@@ -36,11 +36,20 @@ export async function GET(req: NextRequest) {
 
     const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : ""
 
+    const sortParam = searchParams.get("sort") || "relevanz"
+    const orderParam = searchParams.get("order") === "desc" ? "DESC" : "ASC"
+    const sortExpr =
+      sortParam === "datum"
+        ? `created_at ${orderParam} NULLS LAST`
+        : sortParam === "kategorie"
+        ? `topic_kategorie ${orderParam} NULLS LAST`
+        : "id ASC"
+
     const sql = `
       SELECT id, doc_title, doc_source, doc_type, chunk_text, chunk_index, page_ref, topic_kategorie, created_at
       FROM forst_wissen
       ${where}
-      ORDER BY id
+      ORDER BY ${sortExpr}
       LIMIT $${idx} OFFSET $${idx + 1}
     `
     params.push(limit, offset)

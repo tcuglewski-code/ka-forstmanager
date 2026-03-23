@@ -1,67 +1,53 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { querySecondBrain } from "@/lib/secondbrain-db"
 
-export async function GET(req: NextRequest) {
+export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url)
     const suche = searchParams.get("suche") || ""
-    const bundesland = searchParams.get("bundesland") || ""
-    const typ = searchParams.get("typ") || ""
+    const betriebsart = searchParams.get("betriebsart") || ""
+    const sort = searchParams.get("sort") || "name"
+    const order = searchParams.get("order") === "desc" ? "DESC" : "ASC"
     const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 200)
     const offset = parseInt(searchParams.get("offset") || "0")
 
+    let where = "1=1"
     const params: any[] = []
-    const conditions: string[] = []
-    let idx = 1
+    let i = 1
 
     if (suche) {
-      conditions.push(`(name ILIKE $${idx} OR ort ILIKE $${idx} OR betriebsnummer ILIKE $${idx})`)
+      where += ` AND (name ILIKE $${i} OR ort ILIKE $${i})`
       params.push(`%${suche}%`)
-      idx++
+      i++
+    }
+    if (betriebsart) {
+      where += ` AND betriebsart = $${i}`
+      params.push(betriebsart)
+      i++
     }
 
-    if (bundesland) {
-      conditions.push(`bundesland = $${idx}`)
-      params.push(bundesland)
-      idx++
-    }
+    const validSorts = ["name", "betriebsart", "ort", "betriebsart_code"]
+    const sortCol = validSorts.includes(sort) ? sort : "name"
 
-    if (typ) {
-      conditions.push(`typ ILIKE $${idx}`)
-      params.push(`%${typ}%`)
-      idx++
-    }
-
-    const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : ""
-
-    const sql = `
-      SELECT id, name, typ, ort, bundesland, plz, betriebsnummer, betriebsart, ist_partner, created_at
-      FROM baumschulen
-      ${where}
-      ORDER BY name
-      LIMIT $${idx} OFFSET $${idx + 1}
-    `
-    params.push(limit, offset)
-
-    const rows = await querySecondBrain(sql, params)
-
-    const countSql = `SELECT COUNT(*) as total FROM baumschulen ${where}`
-    const countRows = await querySecondBrain(countSql, params.slice(0, -2))
-
-    const bundeslaenderRows = await querySecondBrain(
-      "SELECT DISTINCT bundesland FROM baumschulen WHERE bundesland IS NOT NULL ORDER BY bundesland"
-    )
-    const typenRows = await querySecondBrain(
-      "SELECT DISTINCT typ FROM baumschulen WHERE typ IS NOT NULL ORDER BY typ"
-    )
+    const [data, countResult, betriebsartenResult] = await Promise.all([
+      querySecondBrain(
+        `SELECT id, name, betriebsart, betriebsart_code, ort, plz, bundesland, betriebsnummer, ist_partner
+         FROM baumschulen WHERE ${where}
+         ORDER BY ${sortCol} ${order} NULLS LAST
+         LIMIT $${i} OFFSET $${i + 1}`,
+        [...params, limit, offset]
+      ),
+      querySecondBrain(`SELECT COUNT(*) FROM baumschulen WHERE ${where}`, params),
+      querySecondBrain(
+        `SELECT DISTINCT betriebsart FROM baumschulen WHERE betriebsart IS NOT NULL ORDER BY betriebsart`,
+        []
+      ),
+    ])
 
     return NextResponse.json({
-      data: rows,
-      total: parseInt(countRows[0]?.total || "0"),
-      limit,
-      offset,
-      bundeslaender: bundeslaenderRows.map((r) => r.bundesland),
-      typen: typenRows.map((r) => r.typ),
+      data,
+      total: parseInt(countResult[0].count),
+      betriebsarten: betriebsartenResult.map((r: any) => r.betriebsart),
     })
   } catch (error) {
     console.error("SecondBrain baumschulen error:", error)

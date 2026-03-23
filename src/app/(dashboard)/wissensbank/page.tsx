@@ -16,6 +16,7 @@ import {
   Loader2,
   ChevronLeft,
   ChevronRight,
+  ArrowUpDown,
 } from "lucide-react"
 
 // ──────────────── Types ────────────────
@@ -39,15 +40,15 @@ interface ForstamtKontakt {
   bundesland_kuerzel: string | null
 }
 
-interface Baumschule {
+interface Betrieb {
   id: number
   name: string
-  typ: string | null
   ort: string | null
   bundesland: string | null
   plz: string | null
   betriebsnummer: string | null
   betriebsart: string | null
+  betriebsart_code: string | null
   ist_partner: boolean
 }
 
@@ -81,6 +82,7 @@ interface WissenChunk {
   chunk_index: number
   page_ref: string | null
   topic_kategorie: string | null
+  created_at: string | null
 }
 
 // ──────────────── Constants ────────────────
@@ -106,12 +108,33 @@ const BUNDESLAENDER = [
 
 const TAB_LIST = [
   { id: "forstamter", label: "Forstamt-Kontakte", icon: Building2, count: "2.546" },
-  { id: "baumschulen", label: "Baumschulen", icon: TreePine, count: "2.047" },
+  { id: "baumschulen", label: "Betriebe", icon: TreePine, count: "2.046" },
   { id: "foerderprogramme", label: "Förderprogramme", icon: Star, count: "43" },
   { id: "wissen", label: "Wissen", icon: FileText, count: "1.641" },
 ] as const
 
 type TabId = (typeof TAB_LIST)[number]["id"]
+
+// ──────────────── Betriebsart Badge ────────────────
+
+const BETRIEBSART_COLORS: Record<string, string> = {
+  "Baumschule": "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+  "Waldbesitzer": "bg-green-500/20 text-green-400 border-green-500/30",
+  "Ernter": "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  "Reiner Händler": "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  "Saat- und Pflanzgutbetrieb": "bg-violet-500/20 text-violet-400 border-violet-500/30",
+  "Klenge": "bg-orange-500/20 text-orange-400 border-orange-500/30",
+}
+
+function BetriebsartBadge({ betriebsart }: { betriebsart: string | null }) {
+  if (!betriebsart) return <span className="text-zinc-600 text-xs">—</span>
+  const cls = BETRIEBSART_COLORS[betriebsart] ?? "bg-zinc-500/20 text-zinc-400 border-zinc-500/30"
+  return (
+    <span className={`px-2 py-0.5 rounded border text-xs font-medium ${cls}`}>
+      {betriebsart}
+    </span>
+  )
+}
 
 // ──────────────── Forstamt-Kontakte Tab ────────────────
 
@@ -121,37 +144,49 @@ function ForstamterTab() {
   const [loading, setLoading] = useState(false)
   const [suche, setSuche] = useState("")
   const [bundesland, setBundesland] = useState("")
+  const [sort, setSort] = useState("forstamt")
+  const [order, setOrder] = useState<"asc" | "desc">("asc")
   const [offset, setOffset] = useState(0)
   const [importing, setImporting] = useState<number | null>(null)
   const limit = 50
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
-  const fetchData = useCallback(async (s: string, bl: string, off: number) => {
-    setLoading(true)
-    try {
-      const params = new URLSearchParams({ suche: s, bundesland: bl, limit: String(limit), offset: String(off) })
-      const res = await fetch(`/api/secondbrain/forstamter?${params}`)
-      const json = await res.json()
-      setData(json.data || [])
-      setTotal(json.total || 0)
-    } catch {
-      setData([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const fetchData = useCallback(
+    async (s: string, bl: string, so: string, or: string, off: number) => {
+      setLoading(true)
+      try {
+        const params = new URLSearchParams({
+          suche: s,
+          bundesland: bl,
+          sort: so,
+          order: or,
+          limit: String(limit),
+          offset: String(off),
+        })
+        const res = await fetch(`/api/secondbrain/forstamter?${params}`)
+        const json = await res.json()
+        setData(json.data || [])
+        setTotal(json.total || 0)
+      } catch {
+        setData([])
+      } finally {
+        setLoading(false)
+      }
+    },
+    []
+  )
 
   useEffect(() => {
     clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
       setOffset(0)
-      fetchData(suche, bundesland, 0)
+      fetchData(suche, bundesland, sort, order, 0)
     }, 400)
     return () => clearTimeout(debounceRef.current)
-  }, [suche, bundesland, fetchData])
+  }, [suche, bundesland, sort, order, fetchData])
 
   useEffect(() => {
-    fetchData(suche, bundesland, offset)
+    fetchData(suche, bundesland, sort, order, offset)
   }, [offset]) // eslint-disable-line
 
   const importKontakt = async (k: ForstamtKontakt) => {
@@ -177,21 +212,24 @@ function ForstamterTab() {
     }
   }
 
+  const from = total === 0 ? 0 : offset + 1
+  const to = Math.min(offset + limit, total)
+
   return (
     <div className="space-y-4">
-      {/* Filters */}
-      <div className="flex gap-3 flex-wrap">
+      {/* Filter-Bar */}
+      <div className="flex gap-2 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
-            className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
+            className="w-full bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
             placeholder="Suche nach Name, Funktion, Forstamt, Ort..."
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
           />
         </div>
         <select
-          className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
           value={bundesland}
           onChange={(e) => setBundesland(e.target.value)}
         >
@@ -200,12 +238,29 @@ function ForstamterTab() {
             <option key={bl.kuerzel} value={bl.kuerzel}>{bl.name}</option>
           ))}
         </select>
+        <select
+          className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+        >
+          <option value="forstamt">Sortierung: Forstamt</option>
+          <option value="name">Sortierung: Name</option>
+          <option value="ort">Sortierung: Ort</option>
+          <option value="bundesland">Sortierung: Bundesland</option>
+        </select>
+        <button
+          onClick={() => setOrder(order === "asc" ? "desc" : "asc")}
+          className="flex items-center gap-1.5 bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
+        >
+          <ArrowUpDown className="w-3.5 h-3.5" />
+          {order === "asc" ? "A→Z" : "Z→A"}
+        </button>
       </div>
 
       {/* Stats */}
       <div className="flex items-center justify-between text-xs text-zinc-500">
         <span>{loading ? "Lädt..." : `${total.toLocaleString("de")} Kontakte gefunden`}</span>
-        <span>{offset + 1}–{Math.min(offset + limit, total)} von {total.toLocaleString("de")}</span>
+        {total > 0 && <span>Zeige {from}–{to} von {total.toLocaleString("de")}</span>}
       </div>
 
       {/* Table */}
@@ -296,23 +351,23 @@ function ForstamterTab() {
 
       {/* Pagination */}
       {total > limit && (
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center justify-center gap-3">
           <button
             onClick={() => setOffset(Math.max(0, offset - limit))}
             disabled={offset === 0}
-            className="p-2 rounded-lg bg-[#1e1e1e] border border-[#2a2a2a] text-zinc-400 hover:text-white disabled:opacity-40"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-4 h-4" /> Zurück
           </button>
-          <span className="text-sm text-zinc-400 px-4">
-            Seite {Math.floor(offset / limit) + 1} / {Math.ceil(total / limit)}
+          <span className="text-sm text-zinc-500">
+            Zeige {from}–{to} von {total.toLocaleString("de")}
           </span>
           <button
             onClick={() => setOffset(offset + limit)}
             disabled={offset + limit >= total}
-            className="p-2 rounded-lg bg-[#1e1e1e] border border-[#2a2a2a] text-zinc-400 hover:text-white disabled:opacity-40"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
           >
-            <ChevronRight className="w-4 h-4" />
+            Weiter <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       )}
@@ -320,101 +375,122 @@ function ForstamterTab() {
   )
 }
 
-// ──────────────── Baumschulen Tab ────────────────
+// ──────────────── Betriebe Tab ────────────────
 
-function BaumschulenTab() {
-  const [data, setData] = useState<Baumschule[]>([])
+function BetriebeTab() {
+  const [data, setData] = useState<Betrieb[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
   const [suche, setSuche] = useState("")
-  const [bundesland, setBundesland] = useState("")
-  const [typ, setTyp] = useState("")
-  const [typen, setTypen] = useState<string[]>([])
-  const [offset, setOffset] = useState(0)
+  const [betriebsartFilter, setBetriebsartFilter] = useState("")
+  const [betriebsarten, setBetriebsarten] = useState<string[]>([])
+  const [sortField, setSortField] = useState("name")
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
+  const [page, setPage] = useState(0)
+  const PAGE_SIZE = 50
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
-  const limit = 50
 
-  const fetchData = useCallback(async (s: string, bl: string, t: string, off: number) => {
-    setLoading(true)
-    try {
-      const params = new URLSearchParams({ suche: s, bundesland: bl, typ: t, limit: String(limit), offset: String(off) })
-      const res = await fetch(`/api/secondbrain/baumschulen?${params}`)
-      const json = await res.json()
-      setData(json.data || [])
-      setTotal(json.total || 0)
-      if (json.typen) setTypen(json.typen)
-    } catch {
-      setData([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const fetchData = useCallback(
+    async (s: string, ba: string, sf: string, so: string, pg: number) => {
+      setLoading(true)
+      try {
+        const params = new URLSearchParams({
+          suche: s,
+          betriebsart: ba,
+          sort: sf,
+          order: so,
+          limit: String(PAGE_SIZE),
+          offset: String(pg * PAGE_SIZE),
+        })
+        const res = await fetch(`/api/secondbrain/baumschulen?${params}`)
+        const json = await res.json()
+        setData(json.data || [])
+        setTotal(json.total || 0)
+        if (json.betriebsarten) setBetriebsarten(json.betriebsarten)
+      } catch {
+        setData([])
+      } finally {
+        setLoading(false)
+      }
+    },
+    []
+  )
 
   useEffect(() => {
     clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
-      setOffset(0)
-      fetchData(suche, bundesland, typ, 0)
+      setPage(0)
+      fetchData(suche, betriebsartFilter, sortField, sortOrder, 0)
     }, 400)
     return () => clearTimeout(debounceRef.current)
-  }, [suche, bundesland, typ, fetchData])
+  }, [suche, betriebsartFilter, sortField, sortOrder, fetchData])
 
   useEffect(() => {
-    fetchData(suche, bundesland, typ, offset)
-  }, [offset]) // eslint-disable-line
+    fetchData(suche, betriebsartFilter, sortField, sortOrder, page)
+  }, [page]) // eslint-disable-line
+
+  const from = total === 0 ? 0 : page * PAGE_SIZE + 1
+  const to = Math.min(page * PAGE_SIZE + PAGE_SIZE, total)
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-3 flex-wrap">
+      {/* Filter-Bar */}
+      <div className="flex gap-2 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
-            className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
-            placeholder="Suche nach Name, Ort, Betriebsnummer..."
+            className="w-full bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
+            placeholder="Suche nach Name oder Ort..."
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
           />
         </div>
         <select
-          className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
-          value={bundesland}
-          onChange={(e) => setBundesland(e.target.value)}
+          className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          value={betriebsartFilter}
+          onChange={(e) => setBetriebsartFilter(e.target.value)}
         >
-          <option value="">Alle Bundesländer</option>
-          {BUNDESLAENDER.map((bl) => (
-            <option key={bl.kuerzel} value={bl.name}>{bl.name}</option>
+          <option value="">Alle Betriebsarten</option>
+          {betriebsarten.map((ba) => (
+            <option key={ba} value={ba}>{ba}</option>
           ))}
         </select>
-        {typen.length > 0 && (
-          <select
-            className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
-            value={typ}
-            onChange={(e) => setTyp(e.target.value)}
-          >
-            <option value="">Alle Typen</option>
-            {typen.map((t) => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
-        )}
+        <select
+          className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          value={sortField}
+          onChange={(e) => setSortField(e.target.value)}
+        >
+          <option value="name">Sortierung: Name</option>
+          <option value="betriebsart">Sortierung: Betriebsart</option>
+          <option value="ort">Sortierung: Ort</option>
+        </select>
+        <button
+          onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+          className="flex items-center gap-1.5 bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
+        >
+          <ArrowUpDown className="w-3.5 h-3.5" />
+          {sortOrder === "asc" ? "A→Z" : "Z→A"}
+        </button>
       </div>
 
+      {/* Stats */}
       <div className="flex items-center justify-between text-xs text-zinc-500">
-        <span>{loading ? "Lädt..." : `${total.toLocaleString("de")} Baumschulen gefunden`}</span>
-        <span>{offset + 1}–{Math.min(offset + limit, total)} von {total.toLocaleString("de")}</span>
+        <span>{loading ? "Lädt..." : `${total.toLocaleString("de")} Betriebe gefunden`}</span>
+        {total > 0 && <span>Zeige {from}–{to} von {total.toLocaleString("de")}</span>}
       </div>
 
+      {/* Table */}
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#2a2a2a]">
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">Name</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Typ / Betriebsart</th>
+                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Betriebsart</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">Ort</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">Bundesland</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">Betr.-Nr.</th>
-                <th className="px-4 py-3"></th>
+                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Partner</th>
               </tr>
             </thead>
             <tbody>
@@ -427,7 +503,7 @@ function BaumschulenTab() {
               ) : data.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-4 py-8 text-center text-zinc-500">
-                    Keine Baumschulen gefunden
+                    Keine Betriebe gefunden
                   </td>
                 </tr>
               ) : (
@@ -435,29 +511,23 @@ function BaumschulenTab() {
                   <tr key={b.id} className="border-b border-[#1e1e1e] hover:bg-[#1a1a1a] transition-colors">
                     <td className="px-4 py-3">
                       <p className="text-white text-xs font-medium">{b.name}</p>
-                      {b.ist_partner && (
-                        <span className="text-xs text-amber-400">⭐ Partner</span>
-                      )}
                     </td>
                     <td className="px-4 py-3">
-                      {b.typ && (
-                        <span className="px-2 py-0.5 bg-violet-500/20 text-violet-400 rounded text-xs">
-                          {b.typ}
-                        </span>
-                      )}
-                      {b.betriebsart && (
-                        <p className="text-zinc-500 text-xs mt-1">{b.betriebsart}</p>
-                      )}
+                      <BetriebsartBadge betriebsart={b.betriebsart} />
                     </td>
                     <td className="px-4 py-3 text-xs text-zinc-300">
-                      {b.plz} {b.ort}
+                      {[b.plz, b.ort].filter(Boolean).join(" ") || "—"}
                     </td>
-                    <td className="px-4 py-3 text-xs text-zinc-400">{b.bundesland}</td>
-                    <td className="px-4 py-3 text-xs text-zinc-500 font-mono">{b.betriebsnummer}</td>
+                    <td className="px-4 py-3 text-xs text-zinc-400">{b.bundesland || "—"}</td>
+                    <td className="px-4 py-3 text-xs text-zinc-500 font-mono">{b.betriebsnummer || "—"}</td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-1 rounded text-xs ${b.ist_partner ? "bg-amber-500/20 text-amber-400" : "bg-[#1e1e1e] text-zinc-500"}`}>
-                        {b.ist_partner ? "Partner ✓" : "Kein Partner"}
-                      </span>
+                      {b.ist_partner ? (
+                        <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded text-xs font-medium">
+                          ⭐ Partner
+                        </span>
+                      ) : (
+                        <span className="text-zinc-600 text-xs">—</span>
+                      )}
                     </td>
                   </tr>
                 ))
@@ -467,24 +537,25 @@ function BaumschulenTab() {
         </div>
       </div>
 
-      {total > limit && (
-        <div className="flex items-center justify-center gap-2">
+      {/* Pagination */}
+      {total > PAGE_SIZE && (
+        <div className="flex items-center justify-center gap-3">
           <button
-            onClick={() => setOffset(Math.max(0, offset - limit))}
-            disabled={offset === 0}
-            className="p-2 rounded-lg bg-[#1e1e1e] border border-[#2a2a2a] text-zinc-400 hover:text-white disabled:opacity-40"
+            onClick={() => setPage(Math.max(0, page - 1))}
+            disabled={page === 0}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-4 h-4" /> Zurück
           </button>
-          <span className="text-sm text-zinc-400 px-4">
-            Seite {Math.floor(offset / limit) + 1} / {Math.ceil(total / limit)}
+          <span className="text-sm text-zinc-500">
+            Zeige {from}–{to} von {total.toLocaleString("de")}
           </span>
           <button
-            onClick={() => setOffset(offset + limit)}
-            disabled={offset + limit >= total}
-            className="p-2 rounded-lg bg-[#1e1e1e] border border-[#2a2a2a] text-zinc-400 hover:text-white disabled:opacity-40"
+            onClick={() => setPage(page + 1)}
+            disabled={(page + 1) * PAGE_SIZE >= total}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
           >
-            <ChevronRight className="w-4 h-4" />
+            Weiter <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       )}
@@ -497,9 +568,10 @@ function BaumschulenTab() {
 function FoerderprogrammeCard({ prog }: { prog: Foerderprogramm }) {
   const [open, setOpen] = useState(false)
 
-  const statusColor = prog.status === "OFFEN"
-    ? "bg-emerald-500/20 text-emerald-400"
-    : "bg-zinc-500/20 text-zinc-400"
+  const statusColor =
+    prog.status === "OFFEN"
+      ? "bg-emerald-500/20 text-emerald-400"
+      : "bg-zinc-500/20 text-zinc-400"
 
   return (
     <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
@@ -611,45 +683,66 @@ function FoerderprogrammeTab() {
   const [kategorie, setKategorie] = useState("")
   const [kategorien, setKategorien] = useState<string[]>([])
   const [statusFilter, setStatusFilter] = useState("")
+  const [sort, setSort] = useState("name")
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
-  const fetchData = useCallback(async (s: string, bl: string, kat: string, st: string) => {
-    setLoading(true)
-    try {
-      const params = new URLSearchParams({ suche: s, bundesland: bl, kategorie: kat, status: st })
-      const res = await fetch(`/api/secondbrain/foerderprogramme?${params}`)
-      const json = await res.json()
-      setData(json.data || [])
-      if (json.kategorien) setKategorien(json.kategorien)
-    } catch {
-      setData([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const fetchData = useCallback(
+    async (s: string, bl: string, kat: string, st: string, so: string) => {
+      setLoading(true)
+      try {
+        const params = new URLSearchParams({
+          suche: s,
+          bundesland: bl,
+          kategorie: kat,
+          status: st,
+          sort: so,
+        })
+        const res = await fetch(`/api/secondbrain/foerderprogramme?${params}`)
+        const json = await res.json()
+        setData(json.data || [])
+        if (json.kategorien) setKategorien(json.kategorien)
+      } catch {
+        setData([])
+      } finally {
+        setLoading(false)
+      }
+    },
+    []
+  )
 
   useEffect(() => {
     clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
-      fetchData(suche, bundesland, kategorie, statusFilter)
+      fetchData(suche, bundesland, kategorie, statusFilter, sort)
     }, 400)
     return () => clearTimeout(debounceRef.current)
-  }, [suche, bundesland, kategorie, statusFilter, fetchData])
+  }, [suche, bundesland, kategorie, statusFilter, sort, fetchData])
+
+  // Sort client-side for antragsfrist / name
+  const sorted = [...data].sort((a, b) => {
+    if (sort === "antragsfrist") {
+      return (a.antragsfrist || "").localeCompare(b.antragsfrist || "")
+    }
+    if (sort === "bundesland") {
+      return (a.bundesland || "").localeCompare(b.bundesland || "")
+    }
+    return (a.name || "").localeCompare(b.name || "")
+  })
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-3 flex-wrap">
+      <div className="flex gap-2 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
-            className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
+            className="w-full bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
             placeholder="Suche nach Programm, Fördergegenstand..."
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
           />
         </div>
         <select
-          className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
           value={bundesland}
           onChange={(e) => setBundesland(e.target.value)}
         >
@@ -660,7 +753,7 @@ function FoerderprogrammeTab() {
         </select>
         {kategorien.length > 0 && (
           <select
-            className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+            className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
             value={kategorie}
             onChange={(e) => setKategorie(e.target.value)}
           >
@@ -671,13 +764,22 @@ function FoerderprogrammeTab() {
           </select>
         )}
         <select
-          className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
         >
           <option value="">Alle Status</option>
           <option value="OFFEN">Offen</option>
           <option value="GESCHLOSSEN">Geschlossen</option>
+        </select>
+        <select
+          className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+        >
+          <option value="name">Sortierung: Name</option>
+          <option value="bundesland">Sortierung: Bundesland</option>
+          <option value="antragsfrist">Sortierung: Antragsfrist</option>
         </select>
       </div>
 
@@ -689,11 +791,11 @@ function FoerderprogrammeTab() {
         <div className="flex justify-center py-12">
           <Loader2 className="w-6 h-6 animate-spin text-emerald-500" />
         </div>
-      ) : data.length === 0 ? (
+      ) : sorted.length === 0 ? (
         <div className="text-center py-12 text-zinc-500">Keine Förderprogramme gefunden</div>
       ) : (
         <div className="space-y-3">
-          {data.map((prog) => (
+          {sorted.map((prog) => (
             <FoerderprogrammeCard key={prog.id} prog={prog} />
           ))}
         </div>
@@ -711,71 +813,92 @@ function WissenTab() {
   const [suche, setSuche] = useState("")
   const [kategorie, setKategorie] = useState("")
   const [kategorien, setKategorien] = useState<string[]>([])
+  const [sort, setSort] = useState("relevanz")
   const [offset, setOffset] = useState(0)
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
   const limit = 30
   const [hasSearched, setHasSearched] = useState(false)
 
-  const fetchData = useCallback(async (s: string, kat: string, off: number) => {
-    setLoading(true)
-    try {
-      const params = new URLSearchParams({ suche: s, kategorie: kat, limit: String(limit), offset: String(off) })
-      const res = await fetch(`/api/secondbrain/wissen?${params}`)
-      const json = await res.json()
-      setData(json.data || [])
-      setTotal(json.total || 0)
-      if (json.kategorien) setKategorien(json.kategorien)
-    } catch {
-      setData([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const fetchData = useCallback(
+    async (s: string, kat: string, so: string, off: number) => {
+      setLoading(true)
+      try {
+        const params = new URLSearchParams({
+          suche: s,
+          kategorie: kat,
+          sort: so,
+          limit: String(limit),
+          offset: String(off),
+        })
+        const res = await fetch(`/api/secondbrain/wissen?${params}`)
+        const json = await res.json()
+        setData(json.data || [])
+        setTotal(json.total || 0)
+        if (json.kategorien) setKategorien(json.kategorien)
+      } catch {
+        setData([])
+      } finally {
+        setLoading(false)
+      }
+    },
+    []
+  )
 
   // Load kategorien on mount
   useEffect(() => {
-    fetchData("", "", 0)
+    fetchData("", "", "relevanz", 0)
   }, [fetchData])
 
   const handleSearch = () => {
     if (!suche && !kategorie) return
     setHasSearched(true)
     setOffset(0)
-    fetchData(suche, kategorie, 0)
+    fetchData(suche, kategorie, sort, 0)
   }
 
   useEffect(() => {
     if (hasSearched) {
       clearTimeout(debounceRef.current)
       debounceRef.current = setTimeout(() => {
-        fetchData(suche, kategorie, offset)
+        fetchData(suche, kategorie, sort, offset)
       }, 500)
     }
     return () => clearTimeout(debounceRef.current)
-  }, [offset]) // eslint-disable-line
+  }, [offset, sort]) // eslint-disable-line
 
   const highlightText = (text: string, search: string) => {
     if (!search) return text
-    const parts = text.split(new RegExp(`(${search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi"))
+    const parts = text.split(
+      new RegExp(`(${search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi")
+    )
     return parts.map((part, i) =>
-      part.toLowerCase() === search.toLowerCase()
-        ? <mark key={i} className="bg-yellow-500/30 text-yellow-300 rounded px-0.5">{part}</mark>
-        : part
+      part.toLowerCase() === search.toLowerCase() ? (
+        <mark key={i} className="bg-yellow-500/30 text-yellow-300 rounded px-0.5">
+          {part}
+        </mark>
+      ) : (
+        part
+      )
     )
   }
+
+  const from = total === 0 ? 0 : offset + 1
+  const to = Math.min(offset + limit, total)
 
   return (
     <div className="space-y-4">
       {/* Search */}
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
         <p className="text-zinc-400 text-sm mb-4">
-          Volltextsuche in {total > 0 && hasSearched ? `${total.toLocaleString("de")} Treffer aus ` : ""}1.641 gecrawlten Forstdokumenten und PDFs
+          Volltextsuche in{" "}
+          {total > 0 && hasSearched ? `${total.toLocaleString("de")} Treffer aus ` : ""}
+          1.641 gecrawlten Forstdokumenten und PDFs
         </p>
-        <div className="flex gap-3">
-          <div className="relative flex-1">
+        <div className="flex gap-2 flex-wrap">
+          <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
             <input
-              className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg pl-9 pr-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
+              className="w-full bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg pl-9 pr-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
               placeholder="z.B. Pflanzverband, Borkenkäfer, Fördersatz..."
               value={suche}
               onChange={(e) => setSuche(e.target.value)}
@@ -784,7 +907,7 @@ function WissenTab() {
           </div>
           {kategorien.length > 0 && (
             <select
-              className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+              className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
               value={kategorie}
               onChange={(e) => setKategorie(e.target.value)}
             >
@@ -794,6 +917,21 @@ function WissenTab() {
               ))}
             </select>
           )}
+          <select
+            className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+            value={sort}
+            onChange={(e) => {
+              setSort(e.target.value)
+              if (hasSearched) {
+                setOffset(0)
+                fetchData(suche, kategorie, e.target.value, 0)
+              }
+            }}
+          >
+            <option value="relevanz">Sortierung: Relevanz</option>
+            <option value="datum">Sortierung: Datum</option>
+            <option value="kategorie">Sortierung: Kategorie</option>
+          </select>
           <button
             onClick={handleSearch}
             disabled={!suche && !kategorie}
@@ -865,23 +1003,23 @@ function WissenTab() {
           </div>
 
           {total > limit && (
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center justify-center gap-3">
               <button
                 onClick={() => setOffset(Math.max(0, offset - limit))}
                 disabled={offset === 0}
-                className="p-2 rounded-lg bg-[#1e1e1e] border border-[#2a2a2a] text-zinc-400 hover:text-white disabled:opacity-40"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-4 h-4" /> Zurück
               </button>
-              <span className="text-sm text-zinc-400 px-4">
-                Seite {Math.floor(offset / limit) + 1} / {Math.ceil(total / limit)}
+              <span className="text-sm text-zinc-500">
+                Zeige {from}–{to} von {total.toLocaleString("de")}
               </span>
               <button
                 onClick={() => setOffset(offset + limit)}
                 disabled={offset + limit >= total}
-                className="p-2 rounded-lg bg-[#1e1e1e] border border-[#2a2a2a] text-zinc-400 hover:text-white disabled:opacity-40"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
               >
-                <ChevronRight className="w-4 h-4" />
+                Weiter <ChevronRight className="w-4 h-4" />
               </button>
             </div>
           )}
@@ -905,7 +1043,9 @@ export default function WissensPage() {
         </div>
         <div>
           <h1 className="text-xl font-bold text-white">Wissensbank</h1>
-          <p className="text-sm text-zinc-500">7.000+ Datensätze aus dem Forstbereich — Kontakte, Baumschulen, Förderprogramme, Wissen</p>
+          <p className="text-sm text-zinc-500">
+            7.000+ Datensätze aus dem Forstbereich — Kontakte, Betriebe, Förderprogramme, Wissen
+          </p>
         </div>
         <div className="ml-auto hidden sm:flex gap-2">
           <div className="px-3 py-1.5 bg-[#2C3A1C]/50 border border-emerald-900/50 rounded-lg text-xs text-emerald-400">
@@ -943,7 +1083,7 @@ export default function WissensPage() {
       {/* Tab Content */}
       <div>
         {activeTab === "forstamter" && <ForstamterTab />}
-        {activeTab === "baumschulen" && <BaumschulenTab />}
+        {activeTab === "baumschulen" && <BetriebeTab />}
         {activeTab === "foerderprogramme" && <FoerderprogrammeTab />}
         {activeTab === "wissen" && <WissenTab />}
       </div>
