@@ -64,6 +64,7 @@ model Mitarbeiter {
   lohneintraege     Lohneintrag[]
   vorschuesse       Vorschuss[]
   abwesenheiten     Abwesenheit[]
+  lagerBewegungen   LagerBewegung[]
 }
 
 model Saison {
@@ -136,6 +137,7 @@ model Auftrag {
   dokumente         Dokument[]
   protokolle        Tagesprotokoll[]
   rechnungen        Rechnung[]
+  lagerBewegungen   LagerBewegung[]
 }
 
 // GRUPPE
@@ -193,14 +195,18 @@ model LagerArtikel {
 }
 
 model LagerBewegung {
-  id        String       @id @default(cuid())
-  artikelId String
-  typ       String
-  menge     Float
-  referenz  String?
-  notiz     String?
-  createdAt DateTime     @default(now())
-  artikel   LagerArtikel @relation(fields: [artikelId], references: [id], onDelete: Cascade)
+  id            String       @id @default(cuid())
+  artikelId     String
+  typ           String
+  menge         Float
+  referenz      String?
+  notiz         String?
+  auftragId     String?
+  mitarbeiterId String?
+  createdAt     DateTime     @default(now())
+  artikel       LagerArtikel @relation(fields: [artikelId], references: [id], onDelete: Cascade)
+  auftrag       Auftrag?     @relation(fields: [auftragId], references: [id], onDelete: SetNull)
+  mitarbeiter   Mitarbeiter? @relation(fields: [mitarbeiterId], references: [id], onDelete: SetNull)
 }
 
 // FUHRPARK

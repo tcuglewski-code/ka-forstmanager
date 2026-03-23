@@ -14,6 +14,15 @@ import { PflanzverbandVorschau } from "@/components/auftraege/PflanzverbandVorsc
 interface Saison { id: string; name: string }
 interface Gruppe { id: string; name: string }
 
+interface MaterialBewegung {
+  id: string
+  typ: string
+  menge: number
+  createdAt: string
+  artikel: { id: string; name: string; einheit: string }
+  mitarbeiter?: { id: string; vorname: string; nachname: string } | null
+}
+
 interface FlaecheVorbereitung {
   nr: number
   ha: string
@@ -539,13 +548,16 @@ export default function AuftragDetailPage() {
 
   const [saisons, setSaisons] = useState<Saison[]>([])
   const [gruppen, setGruppen] = useState<Gruppe[]>([])
+  const [material, setMaterial] = useState<MaterialBewegung[]>([])
+  const [materialLoading, setMaterialLoading] = useState(true)
 
   useEffect(() => {
     async function fetchData() {
-      const [auftragRes, saionsRes, gruppenRes] = await Promise.all([
+      const [auftragRes, saionsRes, gruppenRes, materialRes] = await Promise.all([
         fetch(`/api/auftraege/${id}`),
         fetch("/api/saisons"),
         fetch("/api/gruppen"),
+        fetch(`/api/auftraege/${id}/material`),
       ])
       const a: Auftrag = await auftragRes.json()
       setAuftrag(a)
@@ -555,6 +567,8 @@ export default function AuftragDetailPage() {
       setGruppeId(a.gruppeId ?? "")
       setSaisons(saionsRes.ok ? await saionsRes.json() : [])
       setGruppen(gruppenRes.ok ? await gruppenRes.json() : [])
+      if (materialRes.ok) { const mat = await materialRes.json(); setMaterial(Array.isArray(mat) ? mat : []) }
+      setMaterialLoading(false)
       setLoading(false)
     }
     fetchData()
@@ -789,6 +803,53 @@ export default function AuftragDetailPage() {
               </table>
             </div>
           )}
+
+          {/* ── Materialzuweisung ──────────────────────────────────── */}
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+            <SectionHeading icon={<Package className="w-4 h-4" />} label="Materialzuweisung" />
+            {materialLoading ? (
+              <p className="text-zinc-600 text-sm mt-2">Laden...</p>
+            ) : material.length === 0 ? (
+              <p className="text-zinc-600 text-sm mt-2">Noch kein Material zugewiesen</p>
+            ) : (
+              <div className="overflow-x-auto mt-3">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-[#2a2a2a]">
+                      <th className="text-left pb-2 text-zinc-500 font-medium text-xs">Datum</th>
+                      <th className="text-left pb-2 text-zinc-500 font-medium text-xs">Artikel</th>
+                      <th className="text-right pb-2 text-zinc-500 font-medium text-xs">Menge</th>
+                      <th className="text-left pb-2 text-zinc-500 font-medium text-xs pl-3">Typ</th>
+                      <th className="text-left pb-2 text-zinc-500 font-medium text-xs pl-3">Mitarbeiter</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {material.map(b => (
+                      <tr key={b.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors">
+                        <td className="py-2.5 text-zinc-500 text-xs whitespace-nowrap">
+                          {new Date(b.createdAt).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })}
+                        </td>
+                        <td className="py-2.5 text-white text-xs">{b.artikel.name}</td>
+                        <td className="py-2.5 text-right text-white text-xs">{b.menge} {b.artikel.einheit}</td>
+                        <td className="py-2.5 pl-3">
+                          <span className="text-xs px-1.5 py-0.5 rounded bg-[#2a2a2a] text-zinc-400">{b.typ}</span>
+                        </td>
+                        <td className="py-2.5 pl-3">
+                          {b.mitarbeiter ? (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-violet-500/20 text-violet-400">
+                              {b.mitarbeiter.vorname} {b.mitarbeiter.nachname}
+                            </span>
+                          ) : (
+                            <span className="text-zinc-600 text-xs">–</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
 
         </div>
 
