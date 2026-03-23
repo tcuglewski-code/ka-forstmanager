@@ -7,6 +7,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
+import { PflanzverbandVorschau } from "@/components/auftraege/PflanzverbandVorschau"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -180,6 +181,17 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
           </Grid2>
         </div>
       )}
+
+      {/* Pflanzverband-Vorschau */}
+      <PflanzverbandVorschau
+        pflanzverband={w.pflanzverband}
+        pflanzabstand={w.pflanzabstand}
+        reihenabstand={w.reihenabstand}
+        baumarten={w.baumarten}
+        baumart={w.baumart}
+        pflanzenzahl={w.pflanzenzahl_gesamt ? Number(w.pflanzenzahl_gesamt) : null}
+        flaeche_ha={w.flaeche_ha}
+      />
 
       {/* Bezugsquelle */}
       {(w.bezugsquelle || w.lieferant || w.lieferort || w.lieferAdresse) && (
