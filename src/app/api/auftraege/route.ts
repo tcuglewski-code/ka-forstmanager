@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
       saison: { select: { id: true, name: true } },
       gruppe: { select: { id: true, name: true } },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: { wpErstelltAm: "desc" },
   })
 
   return NextResponse.json(auftraege)

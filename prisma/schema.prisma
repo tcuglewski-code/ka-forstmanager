@@ -127,6 +127,7 @@ model Auftrag {
   gruppeId          String?
   startDatum        DateTime?
   endDatum          DateTime?
+  wpErstelltAm      DateTime?        // Erstellungsdatum aus WP (ka_angelegt Unix-Timestamp)
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   saison            Saison?          @relation(fields: [saisonId], references: [id], onDelete: SetNull)

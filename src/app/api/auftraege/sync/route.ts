@@ -121,6 +121,10 @@ export async function POST() {
       const flaeche_ha = parseFlaeche(wizard)
       const neuFlag = (post.meta?.ka_neu_flag ?? 0) === 1
 
+      // WP-Erstellungsdatum: ka_angelegt Unix-Timestamp oder post.date
+      const kaAngelegt = post.meta?.ka_angelegt
+      const wpErstelltAm = kaAngelegt ? new Date(kaAngelegt * 1000) : new Date(post.date)
+
       // Check if exists
       const existing = await prisma.auftrag.findUnique({
         where: { wpProjektId: wpId },
@@ -145,6 +149,7 @@ export async function POST() {
             neuFlag,
             wpProjektId: wpId,
             wizardDaten: wizardDaten ?? undefined,
+            wpErstelltAm,
           },
         })
         newCount++
@@ -165,6 +170,7 @@ export async function POST() {
             zeitraum: wizard.zeitraum ?? null,
             neuFlag,
             wizardDaten: wizardDaten ?? undefined,
+            wpErstelltAm,
             // status bleibt erhalten wenn bereits manuell gesetzt
           },
         })

@@ -191,6 +191,9 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
         baumart={w.baumart}
         pflanzenzahl={w.pflanzenzahl_gesamt ? Number(w.pflanzenzahl_gesamt) : null}
         flaeche_ha={w.flaeche_ha}
+        aussenreihe={w.aussenreihe === true || w.aussenreihe === 'true'}
+        aussenreiheArt={w.aussenreiheArt || null}
+        aussenreiheArtName={w.aussenreiheArt ? String(w.aussenreiheArt) : null}
       />
 
       {/* Bezugsquelle */}
