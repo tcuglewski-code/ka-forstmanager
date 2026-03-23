@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ForstManager — Koch Aufforstung GmbH
 
-## Getting Started
+Digitales Betriebssystem für Forstunternehmen. Erste Instanz: **Koch Aufforstung GmbH**.
 
-First, run the development server:
+## Stack
 
+- **Framework:** Next.js 16 (App Router, TypeScript)
+- **Datenbank:** PostgreSQL via Neon + Prisma 7
+- **Auth:** NextAuth.js v5 (JWT)
+- **Styling:** Tailwind CSS v4, Dark Theme (#0f0f0f)
+- **Icons:** Lucide React
+
+## Module
+
+- ✅ Auth (Login / Logout / JWT Session)
+- ✅ Dashboard (Stats, Schnellzugriff)
+- ✅ Mitarbeiter (CRUD, Suche, Filter)
+- ✅ Saisons (CRUD, Cards)
+- 🔜 Planung
+- 🔜 Aufträge
+- 🔜 Lager
+- 🔜 Dokumente
+
+## Setup (lokal)
+
+### 1. Dependencies installieren
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Umgebungsvariablen
+Erstelle `.env.local`:
+```
+DATABASE_URL="postgresql://neondb_owner:npg_fDBsFc9Tjdy1@ep-misty-moon-aldvc64t-pooler.c-3.eu-central-1.aws.neon.tech/ForstManagerKADB?sslmode=require&channel_binding=require"
+DIRECT_URL="postgresql://neondb_owner:npg_fDBsFc9Tjdy1@ep-misty-moon-aldvc64t-pooler.c-3.eu-central-1.aws.neon.tech/ForstManagerKADB?sslmode=require&channel_binding=require"
+NEXTAUTH_SECRET="forstmanager-secret-2026-ka"
+NEXTAUTH_URL="http://localhost:3001"
+NEXT_PUBLIC_APP_NAME="ForstManager"
+NEXT_PUBLIC_CLIENT_NAME="Koch Aufforstung GmbH"
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Datenbank initialisieren
+```bash
+npx prisma db push
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Seed-Daten
+```bash
+npx ts-node --compiler-options '{"module":"CommonJS"}' prisma/seed.ts
+```
 
-## Learn More
+### 5. Dev Server
+```bash
+npm run dev -- -p 3001
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Deploy (Vercel)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Gehe zu [vercel.com/new](https://vercel.com/new)
+2. Importiere `tcuglewski-code/ka-forstmanager` von GitHub
+3. Framework: **Next.js** (wird automatisch erkannt)
+4. Füge folgende Environment Variables hinzu:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Variable | Wert |
+|----------|------|
+| `DATABASE_URL` | Neon Connection String |
+| `DIRECT_URL` | Neon Connection String |
+| `NEXTAUTH_SECRET` | `forstmanager-ka-secret-2026-prod` |
+| `NEXTAUTH_URL` | `https://ka-forstmanager.vercel.app` (nach Deploy anpassen) |
+| `NEXT_PUBLIC_APP_NAME` | `ForstManager` |
+| `NEXT_PUBLIC_CLIENT_NAME` | `Koch Aufforstung GmbH` |
 
-## Deploy on Vercel
+5. Deploy klicken
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Admin-Zugang
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| E-Mail | Passwort |
+|--------|---------|
+| admin@koch-aufforstung.de | Admin2026! |
+
+## Design
+
+- **Hintergrund:** `#0f0f0f` (Cards: `#161616`)
+- **Akzent:** `#2C3A1C` (Waldgrün), `emerald-400` als Highlight
+- **Borders:** `#2a2a2a`
+- **Font:** System-UI
+
+## Nächste Schritte
+
+1. Vercel manuell verbinden (GitHub Integration)
+2. DB Push auf Neon ausführen (lokal: `npx prisma db push`)
+3. Seed ausführen (`prisma/seed.ts`)
+4. Planung-Modul implementieren
+5. Aufträge-Modul implementieren
+6. Mitarbeiter → User-Account-Verknüpfung
+7. Rollen-basierte Zugriffssteuerung verfeinern
