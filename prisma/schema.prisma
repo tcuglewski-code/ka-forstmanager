@@ -30,45 +30,57 @@ model Session {
 }
 
 model Mitarbeiter {
-  id              String    @id @default(cuid())
-  userId          String?   @unique
-  vorname         String
-  nachname        String
-  email           String?
-  telefon         String?
-  mobil           String?
-  adresse         String?
-  plz             String?
-  ort             String?
-  geburtsdatum    DateTime?
-  eintrittsdatum  DateTime?
-  austrittsdatum  DateTime?
-  rolle           String    @default("mitarbeiter")
-  qualifikationen String?
-  fuehrerschein   String?
-  notfallkontakt  String?
-  notfalltelefon  String?
-  bankname        String?
-  iban            String?
-  stundenlohn     Float?
-  status          String    @default("aktiv")
-  notizen         String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  user            User?     @relation(fields: [userId], references: [id])
+  id                String                     @id @default(cuid())
+  userId            String?                    @unique
+  vorname           String
+  nachname          String
+  email             String?
+  telefon           String?
+  mobil             String?
+  adresse           String?
+  plz               String?
+  ort               String?
+  geburtsdatum      DateTime?
+  eintrittsdatum    DateTime?
+  austrittsdatum    DateTime?
+  rolle             String                     @default("mitarbeiter")
+  qualifikationen   String?
+  fuehrerschein     String?
+  notfallkontakt    String?
+  notfalltelefon    String?
+  bankname          String?
+  iban              String?
+  stundenlohn       Float?
+  status            String                     @default("aktiv")
+  notizen           String?
+  createdAt         DateTime                   @default(now())
+  updatedAt         DateTime                   @updatedAt
+  user              User?                      @relation(fields: [userId], references: [id])
+  gruppen           GruppeMitglied[]
+  saisonAnmeldungen SaisonAnmeldung[]
+  qualifikationenRel MitarbeiterQualifikation[]
+  schulungen        MitarbeiterSchulung[]
+  stundeneintraege  Stundeneintrag[]
+  lohneintraege     Lohneintrag[]
+  vorschuesse       Vorschuss[]
+  abwesenheiten     Abwesenheit[]
 }
 
 model Saison {
-  id           String    @id @default(cuid())
+  id           String            @id @default(cuid())
   name         String
-  typ          String    @default("pflanzung")
-  status       String    @default("planung")
+  typ          String            @default("pflanzung")
+  status       String            @default("planung")
   startDatum   DateTime?
   endDatum     DateTime?
   beschreibung String?
   ziel         String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  anmeldungen  SaisonAnmeldung[]
+  dokumente    Dokument[]
+  gruppen      Gruppe[]
+  auftraege    Auftrag[]
 }
 
 model Tenant {
@@ -90,4 +102,312 @@ model ActivityLog {
   userId     String?
   metadata   String?
   createdAt  DateTime @default(now())
+}
+
+// AUFTRAG
+model Auftrag {
+  id                String           @id @default(cuid())
+  titel             String
+  typ               String
+  status            String           @default("anfrage")
+  beschreibung      String?
+  flaeche_ha        Float?
+  standort          String?
+  bundesland        String?
+  waldbesitzer      String?
+  waldbesitzerEmail String?
+  wpProjektId       String?
+  saisonId          String?
+  gruppeId          String?
+  startDatum        DateTime?
+  endDatum          DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  saison            Saison?          @relation(fields: [saisonId], references: [id], onDelete: SetNull)
+  gruppe            Gruppe?          @relation(fields: [gruppeId], references: [id], onDelete: SetNull)
+  abnahmen          Abnahme[]
+  dokumente         Dokument[]
+  protokolle        Tagesprotokoll[]
+  rechnungen        Rechnung[]
+}
+
+// GRUPPE
+model Gruppe {
+  id               String           @id @default(cuid())
+  name             String
+  saisonId         String?
+  gruppenfuehrerId String?
+  status           String           @default("aktiv")
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  saison           Saison?          @relation(fields: [saisonId], references: [id], onDelete: SetNull)
+  auftraege        Auftrag[]
+  mitglieder       GruppeMitglied[]
+}
+
+model GruppeMitglied {
+  id            String      @id @default(cuid())
+  gruppeId      String
+  mitarbeiterId String
+  rolle         String      @default("mitarbeiter")
+  gruppe        Gruppe      @relation(fields: [gruppeId], references: [id], onDelete: Cascade)
+  mitarbeiter   Mitarbeiter @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
+
+  @@unique([gruppeId, mitarbeiterId])
+}
+
+// SAISON-ANMELDUNG
+model SaisonAnmeldung {
+  id            String      @id @default(cuid())
+  saisonId      String
+  mitarbeiterId String
+  status        String      @default("angemeldet")
+  notiz         String?
+  createdAt     DateTime    @default(now())
+  saison        Saison      @relation(fields: [saisonId], references: [id], onDelete: Cascade)
+  mitarbeiter   Mitarbeiter @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
+
+  @@unique([saisonId, mitarbeiterId])
+}
+
+// LAGER
+model LagerArtikel {
+  id             String          @id @default(cuid())
+  name           String
+  kategorie      String          @default("material")
+  einheit        String          @default("Stück")
+  bestand        Float           @default(0)
+  mindestbestand Float           @default(0)
+  lagerort       String?
+  artikelnummer  String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  bewegungen     LagerBewegung[]
+}
+
+model LagerBewegung {
+  id        String       @id @default(cuid())
+  artikelId String
+  typ       String
+  menge     Float
+  referenz  String?
+  notiz     String?
+  createdAt DateTime     @default(now())
+  artikel   LagerArtikel @relation(fields: [artikelId], references: [id], onDelete: Cascade)
+}
+
+// FUHRPARK
+model Fahrzeug {
+  id              String    @id @default(cuid())
+  typ             String
+  bezeichnung     String
+  kennzeichen     String?
+  baujahr         Int?
+  status          String    @default("verfuegbar")
+  tuvDatum        DateTime?
+  naechsteWartung DateTime?
+  notizen         String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Geraet {
+  id              String    @id @default(cuid())
+  typ             String
+  bezeichnung     String
+  seriennummer    String?
+  status          String    @default("verfuegbar")
+  naechsteWartung DateTime?
+  notizen         String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Wartung {
+  id           String   @id @default(cuid())
+  typ          String
+  referenzId   String
+  beschreibung String
+  datum        DateTime
+  kosten       Float?
+  erledigt     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+}
+
+// LOHN & FINANZEN
+model Lohneintrag {
+  id            String      @id @default(cuid())
+  mitarbeiterId String
+  saisonId      String?
+  monat         Int
+  jahr          Int
+  stunden       Float       @default(0)
+  stundenlohn   Float
+  brutto        Float       @default(0)
+  netto         Float?
+  ausgezahlt    Boolean     @default(false)
+  ausgezahltAm  DateTime?
+  notizen       String?
+  createdAt     DateTime    @default(now())
+  mitarbeiter   Mitarbeiter @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
+}
+
+model Vorschuss {
+  id             String      @id @default(cuid())
+  mitarbeiterId  String
+  betrag         Float
+  datum          DateTime    @default(now())
+  grund          String?
+  genehmigt      Boolean     @default(false)
+  zurueckgezahlt Boolean     @default(false)
+  createdAt      DateTime    @default(now())
+  mitarbeiter    Mitarbeiter @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
+}
+
+// STUNDEN & ABWESENHEIT
+model Stundeneintrag {
+  id            String      @id @default(cuid())
+  mitarbeiterId String
+  datum         DateTime
+  stunden       Float
+  auftragId     String?
+  typ           String      @default("arbeit")
+  notiz         String?
+  genehmigt     Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  mitarbeiter   Mitarbeiter @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
+}
+
+model Abwesenheit {
+  id            String      @id @default(cuid())
+  mitarbeiterId String
+  von           DateTime
+  bis           DateTime
+  typ           String
+  genehmigt     Boolean     @default(false)
+  notiz         String?
+  createdAt     DateTime    @default(now())
+  mitarbeiter   Mitarbeiter @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
+}
+
+// QUALIFIKATIONEN
+model Qualifikation {
+  id           String                     @id @default(cuid())
+  name         String
+  typ          String                     @default("zertifikat")
+  beschreibung String?
+  createdAt    DateTime                   @default(now())
+  mitarbeiter  MitarbeiterQualifikation[]
+}
+
+model MitarbeiterQualifikation {
+  id              String        @id @default(cuid())
+  mitarbeiterId   String
+  qualifikationId String
+  erworbenAm      DateTime?
+  ablaufDatum     DateTime?
+  notiz           String?
+  mitarbeiter     Mitarbeiter   @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
+  qualifikation   Qualifikation @relation(fields: [qualifikationId], references: [id], onDelete: Cascade)
+}
+
+// SCHULUNGEN
+model Schulung {
+  id            String                @id @default(cuid())
+  titel         String
+  typ           String                @default("pflicht")
+  beschreibung  String?
+  datum         DateTime?
+  ort           String?
+  maxTeilnehmer Int?
+  status        String                @default("geplant")
+  createdAt     DateTime              @default(now())
+  teilnehmer    MitarbeiterSchulung[]
+}
+
+model MitarbeiterSchulung {
+  id              String      @id @default(cuid())
+  mitarbeiterId   String
+  schulungId      String
+  status          String      @default("angemeldet")
+  abgeschlossenAm DateTime?
+  mitarbeiter     Mitarbeiter @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
+  schulung        Schulung    @relation(fields: [schulungId], references: [id], onDelete: Cascade)
+
+  @@unique([mitarbeiterId, schulungId])
+}
+
+// DOKUMENTE
+model Dokument {
+  id             String   @id @default(cuid())
+  name           String
+  typ            String   @default("sonstiges")
+  url            String
+  nextcloudPath  String?
+  auftragId      String?
+  saisonId       String?
+  hochgeladenVon String?
+  createdAt      DateTime @default(now())
+  auftrag        Auftrag? @relation(fields: [auftragId], references: [id], onDelete: SetNull)
+  saison         Saison?  @relation(fields: [saisonId], references: [id], onDelete: SetNull)
+}
+
+// ABNAHMEN
+model Abnahme {
+  id          String   @id @default(cuid())
+  auftragId   String
+  datum       DateTime @default(now())
+  foersterId  String?
+  status      String   @default("offen")
+  notizen     String?
+  signaturUrl String?
+  createdAt   DateTime @default(now())
+  auftrag     Auftrag  @relation(fields: [auftragId], references: [id], onDelete: Cascade)
+}
+
+// TAGESPROTOKOLL
+model Tagesprotokoll {
+  id        String   @id @default(cuid())
+  auftragId String?
+  gruppeId  String?
+  datum     DateTime
+  ersteller String?
+  bericht   String?
+  gepflanzt Int?
+  witterung String?
+  fotos     String?
+  createdAt DateTime @default(now())
+  auftrag   Auftrag? @relation(fields: [auftragId], references: [id], onDelete: SetNull)
+}
+
+// KONTAKTE
+model Kontakt {
+  id        String   @id @default(cuid())
+  name      String
+  typ       String   @default("sonstig")
+  telefon   String?
+  email     String?
+  forstamt  String?
+  revier    String?
+  adresse   String?
+  notizen   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// RECHNUNGEN
+model Rechnung {
+  id             String    @id @default(cuid())
+  auftragId      String?
+  nummer         String
+  betrag         Float
+  mwst           Float     @default(19)
+  status         String    @default("offen")
+  rechnungsDatum DateTime  @default(now())
+  faelligAm      DateTime?
+  pdfUrl         String?
+  notizen        String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  auftrag        Auftrag?  @relation(fields: [auftragId], references: [id], onDelete: SetNull)
 }

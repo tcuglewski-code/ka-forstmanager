@@ -9,7 +9,18 @@ import {
   Calendar,
   ClipboardList,
   Package,
+  Car,
+  Wrench,
+  DollarSign,
+  Clock,
+  GraduationCap,
+  BookOpen,
   FileText,
+  CheckSquare,
+  BarChart3,
+  MapPin,
+  Settings,
+  UsersRound,
   LogOut,
 } from "lucide-react"
 import { signOut } from "next-auth/react"
@@ -17,12 +28,22 @@ import { cn } from "@/lib/utils"
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, active: true },
-  { href: "/mitarbeiter", label: "Mitarbeiter", icon: Users, active: true },
+  { href: "/auftraege", label: "Aufträge", icon: ClipboardList, active: true },
   { href: "/saisons", label: "Saisons", icon: Calendar, active: true },
-  { href: "/planung", label: "Planung", icon: ClipboardList, active: false },
-  { href: "/auftraege", label: "Aufträge", icon: ClipboardList, active: false },
-  { href: "/lager", label: "Lager", icon: Package, active: false },
+  { href: "/mitarbeiter", label: "Mitarbeiter", icon: Users, active: true },
+  { href: "/gruppen", label: "Gruppen", icon: UsersRound, active: true },
+  { href: "/lager", label: "Lager", icon: Package, active: true },
+  { href: "/fuhrpark", label: "Fuhrpark", icon: Car, active: true },
+  { href: "/geraete", label: "Geräte", icon: Wrench, active: true },
+  { href: "/lohn", label: "Lohn", icon: DollarSign, active: true },
+  { href: "/stunden", label: "Stunden", icon: Clock, active: false },
+  { href: "/qualifikationen", label: "Qualifikationen", icon: GraduationCap, active: false },
+  { href: "/schulungen", label: "Schulungen", icon: BookOpen, active: false },
   { href: "/dokumente", label: "Dokumente", icon: FileText, active: false },
+  { href: "/abnahmen", label: "Abnahmen", icon: CheckSquare, active: false },
+  { href: "/reports", label: "Reports", icon: BarChart3, active: false },
+  { href: "/kontakte", label: "Kontakte", icon: MapPin, active: true },
+  { href: "/einstellungen", label: "Einstellungen", icon: Settings, active: false },
 ]
 
 export function Sidebar() {
