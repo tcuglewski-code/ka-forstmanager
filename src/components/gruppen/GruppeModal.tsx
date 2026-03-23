@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { X } from "lucide-react"
 
 interface Saison { id: string; name: string }
-interface Mitarbeiter { id: string; vorname: string; nachname: string }
+interface Mitarbeiter { id: string; vorname: string; nachname: string; rolle: string }
 interface Gruppe { id?: string; name?: string; saisonId?: string | null; gruppenfuehrerId?: string | null }
 
 export function GruppeModal({
@@ -27,8 +27,32 @@ export function GruppeModal({
 
   useEffect(() => {
     fetch("/api/saisons").then(r => r.json()).then(setSaisons)
-    fetch("/api/mitarbeiter").then(r => r.json()).then(setMitarbeiter)
+    // Fetch all mitarbeiter and filter by Gruppenführer roles client-side
+    fetch("/api/mitarbeiter")
+      .then(r => r.json())
+      .then((all: Mitarbeiter[]) => {
+        const gf = all.filter(m =>
+          m.rolle === "gruppenführer" || m.rolle === "gf" || m.rolle === "gruppenf%C3%BChrer"
+        )
+        // If no Gruppenführer found, show all (fallback)
+        setMitarbeiter(gf.length > 0 ? gf : all)
+      })
   }, [])
+
+  // Auto-fill group name when Gruppenführer is selected (only for new groups)
+  const handleFuehrerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const id = e.target.value
+    setForm(f => {
+      const isNewGroup = !gruppe?.id
+      if (isNewGroup && id) {
+        const selected = mitarbeiter.find(m => m.id === id)
+        if (selected) {
+          return { ...f, gruppenfuehrerId: id, name: `${selected.vorname} ${selected.nachname}` }
+        }
+      }
+      return { ...f, gruppenfuehrerId: id }
+    })
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -60,6 +84,22 @@ export function GruppeModal({
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
           <div className="overflow-y-auto flex-1 p-6 space-y-4">
             <div>
+              <label className="block text-xs text-zinc-400 mb-1">Gruppenführer</label>
+              <select
+                value={form.gruppenfuehrerId}
+                onChange={handleFuehrerChange}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              >
+                <option value="">— keiner —</option>
+                {mitarbeiter.map(m => (
+                  <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>
+                ))}
+              </select>
+              {mitarbeiter.length === 0 && (
+                <p className="text-xs text-zinc-600 mt-1">Keine Gruppenführer gefunden. Bitte Rollen in Mitarbeiterverwaltung setzen.</p>
+              )}
+            </div>
+            <div>
               <label className="block text-xs text-zinc-400 mb-1">Name *</label>
               <input
                 type="text"
@@ -69,6 +109,9 @@ export function GruppeModal({
                 className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
                 required
               />
+              {!gruppe?.id && (
+                <p className="text-xs text-zinc-600 mt-1">Wird automatisch aus Gruppenführer-Name befüllt</p>
+              )}
             </div>
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Saison</label>
@@ -79,19 +122,6 @@ export function GruppeModal({
               >
                 <option value="">— keine —</option>
                 {saisons.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs text-zinc-400 mb-1">Gruppenführer</label>
-              <select
-                value={form.gruppenfuehrerId}
-                onChange={e => setForm(f => ({ ...f, gruppenfuehrerId: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
-              >
-                <option value="">— keiner —</option>
-                {mitarbeiter.map(m => (
-                  <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>
-                ))}
               </select>
             </div>
           </div>

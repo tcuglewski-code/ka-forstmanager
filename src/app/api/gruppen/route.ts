@@ -11,7 +11,29 @@ export async function GET() {
     },
     orderBy: { createdAt: "desc" },
   })
-  return NextResponse.json(gruppen)
+
+  // Enrich with Gruppenführer details (no relation in schema, fetch manually)
+  const fuellerIds = gruppen
+    .map(g => g.gruppenfuehrerId)
+    .filter((id): id is string => !!id)
+
+  const fuellerMap: Record<string, { id: string; vorname: string; nachname: string }> = {}
+  if (fuellerIds.length > 0) {
+    const fuellerer = await prisma.mitarbeiter.findMany({
+      where: { id: { in: fuellerIds } },
+      select: { id: true, vorname: true, nachname: true },
+    })
+    for (const f of fuellerer) {
+      fuellerMap[f.id] = f
+    }
+  }
+
+  const result = gruppen.map(g => ({
+    ...g,
+    gruppenfuehrer: g.gruppenfuehrerId ? (fuellerMap[g.gruppenfuehrerId] ?? null) : null,
+  }))
+
+  return NextResponse.json(result)
 }
 
 export async function POST(req: NextRequest) {

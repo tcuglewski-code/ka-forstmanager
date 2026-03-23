@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Plus, Users, ChevronRight } from "lucide-react"
+import { Plus, Users, ChevronRight, Crown } from "lucide-react"
 import Link from "next/link"
 import { GruppeModal } from "@/components/gruppen/GruppeModal"
 
@@ -15,6 +15,7 @@ interface Gruppe {
   status: string
   saisonId?: string | null
   gruppenfuehrerId?: string | null
+  gruppenfuehrer?: { id: string; vorname: string; nachname: string } | null
   saison?: { name: string } | null
   mitglieder: GruppeMitglied[]
 }
@@ -73,6 +74,21 @@ export default function GruppenPage() {
                   {g.status}
                 </span>
               </div>
+
+              {/* Gruppenführer prominently displayed */}
+              {g.gruppenfuehrer ? (
+                <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-[#1e1e1e] rounded-lg">
+                  <Crown className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span className="text-sm font-medium text-white">
+                    {g.gruppenfuehrer.vorname} {g.gruppenfuehrer.nachname}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-[#1a1a1a] rounded-lg">
+                  <Crown className="w-3.5 h-3.5 text-zinc-600 shrink-0" />
+                  <span className="text-sm text-zinc-600">Kein Gruppenführer</span>
+                </div>
+              )}
 
               <div className="flex items-center gap-2 text-zinc-500 text-sm mb-4">
                 <Users className="w-4 h-4" />
