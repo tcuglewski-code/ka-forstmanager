@@ -249,8 +249,8 @@ function LagerPageInner() {
         setHighlightedId(itemIdFromUrl)
         const found = data.find(a => a.id === itemIdFromUrl)
         if (found) {
-          // Auto-open QR modal for the scanned item
-          setQrArtikel(found)
+          // Auto-open Buchung modal when scanned via QR
+          setBuchungArtikel(found)
         }
         // Scroll to row after render
         setTimeout(() => {
