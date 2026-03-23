@@ -20,6 +20,7 @@ interface Auftrag {
   gruppe?: { name: string } | null
   startDatum?: string | null
   createdAt: string
+  wpErstelltAm?: string | null
 }
 
 const STATUS_FARBEN: Record<string, string> = {
@@ -81,6 +82,7 @@ export default function AuftraegePage() {
   const [syncResult, setSyncResult] = useState<{ new: number; updated: number; synced: number } | null>(null)
   const [filterStatus, setFilterStatus] = useState("")
   const [filterTyp, setFilterTyp] = useState("")
+  const [datumSort, setDatumSort] = useState<"desc" | "asc">("desc")
   const [modal, setModal] = useState<{ open: boolean; auftrag?: Auftrag | null }>({ open: false })
 
   const load = useCallback(async () => {
@@ -119,6 +121,12 @@ export default function AuftraegePage() {
   }, [filterStatus, filterTyp])
 
   const neuCount = auftraege.filter(a => a.neuFlag).length
+
+  const sortedAuftraege = [...auftraege].sort((a, b) => {
+    const da = new Date(a.wpErstelltAm ?? a.createdAt).getTime()
+    const db = new Date(b.wpErstelltAm ?? b.createdAt).getTime()
+    return datumSort === "desc" ? db - da : da - db
+  })
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -208,7 +216,14 @@ export default function AuftraegePage() {
               <th className="text-left px-4 py-3 text-zinc-500 font-medium">Fläche</th>
               <th className="text-left px-4 py-3 text-zinc-500 font-medium">Bundesland</th>
               <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
-              <th className="text-left px-4 py-3 text-zinc-500 font-medium">Datum</th>
+              <th className="text-left px-4 py-3 text-zinc-500 font-medium">
+                <button
+                  onClick={() => setDatumSort(s => s === "desc" ? "asc" : "desc")}
+                  className="flex items-center gap-1 hover:text-zinc-300 transition-colors"
+                >
+                  Datum {datumSort === "desc" ? "↓" : "↑"}
+                </button>
+              </th>
               <th className="text-left px-4 py-3 text-zinc-500 font-medium"></th>
             </tr>
           </thead>
@@ -220,7 +235,7 @@ export default function AuftraegePage() {
             ) : auftraege.length === 0 ? (
               <tr><td colSpan={8} className="text-center py-12 text-zinc-600">Keine Aufträge gefunden</td></tr>
             ) : (
-              auftraege.map(a => (
+              sortedAuftraege.map(a => (
                 <tr
                   key={a.id}
                   className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] cursor-pointer transition-colors"
@@ -252,7 +267,9 @@ export default function AuftraegePage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-zinc-500">
-                    {new Date(a.createdAt).toLocaleDateString("de-DE")}
+                    {new Date(a.wpErstelltAm ?? a.createdAt).toLocaleDateString("de-DE", {
+                      day: "2-digit", month: "2-digit", year: "numeric"
+                    })}
                   </td>
                   <td className="px-4 py-3">
                     <Link
