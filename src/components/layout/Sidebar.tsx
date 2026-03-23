@@ -47,6 +47,7 @@ const navItems = [
   { href: "/protokolle", label: "Protokolle", icon: ScrollText },
   { href: "/abnahmen", label: "Abnahmen", icon: CheckSquare },
   { href: "/kontakte", label: "Kontakte", icon: MapPin },
+  { href: "/wissensbank", label: "Wissensbank", icon: BookOpen },
   { href: "/reports", label: "Reports", icon: BarChart3 },
   { href: "/einstellungen", label: "Einstellungen", icon: Settings },
 ]
