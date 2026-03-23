@@ -116,7 +116,12 @@ model Auftrag {
   bundesland        String?
   waldbesitzer      String?
   waldbesitzerEmail String?
-  wpProjektId       String?
+  waldbesitzerTelefon String?
+  baumarten         String?
+  zeitraum          String?
+  notizen           String?
+  neuFlag           Boolean          @default(false)
+  wpProjektId       String?          @unique
   saisonId          String?
   gruppeId          String?
   startDatum        DateTime?

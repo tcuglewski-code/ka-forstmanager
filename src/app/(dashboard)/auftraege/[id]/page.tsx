@@ -1,68 +1,164 @@
-import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
-import { notFound } from "next/navigation"
+"use client"
+
+import { useState, useEffect } from "react"
+import { ArrowLeft, ExternalLink, Save, Phone, Mail, User, TreePine, MapPin, Calendar, FileText } from "lucide-react"
 import Link from "next/link"
-import { ArrowLeft, ExternalLink } from "lucide-react"
+import { useParams, useRouter } from "next/navigation"
 
-const statusBadge: Record<string, string> = {
-  anfrage: "bg-blue-500/20 text-blue-400",
-  geprueft: "bg-sky-500/20 text-sky-400",
-  angebot: "bg-violet-500/20 text-violet-400",
-  bestaetigt: "bg-amber-500/20 text-amber-400",
-  in_ausfuehrung: "bg-emerald-500/20 text-emerald-400",
-  abgeschlossen: "bg-zinc-500/20 text-zinc-400",
+interface Saison {
+  id: string
+  name: string
 }
 
-const statusLabel: Record<string, string> = {
-  anfrage: "Anfrage",
-  geprueft: "Geprüft",
-  angebot: "Angebot",
-  bestaetigt: "Bestätigt",
-  in_ausfuehrung: "In Ausführung",
-  abgeschlossen: "Abgeschlossen",
+interface Gruppe {
+  id: string
+  name: string
 }
 
-const abnahmeBadge: Record<string, string> = {
-  offen: "bg-blue-500/20 text-blue-400",
-  bestanden: "bg-emerald-500/20 text-emerald-400",
-  nicht_bestanden: "bg-red-500/20 text-red-400",
+interface Auftrag {
+  id: string
+  titel: string
+  typ: string
+  status: string
+  beschreibung?: string | null
+  flaeche_ha?: number | null
+  standort?: string | null
+  bundesland?: string | null
+  waldbesitzer?: string | null
+  waldbesitzerEmail?: string | null
+  waldbesitzerTelefon?: string | null
+  baumarten?: string | null
+  zeitraum?: string | null
+  notizen?: string | null
+  neuFlag?: boolean
+  wpProjektId?: string | null
+  saisonId?: string | null
+  gruppeId?: string | null
+  saison?: { id: string; name: string } | null
+  gruppe?: { id: string; name: string } | null
+  startDatum?: string | null
+  endDatum?: string | null
+  createdAt: string
+  protokolle?: { id: string; datum: string; gepflanzt?: number | null; witterung?: string | null; ersteller?: string | null }[]
+  abnahmen?: { id: string; datum: string; status: string; notizen?: string | null }[]
+  rechnungen?: { id: string; nummer: string; betrag: number; status: string }[]
 }
 
-const dokTypBadge: Record<string, string> = {
-  foto: "bg-purple-500/20 text-purple-400",
-  karte: "bg-blue-500/20 text-blue-400",
-  protokoll: "bg-amber-500/20 text-amber-400",
-  foerderantrag: "bg-emerald-500/20 text-emerald-400",
-  rechnung: "bg-red-500/20 text-red-400",
-  sonstiges: "bg-zinc-700/50 text-zinc-400",
+const STATUS_LIST = [
+  { value: "anfrage", label: "Anfrage", color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
+  { value: "angebot", label: "Angebot", color: "bg-violet-500/20 text-violet-400 border-violet-500/30" },
+  { value: "auftrag", label: "Auftrag", color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
+  { value: "laufend", label: "Laufend", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
+  { value: "abgeschlossen", label: "Abgeschlossen", color: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30" },
+  { value: "geprueft", label: "Geprüft", color: "bg-sky-500/20 text-sky-400 border-sky-500/30" },
+  { value: "bestaetigt", label: "Bestätigt", color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
+  { value: "in_ausfuehrung", label: "In Ausführung", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
+]
+
+const TYP_LABEL: Record<string, string> = {
+  pflanzung: "Pflanzung",
+  flaechenvorbereitung: "Flächenvorbereitung",
+  flachenvorbereitung: "Flächenvorbereitung",
+  foerderberatung: "Förderberatung",
+  foerdermittelberatung: "Förderberatung",
+  zaunbau: "Zaunbau",
+  kulturschutz: "Kulturschutz",
+  kulturpflege: "Kulturpflege",
+  saatguternte: "Saatguternte",
+  pflanzenbeschaffung: "Pflanzenbeschaffung",
+  unbekannt: "Unbekannt",
 }
 
-const rechnungStatusBadge: Record<string, string> = {
-  offen: "bg-blue-500/20 text-blue-400",
-  freigegeben: "bg-amber-500/20 text-amber-400",
-  bezahlt: "bg-emerald-500/20 text-emerald-400",
-  storniert: "bg-red-500/20 text-red-400",
+const TYP_FARBEN: Record<string, string> = {
+  pflanzung: "bg-emerald-500/20 text-emerald-400",
+  flaechenvorbereitung: "bg-blue-500/20 text-blue-400",
+  flachenvorbereitung: "bg-blue-500/20 text-blue-400",
+  foerderberatung: "bg-purple-500/20 text-purple-400",
+  foerdermittelberatung: "bg-purple-500/20 text-purple-400",
+  zaunbau: "bg-orange-500/20 text-orange-400",
+  kulturschutz: "bg-amber-500/20 text-amber-400",
+  kulturpflege: "bg-yellow-500/20 text-yellow-400",
 }
 
-async function getAuftrag(id: string) {
-  return prisma.auftrag.findUnique({
-    where: { id },
-    include: {
-      saison: { select: { id: true, name: true } },
-      gruppe: { select: { id: true, name: true } },
-      protokolle: { orderBy: { datum: "desc" } },
-      abnahmen: { orderBy: { datum: "desc" } },
-      dokumente: { orderBy: { createdAt: "desc" } },
-      rechnungen: { orderBy: { createdAt: "desc" } },
-    },
-  })
-}
+export default function AuftragDetailPage() {
+  const { id } = useParams<{ id: string }>()
+  const router = useRouter()
 
-export default async function AuftragDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  await auth()
-  const { id } = await params
-  const auftrag = await getAuftrag(id)
-  if (!auftrag) notFound()
+  const [auftrag, setAuftrag] = useState<Auftrag | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+
+  // Editable fields
+  const [status, setStatus] = useState("")
+  const [notizen, setNotizen] = useState("")
+  const [saisonId, setSaisonId] = useState<string>("")
+  const [gruppeId, setGruppeId] = useState<string>("")
+
+  // Lists for dropdowns
+  const [saisons, setSaisons] = useState<Saison[]>([])
+  const [gruppen, setGruppen] = useState<Gruppe[]>([])
+
+  useEffect(() => {
+    async function fetchData() {
+      const [auftragRes, saionsRes, gruppenRes] = await Promise.all([
+        fetch(`/api/auftraege/${id}`),
+        fetch("/api/saisons"),
+        fetch("/api/gruppen"),
+      ])
+      const a: Auftrag = await auftragRes.json()
+      setAuftrag(a)
+      setStatus(a.status)
+      setNotizen(a.notizen ?? "")
+      setSaisonId(a.saisonId ?? "")
+      setGruppeId(a.gruppeId ?? "")
+      setSaisons(saionsRes.ok ? await saionsRes.json() : [])
+      setGruppen(gruppenRes.ok ? await gruppenRes.json() : [])
+      setLoading(false)
+    }
+    fetchData()
+  }, [id])
+
+  async function handleSave() {
+    setSaving(true)
+    await fetch(`/api/auftraege/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        status,
+        notizen: notizen || null,
+        saisonId: saisonId || null,
+        gruppeId: gruppeId || null,
+      }),
+    })
+    setSaving(false)
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2500)
+    // Reload auftrag
+    const res = await fetch(`/api/auftraege/${id}`)
+    setAuftrag(await res.json())
+  }
+
+  if (loading) {
+    return (
+      <div className="max-w-5xl mx-auto flex items-center justify-center h-64">
+        <p className="text-zinc-600">Laden...</p>
+      </div>
+    )
+  }
+
+  if (!auftrag) {
+    return (
+      <div className="max-w-5xl mx-auto">
+        <p className="text-zinc-500">Auftrag nicht gefunden.</p>
+      </div>
+    )
+  }
+
+  const statusObj = STATUS_LIST.find(s => s.value === status) ?? STATUS_LIST[0]
+  const wpAdminUrl = auftrag.wpProjektId
+    ? `https://peru-otter-113714.hostingersite.com/wp-admin/post.php?post=${auftrag.wpProjektId}&action=edit`
+    : null
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -72,151 +168,295 @@ export default async function AuftragDetailPage({ params }: { params: Promise<{ 
 
       {/* Header */}
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 mb-6">
-        <div className="flex items-start justify-between">
-          <div>
+        <div className="flex items-start justify-between flex-wrap gap-4">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-2 flex-wrap">
-              <h1 className="text-2xl font-bold text-white">{auftrag.titel}</h1>
-              <span className={`px-2 py-0.5 rounded-full text-xs ${statusBadge[auftrag.status] ?? "bg-zinc-700 text-zinc-400"}`}>
-                {statusLabel[auftrag.status] ?? auftrag.status}
+              <h1 className="text-xl font-bold text-white leading-tight">{auftrag.titel}</h1>
+              {auftrag.neuFlag && (
+                <span className="px-2 py-0.5 bg-emerald-500/30 text-emerald-300 rounded text-xs font-bold">NEU</span>
+              )}
+              <span className={`px-2 py-0.5 rounded-full text-xs ${TYP_FARBEN[auftrag.typ] ?? "bg-zinc-700/50 text-zinc-400"}`}>
+                {TYP_LABEL[auftrag.typ] ?? auftrag.typ}
               </span>
-              <span className="px-2 py-0.5 rounded-full text-xs bg-zinc-700/50 text-zinc-400">{auftrag.typ}</span>
             </div>
-            {auftrag.beschreibung && <p className="text-zinc-400 text-sm mb-3">{auftrag.beschreibung}</p>}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-              {auftrag.standort && <div><span className="text-zinc-500">Standort</span><p className="text-zinc-300">{auftrag.standort}</p></div>}
-              {auftrag.flaeche_ha && <div><span className="text-zinc-500">Fläche</span><p className="text-zinc-300">{auftrag.flaeche_ha} ha</p></div>}
-              {auftrag.waldbesitzer && <div><span className="text-zinc-500">Waldbesitzer</span><p className="text-zinc-300">{auftrag.waldbesitzer}</p></div>}
-              {auftrag.saison && <div><span className="text-zinc-500">Saison</span><Link href={`/saisons/${auftrag.saison.id}`} className="text-emerald-400 hover:underline">{auftrag.saison.name}</Link></div>}
-              {auftrag.gruppe && <div><span className="text-zinc-500">Gruppe</span><Link href={`/gruppen/${auftrag.gruppe.id}`} className="text-emerald-400 hover:underline">{auftrag.gruppe.name}</Link></div>}
-              {auftrag.startDatum && <div><span className="text-zinc-500">Start</span><p className="text-zinc-300">{new Date(auftrag.startDatum).toLocaleDateString("de-DE")}</p></div>}
-              {auftrag.endDatum && <div><span className="text-zinc-500">Ende</span><p className="text-zinc-300">{new Date(auftrag.endDatum).toLocaleDateString("de-DE")}</p></div>}
-            </div>
+            <p className="text-zinc-500 text-xs">Erstellt: {new Date(auftrag.createdAt).toLocaleDateString("de-DE")}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            {wpAdminUrl && (
+              <a
+                href={wpAdminUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 px-3 py-2 bg-[#2a2a2a] hover:bg-[#333] text-zinc-400 hover:text-white rounded-lg text-xs transition-all"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                WP Admin
+              </a>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left column: Details */}
+        <div className="lg:col-span-2 space-y-6">
 
-        {/* Protokolle */}
-        <Section title={`Tagesprotokolle (${auftrag.protokolle.length})`} link="/protokolle">
-          {auftrag.protokolle.length === 0 ? (
-            <p className="text-zinc-600 text-sm">Keine Protokolle</p>
-          ) : (
-            <table className="w-full">
-              <thead><tr className="border-b border-[#2a2a2a]">
-                <th className="text-left py-2 text-xs text-zinc-500">Datum</th>
-                <th className="text-left py-2 text-xs text-zinc-500">Ersteller</th>
-                <th className="text-left py-2 text-xs text-zinc-500">Gepflanzt</th>
-                <th className="text-left py-2 text-xs text-zinc-500">Witterung</th>
-              </tr></thead>
-              <tbody>
-                {auftrag.protokolle.map((p) => (
-                  <tr key={p.id} className="border-b border-[#2a2a2a] last:border-0">
-                    <td className="py-2 text-sm text-zinc-400">{new Date(p.datum).toLocaleDateString("de-DE")}</td>
-                    <td className="py-2 text-sm text-zinc-400">{p.ersteller ?? "—"}</td>
-                    <td className="py-2 text-sm text-emerald-400">{p.gepflanzt !== null ? `${p.gepflanzt?.toLocaleString()} Stk.` : "—"}</td>
-                    <td className="py-2 text-sm text-zinc-400">{p.witterung ?? "—"}</td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr className="border-t border-[#2a2a2a]">
-                  <td colSpan={2} className="py-2 text-xs text-zinc-500 font-medium">Gesamt gepflanzt:</td>
-                  <td className="py-2 text-sm font-bold text-emerald-400">{auftrag.protokolle.reduce((s, p) => s + (p.gepflanzt ?? 0), 0).toLocaleString()} Stk.</td>
-                  <td></td>
-                </tr>
-              </tfoot>
-            </table>
-          )}
-        </Section>
-
-        {/* Abnahmen */}
-        <Section title={`Abnahmen (${auftrag.abnahmen.length})`} link="/abnahmen">
-          {auftrag.abnahmen.length === 0 ? (
-            <p className="text-zinc-600 text-sm">Keine Abnahmen</p>
-          ) : (
-            <div className="space-y-2">
-              {auftrag.abnahmen.map((a) => (
-                <div key={a.id} className="flex items-center justify-between py-2 border-b border-[#2a2a2a] last:border-0">
-                  <div>
-                    <p className="text-sm text-white">{new Date(a.datum).toLocaleDateString("de-DE")}</p>
-                    <p className="text-xs text-zinc-500">Förster: {a.foersterId ?? "—"}</p>
-                    {a.notizen && <p className="text-xs text-zinc-400 mt-1">{a.notizen}</p>}
-                  </div>
-                  <span className={`px-2 py-0.5 rounded-full text-xs ${abnahmeBadge[a.status] ?? "bg-zinc-700 text-zinc-400"}`}>
-                    {a.status.replace("_", " ")}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </Section>
-
-        {/* Dokumente */}
-        <Section title={`Dokumente (${auftrag.dokumente.length})`} link="/dokumente">
-          {auftrag.dokumente.length === 0 ? (
-            <p className="text-zinc-600 text-sm">Keine Dokumente</p>
-          ) : (
-            <div className="space-y-2">
-              {auftrag.dokumente.map((d) => (
-                <div key={d.id} className="flex items-center justify-between py-2 border-b border-[#2a2a2a] last:border-0">
+          {/* Kontakt */}
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+            <h2 className="font-semibold text-white mb-4 flex items-center gap-2">
+              <User className="w-4 h-4 text-zinc-500" />
+              Waldbesitzer / Kontakt
+            </h2>
+            {auftrag.waldbesitzer || auftrag.waldbesitzerEmail || auftrag.waldbesitzerTelefon ? (
+              <div className="space-y-3">
+                {auftrag.waldbesitzer && (
                   <div className="flex items-center gap-3">
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${dokTypBadge[d.typ] ?? "bg-zinc-700 text-zinc-400"}`}>{d.typ}</span>
-                    <p className="text-sm text-white">{d.name}</p>
+                    <User className="w-4 h-4 text-zinc-600 flex-shrink-0" />
+                    <span className="text-white">{auftrag.waldbesitzer}</span>
                   </div>
-                  <a href={d.url} target="_blank" rel="noreferrer" className="text-zinc-600 hover:text-emerald-400">
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
+                )}
+                {auftrag.waldbesitzerEmail && (
+                  <div className="flex items-center gap-3">
+                    <Mail className="w-4 h-4 text-zinc-600 flex-shrink-0" />
+                    <a href={`mailto:${auftrag.waldbesitzerEmail}`} className="text-emerald-400 hover:underline">
+                      {auftrag.waldbesitzerEmail}
+                    </a>
+                  </div>
+                )}
+                {auftrag.waldbesitzerTelefon && (
+                  <div className="flex items-center gap-3">
+                    <Phone className="w-4 h-4 text-zinc-600 flex-shrink-0" />
+                    <a href={`tel:${auftrag.waldbesitzerTelefon}`} className="text-emerald-400 hover:underline">
+                      {auftrag.waldbesitzerTelefon}
+                    </a>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-zinc-600 text-sm">Keine Kontaktdaten</p>
+            )}
+          </div>
+
+          {/* Projektdetails */}
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+            <h2 className="font-semibold text-white mb-4 flex items-center gap-2">
+              <TreePine className="w-4 h-4 text-zinc-500" />
+              Projektdetails
+            </h2>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-zinc-500 block mb-1">Leistungsart</span>
+                <span className="text-zinc-200">{TYP_LABEL[auftrag.typ] ?? auftrag.typ}</span>
+              </div>
+              {auftrag.flaeche_ha != null && (
+                <div>
+                  <span className="text-zinc-500 block mb-1 flex items-center gap-1">
+                    <MapPin className="w-3 h-3" /> Fläche
+                  </span>
+                  <span className="text-zinc-200">{auftrag.flaeche_ha} ha</span>
                 </div>
-              ))}
+              )}
+              {auftrag.bundesland && (
+                <div>
+                  <span className="text-zinc-500 block mb-1">Bundesland</span>
+                  <span className="text-zinc-200">{auftrag.bundesland}</span>
+                </div>
+              )}
+              {auftrag.zeitraum && (
+                <div>
+                  <span className="text-zinc-500 block mb-1 flex items-center gap-1">
+                    <Calendar className="w-3 h-3" /> Zeitraum
+                  </span>
+                  <span className="text-zinc-200">{auftrag.zeitraum}</span>
+                </div>
+              )}
+              {auftrag.standort && (
+                <div>
+                  <span className="text-zinc-500 block mb-1">Standort</span>
+                  <span className="text-zinc-200">{auftrag.standort}</span>
+                </div>
+              )}
+              {auftrag.startDatum && (
+                <div>
+                  <span className="text-zinc-500 block mb-1">Start</span>
+                  <span className="text-zinc-200">{new Date(auftrag.startDatum).toLocaleDateString("de-DE")}</span>
+                </div>
+              )}
+              {auftrag.endDatum && (
+                <div>
+                  <span className="text-zinc-500 block mb-1">Ende</span>
+                  <span className="text-zinc-200">{new Date(auftrag.endDatum).toLocaleDateString("de-DE")}</span>
+                </div>
+              )}
+            </div>
+
+            {auftrag.baumarten && (
+              <div className="mt-4 pt-4 border-t border-[#2a2a2a]">
+                <span className="text-zinc-500 text-sm block mb-2">Baumarten</span>
+                <p className="text-zinc-200 text-sm leading-relaxed">{auftrag.baumarten}</p>
+              </div>
+            )}
+
+            {auftrag.beschreibung && (
+              <div className="mt-4 pt-4 border-t border-[#2a2a2a]">
+                <span className="text-zinc-500 text-sm block mb-2">Bemerkung</span>
+                <p className="text-zinc-200 text-sm leading-relaxed">{auftrag.beschreibung}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Protokolle */}
+          {auftrag.protokolle && auftrag.protokolle.length > 0 && (
+            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+              <h2 className="font-semibold text-white mb-4">Tagesprotokolle ({auftrag.protokolle.length})</h2>
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-[#2a2a2a]">
+                  <th className="text-left py-2 text-xs text-zinc-500">Datum</th>
+                  <th className="text-left py-2 text-xs text-zinc-500">Ersteller</th>
+                  <th className="text-left py-2 text-xs text-zinc-500">Gepflanzt</th>
+                  <th className="text-left py-2 text-xs text-zinc-500">Witterung</th>
+                </tr></thead>
+                <tbody>
+                  {auftrag.protokolle.map(p => (
+                    <tr key={p.id} className="border-b border-[#1e1e1e] last:border-0">
+                      <td className="py-2 text-zinc-400">{new Date(p.datum).toLocaleDateString("de-DE")}</td>
+                      <td className="py-2 text-zinc-400">{p.ersteller ?? "—"}</td>
+                      <td className="py-2 text-emerald-400">{p.gepflanzt != null ? `${p.gepflanzt.toLocaleString()} Stk.` : "—"}</td>
+                      <td className="py-2 text-zinc-400">{p.witterung ?? "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr className="border-t border-[#2a2a2a]">
+                    <td colSpan={2} className="py-2 text-xs text-zinc-500 font-medium">Gesamt:</td>
+                    <td className="py-2 text-sm font-bold text-emerald-400">
+                      {auftrag.protokolle.reduce((s, p) => s + (p.gepflanzt ?? 0), 0).toLocaleString()} Stk.
+                    </td>
+                    <td></td>
+                  </tr>
+                </tfoot>
+              </table>
             </div>
           )}
-        </Section>
 
-        {/* Rechnungen */}
-        <Section title={`Rechnungen (${auftrag.rechnungen.length})`} link="/rechnungen">
-          {auftrag.rechnungen.length === 0 ? (
-            <p className="text-zinc-600 text-sm">Keine Rechnungen</p>
-          ) : (
-            <table className="w-full">
-              <thead><tr className="border-b border-[#2a2a2a]">
-                <th className="text-left py-2 text-xs text-zinc-500">Nummer</th>
-                <th className="text-left py-2 text-xs text-zinc-500">Betrag</th>
-                <th className="text-left py-2 text-xs text-zinc-500">Status</th>
-                <th className="text-left py-2 text-xs text-zinc-500">Fällig</th>
-              </tr></thead>
-              <tbody>
-                {auftrag.rechnungen.map((r) => (
-                  <tr key={r.id} className="border-b border-[#2a2a2a] last:border-0">
-                    <td className="py-2 text-sm font-mono text-white">{r.nummer}</td>
-                    <td className="py-2 text-sm font-medium text-white">{r.betrag.toFixed(2)} €</td>
-                    <td className="py-2">
-                      <span className={`px-2 py-0.5 rounded-full text-xs ${rechnungStatusBadge[r.status] ?? "bg-zinc-700 text-zinc-400"}`}>{r.status}</span>
-                    </td>
-                    <td className="py-2 text-sm text-zinc-400">{r.faelligAm ? new Date(r.faelligAm).toLocaleDateString("de-DE") : "—"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        </div>
+
+        {/* Right column: Actions */}
+        <div className="space-y-6">
+
+          {/* Status */}
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+            <h2 className="font-semibold text-white mb-4">Status</h2>
+            <div className="mb-3">
+              <span className={`px-3 py-1.5 rounded-lg text-sm border ${statusObj.color}`}>
+                {statusObj.label}
+              </span>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              {STATUS_LIST.map(s => (
+                <button
+                  key={s.value}
+                  onClick={() => setStatus(s.value)}
+                  className={`text-left px-3 py-2 rounded-lg text-sm transition-all ${
+                    status === s.value
+                      ? `${s.color} border`
+                      : "text-zinc-500 hover:text-zinc-300 hover:bg-[#222]"
+                  }`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Interne Felder */}
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+            <h2 className="font-semibold text-white mb-4">Intern</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs text-zinc-500 mb-1.5">Saison</label>
+                <select
+                  value={saisonId}
+                  onChange={e => setSaisonId(e.target.value)}
+                  className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+                >
+                  <option value="">Keine Saison</option>
+                  {saisons.map(s => (
+                    <option key={s.id} value={s.id}>{s.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-500 mb-1.5">Gruppe</label>
+                <select
+                  value={gruppeId}
+                  onChange={e => setGruppeId(e.target.value)}
+                  className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+                >
+                  <option value="">Keine Gruppe</option>
+                  {gruppen.map(g => (
+                    <option key={g.id} value={g.id}>{g.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-500 mb-1.5 flex items-center gap-1">
+                  <FileText className="w-3 h-3" /> Notizen
+                </label>
+                <textarea
+                  value={notizen}
+                  onChange={e => setNotizen(e.target.value)}
+                  rows={4}
+                  className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
+                  placeholder="Interne Notizen..."
+                />
+              </div>
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  saved
+                    ? "bg-emerald-700 text-emerald-100"
+                    : "bg-emerald-600 hover:bg-emerald-500 text-white"
+                } disabled:opacity-50`}
+              >
+                <Save className="w-4 h-4" />
+                {saving ? "Speichern..." : saved ? "Gespeichert ✓" : "Speichern"}
+              </button>
+            </div>
+          </div>
+
+          {/* WP Info */}
+          {auftrag.wpProjektId && (
+            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+              <p className="text-xs text-zinc-500 mb-2">WordPress Post</p>
+              <p className="text-xs font-mono text-zinc-400 mb-3">ID: {auftrag.wpProjektId}</p>
+              {wpAdminUrl && (
+                <a
+                  href={wpAdminUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-2 text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                  Im WP-Admin öffnen
+                </a>
+              )}
+            </div>
           )}
-        </Section>
-      </div>
-    </div>
-  )
-}
 
-function Section({ title, children, link }: { title: string; children: React.ReactNode; link?: string }) {
-  return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="font-semibold text-white">{title}</h2>
-        {link && (
-          <Link href={link} className="text-xs text-emerald-400 hover:text-emerald-300">
-            Alle ansehen →
-          </Link>
-        )}
+        </div>
       </div>
-      {children}
+
+      {/* Back button at bottom */}
+      <div className="mt-6">
+        <button
+          onClick={() => router.back()}
+          className="text-zinc-500 hover:text-zinc-300 text-sm transition-colors"
+        >
+          ← Zurück
+        </button>
+      </div>
     </div>
   )
 }
