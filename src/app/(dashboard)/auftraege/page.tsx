@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Plus, Filter } from "lucide-react"
+import { Plus, Filter, Eye } from "lucide-react"
 import { AuftragModal } from "@/components/auftraege/AuftragModal"
+import Link from "next/link"
 
 interface Auftrag {
   id: string

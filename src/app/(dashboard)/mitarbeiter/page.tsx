@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { UserPlus, Search, Filter, Pencil, Trash2, Loader2 } from "lucide-react"
+import { UserPlus, Search, Filter, Pencil, Trash2, Loader2, Eye } from "lucide-react"
 import { MitarbeiterModal } from "@/components/mitarbeiter/MitarbeiterModal"
 import { cn } from "@/lib/utils"
+import Link from "next/link"
 
 interface Mitarbeiter {
   id: string
@@ -217,6 +218,12 @@ export default function MitarbeiterPage() {
                   </td>
                   <td className="px-5 py-4">
                     <div className="flex items-center justify-end gap-2">
+                      <Link
+                        href={`/mitarbeiter/${m.id}`}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 hover:bg-[#2a2a2a] hover:text-emerald-400 transition-all"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                      </Link>
                       <button
                         onClick={() => openEdit(m)}
                         className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 hover:bg-[#2a2a2a] hover:text-white transition-all"

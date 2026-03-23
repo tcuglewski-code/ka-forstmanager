@@ -22,28 +22,33 @@ import {
   Settings,
   UsersRound,
   LogOut,
+  Receipt,
+  TrendingDown,
+  ScrollText,
 } from "lucide-react"
 import { signOut } from "next-auth/react"
 import { cn } from "@/lib/utils"
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, active: true },
-  { href: "/auftraege", label: "Aufträge", icon: ClipboardList, active: true },
-  { href: "/saisons", label: "Saisons", icon: Calendar, active: true },
-  { href: "/mitarbeiter", label: "Mitarbeiter", icon: Users, active: true },
-  { href: "/gruppen", label: "Gruppen", icon: UsersRound, active: true },
-  { href: "/lager", label: "Lager", icon: Package, active: true },
-  { href: "/fuhrpark", label: "Fuhrpark", icon: Car, active: true },
-  { href: "/geraete", label: "Geräte", icon: Wrench, active: true },
-  { href: "/lohn", label: "Lohn", icon: DollarSign, active: true },
-  { href: "/stunden", label: "Stunden", icon: Clock, active: false },
-  { href: "/qualifikationen", label: "Qualifikationen", icon: GraduationCap, active: false },
-  { href: "/schulungen", label: "Schulungen", icon: BookOpen, active: false },
-  { href: "/dokumente", label: "Dokumente", icon: FileText, active: false },
-  { href: "/abnahmen", label: "Abnahmen", icon: CheckSquare, active: false },
-  { href: "/reports", label: "Reports", icon: BarChart3, active: false },
-  { href: "/kontakte", label: "Kontakte", icon: MapPin, active: true },
-  { href: "/einstellungen", label: "Einstellungen", icon: Settings, active: false },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/auftraege", label: "Aufträge", icon: ClipboardList },
+  { href: "/saisons", label: "Saisons", icon: Calendar },
+  { href: "/mitarbeiter", label: "Mitarbeiter", icon: Users },
+  { href: "/gruppen", label: "Gruppen", icon: UsersRound },
+  { href: "/lager", label: "Lager", icon: Package },
+  { href: "/fuhrpark", label: "Fuhrpark", icon: Car },
+  { href: "/lohn", label: "Lohn", icon: DollarSign },
+  { href: "/stunden", label: "Stunden", icon: Clock },
+  { href: "/vorschuesse", label: "Vorschüsse", icon: TrendingDown },
+  { href: "/rechnungen", label: "Rechnungen", icon: Receipt },
+  { href: "/qualifikationen", label: "Qualifikationen", icon: GraduationCap },
+  { href: "/schulungen", label: "Schulungen", icon: BookOpen },
+  { href: "/dokumente", label: "Dokumente", icon: FileText },
+  { href: "/protokolle", label: "Protokolle", icon: ScrollText },
+  { href: "/abnahmen", label: "Abnahmen", icon: CheckSquare },
+  { href: "/kontakte", label: "Kontakte", icon: MapPin },
+  { href: "/reports", label: "Reports", icon: BarChart3 },
+  { href: "/einstellungen", label: "Einstellungen", icon: Settings },
 ]
 
 export function Sidebar() {
@@ -69,21 +74,6 @@ export function Sidebar() {
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
-
-          if (!item.active) {
-            return (
-              <div
-                key={item.href}
-                className="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-600 cursor-not-allowed select-none"
-              >
-                <Icon className="w-4 h-4" />
-                <span className="text-sm">{item.label}</span>
-                <span className="ml-auto text-[10px] bg-zinc-800 text-zinc-600 px-1.5 py-0.5 rounded">
-                  Bald
-                </span>
-              </div>
-            )
-          }
 
           return (
             <Link

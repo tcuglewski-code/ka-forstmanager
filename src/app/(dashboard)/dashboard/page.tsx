@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { Users, Sprout, ClipboardList, TrendingUp, Package, AlertTriangle, Wrench } from "lucide-react"
+import { Users, Sprout, ClipboardList, TrendingUp, Package, AlertTriangle, Wrench, Clock, BookOpen, CheckSquare, DollarSign } from "lucide-react"
 import Link from "next/link"
 
 async function getStats() {
@@ -16,6 +16,10 @@ async function getStats() {
       lagerUnterMindest,
       ablaufendeQualifikationen,
       faelligeWartungen,
+      naechsteSchulungen,
+      offeneAbnahmen,
+      stundenAusstehend,
+      vorschuessOffen,
     ] = await Promise.all([
       prisma.mitarbeiter.count({ where: { status: "aktiv" } }),
       prisma.saison.count({ where: { status: "aktiv" } }),
@@ -28,6 +32,18 @@ async function getStats() {
         where: { ablaufDatum: { lte: in30Tagen, gte: heute } },
       }),
       prisma.wartung.count({ where: { erledigt: false, datum: { lte: heute } } }),
+      prisma.schulung.findMany({
+        where: { datum: { gte: heute }, status: { not: "abgeschlossen" } },
+        orderBy: { datum: "asc" },
+        take: 3,
+        select: { id: true, titel: true, datum: true, typ: true },
+      }),
+      prisma.abnahme.count({ where: { status: "offen" } }),
+      prisma.stundeneintrag.count({ where: { genehmigt: false } }),
+      prisma.vorschuss.aggregate({
+        where: { genehmigt: false },
+        _sum: { betrag: true },
+      }),
     ])
 
     return {
@@ -38,6 +54,10 @@ async function getStats() {
       lagerUnterMindest,
       ablaufendeQualifikationen,
       faelligeWartungen,
+      naechsteSchulungen,
+      offeneAbnahmen,
+      stundenAusstehend,
+      vorschuessOffen: vorschuessOffen._sum.betrag ?? 0,
     }
   } catch {
     return {
@@ -48,6 +68,10 @@ async function getStats() {
       lagerUnterMindest: 0,
       ablaufendeQualifikationen: 0,
       faelligeWartungen: 0,
+      naechsteSchulungen: [],
+      offeneAbnahmen: 0,
+      stundenAusstehend: 0,
+      vorschuessOffen: 0,
     }
   }
 }
@@ -68,6 +92,12 @@ const STATUS_FARBEN: Record<string, string> = {
   bestaetigt: "bg-amber-500/20 text-amber-400",
   in_ausfuehrung: "bg-emerald-500/20 text-emerald-400",
   abgeschlossen: "bg-zinc-500/20 text-zinc-400",
+}
+
+const SCHULUNG_TYP: Record<string, string> = {
+  pflicht: "bg-red-500/20 text-red-400",
+  freiwillig: "bg-blue-500/20 text-blue-400",
+  auffrischung: "bg-amber-500/20 text-amber-400",
 }
 
 export default async function DashboardPage() {
@@ -122,43 +152,54 @@ export default async function DashboardPage() {
       )}
 
       {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <StatCard label="Aktive Mitarbeiter" value={stats.aktiveMitarbeiter.toString()} icon={<Users className="w-5 h-5 text-emerald-400" />} href="/mitarbeiter" />
+        <StatCard label="Aktive Saisons" value={stats.aktiveSaisons.toString()} icon={<Sprout className="w-5 h-5 text-emerald-400" />} href="/saisons" />
+        <StatCard label="Offene Aufträge" value={stats.offeneAuftraege.toString()} icon={<ClipboardList className="w-5 h-5 text-emerald-400" />} href="/auftraege" />
+        <StatCard label="Lager-Alerts" value={stats.lagerUnterMindest.toString()} icon={<Package className={`w-5 h-5 ${stats.lagerUnterMindest > 0 ? "text-red-400" : "text-emerald-400"}`} />} href="/lager" alert={stats.lagerUnterMindest > 0} />
+      </div>
+
+      {/* New Stats Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <StatCard
-          label="Aktive Mitarbeiter"
-          value={stats.aktiveMitarbeiter.toString()}
-          icon={<Users className="w-5 h-5 text-emerald-400" />}
-          href="/mitarbeiter"
+          label="Offene Abnahmen"
+          value={stats.offeneAbnahmen.toString()}
+          icon={<CheckSquare className={`w-5 h-5 ${stats.offeneAbnahmen > 0 ? "text-amber-400" : "text-emerald-400"}`} />}
+          href="/abnahmen"
+          alert={stats.offeneAbnahmen > 0}
         />
         <StatCard
-          label="Aktive Saisons"
-          value={stats.aktiveSaisons.toString()}
-          icon={<Sprout className="w-5 h-5 text-emerald-400" />}
-          href="/saisons"
+          label="Stunden ausstehend"
+          value={stats.stundenAusstehend.toString()}
+          icon={<Clock className={`w-5 h-5 ${stats.stundenAusstehend > 0 ? "text-amber-400" : "text-emerald-400"}`} />}
+          href="/stunden"
+          alert={stats.stundenAusstehend > 0}
         />
         <StatCard
-          label="Offene Aufträge"
-          value={stats.offeneAuftraege.toString()}
-          icon={<ClipboardList className="w-5 h-5 text-emerald-400" />}
-          href="/auftraege"
+          label="Vorschüsse offen"
+          value={`${stats.vorschuessOffen.toFixed(0)} €`}
+          icon={<DollarSign className={`w-5 h-5 ${stats.vorschuessOffen > 0 ? "text-amber-400" : "text-emerald-400"}`} />}
+          href="/vorschuesse"
+          alert={stats.vorschuessOffen > 0}
         />
         <StatCard
-          label="Lager-Alerts"
-          value={stats.lagerUnterMindest.toString()}
-          icon={<Package className={`w-5 h-5 ${stats.lagerUnterMindest > 0 ? "text-red-400" : "text-emerald-400"}`} />}
-          href="/lager"
-          alert={stats.lagerUnterMindest > 0}
+          label="Qual. ablaufend"
+          value={stats.ablaufendeQualifikationen.toString()}
+          icon={<AlertTriangle className={`w-5 h-5 ${stats.ablaufendeQualifikationen > 0 ? "text-amber-400" : "text-emerald-400"}`} />}
+          href="/qualifikationen"
+          alert={stats.ablaufendeQualifikationen > 0}
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Auftrags-Status Verteilung */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Auftrags-Status */}
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp className="w-4 h-4 text-emerald-400" />
             <h2 className="font-semibold text-white">Auftrags-Status</h2>
           </div>
           {stats.auftragStatusVerteilung.length === 0 ? (
-            <p className="text-zinc-600 text-sm">Keine Aufträge vorhanden</p>
+            <p className="text-zinc-600 text-sm">Keine Aufträge</p>
           ) : (
             <div className="space-y-2">
               {stats.auftragStatusVerteilung.map((s) => (
@@ -173,17 +214,47 @@ export default async function DashboardPage() {
           )}
         </div>
 
+        {/* Nächste Schulungen */}
+        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <BookOpen className="w-4 h-4 text-emerald-400" />
+            <h2 className="font-semibold text-white">Nächste Schulungen</h2>
+          </div>
+          {stats.naechsteSchulungen.length === 0 ? (
+            <p className="text-zinc-600 text-sm">Keine Schulungen geplant</p>
+          ) : (
+            <div className="space-y-3">
+              {stats.naechsteSchulungen.map((s) => (
+                <Link key={s.id} href={`/schulungen/${s.id}`} className="block hover:bg-[#1e1e1e] rounded-lg p-2 -mx-2 transition-all">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`px-2 py-0.5 rounded-full text-xs ${SCHULUNG_TYP[s.typ] ?? "bg-zinc-700 text-zinc-400"}`}>
+                      {s.typ}
+                    </span>
+                  </div>
+                  <p className="text-sm text-white">{s.titel}</p>
+                  {s.datum && (
+                    <p className="text-xs text-zinc-500 mt-0.5">
+                      {new Date(s.datum).toLocaleDateString("de-DE")}
+                    </p>
+                  )}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Schnellzugriff */}
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
           <h2 className="font-semibold text-white mb-4">Schnellzugriff</h2>
           <div className="space-y-1.5">
-            <QuickLink href="/auftraege" label="→ Aufträge verwalten" />
-            <QuickLink href="/gruppen" label="→ Gruppen verwalten" />
-            <QuickLink href="/mitarbeiter" label="→ Mitarbeiter verwalten" />
-            <QuickLink href="/lager" label="→ Lager & Bestände" />
-            <QuickLink href="/fuhrpark" label="→ Fuhrpark & Geräte" />
-            <QuickLink href="/lohn" label="→ Lohnabrechnungen" />
-            <QuickLink href="/kontakte" label="→ Kontakte & Förster" />
+            <QuickLink href="/auftraege" label="→ Aufträge" />
+            <QuickLink href="/gruppen" label="→ Gruppen" />
+            <QuickLink href="/mitarbeiter" label="→ Mitarbeiter" />
+            <QuickLink href="/stunden" label="→ Stunden" />
+            <QuickLink href="/lager" label="→ Lager" />
+            <QuickLink href="/rechnungen" label="→ Rechnungen" />
+            <QuickLink href="/reports" label="→ Reports" />
+            <QuickLink href="/einstellungen" label="→ Einstellungen" />
           </div>
         </div>
       </div>
@@ -191,26 +262,12 @@ export default async function DashboardPage() {
   )
 }
 
-function StatCard({
-  label,
-  value,
-  icon,
-  href,
-  alert,
-}: {
-  label: string
-  value: string
-  icon: React.ReactNode
-  href: string
-  alert?: boolean
-}) {
+function StatCard({ label, value, icon, href, alert }: { label: string; value: string; icon: React.ReactNode; href: string; alert?: boolean }) {
   return (
     <Link href={href} className={`block bg-[#161616] border rounded-xl p-5 hover:border-zinc-500 transition-all ${alert ? "border-red-500/30" : "border-[#2a2a2a]"}`}>
       <div className="flex items-center justify-between mb-3">
         <span className="text-sm text-zinc-400">{label}</span>
-        <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${alert ? "bg-red-500/10" : "bg-[#2C3A1C]/40"}`}>
-          {icon}
-        </div>
+        <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${alert ? "bg-red-500/10" : "bg-[#2C3A1C]/40"}`}>{icon}</div>
       </div>
       <p className="text-2xl font-bold text-white">{value}</p>
     </Link>
@@ -219,10 +276,7 @@ function StatCard({
 
 function QuickLink({ href, label }: { href: string; label: string }) {
   return (
-    <Link
-      href={href}
-      className="block px-3 py-2 rounded-lg text-sm text-zinc-400 hover:bg-[#1e1e1e] hover:text-white transition-all"
-    >
+    <Link href={href} className="block px-3 py-2 rounded-lg text-sm text-zinc-400 hover:bg-[#1e1e1e] hover:text-white transition-all">
       {label}
     </Link>
   )
