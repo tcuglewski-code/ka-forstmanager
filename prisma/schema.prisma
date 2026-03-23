@@ -122,6 +122,7 @@ model Auftrag {
   notizen           String?
   neuFlag           Boolean          @default(false)
   wpProjektId       String?          @unique
+  wizardDaten       Json?            // Kompletter ka_wizard_daten JSON aus WordPress
   saisonId          String?
   gruppeId          String?
   startDatum        DateTime?
