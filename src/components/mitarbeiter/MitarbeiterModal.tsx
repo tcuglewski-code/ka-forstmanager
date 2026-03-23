@@ -8,16 +8,16 @@ interface Mitarbeiter {
   id?: string
   vorname: string
   nachname: string
-  email?: string
-  telefon?: string
-  mobil?: string
-  adresse?: string
-  plz?: string
-  ort?: string
+  email?: string | null
+  telefon?: string | null
+  mobil?: string | null
+  adresse?: string | null
+  plz?: string | null
+  ort?: string | null
   rolle: string
   status: string
   stundenlohn?: number | null
-  notizen?: string
+  notizen?: string | null
 }
 
 interface MitarbeiterModalProps {
@@ -30,16 +30,16 @@ interface MitarbeiterModalProps {
 const defaultData: Partial<Mitarbeiter> = {
   vorname: "",
   nachname: "",
-  email: "",
-  telefon: "",
-  mobil: "",
-  adresse: "",
-  plz: "",
-  ort: "",
+  email: null,
+  telefon: null,
+  mobil: null,
+  adresse: null,
+  plz: null,
+  ort: null,
   rolle: "mitarbeiter",
   status: "aktiv",
   stundenlohn: undefined,
-  notizen: "",
+  notizen: null,
 }
 
 const rollenOptions = [
