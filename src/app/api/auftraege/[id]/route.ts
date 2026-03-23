@@ -14,6 +14,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
     },
   })
   if (!auftrag) return NextResponse.json({ error: "Not found" }, { status: 404 })
+  // wizardDaten is already included via findUnique (no select restriction)
   return NextResponse.json(auftrag)
 }
 

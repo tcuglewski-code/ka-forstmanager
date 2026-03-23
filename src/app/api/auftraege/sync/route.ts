@@ -92,9 +92,12 @@ export async function POST() {
 
       // Parse wizard data
       let wizard: WizardDaten = {}
+      let wizardDaten: object | null = null
       if (post.meta?.ka_wizard_daten) {
         try {
-          wizard = JSON.parse(post.meta.ka_wizard_daten)
+          const wiz = post.meta.ka_wizard_daten
+          wizardDaten = typeof wiz === 'string' ? JSON.parse(wiz) : wiz
+          wizard = wizardDaten as WizardDaten
         } catch {
           // ignore parse errors
         }
@@ -141,6 +144,7 @@ export async function POST() {
             zeitraum: wizard.zeitraum ?? null,
             neuFlag,
             wpProjektId: wpId,
+            wizardDaten: wizardDaten ?? undefined,
           },
         })
         newCount++
@@ -160,6 +164,7 @@ export async function POST() {
             baumarten,
             zeitraum: wizard.zeitraum ?? null,
             neuFlag,
+            wizardDaten: wizardDaten ?? undefined,
             // status bleibt erhalten wenn bereits manuell gesetzt
           },
         })
