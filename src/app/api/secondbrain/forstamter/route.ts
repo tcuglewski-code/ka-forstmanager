@@ -34,6 +34,17 @@ export async function GET(req: NextRequest) {
 
     const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : ""
 
+    const sort = searchParams.get("sort") || "forstamt"
+    const order = searchParams.get("order") === "desc" ? "DESC" : "ASC"
+    const sortExpr =
+      sort === "name"
+        ? `fk.nachname ${order} NULLS LAST, fk.vorname ${order} NULLS LAST`
+        : sort === "ort"
+        ? `fa.ort ${order} NULLS LAST`
+        : sort === "bundesland"
+        ? `bl.name ${order} NULLS LAST`
+        : `fa.name ${order} NULLS LAST, fk.nachname ASC, fk.vorname ASC`
+
     const sql = `
       SELECT 
         fk.id,
@@ -57,7 +68,7 @@ export async function GET(req: NextRequest) {
       LEFT JOIN forstamter fa ON fk.forstamt_id = fa.id
       LEFT JOIN bundeslaender bl ON fa.bundesland_id = bl.id
       ${where}
-      ORDER BY fa.name, fk.nachname, fk.vorname
+      ORDER BY ${sortExpr}
       LIMIT $${idx} OFFSET $${idx + 1}
     `
     params.push(limit, offset)
