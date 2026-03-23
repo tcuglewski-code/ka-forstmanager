@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useSearchParams } from "next/navigation"
-import { Plus, X, QrCode, Printer } from "lucide-react"
+import { Plus, X, QrCode, Printer, Package } from "lucide-react"
 import QRCode from "react-qr-code"
 
 const BASE_URL = "https://ka-forstmanager.vercel.app"
@@ -16,6 +16,19 @@ interface LagerArtikel {
   mindestbestand: number
   lagerort?: string | null
   artikelnummer?: string | null
+}
+
+interface AuftragOption { id: string; titel: string }
+interface MitarbeiterOption { id: string; vorname: string; nachname: string }
+
+interface LagerBewegung {
+  id: string
+  typ: string
+  menge: number
+  notiz?: string | null
+  createdAt: string
+  auftrag?: { id: string; titel: string } | null
+  mitarbeiter?: { id: string; vorname: string; nachname: string } | null
 }
 
 function Ampel({ bestand, mindestbestand }: { bestand: number; mindestbestand: number }) {
@@ -169,12 +182,32 @@ function ArtikelModal({ onClose, onSave }: { onClose: () => void; onSave: () => 
 
 function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onClose: () => void; onSave: () => void }) {
   const [loading, setLoading] = useState(false)
-  const [form, setForm] = useState({ typ: "eingang", menge: "1", notiz: "" })
+  const [form, setForm] = useState({ typ: "eingang", menge: "1", notiz: "", auftragId: "", mitarbeiterId: "" })
+  const [auftraege, setAuftraege] = useState<AuftragOption[]>([])
+  const [mitarbeiter, setMitarbeiter] = useState<MitarbeiterOption[]>([])
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/auftraege?limit=50").then(r => r.json()).catch(() => ({ auftraege: [] })),
+      fetch("/api/mitarbeiter").then(r => r.json()).catch(() => []),
+    ]).then(([auftragData, maData]) => {
+      setAuftraege(Array.isArray(auftragData) ? auftragData : (auftragData.auftraege ?? []))
+      setMitarbeiter(Array.isArray(maData) ? maData : (maData.mitarbeiter ?? []))
+    })
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    await fetch(`/api/lager/${artikel.id}/bewegung`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
+    await fetch(`/api/lager/${artikel.id}/bewegung`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...form,
+        auftragId: form.auftragId || null,
+        mitarbeiterId: form.mitarbeiterId || null,
+      }),
+    })
     setLoading(false)
     onSave()
   }
@@ -194,6 +227,7 @@ function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onC
               <option value="eingang">Eingang (+)</option>
               <option value="ausgang">Ausgang (-)</option>
               <option value="korrektur">Korrektur</option>
+              <option value="zuweisung">Zuweisung</option>
             </select>
           </div>
           <div>
@@ -206,6 +240,22 @@ function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onC
             <input type="text" value={form.notiz} onChange={e => setForm(f => ({ ...f, notiz: e.target.value }))}
               className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
           </div>
+          <div>
+            <label className="block text-xs text-zinc-400 mb-1">Auftrag <span className="text-zinc-600">(optional)</span></label>
+            <select value={form.auftragId} onChange={e => setForm(f => ({ ...f, auftragId: e.target.value }))}
+              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              <option value="">Kein Auftrag</option>
+              {auftraege.map(a => <option key={a.id} value={a.id}>{a.titel}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs text-zinc-400 mb-1">Mitarbeiter <span className="text-zinc-600">(optional)</span></label>
+            <select value={form.mitarbeiterId} onChange={e => setForm(f => ({ ...f, mitarbeiterId: e.target.value }))}
+              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              <option value="">Kein Mitarbeiter</option>
+              {mitarbeiter.map(m => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
+            </select>
+          </div>
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
             <button type="submit" disabled={loading} className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
@@ -213,6 +263,95 @@ function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onC
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  )
+}
+
+function ArtikelDetailModal({ artikel, onClose }: { artikel: LagerArtikel; onClose: () => void }) {
+  const [bewegungen, setBewegungen] = useState<LagerBewegung[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch(`/api/lager/${artikel.id}/bewegung`)
+      .then(r => r.json())
+      .then(data => { setBewegungen(Array.isArray(data) ? data : []); setLoading(false) })
+      .catch(() => setLoading(false))
+  }, [artikel.id])
+
+  const typColor: Record<string, string> = {
+    eingang: "text-emerald-400",
+    ausgang: "text-red-400",
+    korrektur: "text-amber-400",
+    zuweisung: "text-blue-400",
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-2xl max-h-[85vh] flex flex-col">
+        <div className="flex items-center justify-between p-5 border-b border-[#2a2a2a] shrink-0">
+          <div className="flex items-center gap-3">
+            <Package className="w-5 h-5 text-emerald-400" />
+            <div>
+              <h2 className="text-lg font-semibold text-white">{artikel.name}</h2>
+              <p className="text-xs text-zinc-500">Bestand: {artikel.bestand} {artikel.einheit} · {artikel.lagerort ?? "Kein Lagerort"}</p>
+            </div>
+          </div>
+          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-5">
+          <h3 className="text-sm font-medium text-zinc-400 mb-3">Bewegungshistorie</h3>
+          {loading ? (
+            <div className="text-center py-8 text-zinc-600 text-sm">Laden...</div>
+          ) : bewegungen.length === 0 ? (
+            <div className="text-center py-8 text-zinc-600 text-sm">Keine Buchungen vorhanden</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[#2a2a2a]">
+                    <th className="text-left pb-2 text-zinc-500 font-medium text-xs">Datum</th>
+                    <th className="text-left pb-2 text-zinc-500 font-medium text-xs">Typ</th>
+                    <th className="text-right pb-2 text-zinc-500 font-medium text-xs">Menge</th>
+                    <th className="text-left pb-2 text-zinc-500 font-medium text-xs pl-3">Notiz</th>
+                    <th className="text-left pb-2 text-zinc-500 font-medium text-xs pl-3">Zuweisung</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bewegungen.map(b => (
+                    <tr key={b.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors">
+                      <td className="py-2.5 text-zinc-500 text-xs whitespace-nowrap">
+                        {new Date(b.createdAt).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                      </td>
+                      <td className="py-2.5">
+                        <span className={`text-xs font-medium ${typColor[b.typ] ?? "text-zinc-400"}`}>{b.typ}</span>
+                      </td>
+                      <td className="py-2.5 text-right text-white text-xs">
+                        {b.typ === "ausgang" ? "-" : b.typ === "eingang" ? "+" : ""}{b.menge} {artikel.einheit}
+                      </td>
+                      <td className="py-2.5 pl-3 text-zinc-500 text-xs">{b.notiz ?? "–"}</td>
+                      <td className="py-2.5 pl-3">
+                        <div className="flex flex-wrap gap-1">
+                          {b.auftrag && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-blue-500/20 text-blue-400">
+                              {b.auftrag.titel}
+                            </span>
+                          )}
+                          {b.mitarbeiter && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-violet-500/20 text-violet-400">
+                              {b.mitarbeiter.vorname} {b.mitarbeiter.nachname}
+                            </span>
+                          )}
+                          {!b.auftrag && !b.mitarbeiter && <span className="text-zinc-600 text-xs">–</span>}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
@@ -230,6 +369,7 @@ function LagerPageInner() {
   const [showArtikelModal, setShowArtikelModal] = useState(false)
   const [buchungArtikel, setBuchungArtikel] = useState<LagerArtikel | null>(null)
   const [qrArtikel, setQrArtikel] = useState<LagerArtikel | null>(null)
+  const [detailArtikel, setDetailArtikel] = useState<LagerArtikel | null>(null)
   const [highlightedId, setHighlightedId] = useState<string | null>(null)
   const highlightRef = useRef<HTMLTableRowElement>(null)
 
@@ -313,8 +453,13 @@ function LagerPageInner() {
                     }`}
                   >
                     <td className="px-4 py-3"><Ampel bestand={a.bestand} mindestbestand={a.mindestbestand} /></td>
-                    <td className="px-4 py-3 text-white font-medium">
-                      {a.name}
+                    <td className="px-4 py-3 font-medium">
+                      <button
+                        onClick={() => setDetailArtikel(a)}
+                        className="text-white hover:text-emerald-400 transition-colors text-left"
+                      >
+                        {a.name}
+                      </button>
                       {isHighlighted && (
                         <span className="ml-2 text-xs bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded">
                           ↑ gescannt
@@ -360,6 +505,9 @@ function LagerPageInner() {
       )}
       {qrArtikel && (
         <QrPrintModal artikel={qrArtikel} onClose={() => setQrArtikel(null)} />
+      )}
+      {detailArtikel && (
+        <ArtikelDetailModal artikel={detailArtikel} onClose={() => setDetailArtikel(null)} />
       )}
     </div>
   )
