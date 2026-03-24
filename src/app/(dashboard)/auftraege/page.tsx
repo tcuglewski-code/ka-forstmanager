@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { RefreshCw, Filter, Eye, Plus, Sparkles } from "lucide-react"
 import { AuftragModal } from "@/components/auftraege/AuftragModal"
 import Link from "next/link"
+import { toast } from "sonner"
 
 interface Auftrag {
   id: string
@@ -92,6 +93,7 @@ export default function AuftraegePage() {
   const [modal, setModal] = useState<{ open: boolean; auftrag?: Auftrag | null }>({ open: false })
   const [selected, setSelected] = useState<string[]>([])
   const [saisons, setSaisons] = useState<Saison[]>([])
+  const [gruppen, setGruppen] = useState<{id: string; name: string}[]>([])
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -127,6 +129,11 @@ export default function AuftraegePage() {
   // Saisons laden
   useEffect(() => {
     fetch("/api/saisons").then(r => r.json()).then(d => setSaisons(Array.isArray(d) ? d : []))
+  }, [])
+
+  // Gruppen laden
+  useEffect(() => {
+    fetch("/api/gruppen").then(r => r.json()).then(d => setGruppen(Array.isArray(d) ? d : []))
   }, [])
 
   useEffect(() => {
@@ -238,13 +245,16 @@ export default function AuftraegePage() {
 
       {/* Bulk-Aktionsleiste */}
       {selected.length > 0 && (
-        <div className="flex items-center gap-3 mb-4 px-4 py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+        <div className="flex items-center gap-3 mb-4 px-4 py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex-wrap">
           <span className="text-emerald-400 text-sm font-medium">{selected.length} Aufträge ausgewählt</span>
+
+          {/* Saison zuweisen */}
           <select
             defaultValue=""
             onChange={async (e) => {
               if (!e.target.value) return
               const saisonId = e.target.value
+              const count = selected.length
               for (const id of selected) {
                 await fetch(`/api/auftraege/${id}`, {
                   method: "PATCH",
@@ -255,12 +265,81 @@ export default function AuftraegePage() {
               setSelected([])
               await load()
               e.target.value = ""
+              toast.success(`${count} Aufträge aktualisiert`)
             }}
             className="px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white"
           >
             <option value="">Saison zuweisen...</option>
             {saisons.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
+
+          {/* Gruppe zuweisen */}
+          <select
+            onChange={async (e) => {
+              if (!e.target.value) return
+              const count = selected.length
+              for (const id of selected) {
+                await fetch(`/api/auftraege/${id}`, {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ gruppeId: e.target.value })
+                })
+              }
+              load()
+              setSelected([])
+              e.target.value = ""
+              toast.success(`${count} Aufträge aktualisiert`)
+            }}
+            className="px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white"
+          >
+            <option value="">Gruppe zuweisen...</option>
+            {gruppen.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+          </select>
+
+          {/* Status setzen */}
+          <select
+            onChange={async (e) => {
+              if (!e.target.value) return
+              const count = selected.length
+              for (const id of selected) {
+                await fetch(`/api/auftraege/${id}`, {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ status: e.target.value })
+                })
+              }
+              load()
+              setSelected([])
+              e.target.value = ""
+              toast.success(`${count} Aufträge aktualisiert`)
+            }}
+            className="px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white"
+          >
+            <option value="">Status setzen...</option>
+            <option value="anfrage">Anfrage</option>
+            <option value="in_planung">In Planung</option>
+            <option value="in_bearbeitung">In Bearbeitung</option>
+            <option value="abgeschlossen">Abgeschlossen</option>
+            <option value="storniert">Storniert</option>
+          </select>
+
+          {/* Bulk Löschen */}
+          <button
+            onClick={async () => {
+              if (!confirm(`${selected.length} Aufträge wirklich löschen?`)) return
+              const count = selected.length
+              for (const id of selected) {
+                await fetch(`/api/auftraege/${id}`, { method: "DELETE" })
+              }
+              load()
+              setSelected([])
+              toast.success(`${count} Aufträge aktualisiert`)
+            }}
+            className="px-3 py-1.5 bg-red-500/20 border border-red-500/40 rounded-lg text-sm text-red-400 hover:bg-red-500/30 transition-colors ml-2"
+          >
+            Löschen
+          </button>
+
           <button onClick={() => setSelected([])} className="text-xs text-zinc-500 hover:text-white ml-auto">Auswahl aufheben</button>
         </div>
       )}
