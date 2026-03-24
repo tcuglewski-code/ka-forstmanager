@@ -2,6 +2,20 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth()
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  try {
+    const { id } = await params
+    await prisma.vorschuss.delete({ where: { id } })
+    return NextResponse.json({ ok: true })
+  } catch (error: any) {
+    if (error?.code === 'P2025') return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 })
+    console.error("[VORSCHUSS DELETE]", error)
+    return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 })
+  }
+}
+
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
