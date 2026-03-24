@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Plus, Loader2, Sprout, Calendar, Pencil, Trash2, X, Eye } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { toast } from "sonner"
 
 interface Saison {
   id: string
@@ -107,15 +108,20 @@ export default function SaisonsPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         })
+        toast.success("Saison aktualisiert")
       } else {
         await fetch("/api/saisons", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         })
+        toast.success("Saison erfolgreich angelegt")
       }
       setModalOpen(false)
       await fetchSaisons()
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Unbekannter Fehler"
+      toast.error("Fehler: " + msg)
     } finally {
       setSaving(false)
     }
@@ -126,7 +132,11 @@ export default function SaisonsPage() {
     setDeleting(id)
     try {
       await fetch(`/api/saisons/${id}`, { method: "DELETE" })
+      toast.success("Saison gelöscht")
       await fetchSaisons()
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Unbekannter Fehler"
+      toast.error("Fehler: " + msg)
     } finally {
       setDeleting(null)
     }

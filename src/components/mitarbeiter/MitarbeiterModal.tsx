@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { X, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { toast } from "sonner"
 
 interface Mitarbeiter {
   id?: string
@@ -79,9 +80,11 @@ export function MitarbeiterModal({
     setSaving(true)
     try {
       await onSave(form)
+      toast.success("Mitarbeiter erfolgreich gespeichert")
       onClose()
     } catch {
       setError("Fehler beim Speichern. Bitte erneut versuchen.")
+      toast.error("Fehler beim Speichern")
     } finally {
       setSaving(false)
     }

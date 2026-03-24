@@ -9,6 +9,7 @@ import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { PflanzverbandVorschau } from "@/components/auftraege/PflanzverbandVorschau"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -543,6 +544,7 @@ export default function AuftragDetailPage() {
   const [saved, setSaved] = useState(false)
 
   const [status, setStatus] = useState("")
+  const [pendingStatus, setPendingStatus] = useState<string | null>(null)
   const [notizen, setNotizen] = useState("")
   const [saisonId, setSaisonId] = useState<string>("")
   const [gruppeId, setGruppeId] = useState<string>("")
@@ -592,6 +594,16 @@ export default function AuftragDetailPage() {
     setTimeout(() => setSaved(false), 2500)
     const res = await fetch(`/api/auftraege/${id}`)
     setAuftrag(await res.json())
+  }
+
+  async function handleStatusChange(newStatus: string) {
+    await fetch(`/api/auftraege/${auftrag!.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus }),
+    })
+    setStatus(newStatus)
+    setAuftrag(prev => prev ? { ...prev, status: newStatus } : prev)
   }
 
   if (loading) {
@@ -665,7 +677,7 @@ export default function AuftragDetailPage() {
           {STATUS_LIST.map(s => (
             <button
               key={s.value}
-              onClick={() => setStatus(s.value)}
+              onClick={() => { if (s.value !== status) setPendingStatus(s.value) }}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
                 status === s.value ? s.color : "border-[#2a2a2a] text-zinc-500 hover:text-zinc-300 hover:border-zinc-500"
               }`}
@@ -673,17 +685,22 @@ export default function AuftragDetailPage() {
               {s.label}
             </button>
           ))}
-          {status !== auftrag.status && (
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-1.5 transition-all"
-            >
-              <ChevronRight className="w-3 h-3" />
-              {saving ? "..." : "Speichern"}
-            </button>
-          )}
         </div>
+
+        {/* Status-Bestätigungs-Dialog */}
+        <ConfirmDialog
+          open={!!pendingStatus}
+          title="Status ändern"
+          message={`Auftragsstatus auf "${STATUS_LIST.find(s => s.value === pendingStatus)?.label ?? pendingStatus}" setzen?`}
+          danger={false}
+          confirmLabel="Status setzen"
+          onCancel={() => setPendingStatus(null)}
+          onConfirm={async () => {
+            if (!pendingStatus) return
+            await handleStatusChange(pendingStatus)
+            setPendingStatus(null)
+          }}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

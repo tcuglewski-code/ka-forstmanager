@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Clock, Plus, Loader2, Check, X } from "lucide-react"
+import { Clock, Plus, Loader2, Check, X, Download } from "lucide-react"
 
 interface Stundeneintrag {
   id: string
@@ -27,6 +27,34 @@ interface Mitarbeiter {
   id: string
   vorname: string
   nachname: string
+}
+
+function exportStundenCSV(stunden: Stundeneintrag[], filename: string) {
+  if (!stunden.length) {
+    alert("Keine Daten zum Exportieren")
+    return
+  }
+  // UTF-8 BOM für Excel
+  const BOM = "\uFEFF"
+  const headers = ["Mitarbeiter", "Datum", "Stunden", "Typ", "Notiz"]
+  const rows = stunden.map(s => [
+    `${s.mitarbeiter?.vorname || ""} ${s.mitarbeiter?.nachname || ""}`.trim(),
+    s.datum ? new Date(s.datum).toLocaleDateString("de-DE") : "",
+    s.stunden ?? "",
+    s.typ || "",
+    s.notiz || ""
+  ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(";"))
+
+  const csv = BOM + [headers.join(";"), ...rows].join("\n")
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
 }
 
 const typLabel: Record<string, string> = {
