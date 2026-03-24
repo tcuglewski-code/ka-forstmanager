@@ -76,7 +76,7 @@ export async function GET(req: Request) {
           zeitraum: String(wizard.zeitraum ?? ""),
           neuFlag: (post.meta?.ka_neu_flag ?? 0) === 1,
           wpProjektId: wpId,
-          wizardDaten: wizard,
+          wizardDaten: Object.keys(wizard).length > 0 ? (wizard as import("@prisma/client").Prisma.InputJsonValue) : undefined,
           wpErstelltAm: post.meta?.ka_angelegt
             ? new Date(post.meta.ka_angelegt * 1000)
             : new Date(post.date)
