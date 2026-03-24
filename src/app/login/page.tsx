@@ -105,6 +105,9 @@ export default function LoginPage() {
                 "Anmelden"
               )}
             </button>
+            <p className="text-center text-xs text-zinc-600 mt-3">
+              Passwort vergessen? Kontaktiere den Administrator.
+            </p>
           </form>
         </div>
 

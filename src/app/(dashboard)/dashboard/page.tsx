@@ -59,6 +59,27 @@ async function getStats() {
       stundenAusstehend,
       vorschuessOffen: vorschuessOffen._sum.betrag ?? 0,
     }
+
+    const neuesteAuftraege = await prisma.auftrag.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: { id: true, titel: true, status: true, waldbesitzer: true, createdAt: true, bundesland: true }
+    })
+
+    return {
+      aktiveMitarbeiter,
+      aktiveSaisons,
+      offeneAuftraege,
+      auftragStatusVerteilung,
+      lagerUnterMindest,
+      ablaufendeQualifikationen,
+      faelligeWartungen,
+      naechsteSchulungen,
+      offeneAbnahmen,
+      stundenAusstehend,
+      vorschuessOffen: vorschuessOffen._sum.betrag ?? 0,
+      neuesteAuftraege,
+    }
   } catch {
     return {
       aktiveMitarbeiter: 0,
@@ -72,6 +93,7 @@ async function getStats() {
       offeneAbnahmen: 0,
       stundenAusstehend: 0,
       vorschuessOffen: 0,
+      neuesteAuftraege: [],
     }
   }
 }
