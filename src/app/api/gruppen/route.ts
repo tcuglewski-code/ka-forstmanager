@@ -43,6 +43,12 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json()
+
+    // Pflichtfeld-Validierung (Sprint P)
+    if (!body.name?.trim()) {
+      return NextResponse.json({ error: "name ist ein Pflichtfeld" }, { status: 400 })
+    }
+
     const gruppe = await prisma.gruppe.create({
       data: {
         name: body.name,

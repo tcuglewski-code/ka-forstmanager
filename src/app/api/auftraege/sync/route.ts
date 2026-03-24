@@ -4,7 +4,9 @@ import { auth } from "@/lib/auth"
 
 const WP_API_URL =
   "https://peru-otter-113714.hostingersite.com/wp-json/wp/v2/ka_projekt"
-const WP_AUTH = Buffer.from("openclaw:aZ*rd^)AHcUZiY9F39#yHYHI").toString("base64")
+const WP_USER = process.env.WP_USER ?? "openclaw"
+const WP_PASS = process.env.WP_PASSWORD ?? ""
+const WP_AUTH = Buffer.from(`${WP_USER}:${WP_PASS}`).toString("base64")
 
 interface WpPost {
   id: number

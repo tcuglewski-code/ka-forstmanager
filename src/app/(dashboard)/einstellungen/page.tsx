@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { Settings, Users, Building2, Cpu, Plus, Pencil, Loader2, Check } from "lucide-react"
+import { toast } from "sonner"
 
 interface User {
   id: string
@@ -28,7 +29,17 @@ export default function EinstellungenPage() {
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState({ name: "", email: "", password: "", role: "mitarbeiter" })
   const [editForm, setEditForm] = useState({ name: "", email: "", role: "", active: true, password: "" })
-  const [firmaForm, setFirmaForm] = useState({ name: "Koch Aufforstung GmbH", primaryColor: "#2C3A1C", email: "" })
+
+  // Firma-Konfiguration (Sprint P: aus DB geladen)
+  const [config, setConfig] = useState<Record<string, string>>({
+    firma_name: "Koch Aufforstung GmbH",
+    firma_adresse: "",
+    firma_email: "",
+    firma_farbe: "#2C3A1C",
+    preis_pro_ha: "1800",
+    standard_stundenlohn: "12",
+  })
+  const [configLoading, setConfigLoading] = useState(true)
   const [firmaSaved, setFirmaSaved] = useState(false)
 
   const fetchUsers = useCallback(async () => {
@@ -38,25 +49,50 @@ export default function EinstellungenPage() {
     setLoading(false)
   }, [])
 
+  // Lade gespeicherte Konfiguration aus DB (Sprint P)
+  const fetchConfig = useCallback(async () => {
+    setConfigLoading(true)
+    try {
+      const r = await fetch("/api/einstellungen/config").then((r) => r.json())
+      if (r && typeof r === "object") {
+        setConfig(prev => ({ ...prev, ...r }))
+      }
+    } catch {
+      // Ignoriere Fehler beim Laden
+    }
+    setConfigLoading(false)
+  }, [])
+
   useEffect(() => { fetchUsers() }, [fetchUsers])
+  useEffect(() => { fetchConfig() }, [fetchConfig])
 
   async function createUser() {
     setSaving(true)
-    await fetch("/api/einstellungen/users", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
-    setShowModal(false)
-    setForm({ name: "", email: "", password: "", role: "mitarbeiter" })
-    await fetchUsers()
+    try {
+      await fetch("/api/einstellungen/users", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
+      toast.success("Benutzer erfolgreich angelegt")
+      setShowModal(false)
+      setForm({ name: "", email: "", password: "", role: "mitarbeiter" })
+      await fetchUsers()
+    } catch (e: unknown) {
+      toast.error("Fehler: " + (e instanceof Error ? e.message : String(e)))
+    }
     setSaving(false)
   }
 
   async function updateUser() {
     if (!editUser) return
     setSaving(true)
-    const data: Record<string, unknown> = { name: editForm.name, email: editForm.email, role: editForm.role, active: editForm.active }
-    if (editForm.password) data.password = editForm.password
-    await fetch(`/api/einstellungen/users/${editUser.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) })
-    setEditUser(null)
-    await fetchUsers()
+    try {
+      const data: Record<string, unknown> = { name: editForm.name, email: editForm.email, role: editForm.role, active: editForm.active }
+      if (editForm.password) data.password = editForm.password
+      await fetch(`/api/einstellungen/users/${editUser.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) })
+      toast.success("Benutzer aktualisiert")
+      setEditUser(null)
+      await fetchUsers()
+    } catch (e: unknown) {
+      toast.error("Fehler: " + (e instanceof Error ? e.message : String(e)))
+    }
     setSaving(false)
   }
 
@@ -65,10 +101,35 @@ export default function EinstellungenPage() {
     setEditForm({ name: user.name, email: user.email, role: user.role, active: user.active, password: "" })
   }
 
-  function saveFirma() {
-    setFirmaSaved(true)
-    document.documentElement.style.setProperty("--primary", firmaForm.primaryColor)
-    setTimeout(() => setFirmaSaved(false), 2000)
+  // Firma-Einstellungen in DB speichern (Sprint P)
+  async function saveFirma() {
+    setSaving(true)
+    try {
+      await fetch("/api/einstellungen/config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          configs: {
+            firma_name: config.firma_name,
+            firma_adresse: config.firma_adresse,
+            firma_email: config.firma_email,
+            firma_farbe: config.firma_farbe,
+            preis_pro_ha: config.preis_pro_ha,
+            standard_stundenlohn: config.standard_stundenlohn,
+          },
+        }),
+      })
+      // CSS-Variable aktualisieren
+      if (config.firma_farbe) {
+        document.documentElement.style.setProperty("--primary", config.firma_farbe)
+      }
+      toast.success("Firma-Einstellungen gespeichert")
+      setFirmaSaved(true)
+      setTimeout(() => setFirmaSaved(false), 2000)
+    } catch (e: unknown) {
+      toast.error("Fehler: " + (e instanceof Error ? e.message : String(e)))
+    }
+    setSaving(false)
   }
 
   return (
@@ -150,26 +211,91 @@ export default function EinstellungenPage() {
       {/* Firma Tab */}
       {tab === "firma" && (
         <div className="max-w-lg space-y-4">
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 space-y-4">
-            <div>
-              <label className="block text-xs text-zinc-400 mb-1">Firmenname</label>
-              <input value={firmaForm.name} onChange={(e) => setFirmaForm({ ...firmaForm, name: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
-            </div>
-            <div>
-              <label className="block text-xs text-zinc-400 mb-1">Primärfarbe</label>
-              <div className="flex items-center gap-3">
-                <input type="color" value={firmaForm.primaryColor} onChange={(e) => setFirmaForm({ ...firmaForm, primaryColor: e.target.value })} className="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-0" />
-                <input value={firmaForm.primaryColor} onChange={(e) => setFirmaForm({ ...firmaForm, primaryColor: e.target.value })} className="flex-1 bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white font-mono" />
+          {configLoading ? (
+            <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
+          ) : (
+            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 space-y-4">
+              <div>
+                <label className="block text-xs text-zinc-400 mb-1">Firmenname</label>
+                <input
+                  value={config.firma_name ?? ""}
+                  onChange={(e) => setConfig(prev => ({ ...prev, firma_name: e.target.value }))}
+                  className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white"
+                />
               </div>
+              <div>
+                <label className="block text-xs text-zinc-400 mb-1">Adresse</label>
+                <input
+                  value={config.firma_adresse ?? ""}
+                  onChange={(e) => setConfig(prev => ({ ...prev, firma_adresse: e.target.value }))}
+                  placeholder="Straße, PLZ Ort"
+                  className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-400 mb-1">Kontakt-E-Mail</label>
+                <input
+                  type="email"
+                  value={config.firma_email ?? ""}
+                  onChange={(e) => setConfig(prev => ({ ...prev, firma_email: e.target.value }))}
+                  className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-400 mb-1">Primärfarbe</label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    value={config.firma_farbe ?? "#2C3A1C"}
+                    onChange={(e) => setConfig(prev => ({ ...prev, firma_farbe: e.target.value }))}
+                    className="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-0"
+                  />
+                  <input
+                    value={config.firma_farbe ?? "#2C3A1C"}
+                    onChange={(e) => setConfig(prev => ({ ...prev, firma_farbe: e.target.value }))}
+                    className="flex-1 bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Kalkulations-Einstellungen (Sprint P4) */}
+              <div className="space-y-4 mt-6 pt-4 border-t border-[#2a2a2a]">
+                <h3 className="text-sm font-semibold text-zinc-300">Kalkulations-Einstellungen</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs text-zinc-500 mb-1 block">Preis pro ha (€)</label>
+                    <input
+                      type="number"
+                      step="50"
+                      min="0"
+                      value={config.preis_pro_ha ?? "1800"}
+                      onChange={(e) => setConfig(prev => ({ ...prev, preis_pro_ha: e.target.value }))}
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-zinc-500 mb-1 block">Standard-Stundenlohn (€/h)</label>
+                    <input
+                      type="number"
+                      step="0.50"
+                      min="0"
+                      value={config.standard_stundenlohn ?? "12"}
+                      onChange={(e) => setConfig(prev => ({ ...prev, standard_stundenlohn: e.target.value }))}
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={saveFirma}
+                disabled={saving}
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-medium disabled:opacity-50"
+              >
+                {firmaSaved ? <><Check className="w-4 h-4" /> Gespeichert!</> : "Speichern"}
+              </button>
             </div>
-            <div>
-              <label className="block text-xs text-zinc-400 mb-1">Kontakt-E-Mail</label>
-              <input type="email" value={firmaForm.email} onChange={(e) => setFirmaForm({ ...firmaForm, email: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
-            </div>
-            <button onClick={saveFirma} className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-medium">
-              {firmaSaved ? <><Check className="w-4 h-4" /> Gespeichert!</> : "Speichern"}
-            </button>
-          </div>
+          )}
         </div>
       )}
 

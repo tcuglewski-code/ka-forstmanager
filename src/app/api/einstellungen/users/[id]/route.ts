@@ -2,11 +2,12 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
+import { isAdmin } from "@/lib/permissions"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  if ((session.user as any).role !== "admin") {
+  if (!isAdmin(session)) {
     return NextResponse.json({ error: "Forbidden – nur Admins dürfen Users bearbeiten" }, { status: 403 })
   }
   const { id } = await params
@@ -28,7 +29,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  if ((session.user as any).role !== "admin") {
+  if (!isAdmin(session)) {
     return NextResponse.json({ error: "Forbidden – nur Admins dürfen Users löschen" }, { status: 403 })
   }
   const { id } = await params

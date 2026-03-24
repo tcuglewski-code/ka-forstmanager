@@ -1,10 +1,12 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
+import { isAdmin, isAdminOrGF } from "@/lib/permissions"
 
 export async function GET() {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!isAdminOrGF(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   const data = await prisma.rechnung.findMany({
     include: { auftrag: { select: { id: true, titel: true } } },
     orderBy: { createdAt: "desc" },
@@ -15,6 +17,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!isAdmin(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   const body = await req.json()
   const rechnung = await prisma.rechnung.create({
     data: {
