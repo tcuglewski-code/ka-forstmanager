@@ -33,6 +33,18 @@ export async function POST(req: NextRequest) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const body = await req.json()
+
+  // Maschinenzuschlag automatisch aus Fahrzeug holen (Sprint K6)
+  if (body.fahrzeugId && body.maschinenzuschlag == null) {
+    const fahrzeug = await prisma.fahrzeug.findUnique({
+      where: { id: body.fahrzeugId },
+      select: { stundenBonus: true },
+    })
+    if (fahrzeug?.stundenBonus) {
+      body.maschinenzuschlag = fahrzeug.stundenBonus
+    }
+  }
+
   const entry = await prisma.stundeneintrag.create({
     data: {
       mitarbeiterId: body.mitarbeiterId,

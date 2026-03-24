@@ -24,6 +24,8 @@ export async function POST(req: NextRequest) {
       grund: body.grund ?? null,
       genehmigt: false,
       zurueckgezahlt: false,
+      individualBonus: body.individualBonus != null ? parseFloat(body.individualBonus) : 0,
+      individualBonusGrund: body.individualBonusGrund ?? null,
     },
     include: { mitarbeiter: { select: { id: true, vorname: true, nachname: true } } },
   })
