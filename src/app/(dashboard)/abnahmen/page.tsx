@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { CheckSquare, Plus, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
 interface Abnahme {
   id: string
@@ -56,10 +57,19 @@ export default function AbnahmenPage() {
 
   async function create() {
     setSaving(true)
-    await fetch("/api/abnahmen", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
-    setShowModal(false)
-    setForm({ auftragId: "", datum: new Date().toISOString().split("T")[0], foersterId: "", status: "offen", notizen: "" })
-    await fetchAll()
+    try {
+      const res = await fetch("/api/abnahmen", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
+      if (res.ok) {
+        toast.success("Erfolgreich gespeichert")
+      } else {
+        toast.error("Fehler beim Erstellen der Abnahme")
+      }
+      setShowModal(false)
+      setForm({ auftragId: "", datum: new Date().toISOString().split("T")[0], foersterId: "", status: "offen", notizen: "" })
+      await fetchAll()
+    } catch (e: unknown) {
+      toast.error("Fehler: " + (e instanceof Error ? e.message : String(e)))
+    }
     setSaving(false)
   }
 
