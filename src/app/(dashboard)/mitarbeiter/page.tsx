@@ -152,8 +152,10 @@ export default function MitarbeiterPage() {
       {/* Table */}
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
         {loading ? (
-          <div className="flex items-center justify-center py-16">
-            <Loader2 className="w-6 h-6 animate-spin text-emerald-400" />
+          <div className="space-y-2 p-4">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-12 bg-[#1e1e1e] rounded-lg animate-pulse" />
+            ))}
           </div>
         ) : mitarbeiter.length === 0 ? (
           <div className="text-center py-16 text-zinc-500">
