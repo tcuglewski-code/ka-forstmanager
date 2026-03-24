@@ -279,16 +279,18 @@ model Vorschuss {
 
 // STUNDEN & ABWESENHEIT
 model Stundeneintrag {
-  id            String      @id @default(cuid())
-  mitarbeiterId String
-  datum         DateTime
-  stunden       Float
-  auftragId     String?
-  typ           String      @default("arbeit")
-  notiz         String?
-  genehmigt     Boolean     @default(false)
-  createdAt     DateTime    @default(now())
-  mitarbeiter   Mitarbeiter @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
+  id                String      @id @default(cuid())
+  mitarbeiterId     String
+  datum             DateTime
+  stunden           Float
+  auftragId         String?
+  typ               String      @default("arbeit")
+  notiz             String?
+  genehmigt         Boolean     @default(false)
+  stundenlohn       Float?      // Stundenlohn zum Zeitpunkt der Erfassung
+  maschinenzuschlag Float?      // Maschinenbonus (Sprint K1+)
+  createdAt         DateTime    @default(now())
+  mitarbeiter       Mitarbeiter @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
 }
 
 model Abwesenheit {
