@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import SaisonDetailClient from "./SaisonDetailClient"
+import { Breadcrumb } from "@/components/layout/Breadcrumb"
 
 async function getSaison(id: string) {
   return prisma.saison.findUnique({
@@ -34,6 +35,7 @@ export default async function SaisonDetailPage({ params }: { params: Promise<{ i
 
   return (
     <div className="max-w-5xl mx-auto">
+      <Breadcrumb items={[{ label: "Saisons", href: "/saisons" }, { label: saison.name }]} />
       <Link href="/saisons" className="flex items-center gap-2 text-zinc-400 hover:text-white text-sm mb-6 transition-all">
         <ArrowLeft className="w-4 h-4" /> Zurück zu Saisons
       </Link>

@@ -68,6 +68,7 @@ export default function GruppeDetailPage() {
 
   return (
     <div className="max-w-4xl mx-auto">
+      <Breadcrumb items={[{ label: "Gruppen", href: "/gruppen" }, { label: gruppe.name }]} />
       <button
         onClick={() => router.back()}
         className="flex items-center gap-2 text-zinc-500 hover:text-white mb-6 transition-colors text-sm"
