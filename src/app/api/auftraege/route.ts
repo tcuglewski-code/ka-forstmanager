@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 
-const DEFAULT_LIMIT = 50
-const MAX_LIMIT = 200
+// Internal safety limit — no pagination wrapper, returns plain array
+const INTERNAL_LIMIT = 200
 
 export async function GET(req: NextRequest) {
-  // ⚠️ GET ist auth-geschützt — Aufträge sind interne Daten
+  // ⚠️ GET ist auth-geschützt — Aufträge sind interne Dashboard-Daten
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
@@ -14,39 +14,22 @@ export async function GET(req: NextRequest) {
   const status = searchParams.get("status")
   const typ = searchParams.get("typ")
 
-  // Pagination
-  const limitParam = parseInt(searchParams.get("limit") ?? String(DEFAULT_LIMIT), 10)
-  const offsetParam = parseInt(searchParams.get("offset") ?? "0", 10)
-  const limit = Math.min(isNaN(limitParam) ? DEFAULT_LIMIT : limitParam, MAX_LIMIT)
-  const offset = isNaN(offsetParam) ? 0 : Math.max(0, offsetParam)
-
   const where: Record<string, string> = {}
   if (status) where.status = status
   if (typ) where.typ = typ
 
-  const [auftraege, total] = await Promise.all([
-    prisma.auftrag.findMany({
-      where,
-      include: {
-        saison: { select: { id: true, name: true } },
-        gruppe: { select: { id: true, name: true } },
-      },
-      orderBy: { wpErstelltAm: "desc" },
-      take: limit,
-      skip: offset,
-    }),
-    prisma.auftrag.count({ where }),
-  ])
-
-  return NextResponse.json({
-    data: auftraege,
-    pagination: {
-      total,
-      limit,
-      offset,
-      hasMore: offset + limit < total,
+  const auftraege = await prisma.auftrag.findMany({
+    where,
+    include: {
+      saison: { select: { id: true, name: true } },
+      gruppe: { select: { id: true, name: true } },
     },
+    orderBy: { wpErstelltAm: "desc" },
+    take: INTERNAL_LIMIT,
   })
+
+  // Returns plain array — frontend expects: setAuftraege(await res.json())
+  return NextResponse.json(auftraege)
 }
 
 export async function POST(req: NextRequest) {
