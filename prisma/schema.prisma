@@ -133,25 +133,27 @@ model Auftrag {
   updatedAt         DateTime         @updatedAt
   saison            Saison?          @relation(fields: [saisonId], references: [id], onDelete: SetNull)
   gruppe            Gruppe?          @relation(fields: [gruppeId], references: [id], onDelete: SetNull)
-  abnahmen          Abnahme[]
-  dokumente         Dokument[]
-  protokolle        Tagesprotokoll[]
-  rechnungen        Rechnung[]
-  lagerBewegungen   LagerBewegung[]
+  abnahmen           Abnahme[]
+  dokumente          Dokument[]
+  protokolle         Tagesprotokoll[]
+  rechnungen         Rechnung[]
+  lagerBewegungen    LagerBewegung[]
+  maschineneinsaetze Maschineneinsatz[]
 }
 
 // GRUPPE
 model Gruppe {
-  id               String           @id @default(cuid())
-  name             String
-  saisonId         String?
-  gruppenfuehrerId String?
-  status           String           @default("aktiv")
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  saison           Saison?          @relation(fields: [saisonId], references: [id], onDelete: SetNull)
-  auftraege        Auftrag[]
-  mitglieder       GruppeMitglied[]
+  id                  String             @id @default(cuid())
+  name                String
+  saisonId            String?
+  gruppenfuehrerId    String?
+  status              String             @default("aktiv")
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  saison              Saison?            @relation(fields: [saisonId], references: [id], onDelete: SetNull)
+  auftraege           Auftrag[]
+  mitglieder          GruppeMitglied[]
+  maschineneinsaetze  Maschineneinsatz[]
 }
 
 model GruppeMitglied {
@@ -211,17 +213,20 @@ model LagerBewegung {
 
 // FUHRPARK
 model Fahrzeug {
-  id              String    @id @default(cuid())
-  typ             String
-  bezeichnung     String
-  kennzeichen     String?
-  baujahr         Int?
-  status          String    @default("verfuegbar")
-  tuvDatum        DateTime?
-  naechsteWartung DateTime?
-  notizen         String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id                String             @id @default(cuid())
+  typ               String
+  bezeichnung       String
+  kennzeichen       String?
+  baujahr           Int?
+  status            String             @default("verfuegbar")
+  tuvDatum          DateTime?
+  naechsteWartung   DateTime?
+  notizen           String?
+  stundenBonus      Float?             @default(0)  // Extra €/h bei Maschineneinsatz (Sprint K6)
+  bonusBeschreibung String?            // z.B. "Schwermaschinenzuschlag"
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  einsaetze         Maschineneinsatz[]
 }
 
 model Geraet {
@@ -266,15 +271,17 @@ model Lohneintrag {
 }
 
 model Vorschuss {
-  id             String      @id @default(cuid())
-  mitarbeiterId  String
-  betrag         Float
-  datum          DateTime    @default(now())
-  grund          String?
-  genehmigt      Boolean     @default(false)
-  zurueckgezahlt Boolean     @default(false)
-  createdAt      DateTime    @default(now())
-  mitarbeiter    Mitarbeiter @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
+  id                   String      @id @default(cuid())
+  mitarbeiterId        String
+  betrag               Float
+  datum                DateTime    @default(now())
+  grund                String?
+  genehmigt            Boolean     @default(false)
+  zurueckgezahlt       Boolean     @default(false)
+  individualBonus      Float?      @default(0)   // Extra-Bonus für diese Abrechnung (Sprint K7)
+  individualBonusGrund String?                   // Begründung (z.B. "Schichtleitung", "Erschwernis")
+  createdAt            DateTime    @default(now())
+  mitarbeiter          Mitarbeiter @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
 }
 
 // STUNDEN & ABWESENHEIT
@@ -408,6 +415,23 @@ model Kontakt {
   notizen   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// MASCHINENEINSATZ (Sprint K2)
+model Maschineneinsatz {
+  id          String    @id @default(cuid())
+  fahrzeugId  String
+  fahrzeug    Fahrzeug  @relation(fields: [fahrzeugId], references: [id])
+  gruppeId    String?
+  gruppe      Gruppe?   @relation(fields: [gruppeId], references: [id])
+  auftragId   String?
+  auftrag     Auftrag?  @relation(fields: [auftragId], references: [id])
+  vonDatum    DateTime
+  bisDatum    DateTime?
+  zweck       String?
+  stundensatz Float?    // Maschinenkosten pro Stunde (optional)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 // RECHNUNGEN

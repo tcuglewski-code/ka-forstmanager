@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Receipt, Plus, Loader2, CheckCircle, ExternalLink } from "lucide-react"
+import { Receipt, Plus, Loader2, CheckCircle, ExternalLink, Printer } from "lucide-react"
 
 interface Rechnung {
   id: string
@@ -126,6 +126,10 @@ export default function RechnungenPage() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex gap-2 justify-end">
+                      <a href={`/rechnungen/${r.id}/drucken`} target="_blank"
+                        className="text-xs text-zinc-400 hover:text-white flex items-center gap-1">
+                        <Printer className="w-3 h-3" /> Drucken
+                      </a>
                       {r.status === "offen" && (
                         <button onClick={() => patch(r.id, { status: "freigegeben" })} className="px-2 py-1 bg-amber-500/20 text-amber-400 rounded text-xs hover:bg-amber-500/30">
                           Freigeben

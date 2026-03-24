@@ -16,6 +16,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         baujahr: body.baujahr ? parseInt(body.baujahr) : undefined,
         tuvDatum: body.tuvDatum ? new Date(body.tuvDatum) : undefined,
         naechsteWartung: body.naechsteWartung ? new Date(body.naechsteWartung) : undefined,
+        stundenBonus: body.stundenBonus !== undefined ? parseFloat(body.stundenBonus) || 0 : undefined,
+        bonusBeschreibung: body.bonusBeschreibung !== undefined ? body.bonusBeschreibung : undefined,
       },
     })
     return NextResponse.json(fahrzeug)
