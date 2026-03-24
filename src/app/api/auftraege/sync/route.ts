@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { auth } from "@/lib/auth"
 
 const WP_API_URL =
   "https://peru-otter-113714.hostingersite.com/wp-json/wp/v2/ka_projekt"
@@ -81,6 +82,9 @@ function parseFlaeche(wizard: WizardDaten): number | null {
 }
 
 export async function POST() {
+  const session = await auth()
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
   try {
     const posts = await fetchAllWpPosts()
 
@@ -184,7 +188,7 @@ export async function POST() {
       updated: updatedCount,
     })
   } catch (error) {
-    console.error("WP Sync error:", error)
+    console.error("[Auftraege Sync POST]", error)
     return NextResponse.json(
       { error: String(error) },
       { status: 500 }
