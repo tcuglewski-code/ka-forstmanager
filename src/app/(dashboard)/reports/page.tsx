@@ -151,11 +151,9 @@ export default function ReportsPage() {
             <button onClick={loadSaisonReport} disabled={!selectedSaison || saisonLoading} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-medium disabled:opacity-50">
               {saisonLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Laden"}
             </button>
-            {saisonReport && (
-              <button onClick={exportSaisonCSV} className="flex items-center gap-2 px-4 py-2 bg-[#161616] border border-[#2a2a2a] text-zinc-400 hover:text-white rounded-lg text-sm">
-                <Download className="w-4 h-4" /> CSV
-              </button>
-            )}
+            <button onClick={exportSaisonCSV} disabled={!saisonReport} className="flex items-center gap-2 px-4 py-2 bg-[#161616] border border-[#2a2a2a] text-zinc-400 hover:text-white rounded-lg text-sm disabled:opacity-40">
+              <Download className="w-4 h-4" /> CSV
+            </button>
           </div>
           {saisonReport && (
             <div className="space-y-4">
@@ -215,11 +213,9 @@ export default function ReportsPage() {
             <button onClick={loadMaReport} disabled={maLoading} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-medium disabled:opacity-50">
               {maLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Laden"}
             </button>
-            {maReport && (
-              <button onClick={exportMaCSV} className="flex items-center gap-2 px-4 py-2 bg-[#161616] border border-[#2a2a2a] text-zinc-400 hover:text-white rounded-lg text-sm">
-                <Download className="w-4 h-4" /> CSV
-              </button>
-            )}
+            <button onClick={exportMaCSV} disabled={!maReport} className="flex items-center gap-2 px-4 py-2 bg-[#161616] border border-[#2a2a2a] text-zinc-400 hover:text-white rounded-lg text-sm disabled:opacity-40">
+              <Download className="w-4 h-4" /> CSV
+            </button>
           </div>
           {maReport && (
             <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
@@ -265,7 +261,7 @@ export default function ReportsPage() {
       {activeReport === "lager" && (
         <div className="space-y-4">
           <div className="flex justify-end">
-            <button onClick={exportLagerCSV} disabled={lagerItems.length === 0} className="flex items-center gap-2 px-4 py-2 bg-[#161616] border border-[#2a2a2a] text-zinc-400 hover:text-white rounded-lg text-sm disabled:opacity-50">
+            <button onClick={exportLagerCSV} disabled={lagerLoading} className="flex items-center gap-2 px-4 py-2 bg-[#161616] border border-[#2a2a2a] text-zinc-400 hover:text-white rounded-lg text-sm disabled:opacity-40">
               <Download className="w-4 h-4" /> CSV exportieren
             </button>
           </div>

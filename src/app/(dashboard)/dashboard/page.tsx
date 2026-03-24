@@ -75,6 +75,19 @@ async function getStats() {
       }
     })
 
+    // Wirtschaftlichkeits-Kalkulation
+    const stundenGesamt = await prisma.stundeneintrag.aggregate({
+      _sum: { stunden: true }
+    })
+    const rechnungenGesamt = await prisma.rechnung.aggregate({
+      _sum: { betrag: true }
+    })
+    const mitarbeiterLohn = await prisma.mitarbeiter.aggregate({
+      _avg: { stundenlohn: true }
+    })
+    const durchschnittslohn = mitarbeiterLohn._avg?.stundenlohn ?? 12
+    const geschaetzterLohn = (stundenGesamt._sum?.stunden ?? 0) * durchschnittslohn
+
     return {
       aktiveMitarbeiter,
       aktiveSaisons,
@@ -90,6 +103,9 @@ async function getStats() {
       neuesteAuftraege,
       letzteProtokolle,
       letzteAbnahmen,
+      stundenGesamt,
+      rechnungenGesamt,
+      geschaetzterLohn,
     }
   } catch {
     return {
@@ -107,6 +123,9 @@ async function getStats() {
       neuesteAuftraege: [],
       letzteProtokolle: [] as { id: string; datum: Date | string; ersteller: string | null; auftrag: { titel: string; id: string } | null }[],
       letzteAbnahmen: [] as { id: string; datum: Date | string; status: string; auftrag: { titel: string; id: string } | null }[],
+      stundenGesamt: { _sum: { stunden: 0 } },
+      rechnungenGesamt: { _sum: { betrag: 0 } },
+      geschaetzterLohn: 0,
     }
   }
 }
@@ -224,6 +243,22 @@ export default async function DashboardPage() {
           href="/qualifikationen"
           alert={stats.ablaufendeQualifikationen > 0}
         />
+      </div>
+
+      {/* Wirtschaftlichkeits-Widget */}
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+          <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">Gesamtstunden</p>
+          <p className="text-2xl font-bold text-white">{(stats.stundenGesamt._sum?.stunden ?? 0).toFixed(0)}h</p>
+        </div>
+        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+          <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">Gesamtumsatz</p>
+          <p className="text-2xl font-bold text-emerald-400">{((stats.rechnungenGesamt._sum?.betrag ?? 0)).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p>
+        </div>
+        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+          <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">Geschätzter Lohn</p>
+          <p className="text-2xl font-bold text-amber-400">{(stats.geschaetzterLohn ?? 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p>
+        </div>
       </div>
 
       {/* Quick Actions */}

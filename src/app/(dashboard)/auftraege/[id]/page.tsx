@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react"
 import {
   ArrowLeft, ExternalLink, Save, Phone, Mail, User, TreePine, MapPin, Calendar,
-  FileText, Shield, Sprout, Scissors, Package, Layers, Info, BadgeCheck, ChevronRight, Camera
+  FileText, Shield, Sprout, Scissors, Package, Layers, Info, BadgeCheck, ChevronRight, Camera, CheckSquare, Plus
 } from "lucide-react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
+import { toast } from "sonner"
 import { PflanzverbandVorschau } from "@/components/auftraege/PflanzverbandVorschau"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
@@ -843,6 +844,70 @@ export default function AuftragDetailPage() {
             </div>
           )}
 
+          {/* ── Abnahmen ──────────────────────────────────────────── */}
+          {auftrag.abnahmen && auftrag.abnahmen.length > 0 && (
+            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-semibold text-white flex items-center gap-2 text-sm uppercase tracking-wide">
+                  <CheckSquare className="w-4 h-4 text-zinc-500" />
+                  Abnahmen ({auftrag.abnahmen.length})
+                </h2>
+                {/* Rechnung erstellen: nur wenn noch keine existiert */}
+                {auftrag.abnahmen.some(a => a.status === "bestanden") && (!auftrag.rechnungen || auftrag.rechnungen.length === 0) && (
+                  <button
+                    onClick={async () => {
+                      const res = await fetch("/api/rechnungen", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          auftragId: auftrag.id,
+                          nummer: `RE-${new Date().getFullYear()}-${Date.now().toString().slice(-6)}`,
+                          betrag: (auftrag.flaeche_ha ?? 1) * 1800,
+                          notizen: `Rechnung für: ${auftrag.titel}`,
+                          faelligAm: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+                          status: "offen"
+                        })
+                      })
+                      if (res.ok) {
+                        toast.success("Rechnung erstellt")
+                        router.refresh()
+                      } else {
+                        toast.error("Fehler beim Erstellen der Rechnung")
+                      }
+                    }}
+                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-emerald-500/20 border border-emerald-500/40 rounded-lg text-emerald-400 hover:bg-emerald-500/30 transition-all"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    Rechnung erstellen
+                  </button>
+                )}
+              </div>
+              <div className="space-y-2">
+                {auftrag.abnahmen.map(abnahme => (
+                  <div key={abnahme.id} className="flex items-center justify-between p-3 bg-[#0f0f0f] rounded-lg border border-[#2a2a2a]">
+                    <div className="flex items-center gap-3">
+                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                        abnahme.status === "bestanden" ? "bg-emerald-500" :
+                        abnahme.status === "offen" ? "bg-amber-400" : "bg-red-400"
+                      }`} />
+                      <div>
+                        <p className="text-sm text-white">{new Date(abnahme.datum).toLocaleDateString("de-DE")}</p>
+                        {abnahme.notizen && <p className="text-xs text-zinc-500 mt-0.5">{abnahme.notizen}</p>}
+                      </div>
+                    </div>
+                    <span className={`text-xs px-2 py-0.5 rounded-full border ${
+                      abnahme.status === "bestanden" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" :
+                      abnahme.status === "offen" ? "bg-amber-500/20 text-amber-400 border-amber-500/30" :
+                      "bg-red-500/20 text-red-400 border-red-500/30"
+                    }`}>
+                      {abnahme.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* ── Materialzuweisung ──────────────────────────────────── */}
           <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
             <SectionHeading icon={<Package className="w-4 h-4" />} label="Materialzuweisung" />
@@ -951,6 +1016,28 @@ export default function AuftragDetailPage() {
               </button>
             </div>
           </div>
+
+          {/* Rechnungen */}
+          {auftrag.rechnungen && auftrag.rechnungen.length > 0 && (
+            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+              <p className="text-xs text-zinc-500 mb-2 uppercase tracking-wider">Rechnungen</p>
+              <div className="space-y-1.5">
+                {auftrag.rechnungen.map(r => (
+                  <div key={r.id} className="flex items-center justify-between text-sm">
+                    <span className="text-zinc-400">{r.nummer}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-white font-medium">{r.betrag.toFixed(2)} €</span>
+                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                        r.status === "bezahlt" ? "bg-emerald-500/20 text-emerald-400" :
+                        r.status === "offen" ? "bg-amber-500/20 text-amber-400" :
+                        "bg-zinc-500/20 text-zinc-400"
+                      }`}>{r.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* WP Info */}
           {auftrag.wpProjektId && (
