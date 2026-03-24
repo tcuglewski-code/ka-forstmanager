@@ -421,11 +421,11 @@ model Kontakt {
 model Maschineneinsatz {
   id          String    @id @default(cuid())
   fahrzeugId  String
-  fahrzeug    Fahrzeug  @relation(fields: [fahrzeugId], references: [id])
+  fahrzeug    Fahrzeug  @relation(fields: [fahrzeugId], references: [id], onDelete: Cascade)
   gruppeId    String?
-  gruppe      Gruppe?   @relation(fields: [gruppeId], references: [id])
+  gruppe      Gruppe?   @relation(fields: [gruppeId], references: [id], onDelete: SetNull)
   auftragId   String?
-  auftrag     Auftrag?  @relation(fields: [auftragId], references: [id])
+  auftrag     Auftrag?  @relation(fields: [auftragId], references: [id], onDelete: SetNull)
   vonDatum    DateTime
   bisDatum    DateTime?
   zweck       String?
@@ -438,7 +438,7 @@ model Maschineneinsatz {
 model Rechnung {
   id             String    @id @default(cuid())
   auftragId      String?
-  nummer         String
+  nummer         String    @unique
   betrag         Float
   mwst           Float     @default(19)
   status         String    @default("offen")
@@ -449,4 +449,12 @@ model Rechnung {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   auftrag        Auftrag?  @relation(fields: [auftragId], references: [id], onDelete: SetNull)
+}
+
+// SYSTEM-KONFIGURATION (Sprint P)
+model SystemConfig {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
 }

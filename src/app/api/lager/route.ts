@@ -2,11 +2,25 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 
-export async function GET() {
-  const artikel = await prisma.lagerArtikel.findMany({
-    orderBy: { name: "asc" },
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url)
+
+  // Paginierung (Sprint P)
+  const take = Math.min(parseInt(searchParams.get("limit") ?? "100"), 200)
+  const skip = parseInt(searchParams.get("offset") ?? "0")
+
+  const [artikel, total] = await Promise.all([
+    prisma.lagerArtikel.findMany({
+      orderBy: { name: "asc" },
+      take,
+      skip,
+    }),
+    prisma.lagerArtikel.count(),
+  ])
+
+  return NextResponse.json(artikel, {
+    headers: { "X-Total-Count": String(total) },
   })
-  return NextResponse.json(artikel)
 }
 
 export async function POST(req: NextRequest) {

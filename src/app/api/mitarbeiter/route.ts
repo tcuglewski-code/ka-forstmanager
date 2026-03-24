@@ -36,8 +36,14 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
-    const data = await req.json()
-    const mitarbeiter = await prisma.mitarbeiter.create({ data })
+    const body = await req.json()
+
+    // Pflichtfeld-Validierung (Sprint P)
+    if (!body.vorname?.trim() || !body.nachname?.trim()) {
+      return NextResponse.json({ error: "vorname und nachname sind Pflichtfelder" }, { status: 400 })
+    }
+
+    const mitarbeiter = await prisma.mitarbeiter.create({ data: body })
     return NextResponse.json(mitarbeiter, { status: 201 })
   } catch (error) {
     return NextResponse.json({ error: "Fehler beim Erstellen" }, { status: 500 })

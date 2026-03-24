@@ -1,15 +1,21 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { isAdminOrGF } from "@/lib/permissions"
 
 // GET /api/lohn/berechnung
 // Automatische Lohnberechnung aus gespeicherten Stundenbuchungen
-export async function GET() {
+export async function GET(req: NextRequest) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!isAdminOrGF(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
-  // Lies alle Stundenbuchungen mit Mitarbeiter-Daten
+  const { searchParams } = new URL(req.url)
+  const saisonId = searchParams.get("saisonId")
+
+  // Lies alle Stundenbuchungen mit Mitarbeiter-Daten (Sprint P: saisonId-Filter)
   const eintraege = await prisma.stundeneintrag.findMany({
+    where: saisonId ? { auftrag: { saisonId } } : {},
     include: {
       mitarbeiter: {
         select: { id: true, vorname: true, nachname: true, stundenlohn: true },

@@ -2,9 +2,6 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 
-// Internal safety limit — no pagination wrapper, returns plain array
-const INTERNAL_LIMIT = 200
-
 export async function GET(req: NextRequest) {
   // ⚠️ GET ist auth-geschützt — Aufträge sind interne Dashboard-Daten
   const session = await auth()
@@ -14,22 +11,31 @@ export async function GET(req: NextRequest) {
   const status = searchParams.get("status")
   const typ = searchParams.get("typ")
 
+  // Paginierung (Sprint P)
+  const take = Math.min(parseInt(searchParams.get("limit") ?? "50"), 200)
+  const skip = parseInt(searchParams.get("offset") ?? "0")
+
   const where: Record<string, string> = {}
   if (status) where.status = status
   if (typ) where.typ = typ
 
-  const auftraege = await prisma.auftrag.findMany({
-    where,
-    include: {
-      saison: { select: { id: true, name: true } },
-      gruppe: { select: { id: true, name: true } },
-    },
-    orderBy: { wpErstelltAm: "desc" },
-    take: INTERNAL_LIMIT,
-  })
+  const [auftraege, total] = await Promise.all([
+    prisma.auftrag.findMany({
+      where,
+      include: {
+        saison: { select: { id: true, name: true } },
+        gruppe: { select: { id: true, name: true } },
+      },
+      orderBy: { wpErstelltAm: "desc" },
+      take,
+      skip,
+    }),
+    prisma.auftrag.count({ where }),
+  ])
 
-  // Returns plain array — frontend expects: setAuftraege(await res.json())
-  return NextResponse.json(auftraege)
+  return NextResponse.json(auftraege, {
+    headers: { "X-Total-Count": String(total) },
+  })
 }
 
 export async function POST(req: NextRequest) {
@@ -39,8 +45,12 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
 
-    if (!body.titel || !body.typ) {
-      return NextResponse.json({ error: "Pflichtfelder fehlen: titel, typ" }, { status: 400 })
+    // Pflichtfeld-Validierung (Sprint P)
+    if (!body.titel?.trim()) {
+      return NextResponse.json({ error: "titel ist ein Pflichtfeld" }, { status: 400 })
+    }
+    if (!body.typ) {
+      return NextResponse.json({ error: "Pflichtfelder fehlen: typ" }, { status: 400 })
     }
 
     const auftrag = await prisma.auftrag.create({

@@ -11,6 +11,10 @@ export async function GET(req: NextRequest) {
   const jahr = searchParams.get("jahr")
   const genehmigt = searchParams.get("genehmigt")
 
+  // Paginierung (Sprint P)
+  const take = Math.min(parseInt(searchParams.get("limit") ?? "100"), 200)
+  const skip = parseInt(searchParams.get("offset") ?? "0")
+
   const where: Record<string, unknown> = {}
   if (mitarbeiterId) where.mitarbeiterId = mitarbeiterId
   if (genehmigt !== null && genehmigt !== "") where.genehmigt = genehmigt === "true"
@@ -21,18 +25,34 @@ export async function GET(req: NextRequest) {
     where.datum = { gte: von, lt: bis }
   }
 
-  const data = await prisma.stundeneintrag.findMany({
-    where,
-    include: { mitarbeiter: { select: { id: true, vorname: true, nachname: true } } },
-    orderBy: { datum: "desc" },
+  const [data, total] = await Promise.all([
+    prisma.stundeneintrag.findMany({
+      where,
+      include: { mitarbeiter: { select: { id: true, vorname: true, nachname: true } } },
+      orderBy: { datum: "desc" },
+      take,
+      skip,
+    }),
+    prisma.stundeneintrag.count({ where }),
+  ])
+
+  return NextResponse.json(data, {
+    headers: { "X-Total-Count": String(total) },
   })
-  return NextResponse.json(data)
 }
 
 export async function POST(req: NextRequest) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const body = await req.json()
+
+  // Pflichtfeld-Validierung (Sprint P)
+  if (!body.mitarbeiterId || !body.datum || !body.stunden) {
+    return NextResponse.json({ error: "mitarbeiterId, datum und stunden sind Pflichtfelder" }, { status: 400 })
+  }
+  if (isNaN(parseFloat(body.stunden)) || parseFloat(body.stunden) <= 0) {
+    return NextResponse.json({ error: "stunden muss eine positive Zahl sein" }, { status: 400 })
+  }
 
   // Maschinenzuschlag automatisch aus Fahrzeug holen (Sprint K6)
   if (body.fahrzeugId && body.maschinenzuschlag == null) {

@@ -2,7 +2,9 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 
 const WP_API_URL = "https://peru-otter-113714.hostingersite.com/wp-json/wp/v2/ka_projekt"
-const WP_AUTH = Buffer.from("openclaw:aZ*rd^)AHcUZiY9F39#yHYHI").toString("base64")
+const WP_USER = process.env.WP_USER ?? "openclaw"
+const WP_PASS = process.env.WP_PASSWORD ?? ""
+const WP_AUTH = Buffer.from(`${WP_USER}:${WP_PASS}`).toString("base64")
 const CRON_SECRET = process.env.CRON_SECRET ?? "forstmanager-cron-2026"
 
 export async function GET(req: Request) {

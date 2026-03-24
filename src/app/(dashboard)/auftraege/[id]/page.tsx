@@ -543,6 +543,8 @@ export default function AuftragDetailPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  // System-Konfiguration für konfigurierbare Preise (Sprint P)
+  const [sysConfig, setSysConfig] = useState<Record<string, string>>({})
 
   const [status, setStatus] = useState("")
   const [pendingStatus, setPendingStatus] = useState<string | null>(null)
@@ -595,6 +597,11 @@ export default function AuftragDetailPage() {
         .catch(() => {})
     }
   }, [auftrag?.id])
+
+  // Lade System-Konfiguration für konfigurierbaren Preis pro ha (Sprint P)
+  useEffect(() => {
+    fetch("/api/einstellungen/config").then(r => r.json()).then(setSysConfig).catch(() => {})
+  }, [])
 
   async function handleSave() {
     setSaving(true)
