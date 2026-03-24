@@ -909,13 +909,15 @@ export default function AuftragDetailPage() {
                 {auftrag.abnahmen.some(a => a.status === "bestanden") && (!auftrag.rechnungen || auftrag.rechnungen.length === 0) && (
                   <button
                     onClick={async () => {
+                      // Preis pro ha aus System-Konfiguration (Sprint P4)
+                      const preisProHa = parseFloat(sysConfig.preis_pro_ha ?? "1800")
                       const res = await fetch("/api/rechnungen", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
                           auftragId: auftrag.id,
                           nummer: `RE-${new Date().getFullYear()}-${Date.now().toString().slice(-6)}`,
-                          betrag: (auftrag.flaeche_ha ?? 1) * 1800,
+                          betrag: (auftrag.flaeche_ha ?? 1) * preisProHa,
                           notizen: `Rechnung für: ${auftrag.titel}`,
                           faelligAm: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
                           status: "offen"

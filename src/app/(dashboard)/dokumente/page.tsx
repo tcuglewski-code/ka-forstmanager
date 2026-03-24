@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { FileText, Plus, Loader2, Download, Trash2, ExternalLink } from "lucide-react"
+import { toast } from "sonner"
 
 interface Dokument {
   id: string
@@ -68,17 +69,31 @@ export default function DokumentePage() {
 
   async function upload() {
     setSaving(true)
-    await fetch("/api/dokumente", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
-    setShowModal(false)
-    setForm({ name: "", typ: "sonstiges", url: "", auftragId: "", saisonId: "" })
-    await fetchAll()
+    try {
+      const res = await fetch("/api/dokumente", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
+      if (res.ok) {
+        toast.success("Erfolgreich gespeichert")
+      } else {
+        toast.error("Fehler beim Hochladen")
+      }
+      setShowModal(false)
+      setForm({ name: "", typ: "sonstiges", url: "", auftragId: "", saisonId: "" })
+      await fetchAll()
+    } catch (e: unknown) {
+      toast.error("Fehler: " + (e instanceof Error ? e.message : String(e)))
+    }
     setSaving(false)
   }
 
   async function deleteDok(id: string) {
     if (!confirm("Dokument löschen?")) return
-    await fetch(`/api/dokumente/${id}`, { method: "DELETE" })
-    await fetchAll()
+    try {
+      await fetch(`/api/dokumente/${id}`, { method: "DELETE" })
+      toast.success("Gelöscht")
+      await fetchAll()
+    } catch (e: unknown) {
+      toast.error("Fehler: " + (e instanceof Error ? e.message : String(e)))
+    }
   }
 
   return (

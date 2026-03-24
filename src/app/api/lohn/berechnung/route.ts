@@ -1,21 +1,29 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
-import { isAdminOrGF } from "@/lib/permissions"
 
-// GET /api/lohn/berechnung
+// GET /api/lohn/berechnung?saisonId=xxx
 // Automatische Lohnberechnung aus gespeicherten Stundenbuchungen
 export async function GET(req: NextRequest) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  if (!isAdminOrGF(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
   const { searchParams } = new URL(req.url)
   const saisonId = searchParams.get("saisonId")
 
-  // Lies alle Stundenbuchungen mit Mitarbeiter-Daten (Sprint P: saisonId-Filter)
+  // Sprint P: saisonId-Filter — erst Auftrags-IDs der Saison laden
+  let auftragIdFilter: { in: string[] } | undefined
+  if (saisonId) {
+    const auftraege = await prisma.auftrag.findMany({
+      where: { saisonId },
+      select: { id: true },
+    })
+    auftragIdFilter = { in: auftraege.map(a => a.id) }
+  }
+
+  // Lies alle Stundenbuchungen mit Mitarbeiter-Daten
   const eintraege = await prisma.stundeneintrag.findMany({
-    where: saisonId ? { auftrag: { saisonId } } : {},
+    where: auftragIdFilter ? { auftragId: auftragIdFilter } : {},
     include: {
       mitarbeiter: {
         select: { id: true, vorname: true, nachname: true, stundenlohn: true },
