@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { Plus, Search, Phone, Mail, X } from "lucide-react"
+import { toast } from "sonner"
 
 interface Kontakt {
   id: string
@@ -27,6 +28,7 @@ const TYPEN = ["foerster", "waldbesitzer", "behoerde", "lieferant", "sonstig"]
 
 function KontaktModal({ kontakt, onClose, onSave }: { kontakt?: Kontakt | null; onClose: () => void; onSave: () => void }) {
   const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState<{ name?: boolean }>({})
   const [form, setForm] = useState({
     name: kontakt?.name ?? "",
     typ: kontakt?.typ ?? "sonstig",
@@ -40,10 +42,23 @@ function KontaktModal({ kontakt, onClose, onSave }: { kontakt?: Kontakt | null; 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    // Pflichtfeld-Validierung
+    const newErrors: { name?: boolean } = {}
+    if (!form.name.trim()) newErrors.name = true
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      return
+    }
+    setErrors({})
     setLoading(true)
-    const url = kontakt?.id ? `/api/kontakte/${kontakt.id}` : "/api/kontakte"
-    const method = kontakt?.id ? "PATCH" : "POST"
-    await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
+    try {
+      const url = kontakt?.id ? `/api/kontakte/${kontakt.id}` : "/api/kontakte"
+      const method = kontakt?.id ? "PATCH" : "POST"
+      await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
+      toast.success("Kontakt gespeichert")
+    } catch {
+      toast.error("Fehler")
+    }
     setLoading(false)
     onSave()
   }
@@ -59,8 +74,9 @@ function KontaktModal({ kontakt, onClose, onSave }: { kontakt?: Kontakt | null; 
           <div className="overflow-y-auto flex-1 p-6 space-y-4">
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Name *</label>
-              <input type="text" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              <input type="text" value={form.name} onChange={e => { setForm(f => ({ ...f, name: e.target.value })); if (errors.name) setErrors(v => ({ ...v, name: false })) }}
+                className={`w-full bg-[#0f0f0f] border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 ${errors.name ? "border-red-500" : "border-[#2a2a2a]"}`} />
+              {errors.name && <p className="text-red-400 text-xs mt-1">Name ist erforderlich</p>}
             </div>
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Typ</label>
@@ -84,7 +100,7 @@ function KontaktModal({ kontakt, onClose, onSave }: { kontakt?: Kontakt | null; 
           </div>
           <div className="shrink-0 flex gap-3 p-6 border-t border-[#2a2a2a]">
             <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
-            <button type="submit" disabled={loading || !form.name} className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
+            <button type="submit" disabled={loading} className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
               {loading ? "Speichern..." : "Speichern"}
             </button>
           </div>

@@ -23,6 +23,11 @@ interface Auftrag {
   wpErstelltAm?: string | null
 }
 
+interface Saison {
+  id: string
+  name: string
+}
+
 const STATUS_FARBEN: Record<string, string> = {
   anfrage: "bg-blue-500/20 text-blue-400",
   geprueft: "bg-sky-500/20 text-sky-400",
@@ -85,6 +90,8 @@ export default function AuftraegePage() {
   const [suche, setSuche] = useState("")
   const [datumSort, setDatumSort] = useState<"desc" | "asc">("desc")
   const [modal, setModal] = useState<{ open: boolean; auftrag?: Auftrag | null }>({ open: false })
+  const [selected, setSelected] = useState<string[]>([])
+  const [saisons, setSaisons] = useState<Saison[]>([])
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -115,6 +122,11 @@ export default function AuftraegePage() {
   useEffect(() => {
     sync(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Saisons laden
+  useEffect(() => {
+    fetch("/api/saisons").then(r => r.json()).then(d => setSaisons(Array.isArray(d) ? d : []))
   }, [])
 
   useEffect(() => {
