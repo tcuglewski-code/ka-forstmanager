@@ -19,6 +19,12 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!isAdmin(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   const body = await req.json()
+  if (!body.auftragId || body.betrag === undefined || body.betrag === null) {
+    return NextResponse.json({ error: "auftragId und betrag sind Pflichtfelder" }, { status: 400 })
+  }
+  if (isNaN(parseFloat(body.betrag)) || parseFloat(body.betrag) <= 0) {
+    return NextResponse.json({ error: "betrag muss eine positive Zahl sein" }, { status: 400 })
+  }
   const rechnung = await prisma.rechnung.create({
     data: {
       nummer: body.nummer,
