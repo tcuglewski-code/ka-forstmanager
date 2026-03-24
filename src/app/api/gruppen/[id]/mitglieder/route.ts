@@ -2,6 +2,17 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth()
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const { id: gruppeId } = await params
+  const mitglieder = await prisma.gruppeMitglied.findMany({
+    where: { gruppeId },
+    include: { mitarbeiter: { select: { id: true, vorname: true, nachname: true, stundenlohn: true } } },
+  })
+  return NextResponse.json(mitglieder)
+}
+
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
