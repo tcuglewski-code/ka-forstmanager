@@ -46,20 +46,6 @@ async function getStats() {
       }),
     ])
 
-    return {
-      aktiveMitarbeiter,
-      aktiveSaisons,
-      offeneAuftraege,
-      auftragStatusVerteilung,
-      lagerUnterMindest,
-      ablaufendeQualifikationen,
-      faelligeWartungen,
-      naechsteSchulungen,
-      offeneAbnahmen,
-      stundenAusstehend,
-      vorschuessOffen: vorschuessOffen._sum.betrag ?? 0,
-    }
-
     const neuesteAuftraege = await prisma.auftrag.findMany({
       orderBy: { createdAt: "desc" },
       take: 5,
@@ -213,7 +199,53 @@ export default async function DashboardPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Quick Actions */}
+      <div className="mt-8">
+        <h2 className="text-sm font-semibold text-zinc-400 mb-3 uppercase tracking-wider">Schnellzugriff</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            { label: "WP-Sync", href: "/auftraege", icon: "🔄", desc: "Aufträge synchronisieren" },
+            { label: "Neuer Mitarbeiter", href: "/mitarbeiter", icon: "👤", desc: "Mitarbeiter anlegen" },
+            { label: "Neue Saison", href: "/saisons", icon: "🌱", desc: "Saison starten" },
+            { label: "Wissensbank", href: "/wissensbank", icon: "📚", desc: "Förderinfo & Betriebe" },
+          ].map(action => (
+            <Link key={action.label} href={action.href}
+              className="flex flex-col gap-1 p-4 bg-[#161616] border border-[#2a2a2a] rounded-xl hover:border-emerald-500/30 hover:bg-[#1a1a1a] transition-all group">
+              <span className="text-2xl">{action.icon}</span>
+              <span className="text-sm font-medium text-white group-hover:text-emerald-400 transition-colors">{action.label}</span>
+              <span className="text-xs text-zinc-500">{action.desc}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Neueste Aufträge */}
+      {stats.neuesteAuftraege.length > 0 && (
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">Neueste Aufträge</h2>
+            <Link href="/auftraege" className="text-xs text-emerald-500 hover:text-emerald-400">Alle anzeigen →</Link>
+          </div>
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+            {stats.neuesteAuftraege.map((a, i) => (
+              <Link key={a.id} href={`/auftraege/${a.id}`}
+                className={`flex items-center justify-between px-4 py-3 hover:bg-[#1e1e1e] transition-colors ${i > 0 ? "border-t border-[#2a2a2a]" : ""}`}>
+                <div>
+                  <p className="text-sm text-white font-medium truncate max-w-xs">{a.titel}</p>
+                  <p className="text-xs text-zinc-500">{a.waldbesitzer || "—"} · {a.bundesland || "—"}</p>
+                </div>
+                <span className={`text-xs px-2 py-0.5 rounded-full border ${
+                  a.status === "abgeschlossen" ? "bg-zinc-500/20 text-zinc-400 border-zinc-500/30" :
+                  a.status === "laufend" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" :
+                  "bg-blue-500/20 text-blue-400 border-blue-500/30"
+                }`}>{a.status}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
         {/* Auftrags-Status */}
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
           <div className="flex items-center gap-2 mb-4">

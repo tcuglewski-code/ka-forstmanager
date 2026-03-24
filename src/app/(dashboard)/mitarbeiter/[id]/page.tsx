@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, User, MapPin, Phone, Mail, CreditCard } from "lucide-react"
+import { Breadcrumb } from "@/components/layout/Breadcrumb"
 
 const rolleBadge: Record<string, string> = {
   admin: "bg-purple-500/20 text-purple-400 border-purple-500/30",
@@ -48,6 +49,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
 
   return (
     <div className="max-w-5xl mx-auto">
+      <Breadcrumb items={[{ label: "Mitarbeiter", href: "/mitarbeiter" }, { label: `${ma.vorname} ${ma.nachname}` }]} />
       <Link href="/mitarbeiter" className="flex items-center gap-2 text-zinc-400 hover:text-white text-sm mb-6 transition-all">
         <ArrowLeft className="w-4 h-4" /> Zurück zu Mitarbeiter
       </Link>
