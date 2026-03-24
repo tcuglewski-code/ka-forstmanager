@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { X } from "lucide-react"
+import { toast } from "sonner"
 
 interface Saison { id: string; name: string }
 interface Mitarbeiter { id: string; vorname: string; nachname: string; rolle: string }
@@ -64,7 +65,17 @@ export function GruppeModal({
     }
     const url = gruppe?.id ? `/api/gruppen/${gruppe.id}` : "/api/gruppen"
     const method = gruppe?.id ? "PATCH" : "POST"
-    await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+    try {
+      await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+      if (gruppe?.id) {
+        toast.success("Gruppe aktualisiert")
+      } else {
+        toast.success("Gruppe erfolgreich angelegt")
+      }
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Unbekannter Fehler"
+      toast.error("Fehler: " + msg)
+    }
     setLoading(false)
     onSave()
   }

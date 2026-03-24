@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { useSearchParams } from "next/navigation"
 import { Plus, X, QrCode, Printer, Package } from "lucide-react"
 import QRCode from "react-qr-code"
+import { toast } from "sonner"
 
 const BASE_URL = "https://ka-forstmanager.vercel.app"
 
@@ -122,7 +123,12 @@ function ArtikelModal({ onClose, onSave }: { onClose: () => void; onSave: () => 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    await fetch("/api/lager", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
+    try {
+      await fetch("/api/lager", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
+      toast.success("Artikel angelegt")
+    } catch {
+      toast.error("Fehler beim Speichern")
+    }
     setLoading(false)
     onSave()
   }
@@ -135,11 +141,12 @@ function ArtikelModal({ onClose, onSave }: { onClose: () => void; onSave: () => 
           <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {[["Name *", "name", "text"], ["Lagerort", "lagerort", "text"], ["Artikelnummer", "artikelnummer", "text"]].map(([label, key, type]) => (
+          {([["Name *", "name", "text", "z.B. Schutzhelm, Säge, Herbizid..."], ["Lagerort", "lagerort", "text", "z.B. Halle A, Regal 3"], ["Artikelnummer", "artikelnummer", "text", "z.B. ART-001"]] as [string, string, string, string][]).map(([label, key, type, placeholder]) => (
             <div key={key}>
               <label className="block text-xs text-zinc-400 mb-1">{label}</label>
               <input type={type} value={(form as Record<string, string>)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                placeholder={placeholder}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500" />
             </div>
           ))}
           <div className="grid grid-cols-2 gap-3">
@@ -152,20 +159,27 @@ function ArtikelModal({ onClose, onSave }: { onClose: () => void; onSave: () => 
             </div>
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Einheit</label>
-              <input type="text" value={form.einheit} onChange={e => setForm(f => ({ ...f, einheit: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              <select value={form.einheit} onChange={e => setForm(f => ({ ...f, einheit: e.target.value }))}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                <option value="" disabled>Einheit wählen</option>
+                {["Stück", "kg", "g", "l", "ml", "m", "m²", "m³", "Paar", "Packung", "Karton", "Rolle"].map(e => (
+                  <option key={e} value={e}>{e}</option>
+                ))}
+              </select>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Bestand</label>
               <input type="number" value={form.bestand} onChange={e => setForm(f => ({ ...f, bestand: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                placeholder="0"
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500" />
             </div>
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Mindestbestand</label>
               <input type="number" value={form.mindestbestand} onChange={e => setForm(f => ({ ...f, mindestbestand: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                placeholder="5"
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           <div className="flex gap-3 pt-2">
@@ -199,15 +213,20 @@ function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onC
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    await fetch(`/api/lager/${artikel.id}/bewegung`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...form,
-        auftragId: form.auftragId || null,
-        mitarbeiterId: form.mitarbeiterId || null,
-      }),
-    })
+    try {
+      await fetch(`/api/lager/${artikel.id}/bewegung`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          auftragId: form.auftragId || null,
+          mitarbeiterId: form.mitarbeiterId || null,
+        }),
+      })
+      toast.success("Bestand aktualisiert")
+    } catch {
+      toast.error("Fehler beim Speichern")
+    }
     setLoading(false)
     onSave()
   }

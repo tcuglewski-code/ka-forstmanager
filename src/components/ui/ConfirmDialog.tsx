@@ -8,9 +8,10 @@ interface ConfirmDialogProps {
   onConfirm: () => void
   onCancel: () => void
   danger?: boolean
+  confirmLabel?: string
 }
 
-export function ConfirmDialog({ open, title, message, onConfirm, onCancel, danger = true }: ConfirmDialogProps) {
+export function ConfirmDialog({ open, title, message, onConfirm, onCancel, danger = true, confirmLabel }: ConfirmDialogProps) {
   if (!open) return null
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -33,7 +34,7 @@ export function ConfirmDialog({ open, title, message, onConfirm, onCancel, dange
             className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               danger ? "bg-red-600 hover:bg-red-700 text-white" : "bg-emerald-600 hover:bg-emerald-700 text-white"
             }`}>
-            Löschen
+            {confirmLabel ?? (danger ? "Löschen" : "Bestätigen")}
           </button>
         </div>
       </div>

@@ -52,6 +52,29 @@ async function getStats() {
       select: { id: true, titel: true, status: true, waldbesitzer: true, createdAt: true, bundesland: true }
     })
 
+    // Letzte Aktivitäten (aus verschiedenen Tabellen)
+    const letzteProtokolle = await prisma.tagesprotokoll.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: {
+        id: true,
+        datum: true,
+        ersteller: true,
+        auftrag: { select: { titel: true, id: true } }
+      }
+    })
+
+    const letzteAbnahmen = await prisma.abnahme.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 3,
+      select: {
+        id: true,
+        datum: true,
+        status: true,
+        auftrag: { select: { titel: true, id: true } }
+      }
+    })
+
     return {
       aktiveMitarbeiter,
       aktiveSaisons,
@@ -65,6 +88,8 @@ async function getStats() {
       stundenAusstehend,
       vorschuessOffen: vorschuessOffen._sum.betrag ?? 0,
       neuesteAuftraege,
+      letzteProtokolle,
+      letzteAbnahmen,
     }
   } catch {
     return {
@@ -80,6 +105,8 @@ async function getStats() {
       stundenAusstehend: 0,
       vorschuessOffen: 0,
       neuesteAuftraege: [],
+      letzteProtokolle: [] as { id: string; datum: Date | string; ersteller: string | null; auftrag: { titel: string; id: string } | null }[],
+      letzteAbnahmen: [] as { id: string; datum: Date | string; status: string; auftrag: { titel: string; id: string } | null }[],
     }
   }
 }
@@ -241,6 +268,45 @@ export default async function DashboardPage() {
                 }`}>{a.status}</span>
               </Link>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Letzte Aktivitäten */}
+      {(stats.letzteProtokolle.length > 0 || stats.letzteAbnahmen.length > 0) && (
+        <div className="mt-6">
+          <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-3">Letzte Aktivitäten</h2>
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+            {[
+              ...stats.letzteProtokolle.map(p => ({
+                type: "protokoll" as const,
+                icon: "📋",
+                text: `Protokoll: ${p.auftrag?.titel?.slice(0, 30) || "Unbekannt"}`,
+                sub: `${p.ersteller || "—"} · ${new Date(p.datum).toLocaleDateString("de-DE")}`,
+                href: p.auftrag ? `/auftraege/${p.auftrag.id}` : "#",
+                ts: new Date(p.datum)
+              })),
+              ...stats.letzteAbnahmen.map(a => ({
+                type: "abnahme" as const,
+                icon: "✅",
+                text: `Abnahme: ${a.auftrag?.titel?.slice(0, 30) || "Unbekannt"}`,
+                sub: `Status: ${a.status} · ${new Date(a.datum).toLocaleDateString("de-DE")}`,
+                href: a.auftrag ? `/auftraege/${a.auftrag.id}` : "#",
+                ts: new Date(a.datum)
+              }))
+            ]
+              .sort((a, b) => b.ts.getTime() - a.ts.getTime())
+              .slice(0, 6)
+              .map((item, i) => (
+                <Link key={i} href={item.href}
+                  className={`flex items-center gap-3 px-4 py-3 hover:bg-[#1e1e1e] transition-colors ${i > 0 ? "border-t border-[#2a2a2a]" : ""}`}>
+                  <span className="text-lg">{item.icon}</span>
+                  <div className="min-w-0">
+                    <p className="text-sm text-white truncate">{item.text}</p>
+                    <p className="text-xs text-zinc-500">{item.sub}</p>
+                  </div>
+                </Link>
+              ))}
           </div>
         </div>
       )}
