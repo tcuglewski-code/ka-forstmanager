@@ -122,6 +122,7 @@ export function MitarbeiterModal({
               </label>
               <input
                 type="text"
+                name="vorname"
                 value={form.vorname || ""}
                 onChange={(e) => update("vorname", e.target.value)}
                 required
@@ -134,6 +135,7 @@ export function MitarbeiterModal({
               </label>
               <input
                 type="text"
+                name="nachname"
                 value={form.nachname || ""}
                 onChange={(e) => update("nachname", e.target.value)}
                 required
@@ -148,6 +150,7 @@ export function MitarbeiterModal({
               <label className="block text-sm font-medium text-zinc-400 mb-1.5">E-Mail</label>
               <input
                 type="email"
+                name="email"
                 value={form.email || ""}
                 onChange={(e) => update("email", e.target.value)}
                 className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
@@ -157,6 +160,7 @@ export function MitarbeiterModal({
               <label className="block text-sm font-medium text-zinc-400 mb-1.5">Telefon</label>
               <input
                 type="tel"
+                name="telefon"
                 value={form.telefon || ""}
                 onChange={(e) => update("telefon", e.target.value)}
                 className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
@@ -168,6 +172,7 @@ export function MitarbeiterModal({
             <label className="block text-sm font-medium text-zinc-400 mb-1.5">Mobil</label>
             <input
               type="tel"
+              name="mobil"
               value={form.mobil || ""}
               onChange={(e) => update("mobil", e.target.value)}
               className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
@@ -179,6 +184,7 @@ export function MitarbeiterModal({
             <label className="block text-sm font-medium text-zinc-400 mb-1.5">Adresse</label>
             <input
               type="text"
+              name="adresse"
               value={form.adresse || ""}
               onChange={(e) => update("adresse", e.target.value)}
               placeholder="Straße und Hausnummer"

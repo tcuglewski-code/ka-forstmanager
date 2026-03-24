@@ -82,6 +82,7 @@ export default function AuftraegePage() {
   const [syncResult, setSyncResult] = useState<{ new: number; updated: number; synced: number } | null>(null)
   const [filterStatus, setFilterStatus] = useState("")
   const [filterTyp, setFilterTyp] = useState("")
+  const [suche, setSuche] = useState("")
   const [datumSort, setDatumSort] = useState<"desc" | "asc">("desc")
   const [modal, setModal] = useState<{ open: boolean; auftrag?: Auftrag | null }>({ open: false })
 
@@ -90,6 +91,7 @@ export default function AuftraegePage() {
     const params = new URLSearchParams()
     if (filterStatus) params.set("status", filterStatus)
     if (filterTyp) params.set("typ", filterTyp)
+    if (suche) params.set("suche", suche)
     const res = await fetch(`/api/auftraege?${params}`)
     setAuftraege(await res.json())
     setLoading(false)
@@ -126,6 +128,16 @@ export default function AuftraegePage() {
     const da = new Date(a.wpErstelltAm ?? a.createdAt).getTime()
     const db = new Date(b.wpErstelltAm ?? b.createdAt).getTime()
     return datumSort === "desc" ? db - da : da - db
+  })
+
+  const filtered = sortedAuftraege.filter(a => {
+    if (suche) {
+      const s = suche.toLowerCase()
+      return (a.titel?.toLowerCase().includes(s) ||
+              a.waldbesitzer?.toLowerCase().includes(s) ||
+              a.bundesland?.toLowerCase().includes(s))
+    }
+    return true
   })
 
   return (
@@ -171,10 +183,17 @@ export default function AuftraegePage() {
       )}
 
       {/* Filter */}
-      <div className="flex gap-3 mb-4">
+      <div className="flex gap-3 mb-4 flex-wrap">
         <div className="flex items-center gap-2 text-zinc-500">
           <Filter className="w-4 h-4" />
         </div>
+        <input
+          type="text"
+          placeholder="Suche nach Titel, Waldbesitzer, Bundesland..."
+          value={suche}
+          onChange={(e) => setSuche(e.target.value)}
+          className="px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 w-64"
+        />
         <select
           value={filterStatus}
           onChange={e => setFilterStatus(e.target.value)}
@@ -232,10 +251,10 @@ export default function AuftraegePage() {
               <tr><td colSpan={8} className="text-center py-12 text-zinc-600">
                 {syncing ? "Synchronisiere mit WordPress..." : "Laden..."}
               </td></tr>
-            ) : auftraege.length === 0 ? (
+            ) : filtered.length === 0 ? (
               <tr><td colSpan={8} className="text-center py-12 text-zinc-600">Keine Aufträge gefunden</td></tr>
             ) : (
-              sortedAuftraege.map(a => (
+              filtered.map(a => (
                 <tr
                   key={a.id}
                   className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] cursor-pointer transition-colors"
