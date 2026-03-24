@@ -13,6 +13,7 @@ import {
   UserPlus,
   Star,
   AlertCircle,
+  AlertTriangle,
   Loader2,
   ChevronLeft,
   ChevronRight,
@@ -684,11 +685,13 @@ function FoerderprogrammeTab() {
   const [kategorien, setKategorien] = useState<string[]>([])
   const [statusFilter, setStatusFilter] = useState("")
   const [sort, setSort] = useState("name")
+  const [apiError, setApiError] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const fetchData = useCallback(
     async (s: string, bl: string, kat: string, st: string, so: string) => {
       setLoading(true)
+      setApiError(null)
       try {
         const params = new URLSearchParams({
           suche: s,
@@ -703,6 +706,7 @@ function FoerderprogrammeTab() {
         if (json.kategorien) setKategorien(json.kategorien)
       } catch {
         setData([])
+        setApiError("Datenbankverbindung konnte nicht hergestellt werden. Bitte Vercel ENV-Variable SECOND_BRAIN_URL prüfen.")
       } finally {
         setLoading(false)
       }

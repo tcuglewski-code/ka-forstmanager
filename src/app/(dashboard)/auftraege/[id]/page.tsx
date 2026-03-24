@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import {
   ArrowLeft, ExternalLink, Save, Phone, Mail, User, TreePine, MapPin, Calendar,
-  FileText, Shield, Sprout, Scissors, Package, Layers, Info, BadgeCheck, ChevronRight
+  FileText, Shield, Sprout, Scissors, Package, Layers, Info, BadgeCheck, ChevronRight, Camera
 } from "lucide-react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
@@ -65,7 +65,7 @@ interface Auftrag {
   endDatum?: string | null
   createdAt: string
   wizardDaten?: WizardDaten | null
-  protokolle?: { id: string; datum: string; gepflanzt?: number | null; witterung?: string | null; ersteller?: string | null }[]
+  protokolle?: { id: string; datum: string; gepflanzt?: number | null; witterung?: string | null; ersteller?: string | null; fotos?: string | null }[]
   abnahmen?: { id: string; datum: string; status: string; notizen?: string | null }[]
   rechnungen?: { id: string; nummer: string; betrag: number; status: string }[]
 }
@@ -798,17 +798,37 @@ export default function AuftragDetailPage() {
                     <th className="text-left py-2 text-xs text-zinc-500">Ersteller</th>
                     <th className="text-left py-2 text-xs text-zinc-500">Gepflanzt</th>
                     <th className="text-left py-2 text-xs text-zinc-500">Witterung</th>
+                    <th className="text-left py-2 text-xs text-zinc-500">Fotos</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {auftrag.protokolle.map(p => (
+                  {auftrag.protokolle.map(p => {
+                    const fotoListe = p.fotos
+                      ? p.fotos.split(",").map(u => u.trim()).filter(Boolean)
+                      : []
+                    return (
                     <tr key={p.id} className="border-b border-[#1e1e1e] last:border-0">
                       <td className="py-2 text-zinc-400">{new Date(p.datum).toLocaleDateString("de-DE")}</td>
                       <td className="py-2 text-zinc-400">{p.ersteller ?? "—"}</td>
                       <td className="py-2 text-emerald-400">{p.gepflanzt != null ? `${p.gepflanzt.toLocaleString()} Stk.` : "—"}</td>
                       <td className="py-2 text-zinc-400">{p.witterung ?? "—"}</td>
+                      <td className="py-2">
+                        {fotoListe.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {fotoListe.map((url, i) => (
+                              <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+                                className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                                <Camera className="w-3 h-3" /> Foto {fotoListe.length > 1 ? i + 1 : "ansehen"}
+                              </a>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-zinc-600">—</span>
+                        )}
+                      </td>
                     </tr>
-                  ))}
+                    )
+                  })}
                 </tbody>
                 <tfoot>
                   <tr className="border-t border-[#2a2a2a]">
@@ -816,7 +836,7 @@ export default function AuftragDetailPage() {
                     <td className="py-2 text-sm font-bold text-emerald-400">
                       {auftrag.protokolle.reduce((s, p) => s + (p.gepflanzt ?? 0), 0).toLocaleString()} Stk.
                     </td>
-                    <td></td>
+                    <td colSpan={2}></td>
                   </tr>
                 </tfoot>
               </table>

@@ -156,10 +156,22 @@ export default function StundenPage() {
           </h1>
           <p className="text-zinc-500 text-sm mt-1">Stundenerfassung und Abwesenheitsverwaltung</p>
         </div>
-        <button onClick={() => tab === "stunden" ? setShowModal(true) : setShowAbwModal(true)} className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
-          <Plus className="w-4 h-4" />
-          {tab === "stunden" ? "Stunden buchen" : "Abwesenheit eintragen"}
-        </button>
+        <div className="flex items-center gap-2">
+          {tab === "stunden" && (
+            <button
+              onClick={() => exportStundenCSV(stunden, `stunden-export-${new Date().toISOString().slice(0, 10)}.csv`)}
+              className="flex items-center gap-2 px-3 py-2 border border-[#2a2a2a] rounded-lg text-sm text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors"
+              title="Stunden als CSV exportieren"
+            >
+              <Download className="w-4 h-4" />
+              Export
+            </button>
+          )}
+          <button onClick={() => tab === "stunden" ? setShowModal(true) : setShowAbwModal(true)} className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
+            <Plus className="w-4 h-4" />
+            {tab === "stunden" ? "Stunden buchen" : "Abwesenheit eintragen"}
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { Plus, X, Car, Truck, Wrench, Tractor } from "lucide-react"
+import { toast } from "sonner"
 
 interface Fahrzeug {
   id: string
@@ -43,7 +44,12 @@ function FahrzeugModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    await fetch("/api/fuhrpark", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
+    try {
+      await fetch("/api/fuhrpark", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
+      toast.success("Fahrzeug gespeichert")
+    } catch {
+      toast.error("Fehler beim Speichern")
+    }
     setLoading(false)
     onSave()
   }
@@ -103,7 +109,12 @@ function GeraetModal({ onClose, onSave }: { onClose: () => void; onSave: () => v
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    await fetch("/api/geraete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
+    try {
+      await fetch("/api/geraete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
+      toast.success("Fahrzeug gespeichert")
+    } catch {
+      toast.error("Fehler beim Speichern")
+    }
     setLoading(false)
     onSave()
   }
