@@ -6,6 +6,9 @@ import bcrypt from "bcryptjs"
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if ((session.user as any).role !== "admin") {
+    return NextResponse.json({ error: "Forbidden – nur Admins dürfen Users bearbeiten" }, { status: 403 })
+  }
   const { id } = await params
   const body = await req.json()
   const updateData: Record<string, unknown> = {}
@@ -20,4 +23,19 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     select: { id: true, name: true, email: true, role: true, active: true },
   })
   return NextResponse.json(user)
+}
+
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth()
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if ((session.user as any).role !== "admin") {
+    return NextResponse.json({ error: "Forbidden – nur Admins dürfen Users löschen" }, { status: 403 })
+  }
+  const { id } = await params
+  // Eigenen Account nicht löschbar machen
+  if ((session.user as any).id === id) {
+    return NextResponse.json({ error: "Eigener Account kann nicht gelöscht werden" }, { status: 400 })
+  }
+  await prisma.user.delete({ where: { id } })
+  return NextResponse.json({ success: true })
 }

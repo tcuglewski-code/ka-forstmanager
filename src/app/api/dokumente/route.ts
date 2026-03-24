@@ -27,14 +27,40 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  const body = await req.json()
+
+  let body: Record<string, unknown>
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: "Ungültiger JSON-Body" }, { status: 400 })
+  }
+
+  // Pflichtfeld-Validierung
+  if (!body.name || typeof body.name !== "string") {
+    return NextResponse.json({ error: "Pflichtfeld fehlt: name" }, { status: 400 })
+  }
+  if (!body.url || typeof body.url !== "string") {
+    return NextResponse.json(
+      {
+        error: "Pflichtfeld fehlt: url",
+        hinweis: "Datei zuerst via Nextcloud hochladen und die WebDAV-URL übergeben.",
+      },
+      { status: 400 }
+    )
+  }
+
+  // Mindestens eine Zuordnung (Auftrag oder Saison) empfohlen — kein hartes Fehler
+  if (!body.auftragId && !body.saisonId) {
+    console.warn("[Dokumente POST] Dokument ohne Auftrag- oder Saison-Zuordnung erstellt")
+  }
+
   const doc = await prisma.dokument.create({
     data: {
-      name: body.name,
-      typ: body.typ ?? "sonstiges",
-      url: body.url,
-      auftragId: body.auftragId ?? null,
-      saisonId: body.saisonId ?? null,
+      name: body.name as string,
+      typ: (body.typ as string) ?? "sonstiges",
+      url: body.url as string,
+      auftragId: (body.auftragId as string) ?? null,
+      saisonId: (body.saisonId as string) ?? null,
       hochgeladenVon: session.user?.name ?? null,
     },
     include: {
