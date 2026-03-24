@@ -236,11 +236,48 @@ export default function AuftraegePage() {
         </select>
       </div>
 
+      {/* Bulk-Aktionsleiste */}
+      {selected.length > 0 && (
+        <div className="flex items-center gap-3 mb-4 px-4 py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+          <span className="text-emerald-400 text-sm font-medium">{selected.length} Aufträge ausgewählt</span>
+          <select
+            defaultValue=""
+            onChange={async (e) => {
+              if (!e.target.value) return
+              const saisonId = e.target.value
+              for (const id of selected) {
+                await fetch(`/api/auftraege/${id}`, {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ saisonId })
+                })
+              }
+              setSelected([])
+              await load()
+              e.target.value = ""
+            }}
+            className="px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white"
+          >
+            <option value="">Saison zuweisen...</option>
+            {saisons.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
+          <button onClick={() => setSelected([])} className="text-xs text-zinc-500 hover:text-white ml-auto">Auswahl aufheben</button>
+        </div>
+      )}
+
       {/* Tabelle */}
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-[#2a2a2a]">
+              <th className="px-4 py-3">
+                <input
+                  type="checkbox"
+                  checked={selected.length === filtered.length && filtered.length > 0}
+                  onChange={(e) => setSelected(e.target.checked ? filtered.map(a => a.id) : [])}
+                  className="rounded border-zinc-600"
+                />
+              </th>
               <th className="text-left px-4 py-3 text-zinc-500 font-medium">Titel</th>
               <th className="text-left px-4 py-3 text-zinc-500 font-medium">Waldbesitzer</th>
               <th className="text-left px-4 py-3 text-zinc-500 font-medium">Leistung</th>
@@ -260,11 +297,11 @@ export default function AuftraegePage() {
           </thead>
           <tbody>
             {loading || syncing ? (
-              <tr><td colSpan={8} className="text-center py-12 text-zinc-600">
+              <tr><td colSpan={9} className="text-center py-12 text-zinc-600">
                 {syncing ? "Synchronisiere mit WordPress..." : "Laden..."}
               </td></tr>
             ) : filtered.length === 0 ? (
-              <tr><td colSpan={8} className="text-center py-12 text-zinc-600">Keine Aufträge gefunden</td></tr>
+              <tr><td colSpan={9} className="text-center py-12 text-zinc-600">Keine Aufträge gefunden</td></tr>
             ) : (
               filtered.map(a => (
                 <tr
@@ -272,6 +309,14 @@ export default function AuftraegePage() {
                   className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] cursor-pointer transition-colors"
                   onClick={() => window.location.href = `/auftraege/${a.id}`}
                 >
+                  <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      checked={selected.includes(a.id)}
+                      onChange={(e) => setSelected(prev => e.target.checked ? [...prev, a.id] : prev.filter(id => id !== a.id))}
+                      className="rounded border-zinc-600"
+                    />
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <span className="text-white font-medium leading-tight">{a.titel}</span>

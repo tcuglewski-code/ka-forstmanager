@@ -791,7 +791,13 @@ function FoerderprogrammeTab() {
         {loading ? "Lädt..." : `${data.length} Förderprogramme`}
       </div>
 
-      {loading ? (
+      {apiError ? (
+        <div className="flex flex-col items-center py-12 gap-3">
+          <AlertTriangle className="w-8 h-8 text-amber-400" />
+          <p className="text-amber-400 text-sm font-medium">Verbindungsfehler</p>
+          <p className="text-zinc-500 text-xs text-center max-w-sm">{apiError}</p>
+        </div>
+      ) : loading ? (
         <div className="flex justify-center py-12">
           <Loader2 className="w-6 h-6 animate-spin text-emerald-500" />
         </div>
@@ -819,6 +825,7 @@ function WissenTab() {
   const [kategorien, setKategorien] = useState<string[]>([])
   const [sort, setSort] = useState("relevanz")
   const [offset, setOffset] = useState(0)
+  const [apiError, setApiError] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
   const limit = 30
   const [hasSearched, setHasSearched] = useState(false)
@@ -826,6 +833,7 @@ function WissenTab() {
   const fetchData = useCallback(
     async (s: string, kat: string, so: string, off: number) => {
       setLoading(true)
+      setApiError(null)
       try {
         const params = new URLSearchParams({
           suche: s,
@@ -841,6 +849,7 @@ function WissenTab() {
         if (json.kategorien) setKategorien(json.kategorien)
       } catch {
         setData([])
+        setApiError("Datenbankverbindung konnte nicht hergestellt werden. Bitte Vercel ENV-Variable SECOND_BRAIN_URL prüfen.")
       } finally {
         setLoading(false)
       }
@@ -947,7 +956,13 @@ function WissenTab() {
       </div>
 
       {/* Results */}
-      {loading ? (
+      {apiError ? (
+        <div className="flex flex-col items-center py-12 gap-3">
+          <AlertTriangle className="w-8 h-8 text-amber-400" />
+          <p className="text-amber-400 text-sm font-medium">Verbindungsfehler</p>
+          <p className="text-zinc-500 text-xs text-center max-w-sm">{apiError}</p>
+        </div>
+      ) : loading ? (
         <div className="flex justify-center py-12">
           <Loader2 className="w-6 h-6 animate-spin text-emerald-500" />
         </div>
