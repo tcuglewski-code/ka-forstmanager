@@ -197,6 +197,7 @@ export function MitarbeiterModal({
               <label className="block text-sm font-medium text-zinc-400 mb-1.5">PLZ</label>
               <input
                 type="text"
+                name="plz"
                 value={form.plz || ""}
                 onChange={(e) => update("plz", e.target.value)}
                 className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
@@ -206,6 +207,7 @@ export function MitarbeiterModal({
               <label className="block text-sm font-medium text-zinc-400 mb-1.5">Ort</label>
               <input
                 type="text"
+                name="ort"
                 value={form.ort || ""}
                 onChange={(e) => update("ort", e.target.value)}
                 className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
@@ -252,6 +254,7 @@ export function MitarbeiterModal({
             </label>
             <input
               type="number"
+              name="stundenlohn"
               step="0.01"
               value={form.stundenlohn ?? ""}
               onChange={(e) =>
@@ -266,6 +269,7 @@ export function MitarbeiterModal({
           <div>
             <label className="block text-sm font-medium text-zinc-400 mb-1.5">Notizen</label>
             <textarea
+              name="notizen"
               value={form.notizen || ""}
               onChange={(e) => update("notizen", e.target.value)}
               rows={3}
