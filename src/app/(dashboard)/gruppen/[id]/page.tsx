@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { ArrowLeft, UserPlus, Trash2 } from "lucide-react"
+import { Breadcrumb } from "@/components/layout/Breadcrumb"
 
 interface Mitglied {
   id: string
