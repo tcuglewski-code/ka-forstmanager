@@ -554,6 +554,15 @@ export default function AuftragDetailPage() {
   const [gruppen, setGruppen] = useState<Gruppe[]>([])
   const [material, setMaterial] = useState<MaterialBewegung[]>([])
   const [materialLoading, setMaterialLoading] = useState(true)
+  const [wirtschaft, setWirtschaft] = useState<{
+    stundenAnzahl: number
+    lohnkosten: number
+    maschinenkosten: number
+    gesamtkosten: number
+    umsatz: number
+    deckungsbeitrag: number
+    marge: number
+  } | null>(null)
 
   useEffect(() => {
     async function fetchData() {
@@ -577,6 +586,15 @@ export default function AuftragDetailPage() {
     }
     fetchData()
   }, [id])
+
+  useEffect(() => {
+    if (auftrag?.id) {
+      fetch(`/api/auftraege/${auftrag.id}/wirtschaftlichkeit`)
+        .then(r => r.json())
+        .then(setWirtschaft)
+        .catch(() => {})
+    }
+  }, [auftrag?.id])
 
   async function handleSave() {
     setSaving(true)
@@ -787,6 +805,34 @@ export default function AuftragDetailPage() {
 
           {/* Kosten-Vorschau */}
           {auftrag.wizardDaten && <KostenVorschau auftrag={auftrag} />}
+
+          {/* Wirtschaftlichkeits-Widget */}
+          {wirtschaft && (
+            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 mb-0">
+              <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-3">Wirtschaftlichkeit</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  { label: "Stunden", value: `${wirtschaft.stundenAnzahl}h`, color: "text-white" },
+                  { label: "Lohnkosten", value: wirtschaft.lohnkosten.toLocaleString("de-DE", { style: "currency", currency: "EUR" }), color: "text-amber-400" },
+                  { label: "Umsatz", value: wirtschaft.umsatz.toLocaleString("de-DE", { style: "currency", currency: "EUR" }), color: "text-emerald-400" },
+                  { label: "Marge", value: `${wirtschaft.marge}%`, color: wirtschaft.marge > 20 ? "text-emerald-400" : wirtschaft.marge > 0 ? "text-amber-400" : "text-red-400" },
+                ].map(({ label, value, color }) => (
+                  <div key={label} className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-xl p-3">
+                    <p className="text-xs text-zinc-500 mb-1">{label}</p>
+                    <p className={`text-lg font-bold ${color}`}>{value}</p>
+                  </div>
+                ))}
+              </div>
+              {wirtschaft.deckungsbeitrag !== 0 && (
+                <p className="text-xs text-zinc-500 mt-2">
+                  Deckungsbeitrag:{" "}
+                  <span className={wirtschaft.deckungsbeitrag >= 0 ? "text-emerald-400" : "text-red-400"}>
+                    {wirtschaft.deckungsbeitrag.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+                  </span>
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Tagesprotokolle */}
           {auftrag.protokolle && auftrag.protokolle.length > 0 && (
@@ -1055,6 +1101,22 @@ export default function AuftragDetailPage() {
                   Im WP-Admin öffnen
                 </a>
               )}
+            </div>
+          )}
+
+          {/* Kundenportal-Link */}
+          {auftrag.waldbesitzerEmail && (
+            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+              <p className="text-xs text-zinc-500 mb-2">Kundenportal</p>
+              <a
+                href={`https://peru-otter-113714.hostingersite.com/kundenportal/?auftrag=${auftrag.wpProjektId ?? auftrag.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                <ExternalLink className="w-3 h-3" />
+                Im Kundenportal ansehen
+              </a>
             </div>
           )}
 
