@@ -42,6 +42,8 @@ export async function POST(req: NextRequest) {
       auftragId: body.auftragId ?? null,
       notiz: body.notiz ?? null,
       genehmigt: body.genehmigt ?? false,
+      stundenlohn: body.stundenlohn != null ? parseFloat(body.stundenlohn) : null,
+      maschinenzuschlag: body.maschinenzuschlag != null ? parseFloat(body.maschinenzuschlag) : null,
     },
     include: { mitarbeiter: { select: { id: true, vorname: true, nachname: true } } },
   })
