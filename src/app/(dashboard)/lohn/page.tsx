@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Plus, X, CheckCircle, Circle, TrendingDown, Calculator } from "lucide-react"
+import { Plus, X, CheckCircle, Circle, TrendingDown, Calculator, Download } from "lucide-react"
 
 interface Lohneintrag {
   id: string
@@ -47,6 +47,39 @@ interface LohnBerechnung {
 }
 
 const MONATE = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
+
+// ─── CSV-Export: Gruppen-Abrechnung ──────────────────────────────────────────
+
+function exportGruppenAbrechnungCSV(gruppe: string, vorschuesse: Vorschuss[], lohnData: LohnBerechnung[]) {
+  const BOM = "\uFEFF"
+  const headers = ["Mitarbeiter", "Stunden", "Stundenlohn", "Bruttolohn", "Maschinenbonus", "Individualbonus", "Gesamtlohn", "Vorschuss", "Datum"]
+
+  const rows = lohnData.map(l => {
+    const vorschuss = vorschuesse.find(v => v.mitarbeiter.id === l.mitarbeiterId)
+    return [
+      `${l.mitarbeiter?.vorname} ${l.mitarbeiter?.nachname}`,
+      l.stunden?.toFixed(1) ?? "0",
+      (l.stundenlohn ?? 0).toFixed(2),
+      (l.bruttoLohn ?? 0).toFixed(2),
+      (l.maschinenzuschlag ?? 0).toFixed(2),
+      (vorschuss?.individualBonus ?? 0).toFixed(2),
+      (l.gesamtLohn ?? 0).toFixed(2),
+      (vorschuss?.betrag ?? 0).toFixed(2),
+      vorschuss?.datum ? new Date(vorschuss.datum).toLocaleDateString("de-DE") : ""
+    ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(";")
+  })
+
+  const csv = BOM + [headers.join(";"), ...rows].join("\n")
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = `abrechnung-${gruppe.replace(/\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}.csv`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
 
 // ─── Modal: Abrechnung erstellen ─────────────────────────────────────────────
 
@@ -308,7 +341,10 @@ export default function LohnPage() {
 
   useEffect(() => {
     if (activeTab === "vorschuesse") loadVorschuesse()
-    if (activeTab === "lohnuebersicht") loadLohnBerechnung()
+    if (activeTab === "lohnuebersicht") {
+      loadLohnBerechnung()
+      loadVorschuesse()
+    }
   }, [activeTab, loadVorschuesse, loadLohnBerechnung])
 
   const toggleAusgezahlt = async (id: string, ausgezahlt: boolean) => {
@@ -550,12 +586,22 @@ export default function LohnPage() {
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
           <div className="px-4 py-3 border-b border-[#2a2a2a] flex items-center justify-between">
             <p className="text-sm text-zinc-400">Automatische Lohnberechnung aus Stundenbuchungen</p>
-            <button
-              onClick={loadLohnBerechnung}
-              className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
-            >
-              Aktualisieren
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => exportGruppenAbrechnungCSV(selectedGruppe?.name ?? "alle", vorschuesse, lohnBerechnung)}
+                disabled={lohnBerechnung.length === 0}
+                className="flex items-center gap-2 px-3 py-1.5 border border-[#2a2a2a] rounded-lg text-xs text-zinc-400 hover:text-white disabled:opacity-40 transition-all"
+              >
+                <Download className="w-3.5 h-3.5" />
+                Abrechnung exportieren
+              </button>
+              <button
+                onClick={loadLohnBerechnung}
+                className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
+              >
+                Aktualisieren
+              </button>
+            </div>
           </div>
           <table className="w-full text-sm">
             <thead>

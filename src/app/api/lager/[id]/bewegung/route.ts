@@ -39,8 +39,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       },
     })
 
-    // Update bestand
-    const delta = body.typ === "eingang" ? menge : body.typ === "ausgang" ? -menge : menge
+    // Update bestand: eingang/rueckgabe addieren, ausgang/reserve/zuweisung subtrahieren
+    const delta = (body.typ === "eingang" || body.typ === "rueckgabe")
+      ? menge
+      : (body.typ === "ausgang" || body.typ === "reserve" || body.typ === "zuweisung")
+      ? -menge
+      : menge // korrektur + andere = positiv
     await prisma.lagerArtikel.update({
       where: { id: artikelId },
       data: { bestand: { increment: delta } },

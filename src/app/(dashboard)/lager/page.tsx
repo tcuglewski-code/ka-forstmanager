@@ -196,7 +196,7 @@ function ArtikelModal({ onClose, onSave }: { onClose: () => void; onSave: () => 
 
 function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onClose: () => void; onSave: () => void }) {
   const [loading, setLoading] = useState(false)
-  const [form, setForm] = useState({ typ: "eingang", menge: "1", notiz: "", auftragId: "", mitarbeiterId: "" })
+  const [form, setForm] = useState({ typ: "ausgang", menge: "1", notiz: "", auftragId: "", mitarbeiterId: "" })
   const [auftraege, setAuftraege] = useState<AuftragOption[]>([])
   const [mitarbeiter, setMitarbeiter] = useState<MitarbeiterOption[]>([])
 
@@ -243,10 +243,11 @@ function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onC
             <label className="block text-xs text-zinc-400 mb-1">Typ</label>
             <select value={form.typ} onChange={e => setForm(f => ({ ...f, typ: e.target.value }))}
               className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
-              <option value="eingang">Eingang (+)</option>
-              <option value="ausgang">Ausgang (-)</option>
-              <option value="korrektur">Korrektur</option>
-              <option value="zuweisung">Zuweisung</option>
+              <option value="ausgang">Ausgabe (-)</option>
+              <option value="reserve">Reserve (−, mit Rückgabe)</option>
+              <option value="rueckgabe">Rückgabe (+)</option>
+              <option value="eingang">Eingang/Nachbestellung (+)</option>
+              <option value="korrektur">Korrektur/Inventur (+)</option>
             </select>
           </div>
           <div>
