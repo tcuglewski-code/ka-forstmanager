@@ -55,6 +55,9 @@ model Mitarbeiter {
   notizen           String?
   vollkostenSatz    Float?                     // Überschreibt vollkosten_pro_stunde (Sprint Q)
   maschinenbonusIndividuell Float?             // Überschreibt maschinenbonus_mitarbeiter (Sprint Q)
+  notfallName       String?                    // Notfallkontakt Name (Sprint U)
+  notfallTelefon    String?                    // Notfallkontakt Telefon (Sprint U)
+  notfallBeziehung  String?                    // Notfallkontakt Beziehung z.B. Partner, Mutter (Sprint U)
   createdAt         DateTime                   @default(now())
   updatedAt         DateTime                   @updatedAt
   user              User?                      @relation(fields: [userId], references: [id])
@@ -134,6 +137,9 @@ model Auftrag {
   startDatum        DateTime?
   endDatum          DateTime?
   wpErstelltAm      DateTime?        // Erstellungsdatum aus WP (ka_angelegt Unix-Timestamp)
+  lat               Float?           // GPS-Koordinate Breitengrad (Sprint U)
+  lng               Float?           // GPS-Koordinate Längengrad (Sprint U)
+  plusCode          String?          // Google Plus Code für Forststandorte (Sprint U)
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   saison            Saison?          @relation(fields: [saisonId], references: [id], onDelete: SetNull)

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { BarChart3, Download, Loader2, TreePine, Users, Package } from "lucide-react"
+import { BarChart3, Download, Loader2, TreePine, Users, Package, FileText } from "lucide-react"
 
 interface Saison { id: string; name: string }
 interface SaisonReport {
@@ -261,6 +261,31 @@ export default function ReportsPage() {
           )}
         </div>
       )}
+
+      {/* DATEV-Export */}
+      <div className="mt-8 bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <FileText className="w-4 h-4 text-zinc-500" />
+          <h3 className="text-sm font-semibold text-zinc-300">DATEV-Export (Steuerberater)</h3>
+        </div>
+        <div className="flex gap-3 flex-wrap">
+          <a
+            href="/api/export/datev-rechnungen"
+            className="flex items-center gap-2 px-4 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-zinc-400 hover:text-white hover:border-zinc-600 transition-all"
+          >
+            <Download className="w-4 h-4" /> Rechnungen DATEV CSV
+          </a>
+          <a
+            href="/api/export/datev-lohn"
+            className="flex items-center gap-2 px-4 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-zinc-400 hover:text-white hover:border-zinc-600 transition-all"
+          >
+            <Download className="w-4 h-4" /> Lohnabrechnungen DATEV CSV
+          </a>
+        </div>
+        <p className="text-xs text-zinc-600 mt-3">
+          Rechnungen-Export im DATEV-Buchungsstapel-Format (CSV). Lohnexport enthält alle Lohnabrechnungen.
+        </p>
+      </div>
 
       {/* Lager Report */}
       {activeReport === "lager" && (

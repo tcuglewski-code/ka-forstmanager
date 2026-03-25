@@ -35,6 +35,7 @@ import { cn } from "@/lib/utils"
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/auftraege", label: "Aufträge", icon: ClipboardList },
+  { href: "/angebote", label: "Angebote", icon: FileText },
   { href: "/saisons", label: "Saisons", icon: Calendar },
   { href: "/mitarbeiter", label: "Mitarbeiter", icon: Users },
   { href: "/gruppen", label: "Gruppen", icon: UsersRound },
@@ -52,6 +53,7 @@ const navItems = [
   { href: "/kontakte", label: "Kontakte", icon: MapPin },
   { href: "/wissensbank", label: "Wissensbank", icon: BookOpen },
   { href: "/reports", label: "Reports", icon: BarChart3 },
+  { href: "/jahresuebersicht", label: "Jahresübersicht", icon: BarChart3 },
   { href: "/einstellungen", label: "Einstellungen", icon: Settings },
 ]
 
