@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Plus, Users, ChevronRight, Crown } from "lucide-react"
+import { Plus, Users, ChevronRight, Crown, Trash2 } from "lucide-react"
 import Link from "next/link"
+import { toast } from "sonner"
 import { GruppeModal } from "@/components/gruppen/GruppeModal"
 
 interface GruppeMitglied {
@@ -24,6 +25,7 @@ export default function GruppenPage() {
   const [gruppen, setGruppen] = useState<Gruppe[]>([])
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState<{ open: boolean; gruppe?: Gruppe | null }>({ open: false })
+  const [deleting, setDeleting] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -33,6 +35,21 @@ export default function GruppenPage() {
   }, [])
 
   useEffect(() => { load() }, [load])
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Gruppe "${name}" wirklich löschen?`)) return
+    setDeleting(id)
+    try {
+      const res = await fetch(`/api/gruppen/${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error()
+      toast.success(`Gruppe "${name}" gelöscht`)
+      load()
+    } catch {
+      toast.error('Fehler beim Löschen')
+    } finally {
+      setDeleting(null)
+    }
+  }
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -122,6 +139,14 @@ export default function GruppenPage() {
                   className="px-3 py-1.5 rounded-lg bg-[#1e1e1e] text-zinc-400 hover:text-white text-xs transition-all"
                 >
                   Bearbeiten
+                </button>
+                <button
+                  onClick={() => handleDelete(g.id, g.name)}
+                  disabled={deleting === g.id}
+                  className="px-3 py-1.5 rounded-lg bg-[#1e1e1e] text-red-500 hover:text-red-400 hover:bg-red-500/10 text-xs transition-all disabled:opacity-50"
+                  title="Gruppe löschen"
+                >
+                  {deleting === g.id ? '…' : <Trash2 className="w-3.5 h-3.5" />}
                 </button>
               </div>
             </div>

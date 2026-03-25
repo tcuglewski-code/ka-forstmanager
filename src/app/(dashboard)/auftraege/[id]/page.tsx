@@ -17,6 +17,18 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 interface Saison { id: string; name: string }
 interface Gruppe { id: string; name: string }
 
+interface FlaecheItem {
+  ha?: string | number
+  plz?: string
+  ort?: string
+  forstamt?: string
+  revier?: string
+  pflanzverband?: string
+  abstand_p?: string
+  abstand_r?: string
+  stueckzahl?: number
+}
+
 interface MaterialBewegung {
   id: string
   typ: string
@@ -177,11 +189,40 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
       <div>
         <p className="text-xs text-zinc-500 mb-2 font-medium">Standort</p>
         <Grid2>
-          <Field label="Forstamt" value={w.flaeche_forstamt} />
-          <Field label="Revier" value={w.flaeche_revier} />
-          <Field label="PLZ" value={w.flaeche_plz} />
-          <Field label="Ort" value={w.flaeche_ort} />
-          {w.flaechen_str && <div className="col-span-2"><Field label="Fläche" value={w.flaechen_str} /></div>}
+          {Array.isArray(w.flaechen) && w.flaechen.length > 0 ? (
+            <div className="col-span-2 space-y-2">
+              <p className="text-xs text-zinc-500 font-semibold uppercase tracking-wide">
+                {w.flaechen.length} Fläche{w.flaechen.length > 1 ? "n" : ""}
+              </p>
+              {(w.flaechen as FlaecheItem[]).map((fl, i) => (
+                <div key={i} className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-3 space-y-1">
+                  <p className="text-xs font-semibold text-zinc-200">
+                    Fläche {i + 1} — {fl.ha} ha
+                  </p>
+                  {(fl.plz || fl.ort) && (
+                    <Field label="PLZ / Ort" value={`${fl.plz ?? ''} ${fl.ort ?? ''}`.trim()} />
+                  )}
+                  {fl.forstamt && (
+                    <Field label="Forstamt / Revier" value={`${fl.forstamt}${fl.revier ? ' / ' + fl.revier : ''}`} />
+                  )}
+                  {fl.pflanzverband && (
+                    <Field label="Pflanzverband" value={`${fl.abstand_p ?? '2.0'} × ${fl.abstand_r ?? '2.0'} m (${fl.pflanzverband})`} />
+                  )}
+                  {(fl.stueckzahl ?? 0) > 0 && (
+                    <Field label="Stückzahl" value={`≈ ${(fl.stueckzahl as number).toLocaleString('de-DE')} Pflanzen`} />
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              <Field label="Forstamt" value={w.flaeche_forstamt} />
+              <Field label="Revier" value={w.flaeche_revier} />
+              <Field label="PLZ" value={w.flaeche_plz} />
+              <Field label="Ort" value={w.flaeche_ort} />
+              {w.flaechen_str && <div className="col-span-2"><Field label="Fläche" value={w.flaechen_str} /></div>}
+            </>
+          )}
         </Grid2>
       </div>
 

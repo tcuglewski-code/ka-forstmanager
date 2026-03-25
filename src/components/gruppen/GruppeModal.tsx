@@ -32,9 +32,11 @@ export function GruppeModal({
     fetch("/api/mitarbeiter")
       .then(r => r.json())
       .then((all: Mitarbeiter[]) => {
-        const gf = all.filter(m =>
-          m.rolle === "gruppenführer" || m.rolle === "gf" || m.rolle === "gruppenf%C3%BChrer"
-        )
+        const GF_ROLES = ["gruppenführer", "gf", "gruppenf\u00fchrer"]
+        const gf = all.filter(m => {
+          const r = (m.rolle ?? '').toLowerCase().trim()
+          return GF_ROLES.includes(r) || GF_ROLES.includes(decodeURIComponent(r))
+        })
         // If no Gruppenführer found, show all (fallback)
         setMitarbeiter(gf.length > 0 ? gf : all)
       })
@@ -66,7 +68,13 @@ export function GruppeModal({
     const url = gruppe?.id ? `/api/gruppen/${gruppe.id}` : "/api/gruppen"
     const method = gruppe?.id ? "PATCH" : "POST"
     try {
-      await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+      const data = await res.json()
+      if (!res.ok) {
+        toast.error(data.error || "Fehler beim Speichern")
+        setLoading(false)
+        return
+      }
       if (gruppe?.id) {
         toast.success("Gruppe aktualisiert")
       } else {
@@ -75,6 +83,8 @@ export function GruppeModal({
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Unbekannter Fehler"
       toast.error("Fehler: " + msg)
+      setLoading(false)
+      return
     }
     setLoading(false)
     onSave()

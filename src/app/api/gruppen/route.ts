@@ -49,6 +49,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "name ist ein Pflichtfeld" }, { status: 400 })
     }
 
+    // 1 GF pro Saison Validierung
+    if (body.gruppenfuehrerId && body.saisonId) {
+      const conflict = await prisma.gruppe.findFirst({
+        where: { gruppenfuehrerId: body.gruppenfuehrerId, saisonId: body.saisonId }
+      })
+      if (conflict) {
+        return NextResponse.json({ error: `Dieser Gruppenführer leitet in dieser Saison bereits Gruppe "${conflict.name}"` }, { status: 409 })
+      }
+    }
+
     const gruppe = await prisma.gruppe.create({
       data: {
         name: body.name,
