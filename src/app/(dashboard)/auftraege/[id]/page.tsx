@@ -709,6 +709,15 @@ export default function AuftragDetailPage() {
             <p className="text-zinc-500 text-xs">Erstellt: {new Date(auftrag.createdAt).toLocaleDateString("de-DE")}</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            {/* Arbeitsanweisung drucken (Sprint V) */}
+            <a
+              href={`/auftraege/${auftrag.id}/arbeitsanweisung`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 px-4 py-2 border border-zinc-600 text-zinc-400 rounded-lg text-sm hover:border-zinc-400 hover:text-white transition-colors"
+            >
+              🖨️ Arbeitsanweisung
+            </a>
             {auftrag.status === "anfrage" && (
               <button
                 onClick={async () => {
