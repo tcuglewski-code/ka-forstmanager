@@ -7,11 +7,8 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 
-const WP_API_URL =
-  "https://peru-otter-113714.hostingersite.com/wp-json/wp/v2/ka_projekt"
-const WP_USER = process.env.WP_USER ?? "openclaw"
-const WP_PASS = process.env.WP_PASSWORD ?? ""
-const WP_AUTH = Buffer.from(`${WP_USER}:${WP_PASS}`).toString("base64")
+const WP_CLEANUP_URL = "https://peru-otter-113714.hostingersite.com/wp-json/ka/v1/wp-projekt"
+const WP_FM_SECRET = process.env.WP_FM_SECRET ?? "ka-forstmanager-sync-2026"
 
 export async function POST() {
   const session = await auth()
@@ -29,23 +26,29 @@ export async function POST() {
     let failed = 0
     const errors: { id: string; status: number }[] = []
 
-    for (const wpId of blockedWpIds) {
+    // Bulk-Delete via Custom Endpoint (batches of 20)
+    const BATCH_SIZE = 20
+    for (let i = 0; i < blockedWpIds.length; i += BATCH_SIZE) {
+      const batch = blockedWpIds.slice(i, i + BATCH_SIZE)
       try {
-        const res = await fetch(`${WP_API_URL}/${wpId}?force=true`, {
-          method: "DELETE",
-          headers: { Authorization: `Basic ${WP_AUTH}` },
+        const res = await fetch(`${WP_CLEANUP_URL}/bulk-delete`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-FM-Secret": WP_FM_SECRET,
+          },
+          body: JSON.stringify({ ids: batch }),
         })
-        if (res.ok || res.status === 404) {
-          // 404 = already gone, that's fine
-          deleted++
+        if (res.ok) {
+          const data = await res.json() as { deleted: number; not_found: number }
+          deleted += data.deleted + (data.not_found ?? 0) // not_found = already gone
         } else {
-          failed++
-          errors.push({ id: wpId, status: res.status })
-          console.warn(`[cleanup-wp] WP-Post ${wpId} → ${res.status}`)
+          failed += batch.length
+          errors.push(...batch.map(id => ({ id, status: res.status })))
         }
       } catch (err) {
-        failed++
-        console.warn(`[cleanup-wp] WP-Post ${wpId} Fehler:`, err)
+        failed += batch.length
+        console.warn(`[cleanup-wp] Batch ${i}-${i + BATCH_SIZE} Fehler:`, err)
       }
     }
 
