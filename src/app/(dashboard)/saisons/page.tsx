@@ -142,6 +142,25 @@ export default function SaisonsPage() {
     }
   }
 
+  const handleAbschliessen = async (saison: Saison) => {
+    if (!confirm(`Saison "${saison.name}" wirklich abschließen? Dies kann nicht rückgängig gemacht werden.`)) return
+    try {
+      const r = await fetch(`/api/saisons/${saison.id}/abschliessen`, { method: "POST" })
+      const data = await r.json()
+      if (!r.ok) {
+        toast.error(data.error ?? "Fehler beim Abschließen")
+        return
+      }
+      toast.success(
+        `Saison abgeschlossen: ${data.report.auftraege} Aufträge · ${data.report.gesamtStunden.toFixed(1)}h · ${data.report.gesamtUmsatz.toFixed(2)} € Umsatz`
+      )
+      await fetchSaisons()
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Unbekannter Fehler"
+      toast.error("Fehler: " + msg)
+    }
+  }
+
   return (
     <div className="max-w-6xl mx-auto">
       {/* Header */}
@@ -214,7 +233,7 @@ export default function SaisonsPage() {
                 <p className="text-xs text-zinc-500 mb-3 line-clamp-2">{s.beschreibung}</p>
               )}
 
-              <div className="flex gap-2 pt-2 border-t border-[#2a2a2a]">
+              <div className="flex flex-wrap gap-2 pt-2 border-t border-[#2a2a2a]">
                 <button
                   onClick={() => openEdit(s)}
                   className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-white transition-colors px-2 py-1 rounded hover:bg-[#2a2a2a]"
@@ -222,6 +241,14 @@ export default function SaisonsPage() {
                   <Pencil className="w-3 h-3" />
                   Bearbeiten
                 </button>
+                {s.status !== "abgeschlossen" && (
+                  <button
+                    onClick={() => handleAbschliessen(s)}
+                    className="flex items-center gap-1.5 text-xs px-3 py-1 border border-amber-500/40 text-amber-400 rounded-lg hover:bg-amber-500/10 transition-colors"
+                  >
+                    Saison abschließen
+                  </button>
+                )}
                 <button
                   onClick={() => handleDelete(s.id)}
                   disabled={deleting === s.id}

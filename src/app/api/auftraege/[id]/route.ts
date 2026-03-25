@@ -27,6 +27,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const { id } = await params
     const body = await req.json()
 
+    // Vorherigen Status laden für Audit-Log
+    const auftragVorher = body.status
+      ? await prisma.auftrag.findUnique({ where: { id }, select: { status: true } })
+      : null
+
     // Build update data, only include fields that are present in the body
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: Record<string, any> = {}
@@ -62,6 +67,20 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         gruppe: { select: { id: true, name: true } },
       },
     })
+
+    // Audit-Log: Status-Änderung protokollieren
+    if (body.status && auftragVorher && body.status !== auftragVorher.status) {
+      await prisma.auftragLog.create({
+        data: {
+          auftragId: id,
+          aktion: "status_geaendert",
+          von: auftragVorher.status ?? null,
+          nach: body.status,
+          userId: (session?.user as { id?: string })?.id ?? null,
+        },
+      }).catch(() => {}) // Silent fail — Log ist nicht kritisch
+    }
+
     return NextResponse.json(auftrag)
   } catch (error) {
     console.error("[Auftraege PATCH]", error)

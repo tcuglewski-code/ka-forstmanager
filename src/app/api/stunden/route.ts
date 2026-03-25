@@ -28,7 +28,10 @@ export async function GET(req: NextRequest) {
   const [data, total] = await Promise.all([
     prisma.stundeneintrag.findMany({
       where,
-      include: { mitarbeiter: { select: { id: true, vorname: true, nachname: true } } },
+      include: {
+        mitarbeiter: { select: { id: true, vorname: true, nachname: true } },
+        auftrag: { select: { id: true, titel: true, typ: true } },
+      },
       orderBy: { datum: "desc" },
       take,
       skip,
@@ -77,7 +80,10 @@ export async function POST(req: NextRequest) {
       stundenlohn: body.stundenlohn != null ? parseFloat(body.stundenlohn) : null,
       maschinenzuschlag: body.maschinenzuschlag != null ? parseFloat(body.maschinenzuschlag) : null,
     },
-    include: { mitarbeiter: { select: { id: true, vorname: true, nachname: true } } },
+    include: {
+      mitarbeiter: { select: { id: true, vorname: true, nachname: true } },
+      auftrag: { select: { id: true, titel: true, typ: true } },
+    },
   })
   return NextResponse.json(entry, { status: 201 })
 }

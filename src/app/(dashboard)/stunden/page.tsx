@@ -3,6 +3,12 @@
 import { useState, useEffect, useCallback } from "react"
 import { Clock, Plus, Loader2, Check, X, Download } from "lucide-react"
 
+interface Auftrag {
+  id: string
+  titel: string
+  typ: string
+}
+
 interface Stundeneintrag {
   id: string
   datum: string
@@ -10,6 +16,8 @@ interface Stundeneintrag {
   typ: string
   genehmigt: boolean
   notiz?: string | null
+  auftragId?: string | null
+  auftrag?: { id: string; titel: string; typ: string } | null
   mitarbeiter: { id: string; vorname: string; nachname: string }
 }
 
@@ -34,14 +42,14 @@ function exportStundenCSV(stunden: Stundeneintrag[], filename: string) {
     alert("Keine Daten zum Exportieren")
     return
   }
-  // UTF-8 BOM für Excel
   const BOM = "\uFEFF"
-  const headers = ["Mitarbeiter", "Datum", "Stunden", "Typ", "Notiz"]
+  const headers = ["Mitarbeiter", "Datum", "Stunden", "Tätigkeit", "Auftrag", "Notiz"]
   const rows = stunden.map(s => [
     `${s.mitarbeiter?.vorname || ""} ${s.mitarbeiter?.nachname || ""}`.trim(),
     s.datum ? new Date(s.datum).toLocaleDateString("de-DE") : "",
     s.stunden ?? "",
-    s.typ || "",
+    typLabel[s.typ] ?? s.typ,
+    s.auftrag?.titel ?? "",
     s.notiz || ""
   ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(";"))
 
@@ -58,7 +66,12 @@ function exportStundenCSV(stunden: Stundeneintrag[], filename: string) {
 }
 
 const typLabel: Record<string, string> = {
-  arbeit: "Arbeit",
+  arbeit: "Allgemeine Arbeit",
+  pflanzung: "Pflanzung",
+  einschlag: "Einschlag",
+  freischneider: "Freischneider (Maschine)",
+  pflege: "Bestandespflege",
+  transport: "Transport",
   ueberstunden: "Überstunden",
   urlaub: "Urlaub",
   krank: "Krank",
@@ -73,11 +86,14 @@ const abwTypLabel: Record<string, string> = {
   sonstiges: "Sonstiges",
 }
 
+const MASCHINENZUSCHLAG_DEFAULT = 1 // €/h Standard aus SystemConfig
+
 export default function StundenPage() {
   const [tab, setTab] = useState<"stunden" | "abwesenheiten">("stunden")
   const [stunden, setStunden] = useState<Stundeneintrag[]>([])
   const [abwesenheiten, setAbwesenheiten] = useState<Abwesenheit[]>([])
   const [mitarbeiter, setMitarbeiter] = useState<Mitarbeiter[]>([])
+  const [auftraege, setAuftraege] = useState<Auftrag[]>([])
   const [loading, setLoading] = useState(true)
   const [filterMitarbeiter, setFilterMitarbeiter] = useState("")
   const [filterMonat, setFilterMonat] = useState(String(new Date().getMonth() + 1))
@@ -85,7 +101,6 @@ export default function StundenPage() {
   const [filterGenehmigt, setFilterGenehmigt] = useState("")
   const [urlParamsLoaded, setUrlParamsLoaded] = useState(false)
 
-  // URL-Parameter beim ersten Laden auslesen (B1: mitarbeiterId, B4: genehmigt)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const maId = params.get("mitarbeiterId")
@@ -93,16 +108,24 @@ export default function StundenPage() {
     if (maId) setFilterMitarbeiter(maId)
     if (genehmigtParam !== null && genehmigtParam !== "") {
       setFilterGenehmigt(genehmigtParam)
-      // Kein Monatsfilter wenn vom Dashboard mit genehmigt-Param aufgerufen — zeige alle Monate
       setFilterMonat("")
       setFilterJahr("")
     }
     setUrlParamsLoaded(true)
   }, [])
+
   const [showModal, setShowModal] = useState(false)
   const [showAbwModal, setShowAbwModal] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [stundenForm, setStundenForm] = useState({ mitarbeiterId: "", datum: new Date().toISOString().split("T")[0], stunden: "", typ: "arbeit", notiz: "" })
+  const [stundenForm, setStundenForm] = useState({
+    mitarbeiterId: "",
+    datum: new Date().toISOString().split("T")[0],
+    stunden: "",
+    typ: "arbeit",
+    auftragId: "",
+    notiz: "",
+    maschinenzuschlag: "",
+  })
   const [abwForm, setAbwForm] = useState({ mitarbeiterId: "", von: "", bis: "", typ: "urlaub", notiz: "" })
 
   const fetchAll = useCallback(async () => {
@@ -112,18 +135,29 @@ export default function StundenPage() {
     if (filterMonat) params.set("monat", filterMonat)
     if (filterJahr) params.set("jahr", filterJahr)
     if (filterGenehmigt) params.set("genehmigt", filterGenehmigt)
-    const [s, a, m] = await Promise.all([
+    const [s, a, m, au] = await Promise.all([
       fetch(`/api/stunden?${params}`).then((r) => r.json()),
       fetch("/api/abwesenheiten").then((r) => r.json()),
       fetch("/api/mitarbeiter").then((r) => r.json()),
+      fetch("/api/auftraege?limit=200").then((r) => r.json()),
     ])
     setStunden(Array.isArray(s) ? s : [])
     setAbwesenheiten(Array.isArray(a) ? a : [])
     setMitarbeiter(Array.isArray(m) ? m : [])
+    setAuftraege(Array.isArray(au) ? au : (Array.isArray(au?.data) ? au.data : []))
     setLoading(false)
   }, [filterMitarbeiter, filterMonat, filterJahr, filterGenehmigt])
 
   useEffect(() => { if (urlParamsLoaded) fetchAll() }, [fetchAll, urlParamsLoaded])
+
+  // Beim Typ-Wechsel auf "freischneider" Maschinenzuschlag vorausfüllen
+  function handleTypChange(typ: string) {
+    setStundenForm(prev => ({
+      ...prev,
+      typ,
+      maschinenzuschlag: typ === "freischneider" ? String(MASCHINENZUSCHLAG_DEFAULT) : prev.maschinenzuschlag,
+    }))
+  }
 
   async function toggleGenehmigt(id: string, current: boolean) {
     await fetch(`/api/stunden/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ genehmigt: !current }) })
@@ -137,9 +171,14 @@ export default function StundenPage() {
 
   async function saveStunden() {
     setSaving(true)
-    await fetch("/api/stunden", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(stundenForm) })
+    const payload = {
+      ...stundenForm,
+      auftragId: stundenForm.auftragId || null,
+      maschinenzuschlag: stundenForm.maschinenzuschlag ? parseFloat(stundenForm.maschinenzuschlag) : null,
+    }
+    await fetch("/api/stunden", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
     setShowModal(false)
-    setStundenForm({ mitarbeiterId: "", datum: new Date().toISOString().split("T")[0], stunden: "", typ: "arbeit", notiz: "" })
+    setStundenForm({ mitarbeiterId: "", datum: new Date().toISOString().split("T")[0], stunden: "", typ: "arbeit", auftragId: "", notiz: "", maschinenzuschlag: "" })
     await fetchAll()
     setSaving(false)
   }
@@ -160,6 +199,14 @@ export default function StundenPage() {
     if (!stundenProMitarbeiter[key]) stundenProMitarbeiter[key] = { name: `${s.mitarbeiter.vorname} ${s.mitarbeiter.nachname}`, summe: 0 }
     stundenProMitarbeiter[key].summe += s.stunden
   }
+
+  // Tages-Gruppierung
+  const nachDatum = stunden.reduce((acc, e) => {
+    const datum = new Date(e.datum).toLocaleDateString("de-DE")
+    if (!acc[datum]) acc[datum] = []
+    acc[datum].push(e)
+    return acc
+  }, {} as Record<string, typeof stunden>)
 
   const jahre = [2023, 2024, 2025, 2026, 2027]
 
@@ -208,11 +255,13 @@ export default function StundenPage() {
               {mitarbeiter.map((m) => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
             </select>
             <select value={filterMonat} onChange={(e) => setFilterMonat(e.target.value)} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white">
+              <option value="">Alle Monate</option>
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                 <option key={m} value={m}>{new Date(2024, m - 1).toLocaleString("de-DE", { month: "long" })}</option>
               ))}
             </select>
             <select value={filterJahr} onChange={(e) => setFilterJahr(e.target.value)} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white">
+              <option value="">Alle Jahre</option>
               {jahre.map((y) => <option key={y} value={y}>{y}</option>)}
             </select>
             <select value={filterGenehmigt} onChange={(e) => setFilterGenehmigt(e.target.value)} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white">
@@ -236,38 +285,75 @@ export default function StundenPage() {
 
           {loading ? (
             <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
+          ) : stunden.length === 0 ? (
+            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl px-6 py-12 text-center text-zinc-600">
+              Keine Einträge
+            </div>
           ) : (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-[#2a2a2a]">
-                    <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Mitarbeiter</th>
-                    <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Datum</th>
-                    <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Stunden</th>
-                    <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Typ</th>
-                    <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Notiz</th>
-                    <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Genehmigt</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#2a2a2a]">
-                  {stunden.length === 0 ? (
-                    <tr><td colSpan={6} className="px-6 py-12 text-center text-zinc-600">Keine Einträge</td></tr>
-                  ) : stunden.map((s) => (
-                    <tr key={s.id} className="hover:bg-[#1c1c1c]">
-                      <td className="px-6 py-4 text-sm text-white">{s.mitarbeiter.vorname} {s.mitarbeiter.nachname}</td>
-                      <td className="px-6 py-4 text-sm text-zinc-400">{new Date(s.datum).toLocaleDateString("de-DE")}</td>
-                      <td className="px-6 py-4 text-sm font-medium text-emerald-400">{s.stunden} h</td>
-                      <td className="px-6 py-4 text-sm text-zinc-400">{typLabel[s.typ] ?? s.typ}</td>
-                      <td className="px-6 py-4 text-sm text-zinc-500">{s.notiz ?? "—"}</td>
-                      <td className="px-6 py-4">
-                        <button onClick={() => toggleGenehmigt(s.id, s.genehmigt)} className={`w-8 h-5 rounded-full transition-all ${s.genehmigt ? "bg-emerald-500" : "bg-zinc-700"}`}>
-                          <span className={`block w-3 h-3 rounded-full bg-white mx-auto transition-transform ${s.genehmigt ? "" : ""}`} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="space-y-4">
+              {Object.entries(nachDatum)
+                .sort(([a], [b]) => {
+                  // DE-Datum "TT.MM.JJJJ" → sortierbar umwandeln
+                  const parseDE = (d: string) => {
+                    const [t, m, j] = d.split(".")
+                    return `${j}-${m}-${t}`
+                  }
+                  return parseDE(b).localeCompare(parseDE(a))
+                })
+                .map(([datum, eintraege]) => (
+                  <div key={datum}>
+                    {/* Tages-Header */}
+                    <div className="flex items-center gap-3 mb-2 px-2">
+                      <span className="text-sm font-medium text-zinc-300">{datum}</span>
+                      <span className="text-xs text-zinc-600">
+                        {eintraege.reduce((s, e) => s + (e.stunden ?? 0), 0).toFixed(1)}h gesamt
+                        {eintraege.length > 1 && ` · ${eintraege.length} Einträge`}
+                      </span>
+                    </div>
+                    {/* Einträge des Tages */}
+                    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-[#2a2a2a]">
+                            <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">Mitarbeiter</th>
+                            <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">Stunden</th>
+                            <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">Tätigkeit</th>
+                            <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">Auftrag</th>
+                            <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">Notiz</th>
+                            <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">✓</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[#2a2a2a]">
+                          {eintraege.map((s) => (
+                            <tr key={s.id} className="hover:bg-[#1c1c1c]">
+                              <td className="px-4 py-3 text-sm text-white">{s.mitarbeiter.vorname} {s.mitarbeiter.nachname}</td>
+                              <td className="px-4 py-3 text-sm font-medium text-emerald-400">{s.stunden} h</td>
+                              <td className="px-4 py-3 text-sm text-zinc-400">{typLabel[s.typ] ?? s.typ}</td>
+                              <td className="px-4 py-3 text-sm text-zinc-400">
+                                {s.auftrag ? (
+                                  <a
+                                    href={`/auftraege/${s.auftragId}`}
+                                    className="text-xs text-blue-400 hover:underline truncate max-w-[150px] block"
+                                  >
+                                    {s.auftrag.titel ?? s.auftragId}
+                                  </a>
+                                ) : (
+                                  <span className="text-zinc-600">—</span>
+                                )}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-zinc-500">{s.notiz ?? "—"}</td>
+                              <td className="px-4 py-3">
+                                <button onClick={() => toggleGenehmigt(s.id, s.genehmigt)} className={`w-8 h-5 rounded-full transition-all ${s.genehmigt ? "bg-emerald-500" : "bg-zinc-700"}`}>
+                                  <span className="block w-3 h-3 rounded-full bg-white mx-auto" />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ))}
             </div>
           )}
         </>
@@ -329,11 +415,11 @@ export default function StundenPage() {
       {/* Stunden Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl w-full max-w-md p-6">
+          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
             <h2 className="text-lg font-bold text-white mb-4">Stunden buchen</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Mitarbeiter</label>
+                <label className="block text-xs text-zinc-400 mb-1">Mitarbeiter *</label>
                 <select value={stundenForm.mitarbeiterId} onChange={(e) => setStundenForm({ ...stundenForm, mitarbeiterId: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
                   <option value="">— auswählen —</option>
                   {mitarbeiter.map((m) => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
@@ -341,20 +427,53 @@ export default function StundenPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Datum</label>
+                  <label className="block text-xs text-zinc-400 mb-1">Datum *</label>
                   <input type="date" value={stundenForm.datum} onChange={(e) => setStundenForm({ ...stundenForm, datum: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Stunden</label>
-                  <input type="number" step="0.5" value={stundenForm.stunden} onChange={(e) => setStundenForm({ ...stundenForm, stunden: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
+                  <label className="block text-xs text-zinc-400 mb-1">Stunden *</label>
+                  <input type="number" step="0.5" min="0.5" max="24" value={stundenForm.stunden} onChange={(e) => setStundenForm({ ...stundenForm, stunden: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Typ</label>
-                <select value={stundenForm.typ} onChange={(e) => setStundenForm({ ...stundenForm, typ: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
-                  <option value="arbeit">Arbeit</option>
+                <label className="block text-xs text-zinc-400 mb-1">Tätigkeit</label>
+                <select
+                  value={stundenForm.typ}
+                  onChange={(e) => handleTypChange(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                >
+                  <option value="arbeit">Allgemeine Arbeit</option>
+                  <option value="pflanzung">Pflanzung</option>
+                  <option value="einschlag">Einschlag</option>
+                  <option value="freischneider">Freischneider (Maschine)</option>
+                  <option value="pflege">Bestandespflege</option>
+                  <option value="transport">Transport</option>
                   <option value="ueberstunden">Überstunden</option>
                   <option value="sonstiges">Sonstiges</option>
+                </select>
+              </div>
+              {stundenForm.typ === "freischneider" && (
+                <div>
+                  <label className="block text-xs text-zinc-400 mb-1">Maschinenzuschlag (€/h)</label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    value={stundenForm.maschinenzuschlag}
+                    onChange={(e) => setStundenForm({ ...stundenForm, maschinenzuschlag: e.target.value })}
+                    className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white"
+                    placeholder="1.00"
+                  />
+                </div>
+              )}
+              <div>
+                <label className="block text-xs text-zinc-400 mb-1">Auftrag (optional)</label>
+                <select
+                  value={stundenForm.auftragId}
+                  onChange={(e) => setStundenForm({ ...stundenForm, auftragId: e.target.value })}
+                  className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                >
+                  <option value="">Kein Auftrag</option>
+                  {auftraege.map((a) => <option key={a.id} value={a.id}>{a.titel}</option>)}
                 </select>
               </div>
               <div>
@@ -400,6 +519,7 @@ export default function StundenPage() {
                 <select value={abwForm.typ} onChange={(e) => setAbwForm({ ...abwForm, typ: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
                   <option value="urlaub">Urlaub</option>
                   <option value="krank">Krankheit</option>
+                  <option value="schlechtwetter">Schlechtwetter</option>
                   <option value="sonderurlaub">Sonderurlaub</option>
                   <option value="unbezahlt">Unbezahlt</option>
                   <option value="sonstiges">Sonstiges</option>
