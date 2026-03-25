@@ -393,6 +393,11 @@ function LagerPageInner() {
   const [highlightedId, setHighlightedId] = useState<string | null>(null)
   const highlightRef = useRef<HTMLTableRowElement>(null)
 
+  // Y1: Bulk-Auswahl und Filter-States
+  const [selected, setSelected] = useState<string[]>([])
+  const [filterKategorie, setFilterKategorie] = useState("")
+  const [filterLagerort, setFilterLagerort] = useState("")
+
   const load = useCallback(async () => {
     setLoading(true)
     const res = await fetch("/api/lager")
@@ -404,15 +409,13 @@ function LagerPageInner() {
 
   useEffect(() => {
     load().then((data) => {
-      // Handle ?item=<id> scan link
+      // ?item=<id> via QR-Code öffnen
       if (itemIdFromUrl) {
         setHighlightedId(itemIdFromUrl)
         const found = data.find(a => a.id === itemIdFromUrl)
         if (found) {
-          // Auto-open Buchung modal when scanned via QR
           setBuchungArtikel(found)
         }
-        // Scroll to row after render
         setTimeout(() => {
           highlightRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
         }, 300)
@@ -420,11 +423,40 @@ function LagerPageInner() {
     })
   }, [load, itemIdFromUrl])
 
+  // Y1: Gefilterte Liste
+  const filteredArtikel = artikel.filter(a => {
+    if (filterKategorie && a.kategorie !== filterKategorie) return false
+    if (filterLagerort && !(a.lagerort?.toLowerCase().includes(filterLagerort.toLowerCase()))) return false
+    return true
+  })
+
   const unterMindest = artikel.filter(a => a.bestand < a.mindestbestand).length
+
+  // Y1: Alle eindeutigen Kategorien für Dropdown
+  const kategorien = Array.from(new Set(artikel.map(a => a.kategorie))).sort()
+
+  // Y1: Bulk-Löschen
+  const handleBulkDelete = async () => {
+    if (!confirm(`${selected.length} Artikel wirklich löschen?`)) return
+    const count = selected.length
+    let errors = 0
+    for (const id of selected) {
+      const res = await fetch(`/api/lager/${id}`, { method: "DELETE" })
+      if (!res.ok) errors++
+    }
+    setSelected([])
+    await load()
+    if (errors > 0) {
+      toast.error(`${errors} von ${count} Artikeln konnten nicht gelöscht werden`)
+    } else {
+      toast.success(`${count} Artikel gelöscht`)
+    }
+  }
 
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-2xl font-bold text-white">Lager</h1>
           <p className="text-zinc-500 text-sm mt-0.5">
@@ -441,10 +473,69 @@ function LagerPageInner() {
         </button>
       </div>
 
+      {/* Y1: Filter-Bar */}
+      <div className="flex gap-3 mb-4 flex-wrap">
+        <select
+          value={filterKategorie}
+          onChange={e => setFilterKategorie(e.target.value)}
+          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+        >
+          <option value="">Alle Kategorien</option>
+          {kategorien.map(k => (
+            <option key={k} value={k}>{k}</option>
+          ))}
+        </select>
+        <input
+          type="text"
+          placeholder="Lagerort filtern..."
+          value={filterLagerort}
+          onChange={e => setFilterLagerort(e.target.value)}
+          className="px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 w-48"
+        />
+        {(filterKategorie || filterLagerort) && (
+          <button
+            onClick={() => { setFilterKategorie(""); setFilterLagerort("") }}
+            className="text-xs text-zinc-500 hover:text-white px-2 py-1 rounded hover:bg-[#2a2a2a] transition-colors"
+          >
+            Filter zurücksetzen
+          </button>
+        )}
+      </div>
+
+      {/* Y1: Bulk-Aktionsleiste */}
+      {selected.length > 0 && (
+        <div className="flex items-center gap-3 mb-4 px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-xl">
+          <span className="text-red-400 text-sm font-medium">
+            {selected.length} Artikel ausgewählt
+          </span>
+          <button
+            onClick={handleBulkDelete}
+            className="px-3 py-1.5 bg-red-500/20 border border-red-500/40 rounded-lg text-sm text-red-400 hover:bg-red-500/30 transition-colors"
+          >
+            Löschen
+          </button>
+          <button
+            onClick={() => setSelected([])}
+            className="text-xs text-zinc-500 hover:text-white ml-auto"
+          >
+            Auswahl aufheben
+          </button>
+        </div>
+      )}
+
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-[#2a2a2a]">
+              {/* Y1: Header-Checkbox */}
+              <th className="px-4 py-3 w-10">
+                <input
+                  type="checkbox"
+                  checked={selected.length === filteredArtikel.length && filteredArtikel.length > 0}
+                  onChange={e => setSelected(e.target.checked ? filteredArtikel.map(a => a.id) : [])}
+                  className="rounded border-zinc-600"
+                />
+              </th>
               <th className="text-left px-4 py-3 text-zinc-500 font-medium w-6"></th>
               <th className="text-left px-4 py-3 text-zinc-500 font-medium">Name</th>
               <th className="text-left px-4 py-3 text-zinc-500 font-medium">Kategorie</th>
@@ -456,11 +547,13 @@ function LagerPageInner() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={7} className="text-center py-12 text-zinc-600">Laden...</td></tr>
-            ) : artikel.length === 0 ? (
-              <tr><td colSpan={7} className="text-center py-12 text-zinc-600">Keine Artikel vorhanden</td></tr>
+              <tr><td colSpan={8} className="text-center py-12 text-zinc-600">Laden...</td></tr>
+            ) : filteredArtikel.length === 0 ? (
+              <tr><td colSpan={8} className="text-center py-12 text-zinc-600">
+                {artikel.length === 0 ? "Keine Artikel vorhanden" : "Keine Artikel gefunden"}
+              </td></tr>
             ) : (
-              artikel.map(a => {
+              filteredArtikel.map(a => {
                 const isHighlighted = a.id === highlightedId
                 return (
                   <tr
@@ -472,6 +565,17 @@ function LagerPageInner() {
                         : "hover:bg-[#1c1c1c]"
                     }`}
                   >
+                    {/* Y1: Zeilen-Checkbox */}
+                    <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                      <input
+                        type="checkbox"
+                        checked={selected.includes(a.id)}
+                        onChange={e => setSelected(prev =>
+                          e.target.checked ? [...prev, a.id] : prev.filter(id => id !== a.id)
+                        )}
+                        className="rounded border-zinc-600"
+                      />
+                    </td>
                     <td className="px-4 py-3"><Ampel bestand={a.bestand} mindestbestand={a.mindestbestand} /></td>
                     <td className="px-4 py-3 font-medium">
                       <button
