@@ -95,13 +95,43 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   }
 }
 
+const WP_API_URL = "https://peru-otter-113714.hostingersite.com/wp-json/wp/v2/ka_projekt"
+const WP_USER = process.env.WP_USER ?? "openclaw"
+const WP_PASS = process.env.WP_PASSWORD ?? ""
+const WP_AUTH = Buffer.from(`${WP_USER}:${WP_PASS}`).toString("base64")
+
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
     const { id } = await params
+
+    // wpProjektId holen bevor wir löschen
+    const auftrag = await prisma.auftrag.findUnique({
+      where: { id },
+      select: { wpProjektId: true },
+    })
+
+    // Aus ForstManager DB löschen
     await prisma.auftrag.delete({ where: { id } })
+
+    // WP-Post in den Papierkorb verschieben (damit Sync ihn nicht wieder importiert)
+    if (auftrag?.wpProjektId) {
+      try {
+        await fetch(`${WP_API_URL}/${auftrag.wpProjektId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Basic ${WP_AUTH}`,
+            "Content-Type": "application/json",
+          },
+        })
+      } catch (wpError) {
+        // WP-Löschung ist best-effort — FM-Löschung hat Vorrang
+        console.warn("[Auftraege DELETE] WP-Post konnte nicht gelöscht werden:", wpError)
+      }
+    }
+
     return NextResponse.json({ ok: true })
   } catch (error) {
     console.error("[Auftraege DELETE]", error)
