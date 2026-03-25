@@ -116,6 +116,9 @@ export default function EinstellungenPage() {
             firma_farbe: config.firma_farbe,
             preis_pro_ha: config.preis_pro_ha,
             standard_stundenlohn: config.standard_stundenlohn,
+            vollkosten_pro_stunde: config.vollkosten_pro_stunde,
+            maschinenzuschlag_kunde: config.maschinenzuschlag_kunde,
+            maschinenbonus_mitarbeiter: config.maschinenbonus_mitarbeiter,
           },
         }),
       })
@@ -258,7 +261,7 @@ export default function EinstellungenPage() {
                 </div>
               </div>
 
-              {/* Kalkulations-Einstellungen (Sprint P4) */}
+              {/* Kalkulations-Einstellungen (Sprint Q) */}
               <div className="space-y-4 mt-6 pt-4 border-t border-[#2a2a2a]">
                 <h3 className="text-sm font-semibold text-zinc-300">Kalkulations-Einstellungen</h3>
                 <div className="grid grid-cols-2 gap-4">
@@ -274,7 +277,7 @@ export default function EinstellungenPage() {
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-zinc-500 mb-1 block">Standard-Stundenlohn (€/h)</label>
+                    <label className="text-xs text-zinc-500 mb-1 block">Standard-Nettolohn MA (€/h)</label>
                     <input
                       type="number"
                       step="0.50"
@@ -284,7 +287,41 @@ export default function EinstellungenPage() {
                       className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
                     />
                   </div>
+                  <div>
+                    <label className="text-xs text-zinc-500 mb-1 block">Vollkosten pro Stunde (€) — Kundenpreis</label>
+                    <input
+                      type="number"
+                      step="0.50"
+                      min="0"
+                      value={config.vollkosten_pro_stunde ?? "43.50"}
+                      onChange={(e) => setConfig(prev => ({ ...prev, vollkosten_pro_stunde: e.target.value }))}
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-zinc-500 mb-1 block">Maschinenzuschlag Kunde (€/h)</label>
+                    <input
+                      type="number"
+                      step="0.50"
+                      min="0"
+                      value={config.maschinenzuschlag_kunde ?? "6.00"}
+                      onChange={(e) => setConfig(prev => ({ ...prev, maschinenzuschlag_kunde: e.target.value }))}
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-zinc-500 mb-1 block">Maschinenbonus Mitarbeiter (€/h)</label>
+                    <input
+                      type="number"
+                      step="0.50"
+                      min="0"
+                      value={config.maschinenbonus_mitarbeiter ?? "1.00"}
+                      onChange={(e) => setConfig(prev => ({ ...prev, maschinenbonus_mitarbeiter: e.target.value }))}
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                    />
+                  </div>
                 </div>
+                <p className="text-xs text-zinc-600">💡 Vollkosten = Lohn + Steuern + Versicherung — wird dem Kunden in Rechnung gestellt.</p>
               </div>
 
               <button
@@ -357,7 +394,9 @@ export default function EinstellungenPage() {
                 <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
                   <option value="admin">Admin</option>
                   <option value="buero">Büro</option>
-                  <option value="gruppenfuehrer">Gruppenführer</option>
+                  <option value="gf_senior">🏅 Senior-Gruppenführer</option>
+                  <option value="gf_standard">👷 Gruppenführer</option>
+                  <option value="gruppenfuehrer">Gruppenführer (alt)</option>
                   <option value="mitarbeiter">Mitarbeiter</option>
                 </select>
               </div>
@@ -396,7 +435,9 @@ export default function EinstellungenPage() {
                   <select value={editForm.role} onChange={(e) => setEditForm({ ...editForm, role: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
                     <option value="admin">Admin</option>
                     <option value="buero">Büro</option>
-                    <option value="gruppenfuehrer">Gruppenführer</option>
+                    <option value="gf_senior">🏅 Senior-Gruppenführer</option>
+                    <option value="gf_standard">👷 Gruppenführer</option>
+                    <option value="gruppenfuehrer">Gruppenführer (alt)</option>
                     <option value="mitarbeiter">Mitarbeiter</option>
                   </select>
                 </div>

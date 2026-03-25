@@ -3,6 +3,24 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 
 export async function GET() {
+  // Standard-Werte (Sprint Q): werden angelegt falls noch nicht in DB
+  const defaults: Record<string, string> = {
+    vollkosten_pro_stunde: "43.50",      // Was der Kunde zahlt (Lohn + Steuern + Versicherung)
+    maschinenzuschlag_kunde: "6.00",     // Aufpreis Maschine für Kunden
+    maschinenbonus_mitarbeiter: "1.00",  // Extra für MA bei Maschineneinsatz
+    standard_stundenlohn: "12.00",       // MA-Nettolohn (intern)
+    preis_pro_ha: "1800",
+  }
+
+  // Upsert: nur anlegen falls nicht vorhanden
+  for (const [key, value] of Object.entries(defaults)) {
+    await prisma.systemConfig.upsert({
+      where: { key },
+      update: {},           // nichts überschreiben falls schon gesetzt
+      create: { key, value },
+    })
+  }
+
   const configs = await prisma.systemConfig.findMany()
   const result: Record<string, string> = {}
   for (const c of configs) result[c.key] = c.value

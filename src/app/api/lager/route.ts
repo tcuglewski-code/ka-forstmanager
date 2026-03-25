@@ -29,6 +29,21 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json()
+
+    // Sprint Q: Auto-Artikelnummer generieren falls nicht angegeben
+    let artikelnummer = body.artikelnummer?.trim() || null
+    if (!artikelnummer) {
+      const lastArtikel = await prisma.lagerArtikel.findFirst({
+        orderBy: { createdAt: "desc" },
+        where: { artikelnummer: { not: null } },
+        select: { artikelnummer: true },
+      })
+      const lastNum = lastArtikel?.artikelnummer
+        ? parseInt(lastArtikel.artikelnummer.replace(/\D/g, "")) || 0
+        : 0
+      artikelnummer = `ART-${String(lastNum + 1).padStart(3, "0")}`
+    }
+
     const artikel = await prisma.lagerArtikel.create({
       data: {
         name: body.name,
@@ -37,7 +52,7 @@ export async function POST(req: NextRequest) {
         bestand: body.bestand ? parseFloat(body.bestand) : 0,
         mindestbestand: body.mindestbestand ? parseFloat(body.mindestbestand) : 0,
         lagerort: body.lagerort ?? null,
-        artikelnummer: body.artikelnummer ?? null,
+        artikelnummer,
       },
     })
     return NextResponse.json(artikel, { status: 201 })

@@ -8,10 +8,26 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
   const { id } = await params
 
-  // Stunden für diesen Auftrag
+  // SystemConfig laden (Sprint Q: vollkosten-Modell)
+  const configs = await prisma.systemConfig.findMany()
+  const configMap: Record<string, string> = {}
+  for (const c of configs) configMap[c.key] = c.value
+  const vollkosten = parseFloat(configMap.vollkosten_pro_stunde ?? "43.50")
+  const maschinenkundenzuschlag = parseFloat(configMap.maschinenzuschlag_kunde ?? "6.00")
+
+  // Stunden für diesen Auftrag (inkl. individuellem vollkostenSatz)
   const stunden = await prisma.stundeneintrag.findMany({
     where: { auftragId: id },
-    include: { mitarbeiter: { select: { stundenlohn: true, vorname: true, nachname: true } } }
+    include: {
+      mitarbeiter: {
+        select: {
+          stundenlohn: true,
+          vorname: true,
+          nachname: true,
+          vollkostenSatz: true,  // Sprint Q: individueller Override
+        }
+      }
+    }
   })
 
   // Rechnungen für diesen Auftrag
@@ -30,22 +46,26 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   let lohnkosten = 0
   let maschinenkosten = 0
 
+  // Sprint Q: vollkostenSatz (Kundenpreis) statt Netto-Stundenlohn
   for (const e of stunden) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const lohn = (e as any).stundenlohn ?? e.mitarbeiter?.stundenlohn ?? 0
+    const ma = e.mitarbeiter as any
+    // Priorität: individueller vollkostenSatz → globaler vollkosten
+    const satz = ma?.vollkostenSatz ?? vollkosten
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const bonus = (e as any).maschinenzuschlag ?? 0
-    lohnkosten += ((e as any).stunden ?? 0) * (lohn + bonus)
+    lohnkosten += ((e as any).stunden ?? 0) * satz
   }
 
+  // Sprint Q: Maschinenkosten = stundensatz + maschinenkundenzuschlag pro Stunde
   for (const m of maschineneinsaetze) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const ma = m as any
-    if (ma.stundensatz && ma.vonDatum) {
+    if (ma.vonDatum) {
       const std = ma.bisDatum
         ? Math.abs(new Date(ma.bisDatum).getTime() - new Date(ma.vonDatum).getTime()) / 3600000
         : 8
-      maschinenkosten += std * ma.stundensatz
+      const basisSatz = ma.stundensatz ?? 0
+      maschinenkosten += std * (basisSatz + maschinenkundenzuschlag)
     }
   }
 
@@ -64,6 +84,11 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     deckungsbeitrag: Math.round(deckungsbeitrag * 100) / 100,
     marge: Math.round(marge * 10) / 10,
     rechnungenAnzahl: rechnungen.length,
-    maschineneinsaetzeAnzahl: maschineneinsaetze.length
+    maschineneinsaetzeAnzahl: maschineneinsaetze.length,
+    // Sprint Q: Kalkulationsgrundlage mitliefern
+    kalkulationsbasis: {
+      vollkostenProStunde: vollkosten,
+      maschinenkundenzuschlag,
+    }
   })
 }

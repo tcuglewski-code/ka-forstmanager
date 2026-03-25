@@ -226,7 +226,7 @@ export default async function DashboardPage() {
           label="Stunden ausstehend"
           value={stats.stundenAusstehend.toString()}
           icon={<Clock className={`w-5 h-5 ${stats.stundenAusstehend > 0 ? "text-amber-400" : "text-emerald-400"}`} />}
-          href="/stunden"
+          href="/stunden?genehmigt=false"
           alert={stats.stundenAusstehend > 0}
         />
         <StatCard
