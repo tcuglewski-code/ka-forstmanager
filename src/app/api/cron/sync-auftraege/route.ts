@@ -29,22 +29,35 @@ export async function GET(req: Request) {
     const posts = await res.json() as Array<{
       id: number
       title: { rendered: string }
+      content?: { rendered: string }
       date: string
       meta: {
         ka_wizard_daten?: string
         ka_baumarten?: string
         ka_neu_flag?: number
         ka_angelegt?: number
+        // Bug B5: Direkte WP-Meta-Felder (Aufträge ohne Wizard)
+        ka_flaeche_ha?: string | number
+        ka_waldbesitzer_name?: string
+        ka_kontakt_name?: string
+        ka_waldbesitzer_email?: string
+        ka_kontakt_email?: string
+        ka_waldbesitzer_telefon?: string
+        ka_kontakt_telefon?: string
+        ka_ort?: string
+        ka_gemeinde?: string
+        ka_bundesland?: string
+        ka_beschreibung?: string
+        ka_auftragstyp?: string
+        ka_zeitraum?: string
       }
     }>
 
     let newCount = 0
+    let updatedCount = 0
+
     for (const post of posts) {
       const wpId = String(post.id)
-
-      // Nur neue anlegen, nicht updaten (Cron-Mode)
-      const existing = await prisma.auftrag.findUnique({ where: { wpProjektId: wpId }, select: { id: true } })
-      if (existing) continue
 
       let wizard: Record<string, unknown> = {}
       if (post.meta?.ka_wizard_daten) {
@@ -60,37 +73,75 @@ export async function GET(req: Request) {
         .replace(/&amp;/g, "&")
         .trim()
 
-      await prisma.auftrag.create({
-        data: {
-          titel,
-          typ: String(wizard.leistung ?? "unbekannt")
-            .toLowerCase()
-            .replace(/\s+/g, "_")
-            .replace(/[^a-z0-9_äöüß]/g, ""),
-          status: "anfrage",
-          beschreibung: String(wizard.bemerkung ?? ""),
-          waldbesitzer: String(wizard.name ?? ""),
-          waldbesitzerEmail: String(wizard.email ?? ""),
-          waldbesitzerTelefon: String(wizard.telefon ?? ""),
-          bundesland: String(wizard.bundesland ?? ""),
-          baumarten: String(wizard.baumarten ?? wizard.baumart ?? post.meta?.ka_baumarten ?? ""),
-          flaeche_ha: wizard.flaeche_ha ? parseFloat(String(wizard.flaeche_ha)) : null,
-          zeitraum: String(wizard.zeitraum ?? ""),
-          neuFlag: (post.meta?.ka_neu_flag ?? 0) === 1,
-          wpProjektId: wpId,
-          wizardDaten: Object.keys(wizard).length > 0 ? (wizard as import("@prisma/client").Prisma.InputJsonValue) : undefined,
-          wpErstelltAm: post.meta?.ka_angelegt
-            ? new Date(post.meta.ka_angelegt * 1000)
-            : new Date(post.date)
-        }
-      })
-      newCount++
+      // Bug B5: Felder aus wizard-Daten ODER direkt aus WP-Meta-Feldern lesen
+      const waldbesitzer = String(wizard.name ?? post.meta?.ka_waldbesitzer_name ?? post.meta?.ka_kontakt_name ?? "")
+      const waldbesitzerEmail = String(wizard.email ?? post.meta?.ka_waldbesitzer_email ?? post.meta?.ka_kontakt_email ?? "")
+      const waldbesitzerTelefon = String(wizard.telefon ?? post.meta?.ka_waldbesitzer_telefon ?? post.meta?.ka_kontakt_telefon ?? "")
+      const bundesland = String(wizard.bundesland ?? post.meta?.ka_bundesland ?? "")
+      const baumarten = String(wizard.baumarten ?? wizard.baumart ?? post.meta?.ka_baumarten ?? "")
+      const flaecheRaw = wizard.flaeche_ha ?? post.meta?.ka_flaeche_ha
+      const flaeche_ha = flaecheRaw ? parseFloat(String(flaecheRaw)) : null
+      const zeitraum = String(wizard.zeitraum ?? post.meta?.ka_zeitraum ?? "")
+      const standort = String(wizard.ort ?? post.meta?.ka_ort ?? post.meta?.ka_gemeinde ?? "")
+      const beschreibung = String(wizard.bemerkung ?? post.meta?.ka_beschreibung ?? post.content?.rendered?.replace(/<[^>]+>/g, "").trim() ?? "")
+      const typ = String(wizard.leistung ?? post.meta?.ka_auftragstyp ?? "unbekannt")
+        .toLowerCase()
+        .replace(/\s+/g, "_")
+        .replace(/[^a-z0-9_äöüß]/g, "")
+
+      // Bug B5: Upsert statt nur Create — damit bestehende Aufträge mit leeren Details aktualisiert werden
+      const existing = await prisma.auftrag.findUnique({ where: { wpProjektId: wpId }, select: { id: true } })
+
+      if (!existing) {
+        await prisma.auftrag.create({
+          data: {
+            titel,
+            typ,
+            status: "anfrage",
+            beschreibung,
+            waldbesitzer,
+            waldbesitzerEmail,
+            waldbesitzerTelefon,
+            bundesland,
+            baumarten,
+            flaeche_ha,
+            standort,
+            zeitraum,
+            neuFlag: (post.meta?.ka_neu_flag ?? 0) === 1,
+            wpProjektId: wpId,
+            wizardDaten: Object.keys(wizard).length > 0 ? (wizard as import("@prisma/client").Prisma.InputJsonValue) : undefined,
+            wpErstelltAm: post.meta?.ka_angelegt
+              ? new Date(post.meta.ka_angelegt * 1000)
+              : new Date(post.date)
+          }
+        })
+        newCount++
+      } else {
+        // Bestehenden Auftrag mit fehlenden Details aktualisieren
+        await prisma.auftrag.update({
+          where: { wpProjektId: wpId },
+          data: {
+            titel,
+            ...(beschreibung ? { beschreibung } : {}),
+            ...(waldbesitzer ? { waldbesitzer } : {}),
+            ...(waldbesitzerEmail ? { waldbesitzerEmail } : {}),
+            ...(waldbesitzerTelefon ? { waldbesitzerTelefon } : {}),
+            ...(bundesland ? { bundesland } : {}),
+            ...(baumarten ? { baumarten } : {}),
+            ...(flaeche_ha !== null ? { flaeche_ha } : {}),
+            ...(standort ? { standort } : {}),
+            ...(zeitraum ? { zeitraum } : {}),
+          }
+        })
+        updatedCount++
+      }
     }
 
     return NextResponse.json({
       ok: true,
       checked: posts.length,
       new: newCount,
+      updated: updatedCount,
       ts: new Date().toISOString()
     })
   } catch (error) {

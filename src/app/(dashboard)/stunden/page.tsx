@@ -83,6 +83,22 @@ export default function StundenPage() {
   const [filterMonat, setFilterMonat] = useState(String(new Date().getMonth() + 1))
   const [filterJahr, setFilterJahr] = useState(String(new Date().getFullYear()))
   const [filterGenehmigt, setFilterGenehmigt] = useState("")
+  const [urlParamsLoaded, setUrlParamsLoaded] = useState(false)
+
+  // URL-Parameter beim ersten Laden auslesen (B1: mitarbeiterId, B4: genehmigt)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const maId = params.get("mitarbeiterId")
+    const genehmigtParam = params.get("genehmigt")
+    if (maId) setFilterMitarbeiter(maId)
+    if (genehmigtParam !== null && genehmigtParam !== "") {
+      setFilterGenehmigt(genehmigtParam)
+      // Kein Monatsfilter wenn vom Dashboard mit genehmigt-Param aufgerufen — zeige alle Monate
+      setFilterMonat("")
+      setFilterJahr("")
+    }
+    setUrlParamsLoaded(true)
+  }, [])
   const [showModal, setShowModal] = useState(false)
   const [showAbwModal, setShowAbwModal] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -107,7 +123,7 @@ export default function StundenPage() {
     setLoading(false)
   }, [filterMitarbeiter, filterMonat, filterJahr, filterGenehmigt])
 
-  useEffect(() => { fetchAll() }, [fetchAll])
+  useEffect(() => { if (urlParamsLoaded) fetchAll() }, [fetchAll, urlParamsLoaded])
 
   async function toggleGenehmigt(id: string, current: boolean) {
     await fetch(`/api/stunden/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ genehmigt: !current }) })

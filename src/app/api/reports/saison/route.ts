@@ -16,7 +16,30 @@ export async function GET(req: NextRequest) {
   const auftraege = await prisma.auftrag.findMany({ where: { saisonId } })
   const protokolle = await prisma.tagesprotokoll.findMany({ where: { auftrag: { saisonId } } })
   const gruppen = await prisma.gruppe.findMany({ where: { saisonId }, include: { mitglieder: true } })
-  const anmeldungen = await prisma.saisonAnmeldung.count({ where: { saisonId, status: "bestaetigt" } })
+
+  // Bug B3: Mitarbeiter korrekt zählen — über Gruppen-Mitgliedschaften in dieser Saison
+  // (nicht über SaisonAnmeldungen die oft leer sind)
+  const mitarbeiterCount = await prisma.mitarbeiter.count({
+    where: {
+      OR: [
+        {
+          // Mitarbeiter die einer Gruppe in dieser Saison angehören
+          gruppen: {
+            some: {
+              gruppe: { saisonId }
+            }
+          }
+        },
+        {
+          // Mitarbeiter die über SaisonAnmeldung registriert sind
+          saisonAnmeldungen: {
+            some: { saisonId, status: "bestaetigt" }
+          }
+        }
+      ]
+    }
+  })
+
   const gepflanzt = protokolle.reduce((s, p) => s + (p.gepflanzt ?? 0), 0)
   const flaeche = auftraege.reduce((s, a) => s + (a.flaeche_ha ?? 0), 0)
   return NextResponse.json({
@@ -26,7 +49,7 @@ export async function GET(req: NextRequest) {
       gepflanzt,
       flaeche: flaeche.toFixed(2),
       gruppen: gruppen.length,
-      mitarbeiter: anmeldungen,
+      mitarbeiter: mitarbeiterCount,
       protokolle: protokolle.length,
     },
     auftraege,

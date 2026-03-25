@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { X, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
@@ -45,7 +45,9 @@ const defaultData: Partial<Mitarbeiter> = {
 
 const rollenOptions = [
   { value: "mitarbeiter", label: "Mitarbeiter" },
-  { value: "gruppenfuehrer", label: "Gruppenführer" },
+  { value: "gf_standard", label: "👷 Gruppenführer" },
+  { value: "gf_senior", label: "🏅 Senior-Gruppenführer" },
+  { value: "gruppenfuehrer", label: "Gruppenführer (alt)" },
   { value: "buero", label: "Büro" },
   { value: "admin", label: "Admin" },
 ]
@@ -67,6 +69,14 @@ export function MitarbeiterModal({
   const [error, setError] = useState("")
 
   const isEdit = !!initialData?.id
+
+  // Bug B2: Formular mit bestehenden Mitarbeiter-Daten vorausfüllen wenn Modal geöffnet wird
+  useEffect(() => {
+    if (isOpen) {
+      setForm(initialData || defaultData)
+      setError("")
+    }
+  }, [isOpen, initialData])
 
   if (!isOpen) return null
 

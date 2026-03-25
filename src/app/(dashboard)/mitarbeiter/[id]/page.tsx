@@ -5,11 +5,24 @@ import Link from "next/link"
 import { ArrowLeft, User, MapPin, Phone, Mail, CreditCard } from "lucide-react"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
 
-const rolleBadge: Record<string, string> = {
-  admin: "bg-purple-500/20 text-purple-400 border-purple-500/30",
-  buero: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  gruppenfuehrer: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  mitarbeiter: "bg-zinc-700/50 text-zinc-400 border-zinc-600/30",
+// Sprint Q: RolleBadge Komponente
+function RolleBadge({ rolle }: { rolle: string }) {
+  if (rolle === "gf_senior" || rolle === "ka_admin") {
+    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/40">🏅 Senior GF</span>
+  }
+  if (rolle === "gf_standard" || rolle === "gruppenführer" || rolle === "ka_gruppenführer" || rolle === "gruppenfuehrer") {
+    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-zinc-500/20 text-zinc-300 border border-zinc-500/40">👷 Gruppenführer</span>
+  }
+  if (rolle === "admin") {
+    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-400 border border-purple-500/30">Admin</span>
+  }
+  if (rolle === "buero") {
+    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-400 border border-blue-500/30">Büro</span>
+  }
+  if (rolle === "ka_mitarbeiter" || rolle === "mitarbeiter") {
+    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">Mitarbeiter</span>
+  }
+  return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs text-zinc-500 border border-zinc-700">{rolle}</span>
 }
 
 const statusBadge: Record<string, string> = {
@@ -63,7 +76,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2 flex-wrap">
               <h1 className="text-2xl font-bold text-white">{ma.vorname} {ma.nachname}</h1>
-              <span className={`px-2 py-0.5 rounded-full text-xs border ${rolleBadge[ma.rolle] ?? "bg-zinc-700 text-zinc-400"}`}>{ma.rolle}</span>
+              <RolleBadge rolle={ma.rolle} />
               <span className={`px-2 py-0.5 rounded-full text-xs border ${statusBadge[ma.status] ?? "bg-zinc-700 text-zinc-400"}`}>{ma.status}</span>
             </div>
             <div className="flex flex-wrap gap-4 text-sm text-zinc-400">
@@ -159,7 +172,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
         </Section>
 
         {/* Stunden */}
-        <Section title={`Stunden (letzte 20)`} link="/stunden">
+        <Section title={`Stunden (letzte 20)`} link={`/stunden?mitarbeiterId=${ma.id}`}>
           {ma.stundeneintraege.length === 0 ? (
             <p className="text-zinc-600 text-sm">Keine Stundeneinträge</p>
           ) : (

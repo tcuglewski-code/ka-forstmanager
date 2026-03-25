@@ -17,18 +17,24 @@ interface Mitarbeiter {
   stundenlohn?: number | null
 }
 
-const rolleBadge: Record<string, string> = {
-  admin: "bg-purple-500/20 text-purple-400 border-purple-500/30",
-  buero: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  gruppenfuehrer: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  mitarbeiter: "bg-zinc-700/50 text-zinc-400 border-zinc-600/30",
-}
-
-const rolleLabel: Record<string, string> = {
-  admin: "Admin",
-  buero: "Büro",
-  gruppenfuehrer: "Gruppenführer",
-  mitarbeiter: "Mitarbeiter",
+// Sprint Q: RolleBadge Komponente für schnelle Sichtbarkeit
+function RolleBadge({ rolle }: { rolle: string }) {
+  if (rolle === "gf_senior" || rolle === "ka_admin") {
+    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/40">🏅 Senior GF</span>
+  }
+  if (rolle === "gf_standard" || rolle === "gruppenführer" || rolle === "ka_gruppenführer" || rolle === "gruppenfuehrer") {
+    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-zinc-500/20 text-zinc-300 border border-zinc-500/40">👷 Gruppenführer</span>
+  }
+  if (rolle === "admin") {
+    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-400 border border-purple-500/30">Admin</span>
+  }
+  if (rolle === "buero") {
+    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-400 border border-blue-500/30">Büro</span>
+  }
+  if (rolle === "ka_mitarbeiter" || rolle === "mitarbeiter") {
+    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">Mitarbeiter</span>
+  }
+  return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs text-zinc-500 border border-zinc-700">{rolle}</span>
 }
 
 const statusBadge: Record<string, string> = {
@@ -143,7 +149,9 @@ export default function MitarbeiterPage() {
         >
           <option value="">Alle Rollen</option>
           <option value="mitarbeiter">Mitarbeiter</option>
-          <option value="gruppenfuehrer">Gruppenführer</option>
+          <option value="gf_standard">Gruppenführer</option>
+          <option value="gf_senior">Senior-Gruppenführer</option>
+          <option value="gruppenfuehrer">Gruppenführer (alt)</option>
           <option value="buero">Büro</option>
           <option value="admin">Admin</option>
         </select>
@@ -196,14 +204,7 @@ export default function MitarbeiterPage() {
                     </div>
                   </td>
                   <td className="px-5 py-4">
-                    <span
-                      className={cn(
-                        "inline-flex items-center px-2 py-0.5 rounded text-xs border",
-                        rolleBadge[m.rolle] || rolleBadge.mitarbeiter
-                      )}
-                    >
-                      {rolleLabel[m.rolle] || m.rolle}
-                    </span>
+                    <RolleBadge rolle={m.rolle} />
                   </td>
                   <td className="px-5 py-4 text-sm text-zinc-400">
                     {m.telefon || "–"}
