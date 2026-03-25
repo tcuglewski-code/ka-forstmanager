@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Plus, X, CheckCircle, Circle, TrendingDown, Calculator, Download } from "lucide-react"
+import { Plus, X, CheckCircle, Circle, TrendingDown, Calculator, Download, FileText } from "lucide-react"
 
 interface Lohneintrag {
   id: string
@@ -33,6 +33,29 @@ interface Gruppe {
   id: string
   name: string
   mitglieder?: { mitarbeiterId: string; mitarbeiter: { id: string } }[]
+}
+
+interface Saison {
+  id: string
+  name: string
+  startDatum?: string | null
+  endDatum?: string | null
+}
+
+interface Lohnabrechnung {
+  id: string
+  mitarbeiter: { id: string; vorname: string; nachname: string }
+  saison?: { id: string; name: string } | null
+  zeitraumVon: string
+  zeitraumBis: string
+  stunden: number
+  bruttoLohn: number
+  gesamtLohn: number
+  maschinenBonus: number
+  vorschuesse: number
+  auszahlung: number
+  status: string
+  notizen?: string | null
 }
 
 interface LohnBerechnung {
@@ -79,6 +102,158 @@ function exportGruppenAbrechnungCSV(gruppe: string, vorschuesse: Vorschuss[], lo
   a.click()
   document.body.removeChild(a)
   URL.revokeObjectURL(url)
+}
+
+// ─── Modal: Neue Lohnabrechnung (Sprint R) ────────────────────────────────────
+
+function NeueLohnabrechnungModal({ mitarbeiter, saisons, onClose, onSave }: {
+  mitarbeiter: Mitarbeiter[]
+  saisons: Saison[]
+  onClose: () => void
+  onSave: () => void
+}) {
+  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({
+    mitarbeiterId: "",
+    saisonId: "",
+    zeitraumVon: "",
+    zeitraumBis: "",
+    notizen: "",
+  })
+  const [vorschau, setVorschau] = useState<{ stunden: number; bruttoLohn: number; maschinenBonus: number; vorschuesse: number; auszahlung: number } | null>(null)
+  const [vorschauLoading, setVorschauLoading] = useState(false)
+
+  // Saison ausgewählt → Zeitraum vorausfüllen
+  useEffect(() => {
+    if (form.saisonId) {
+      const saison = saisons.find(s => s.id === form.saisonId)
+      if (saison?.startDatum) setForm(f => ({ ...f, zeitraumVon: saison.startDatum!.slice(0, 10) }))
+      if (saison?.endDatum) setForm(f => ({ ...f, zeitraumBis: saison.endDatum!.slice(0, 10) }))
+    }
+  }, [form.saisonId, saisons])
+
+  // Vorschau laden
+  const loadVorschau = useCallback(async () => {
+    if (!form.mitarbeiterId || !form.zeitraumVon || !form.zeitraumBis) return
+    setVorschauLoading(true)
+    try {
+      // Stunden im Zeitraum laden
+      const params = new URLSearchParams({
+        mitarbeiterId: form.mitarbeiterId,
+        ...(form.saisonId ? { saisonId: form.saisonId } : {}),
+        zeitraumVon: form.zeitraumVon,
+        zeitraumBis: form.zeitraumBis,
+      })
+      const res = await fetch(`/api/lohn/abrechnung/vorschau?${params}`)
+      if (res.ok) {
+        const data = await res.json()
+        setVorschau(data)
+      }
+    } catch {
+      // kein Problem
+    } finally {
+      setVorschauLoading(false)
+    }
+  }, [form.mitarbeiterId, form.saisonId, form.zeitraumVon, form.zeitraumBis])
+
+  useEffect(() => {
+    loadVorschau()
+  }, [loadVorschau])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      await fetch("/api/lohn/abrechnung", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mitarbeiterId: form.mitarbeiterId,
+          saisonId: form.saisonId || null,
+          zeitraumVon: form.zeitraumVon,
+          zeitraumBis: form.zeitraumBis,
+          notizen: form.notizen || null,
+        }),
+      })
+      onSave()
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
+          <h2 className="text-lg font-semibold text-white">Neue Lohnabrechnung</h2>
+          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-xs text-zinc-400 mb-1">Mitarbeiter *</label>
+            <select value={form.mitarbeiterId} onChange={e => setForm(f => ({ ...f, mitarbeiterId: e.target.value }))} required
+              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              <option value="">— wählen —</option>
+              {mitarbeiter.map(m => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs text-zinc-400 mb-1">Saison (optional)</label>
+            <select value={form.saisonId} onChange={e => setForm(f => ({ ...f, saisonId: e.target.value }))}
+              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              <option value="">— Manueller Zeitraum —</option>
+              {saisons.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Zeitraum Von *</label>
+              <input type="date" value={form.zeitraumVon} onChange={e => setForm(f => ({ ...f, zeitraumVon: e.target.value }))} required
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Zeitraum Bis *</label>
+              <input type="date" value={form.zeitraumBis} onChange={e => setForm(f => ({ ...f, zeitraumBis: e.target.value }))} required
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+            </div>
+          </div>
+
+          {/* Vorschau */}
+          {vorschauLoading && (
+            <div className="bg-[#0f0f0f] rounded-lg px-4 py-3 text-xs text-zinc-500">Berechne Vorschau...</div>
+          )}
+          {!vorschauLoading && vorschau && (
+            <div className="bg-[#0f0f0f] rounded-lg px-4 py-3 space-y-2">
+              <p className="text-xs text-zinc-500 font-medium mb-2">Vorschau</p>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div><span className="text-zinc-500">Stunden:</span> <span className="text-white font-medium">{vorschau.stunden.toFixed(1)}h</span></div>
+                <div><span className="text-zinc-500">Bruttolohn:</span> <span className="text-white font-medium">{vorschau.bruttoLohn.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
+                <div><span className="text-zinc-500">Maschinenbonus:</span> <span className="text-emerald-400 font-medium">{vorschau.maschinenBonus.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
+                <div><span className="text-zinc-500">Vorschüsse:</span> <span className="text-amber-400 font-medium">{vorschau.vorschuesse.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
+              </div>
+              <div className="border-t border-[#2a2a2a] pt-2 flex justify-between">
+                <span className="text-xs text-zinc-400">Auszahlung:</span>
+                <span className="text-emerald-400 font-bold">{vorschau.auszahlung.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span>
+              </div>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
+            <textarea value={form.notizen} onChange={e => setForm(f => ({ ...f, notizen: e.target.value }))} rows={2}
+              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 resize-none" />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+            <button type="submit" disabled={loading || !form.mitarbeiterId}
+              className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
+              {loading ? "Erstellen..." : "Abrechnung erstellen"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
 }
 
 // ─── Modal: Abrechnung erstellen ─────────────────────────────────────────────
@@ -280,13 +455,13 @@ function VorschussModal({ mitarbeiter, onClose, onSave }: {
 
 export default function LohnPage() {
   const now = new Date()
-  const [activeTab, setActiveTab] = useState<"abrechnungen" | "vorschuesse" | "lohnuebersicht">("abrechnungen")
+  const [activeTab, setActiveTab] = useState<"abrechnungen" | "lohnabrechnung" | "vorschuesse" | "lohnuebersicht">("lohnabrechnung")
   const [monat, setMonat] = useState(now.getMonth() + 1)
   const [jahr, setJahr] = useState(now.getFullYear())
   const [eintraege, setEintraege] = useState<Lohneintrag[]>([])
   const [mitarbeiter, setMitarbeiter] = useState<Mitarbeiter[]>([])
   const [loading, setLoading] = useState(true)
-  const [showModal, setShowModal] = useState<"abrechnung" | "vorschuss" | null>(null)
+  const [showModal, setShowModal] = useState<"abrechnung" | "lohnabrechnung" | "vorschuss" | null>(null)
   const [vorschuesse, setVorschuesse] = useState<Vorschuss[]>([])
   const [vorschuesseLoading, setVorschuesseLoading] = useState(false)
 
@@ -298,14 +473,22 @@ export default function LohnPage() {
   const [lohnBerechnung, setLohnBerechnung] = useState<LohnBerechnung[]>([])
   const [lohnBerechnungLoading, setLohnBerechnungLoading] = useState(false)
 
+  // Sprint R: Lohnabrechnung
+  const [abrechnungen, setAbrechnungen] = useState<Lohnabrechnung[]>([])
+  const [abrechnungenLoading, setAbrechnungenLoading] = useState(false)
+  const [saisons, setSaisons] = useState<Saison[]>([])
+  const [editAbrechnung, setEditAbrechnung] = useState<Lohnabrechnung | null>(null)
+
   const load = useCallback(async () => {
     setLoading(true)
-    const [e, ma] = await Promise.all([
+    const [e, ma, sai] = await Promise.all([
       fetch(`/api/lohn?monat=${monat}&jahr=${jahr}`).then(r => r.json()),
       fetch("/api/mitarbeiter").then(r => r.json()),
+      fetch("/api/saisons").then(r => r.json()).catch(() => []),
     ])
     setEintraege(e)
     setMitarbeiter(ma)
+    setSaisons(Array.isArray(sai) ? sai : [])
     setLoading(false)
   }, [monat, jahr])
 
@@ -339,13 +522,35 @@ export default function LohnPage() {
     }
   }, [])
 
+  const loadAbrechnungen = useCallback(async () => {
+    setAbrechnungenLoading(true)
+    try {
+      const data = await fetch("/api/lohn/abrechnung").then(r => r.json())
+      setAbrechnungen(Array.isArray(data) ? data : [])
+    } catch {
+      setAbrechnungen([])
+    } finally {
+      setAbrechnungenLoading(false)
+    }
+  }, [])
+
+  const updateAbrechnung = async (id: string, patch: Record<string, unknown>) => {
+    await fetch(`/api/lohn/abrechnung/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(patch),
+    })
+    loadAbrechnungen()
+  }
+
   useEffect(() => {
     if (activeTab === "vorschuesse") loadVorschuesse()
     if (activeTab === "lohnuebersicht") {
       loadLohnBerechnung()
       loadVorschuesse()
     }
-  }, [activeTab, loadVorschuesse, loadLohnBerechnung])
+    if (activeTab === "lohnabrechnung") loadAbrechnungen()
+  }, [activeTab, loadVorschuesse, loadLohnBerechnung, loadAbrechnungen])
 
   const toggleAusgezahlt = async (id: string, ausgezahlt: boolean) => {
     await fetch(`/api/lohn/${id}`, {
@@ -386,7 +591,16 @@ export default function LohnPage() {
               Vorschuss
             </button>
           )}
-          {activeTab !== "vorschuesse" && (
+          {activeTab === "lohnabrechnung" && (
+            <button
+              onClick={() => setShowModal("lohnabrechnung")}
+              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-medium transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              Neue Abrechnung
+            </button>
+          )}
+          {activeTab === "abrechnungen" && (
             <button
               onClick={() => setShowModal("abrechnung")}
               className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-medium transition-all"
@@ -399,12 +613,19 @@ export default function LohnPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-[#161616] border border-[#2a2a2a] rounded-lg p-1 w-fit">
+      <div className="flex gap-1 mb-6 bg-[#161616] border border-[#2a2a2a] rounded-lg p-1 w-fit flex-wrap">
+        <button
+          onClick={() => setActiveTab("lohnabrechnung")}
+          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === "lohnabrechnung" ? "bg-[#2C3A1C] text-emerald-400" : "text-zinc-400 hover:text-white"}`}
+        >
+          <FileText className="w-3.5 h-3.5" />
+          Abrechnungen
+        </button>
         <button
           onClick={() => setActiveTab("abrechnungen")}
           className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === "abrechnungen" ? "bg-[#2C3A1C] text-emerald-400" : "text-zinc-400 hover:text-white"}`}
         >
-          Abrechnungen
+          Lohneinträge
         </button>
         <button
           onClick={() => setActiveTab("vorschuesse")}
@@ -421,6 +642,120 @@ export default function LohnPage() {
           Lohnübersicht
         </button>
       </div>
+
+      {/* ─── Tab: Lohnabrechnung (Sprint R) ──────────────────────────────── */}
+      {activeTab === "lohnabrechnung" && (
+        <>
+          {abrechnungenLoading ? (
+            <div className="text-center py-12 text-zinc-600">Laden...</div>
+          ) : abrechnungen.length === 0 ? (
+            <div className="text-center py-16 text-zinc-600">
+              <FileText className="w-10 h-10 mx-auto mb-3 opacity-30" />
+              <p>Noch keine Abrechnungen erstellt</p>
+              <p className="text-xs mt-1">Klicke auf „Neue Abrechnung" um zu starten</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {abrechnungen.map(a => (
+                <div key={a.id} className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <p className="font-medium text-white">{a.mitarbeiter?.vorname} {a.mitarbeiter?.nachname}</p>
+                      <p className="text-xs text-zinc-500">
+                        {a.saison?.name ?? "Manueller Zeitraum"} · {new Date(a.zeitraumVon).toLocaleDateString("de-DE")} – {new Date(a.zeitraumBis).toLocaleDateString("de-DE")}
+                      </p>
+                    </div>
+                    <span className={`text-xs px-2 py-0.5 rounded-full border ${
+                      a.status === "ausgezahlt" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
+                      a.status === "genehmigt" ? "bg-blue-500/10 text-blue-400 border-blue-500/20" :
+                      "bg-zinc-700/50 text-zinc-400 border-zinc-600"
+                    }`}>{a.status}</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-xs mb-3">
+                    <div><p className="text-zinc-500">Stunden</p><p className="font-medium text-white">{a.stunden?.toFixed(1)}h</p></div>
+                    <div><p className="text-zinc-500">Bruttolohn</p><p className="font-medium text-white">{a.bruttoLohn?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p></div>
+                    <div><p className="text-zinc-500">Auszahlung</p><p className="font-medium text-emerald-400">{a.auszahlung?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p></div>
+                  </div>
+                  {a.vorschuesse > 0 && (
+                    <p className="text-xs text-amber-400 mb-2">Vorschüsse abgezogen: {a.vorschuesse?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p>
+                  )}
+                  {a.notizen && (
+                    <p className="text-xs text-zinc-500 mb-2 italic">{a.notizen}</p>
+                  )}
+                  <div className="flex gap-2 mt-2">
+                    {a.status !== "ausgezahlt" && (
+                      <button onClick={() => updateAbrechnung(a.id, { status: "ausgezahlt" })}
+                        className="text-xs px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded hover:bg-emerald-500/20 transition-all">
+                        Als ausgezahlt markieren
+                      </button>
+                    )}
+                    {a.status !== "genehmigt" && a.status !== "ausgezahlt" && (
+                      <button onClick={() => updateAbrechnung(a.id, { status: "genehmigt" })}
+                        className="text-xs px-2 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded hover:bg-blue-500/20 transition-all">
+                        Genehmigen
+                      </button>
+                    )}
+                    <button onClick={() => setEditAbrechnung(a)}
+                      className="text-xs px-2 py-1 border border-zinc-700 text-zinc-400 rounded hover:border-zinc-500 transition-all">
+                      Bearbeiten
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Edit Modal */}
+          {editAbrechnung && (
+            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+              <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md">
+                <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
+                  <h2 className="text-lg font-semibold text-white">Abrechnung bearbeiten</h2>
+                  <button onClick={() => setEditAbrechnung(null)}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+                </div>
+                <div className="p-6 space-y-4">
+                  <div>
+                    <label className="block text-xs text-zinc-400 mb-1">Status</label>
+                    <select defaultValue={editAbrechnung.status}
+                      onChange={e => setEditAbrechnung(prev => prev ? { ...prev, status: e.target.value } : null)}
+                      className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                      <option value="erstellt">Erstellt</option>
+                      <option value="genehmigt">Genehmigt</option>
+                      <option value="ausgezahlt">Ausgezahlt</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-zinc-400 mb-1">Auszahlung (€)</label>
+                    <input type="number" step="0.01" defaultValue={editAbrechnung.auszahlung}
+                      onChange={e => setEditAbrechnung(prev => prev ? { ...prev, auszahlung: parseFloat(e.target.value) } : null)}
+                      className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
+                    <textarea defaultValue={editAbrechnung.notizen ?? ""}
+                      onChange={e => setEditAbrechnung(prev => prev ? { ...prev, notizen: e.target.value } : null)}
+                      rows={3}
+                      className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 resize-none" />
+                  </div>
+                  <div className="flex gap-3">
+                    <button onClick={() => setEditAbrechnung(null)} className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+                    <button onClick={async () => {
+                      await updateAbrechnung(editAbrechnung.id, {
+                        status: editAbrechnung.status,
+                        auszahlung: editAbrechnung.auszahlung,
+                        notizen: editAbrechnung.notizen,
+                      })
+                      setEditAbrechnung(null)
+                    }} className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition-all">
+                      Speichern
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
 
       {/* ─── Tab: Abrechnungen ───────────────────────────────────────────── */}
       {activeTab === "abrechnungen" && (
@@ -670,6 +1005,14 @@ export default function LohnPage() {
       )}
 
       {/* Modals */}
+      {showModal === "lohnabrechnung" && (
+        <NeueLohnabrechnungModal
+          mitarbeiter={mitarbeiter}
+          saisons={saisons}
+          onClose={() => setShowModal(null)}
+          onSave={() => { setShowModal(null); loadAbrechnungen() }}
+        />
+      )}
       {showModal === "abrechnung" && (
         <AbrechnungModal
           mitarbeiter={mitarbeiter}

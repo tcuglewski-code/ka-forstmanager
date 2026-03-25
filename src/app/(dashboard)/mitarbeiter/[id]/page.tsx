@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, User, MapPin, Phone, Mail, CreditCard } from "lucide-react"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
+import { StatistikWidget } from "./StatistikWidget"
 
 // Sprint Q: RolleBadge Komponente
 function RolleBadge({ rolle }: { rolle: string }) {
@@ -45,10 +46,14 @@ async function getMitarbeiter(id: string) {
   })
 }
 
+async function getSaisons() {
+  return prisma.saison.findMany({ select: { id: true, name: true }, orderBy: { startDatum: "desc" } })
+}
+
 export default async function MitarbeiterDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await auth()
   const { id } = await params
-  const ma = await getMitarbeiter(id)
+  const [ma, saisons] = await Promise.all([getMitarbeiter(id), getSaisons()])
   if (!ma) notFound()
 
   const tabs = [
@@ -88,6 +93,9 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
           </div>
         </div>
       </div>
+
+      {/* Sprint R: Statistik-Widget */}
+      <StatistikWidget mitarbeiterId={ma.id} saisons={saisons} />
 
       {/* Content Sections */}
       <div className="space-y-6">
