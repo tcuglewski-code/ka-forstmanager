@@ -99,6 +99,8 @@ const WP_API_URL = "https://peru-otter-113714.hostingersite.com/wp-json/wp/v2/ka
 const WP_USER = process.env.WP_USER ?? "openclaw"
 const WP_PASS = process.env.WP_PASSWORD ?? ""
 const WP_AUTH = Buffer.from(`${WP_USER}:${WP_PASS}`).toString("base64")
+const WP_CLEANUP_URL = "https://peru-otter-113714.hostingersite.com/wp-json/ka/v1/wp-projekt"
+const WP_FM_SECRET = process.env.WP_FM_SECRET ?? "ka-forstmanager-sync-2026"
 
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -133,12 +135,11 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
         console.warn("[Auftraege DELETE] Blocklist-Update fehlgeschlagen:", err)
       }
 
-      // WP-Post ebenfalls löschen (force=true → endgültig, kein Papierkorb)
+      // WP-Post ebenfalls löschen via Custom Cleanup-Endpoint (Secret-Auth)
       try {
-        const wpDeleteUrl = `${WP_API_URL}/${auftrag.wpProjektId}?force=true`
-        const wpRes = await fetch(wpDeleteUrl, {
+        const wpRes = await fetch(`${WP_CLEANUP_URL}/${auftrag.wpProjektId}`, {
           method: "DELETE",
-          headers: { Authorization: `Basic ${WP_AUTH}` },
+          headers: { "X-FM-Secret": WP_FM_SECRET },
         })
         if (!wpRes.ok) {
           console.warn(`[Auftraege DELETE] WP-Post ${auftrag.wpProjektId} konnte nicht gelöscht werden: ${wpRes.status}`)
