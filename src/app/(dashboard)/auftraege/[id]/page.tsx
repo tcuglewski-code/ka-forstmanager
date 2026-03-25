@@ -718,6 +718,25 @@ export default function AuftragDetailPage() {
             >
               🖨️ Arbeitsanweisung
             </a>
+            {/* GPS-Export (nur wenn Koordinaten vorhanden) */}
+            {auftrag.lat != null && auftrag.lng != null && (
+              <>
+                <a
+                  href={`/api/auftraege/${auftrag.id}/export?format=gpx`}
+                  className="flex items-center gap-1.5 px-3 py-2 border border-zinc-600 text-zinc-400 rounded-lg text-sm hover:border-zinc-400 hover:text-white transition-colors"
+                  title="GPS-Koordinaten als GPX exportieren"
+                >
+                  📍 GPX
+                </a>
+                <a
+                  href={`/api/auftraege/${auftrag.id}/export?format=kml`}
+                  className="flex items-center gap-1.5 px-3 py-2 border border-zinc-600 text-zinc-400 rounded-lg text-sm hover:border-zinc-400 hover:text-white transition-colors"
+                  title="GPS-Koordinaten als KML exportieren"
+                >
+                  🗺️ KML
+                </a>
+              </>
+            )}
             {auftrag.status === "anfrage" && (
               <button
                 onClick={async () => {
