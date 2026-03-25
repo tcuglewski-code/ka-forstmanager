@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, User, MapPin, Phone, Mail, CreditCard } from "lucide-react"
+import { ArrowLeft, User, MapPin, Phone, Mail, CreditCard, AlertTriangle } from "lucide-react"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
 import { StatistikWidget } from "./StatistikWidget"
 import { AbwesenheitenSection } from "./AbwesenheitenSection"
@@ -95,6 +95,25 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
         </div>
       </div>
 
+      {/* Notfallkontakt (Sprint U) */}
+      {(ma.notfallName || ma.notfallTelefon) && (
+        <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 mb-4">
+          <h4 className="text-xs font-semibold text-red-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+            <AlertTriangle className="w-3 h-3" /> Notfallkontakt
+          </h4>
+          <p className="text-sm font-medium text-white">{ma.notfallName}</p>
+          {ma.notfallBeziehung && <p className="text-xs text-zinc-400">{ma.notfallBeziehung}</p>}
+          {ma.notfallTelefon && (
+            <a
+              href={`tel:${ma.notfallTelefon}`}
+              className="text-sm text-blue-400 hover:underline mt-1 block"
+            >
+              📞 {ma.notfallTelefon}
+            </a>
+          )}
+        </div>
+      )}
+
       {/* Sprint R: Statistik-Widget */}
       <StatistikWidget mitarbeiterId={ma.id} saisons={saisons} />
 
@@ -116,8 +135,11 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
             <Field label="Stundenlohn" value={ma.stundenlohn ? `${ma.stundenlohn} €/h` : null} />
             <Field label="Bankname" value={ma.bankname} />
             <Field label="IBAN" value={ma.iban} />
-            <Field label="Notfallkontakt" value={ma.notfallkontakt} />
-            <Field label="Notfalltelefon" value={ma.notfalltelefon} />
+            <Field label="Notfallkontakt (alt)" value={ma.notfallkontakt} />
+            <Field label="Notfalltelefon (alt)" value={ma.notfalltelefon} />
+            <Field label="Notfallkontakt Name" value={ma.notfallName} />
+            <Field label="Notfall Beziehung" value={ma.notfallBeziehung} />
+            <Field label="Notfall Telefon" value={ma.notfallTelefon} />
           </div>
           {ma.notizen && (
             <div className="mt-4">

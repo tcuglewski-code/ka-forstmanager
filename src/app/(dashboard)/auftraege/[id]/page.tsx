@@ -1096,6 +1096,67 @@ export default function AuftragDetailPage() {
                   ))}
                 </select>
               </div>
+              {/* GPS-Koordinaten (Sprint U) */}
+              <div>
+                <h4 className="text-xs font-medium text-zinc-400 mb-2 uppercase tracking-wider flex items-center gap-1">
+                  <MapPin className="w-3 h-3" /> Standort GPS
+                </h4>
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                  <div>
+                    <label className="text-xs text-zinc-500 mb-1 block">Breitengrad (lat)</label>
+                    <input
+                      type="number"
+                      step="0.000001"
+                      value={lat}
+                      onChange={e => setLat(e.target.value)}
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+                      placeholder="z.B. 50.123456"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-zinc-500 mb-1 block">Längengrad (lng)</label>
+                    <input
+                      type="number"
+                      step="0.000001"
+                      value={lng}
+                      onChange={e => setLng(e.target.value)}
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+                      placeholder="z.B. 8.654321"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs text-zinc-500 mb-1 block">Plus Code (optional)</label>
+                  <input
+                    type="text"
+                    value={plusCode}
+                    onChange={e => setPlusCode(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+                    placeholder="z.B. 8FWH4HGW+QV"
+                  />
+                </div>
+                {lat && lng && (
+                  <a
+                    href={`https://www.google.com/maps?q=${lat},${lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300"
+                  >
+                    <MapPin className="w-3 h-3" /> In Google Maps öffnen
+                  </a>
+                )}
+                {plusCode && (
+                  <a
+                    href={`https://plus.codes/${plusCode}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 flex items-center gap-2 text-xs text-zinc-500 hover:text-zinc-400"
+                  >
+                    Plus Code: {plusCode}
+                  </a>
+                )}
+              </div>
+
               <div>
                 <label className="block text-xs text-zinc-500 mb-1.5 flex items-center gap-1">
                   <FileText className="w-3 h-3" /> Notizen
