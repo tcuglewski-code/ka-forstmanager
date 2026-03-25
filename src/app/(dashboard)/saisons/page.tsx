@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Loader2, Sprout, Calendar, Pencil, Trash2, X, Eye } from "lucide-react"
+import { Plus, Loader2, Sprout, Calendar, Pencil, Trash2, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { toast } from "sonner"
@@ -79,7 +79,9 @@ export default function SaisonsPage() {
     setModalOpen(true)
   }
 
-  const openEdit = (s: Saison) => {
+  const openEdit = (e: React.MouseEvent, s: Saison) => {
+    e.stopPropagation()
+    e.preventDefault()
     setEditItem(s)
     setForm({
       name: s.name,
@@ -127,37 +129,20 @@ export default function SaisonsPage() {
     }
   }
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    e.preventDefault()
     if (!confirm("Saison wirklich löschen?")) return
     setDeleting(id)
     try {
       await fetch(`/api/saisons/${id}`, { method: "DELETE" })
       toast.success("Saison gelöscht")
       await fetchSaisons()
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Unbekannter Fehler"
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Unbekannter Fehler"
       toast.error("Fehler: " + msg)
     } finally {
       setDeleting(null)
-    }
-  }
-
-  const handleAbschliessen = async (saison: Saison) => {
-    if (!confirm(`Saison "${saison.name}" wirklich abschließen? Dies kann nicht rückgängig gemacht werden.`)) return
-    try {
-      const r = await fetch(`/api/saisons/${saison.id}/abschliessen`, { method: "POST" })
-      const data = await r.json()
-      if (!r.ok) {
-        toast.error(data.error ?? "Fehler beim Abschließen")
-        return
-      }
-      toast.success(
-        `Saison abgeschlossen: ${data.report.auftraege} Aufträge · ${data.report.gesamtStunden.toFixed(1)}h · ${data.report.gesamtUmsatz.toFixed(2)} € Umsatz`
-      )
-      await fetchSaisons()
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Unbekannter Fehler"
-      toast.error("Fehler: " + msg)
     }
   }
 
@@ -192,9 +177,11 @@ export default function SaisonsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {saisons.map((s) => (
-            <div
+            /* W1: Karte als Link zur Detailseite */
+            <Link
               key={s.id}
-              className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5 hover:border-[#3a3a3a] transition-all"
+              href={`/saisons/${s.id}`}
+              className="block bg-[#161616] border border-[#2a2a2a] rounded-xl p-5 hover:border-emerald-700/50 hover:bg-[#1a1a1a] transition-all cursor-pointer"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -233,24 +220,17 @@ export default function SaisonsPage() {
                 <p className="text-xs text-zinc-500 mb-3 line-clamp-2">{s.beschreibung}</p>
               )}
 
+              {/* Buttons mit stopPropagation damit Klick nicht zur Detailseite navigiert */}
               <div className="flex flex-wrap gap-2 pt-2 border-t border-[#2a2a2a]">
                 <button
-                  onClick={() => openEdit(s)}
+                  onClick={(e) => openEdit(e, s)}
                   className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-white transition-colors px-2 py-1 rounded hover:bg-[#2a2a2a]"
                 >
                   <Pencil className="w-3 h-3" />
                   Bearbeiten
                 </button>
-                {s.status !== "abgeschlossen" && (
-                  <button
-                    onClick={() => handleAbschliessen(s)}
-                    className="flex items-center gap-1.5 text-xs px-3 py-1 border border-amber-500/40 text-amber-400 rounded-lg hover:bg-amber-500/10 transition-colors"
-                  >
-                    Saison abschließen
-                  </button>
-                )}
                 <button
-                  onClick={() => handleDelete(s.id)}
+                  onClick={(e) => handleDelete(e, s.id)}
                   disabled={deleting === s.id}
                   className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-red-400 transition-colors px-2 py-1 rounded hover:bg-red-500/10 ml-auto disabled:opacity-50"
                 >
@@ -262,7 +242,7 @@ export default function SaisonsPage() {
                   Löschen
                 </button>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}

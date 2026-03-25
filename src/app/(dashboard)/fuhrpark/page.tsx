@@ -60,6 +60,117 @@ const TypIcon = ({ typ }: { typ: string }) => {
   return <Car className="w-4 h-4" />
 }
 
+// ─── Modal: Fahrzeug bearbeiten (Y2) ─────────────────────────────────────────
+
+function FahrzeugEditModal({
+  fahrzeug,
+  onClose,
+  onSave,
+}: {
+  fahrzeug: Fahrzeug
+  onClose: () => void
+  onSave: () => void
+}) {
+  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({
+    typ: fahrzeug.typ,
+    bezeichnung: fahrzeug.bezeichnung,
+    kennzeichen: fahrzeug.kennzeichen ?? "",
+    baujahr: fahrzeug.baujahr ? String(fahrzeug.baujahr) : "",
+    status: fahrzeug.status,
+    tuvDatum: fahrzeug.tuvDatum ? fahrzeug.tuvDatum.split("T")[0] : "",
+    notizen: fahrzeug.notizen ?? "",
+    stundenBonus: fahrzeug.stundenBonus ? String(fahrzeug.stundenBonus) : "",
+    bonusBeschreibung: fahrzeug.bonusBeschreibung ?? "",
+  })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/fuhrpark/${fahrzeug.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+      if (!res.ok) throw new Error("Fehler beim Speichern")
+      toast.success("Fahrzeug aktualisiert")
+    } catch {
+      toast.error("Fehler beim Speichern")
+    }
+    setLoading(false)
+    onSave()
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
+          <h2 className="text-lg font-semibold text-white">Fahrzeug bearbeiten</h2>
+          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Typ</label>
+              <select value={form.typ} onChange={e => setForm(f => ({ ...f, typ: e.target.value }))}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                {["pkw", "lkw", "transporter", "maschine"].map(t => <option key={t} value={t}>{t.toUpperCase()}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Status</label>
+              <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                {["verfuegbar", "im_einsatz", "in_wartung", "defekt"].map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+          </div>
+          {[["Bezeichnung *", "bezeichnung"], ["Kennzeichen", "kennzeichen"], ["Baujahr", "baujahr"]].map(([label, key]) => (
+            <div key={key}>
+              <label className="block text-xs text-zinc-400 mb-1">{label}</label>
+              <input type={key === "baujahr" ? "number" : "text"} value={(form as Record<string, string>)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+            </div>
+          ))}
+          <div>
+            <label className="block text-xs text-zinc-400 mb-1">TÜV-Datum</label>
+            <input type="date" value={form.tuvDatum} onChange={e => setForm(f => ({ ...f, tuvDatum: e.target.value }))}
+              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+          </div>
+          <div>
+            <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
+            <textarea rows={2} value={form.notizen} onChange={e => setForm(f => ({ ...f, notizen: e.target.value }))}
+              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white resize-none focus:outline-none focus:border-emerald-500" />
+          </div>
+          <div className="border-t border-[#2a2a2a] pt-3">
+            <p className="text-xs text-zinc-500 mb-3">Maschinenbonus</p>
+            <div>
+              <label className="text-xs text-zinc-500 mb-1 block">Maschinenzuschlag (€/h)</label>
+              <input type="number" step="0.50" min="0" placeholder="0.00" value={form.stundenBonus}
+                onChange={e => setForm(f => ({ ...f, stundenBonus: e.target.value }))}
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
+            </div>
+            <div className="mt-3">
+              <label className="text-xs text-zinc-500 mb-1 block">Bonus-Beschreibung</label>
+              <input type="text" placeholder="z.B. Schwermaschinenzuschlag" value={form.bonusBeschreibung}
+                onChange={e => setForm(f => ({ ...f, bonusBeschreibung: e.target.value }))}
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
+            </div>
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+            <button type="submit" disabled={loading || !form.bezeichnung}
+              className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
+              {loading ? "Speichern..." : "Aktualisieren"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 // ─── Modal: Neues Fahrzeug ────────────────────────────────────────────────────
 
 function FahrzeugModal({ onClose, onSave }: { onClose: () => void; onSave: () => void }) {
@@ -323,6 +434,8 @@ export default function FuhrparkPage() {
   const [loading, setLoading] = useState(true)
   const [einsaetzeLoading, setEinsaetzeLoading] = useState(false)
   const [modal, setModal] = useState<"fahrzeug" | "geraet" | "einsatz" | null>(null)
+  // Y2: Edit-State für Fahrzeuge
+  const [editFahrzeug, setEditFahrzeug] = useState<Fahrzeug | null>(null)
   const heute = new Date()
 
   const load = useCallback(async () => {
@@ -403,11 +516,12 @@ export default function FuhrparkPage() {
                     <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
                     <th className="text-left px-4 py-3 text-zinc-500 font-medium">TÜV</th>
                     <th className="text-right px-4 py-3 text-zinc-500 font-medium">Zuschlag/h</th>
+                    <th className="px-4 py-3" />
                   </tr>
                 </thead>
                 <tbody>
                   {fahrzeuge.length === 0 ? (
-                    <tr><td colSpan={6} className="text-center py-12 text-zinc-600">Keine Fahrzeuge</td></tr>
+                    <tr><td colSpan={7} className="text-center py-12 text-zinc-600">Keine Fahrzeuge</td></tr>
                   ) : fahrzeuge.map(f => (
                     <tr key={f.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors cursor-default">
                       <td className="px-4 py-3">
@@ -437,6 +551,15 @@ export default function FuhrparkPage() {
                             +{f.stundenBonus.toFixed(2)} €/h
                           </span>
                         ) : <span className="text-zinc-600">–</span>}
+                      </td>
+                      {/* Y2: Edit-Button */}
+                      <td className="px-4 py-3 text-right">
+                        <button
+                          onClick={() => setEditFahrzeug(f)}
+                          className="text-zinc-500 hover:text-emerald-400 transition-colors text-xs px-2 py-1 rounded hover:bg-[#2a2a2a]"
+                        >
+                          Bearbeiten
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -536,6 +659,14 @@ export default function FuhrparkPage() {
       {/* Modals */}
       {modal === "fahrzeug" && (
         <FahrzeugModal onClose={() => setModal(null)} onSave={() => { setModal(null); load() }} />
+      )}
+      {/* Y2: Edit-Modal */}
+      {editFahrzeug && (
+        <FahrzeugEditModal
+          fahrzeug={editFahrzeug}
+          onClose={() => setEditFahrzeug(null)}
+          onSave={() => { setEditFahrzeug(null); load() }}
+        />
       )}
       {modal === "geraet" && (
         <GeraetModal onClose={() => setModal(null)} onSave={() => { setModal(null); load() }} />
