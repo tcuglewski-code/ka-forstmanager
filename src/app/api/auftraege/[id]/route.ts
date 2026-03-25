@@ -116,19 +116,21 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
     // Aus ForstManager DB löschen
     await prisma.auftrag.delete({ where: { id } })
 
-    // WP-Post in den Papierkorb verschieben (damit Sync ihn nicht wieder importiert)
+    // WP-ID zur Sync-Blockliste hinzufügen (verhindert Re-Import beim nächsten Sync)
     if (auftrag?.wpProjektId) {
       try {
-        await fetch(`${WP_API_URL}/${auftrag.wpProjektId}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Basic ${WP_AUTH}`,
-            "Content-Type": "application/json",
-          },
-        })
-      } catch (wpError) {
-        // WP-Löschung ist best-effort — FM-Löschung hat Vorrang
-        console.warn("[Auftraege DELETE] WP-Post konnte nicht gelöscht werden:", wpError)
+        const config = await prisma.systemConfig.findUnique({ where: { key: "sync_blocked_wp_ids" } })
+        const blocked: string[] = config?.value ? JSON.parse(config.value as string) : []
+        if (!blocked.includes(auftrag.wpProjektId)) {
+          blocked.push(auftrag.wpProjektId)
+          await prisma.systemConfig.upsert({
+            where: { key: "sync_blocked_wp_ids" },
+            create: { key: "sync_blocked_wp_ids", value: JSON.stringify(blocked) },
+            update: { value: JSON.stringify(blocked) },
+          })
+        }
+      } catch (err) {
+        console.warn("[Auftraege DELETE] Blocklist-Update fehlgeschlagen:", err)
       }
     }
 

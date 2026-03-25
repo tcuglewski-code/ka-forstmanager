@@ -90,11 +90,18 @@ export async function POST() {
   try {
     const posts = await fetchAllWpPosts()
 
+    // Geblockte WP-IDs laden (in FM manuell gelöscht)
+    const blockConfig = await prisma.systemConfig.findUnique({ where: { key: "sync_blocked_wp_ids" } })
+    const blockedWpIds = new Set<string>(blockConfig?.value ? JSON.parse(blockConfig.value as string) : [])
+
     let newCount = 0
     let updatedCount = 0
 
     for (const post of posts) {
       const wpId = String(post.id)
+
+      // Überspringe geblockte (in FM gelöschte) WP-Posts
+      if (blockedWpIds.has(wpId)) continue
 
       // Parse wizard data
       let wizard: WizardDaten = {}
