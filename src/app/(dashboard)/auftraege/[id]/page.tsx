@@ -66,6 +66,9 @@ interface Auftrag {
   endDatum?: string | null
   createdAt: string
   wizardDaten?: WizardDaten | null
+  lat?: number | null
+  lng?: number | null
+  plusCode?: string | null
   protokolle?: { id: string; datum: string; gepflanzt?: number | null; witterung?: string | null; ersteller?: string | null; fotos?: string | null }[]
   abnahmen?: { id: string; datum: string; status: string; notizen?: string | null }[]
   rechnungen?: { id: string; nummer: string; betrag: number; status: string }[]
@@ -551,6 +554,10 @@ export default function AuftragDetailPage() {
   const [notizen, setNotizen] = useState("")
   const [saisonId, setSaisonId] = useState<string>("")
   const [gruppeId, setGruppeId] = useState<string>("")
+  // GPS-Koordinaten (Sprint U)
+  const [lat, setLat] = useState<string>("")
+  const [lng, setLng] = useState<string>("")
+  const [plusCode, setPlusCode] = useState<string>("")
 
   const [saisons, setSaisons] = useState<Saison[]>([])
   const [gruppen, setGruppen] = useState<Gruppe[]>([])
@@ -583,6 +590,9 @@ export default function AuftragDetailPage() {
       setNotizen(a.notizen ?? "")
       setSaisonId(a.saisonId ?? "")
       setGruppeId(a.gruppeId ?? "")
+      setLat(a.lat != null ? String(a.lat) : "")
+      setLng(a.lng != null ? String(a.lng) : "")
+      setPlusCode(a.plusCode ?? "")
       setSaisons(saionsRes.ok ? await saionsRes.json() : [])
       setGruppen(gruppenRes.ok ? await gruppenRes.json() : [])
       if (materialRes.ok) { const mat = await materialRes.json(); setMaterial(Array.isArray(mat) ? mat : []) }
@@ -625,6 +635,9 @@ export default function AuftragDetailPage() {
         notizen: notizen || null,
         saisonId: saisonId || null,
         gruppeId: gruppeId || null,
+        lat: lat !== "" ? lat : null,
+        lng: lng !== "" ? lng : null,
+        plusCode: plusCode || null,
       }),
     })
     setSaving(false)
@@ -695,7 +708,33 @@ export default function AuftragDetailPage() {
             </div>
             <p className="text-zinc-500 text-xs">Erstellt: {new Date(auftrag.createdAt).toLocaleDateString("de-DE")}</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            {auftrag.status === "anfrage" && (
+              <button
+                onClick={async () => {
+                  const r = await fetch("/api/angebote", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      auftragId: auftrag.id,
+                      waldbesitzerName: auftrag.waldbesitzer,
+                      waldbesitzerEmail: auftrag.waldbesitzerEmail,
+                      flaeche_ha: auftrag.flaeche_ha,
+                      beschreibung: auftrag.titel,
+                    }),
+                  })
+                  if (r.ok) {
+                    const data = await r.json()
+                    toast.success(`Angebot ${data.nummer} erstellt`)
+                  } else {
+                    toast.error("Fehler beim Erstellen des Angebots")
+                  }
+                }}
+                className="px-4 py-2 bg-blue-500/20 border border-blue-500/40 text-blue-400 rounded-lg text-sm hover:bg-blue-500/30 transition-colors"
+              >
+                📋 Angebot erstellen
+              </button>
+            )}
             {wpAdminUrl && (
               <a
                 href={wpAdminUrl}

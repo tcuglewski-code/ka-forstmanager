@@ -40,7 +40,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       "titel", "typ", "status", "beschreibung", "standort", "bundesland",
       "waldbesitzer", "waldbesitzerEmail", "waldbesitzerTelefon",
       "baumarten", "zeitraum", "notizen", "neuFlag",
-      "saisonId", "gruppeId",
+      "saisonId", "gruppeId", "plusCode",
     ]
 
     for (const field of allowedFields) {
@@ -57,6 +57,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
     if ("endDatum" in body) {
       data.endDatum = body.endDatum ? new Date(body.endDatum) : null
+    }
+    // GPS-Koordinaten (Sprint U)
+    if ("lat" in body) {
+      data.lat = body.lat != null && body.lat !== "" ? parseFloat(String(body.lat)) : null
+    }
+    if ("lng" in body) {
+      data.lng = body.lng != null && body.lng !== "" ? parseFloat(String(body.lng)) : null
     }
 
     const auftrag = await prisma.auftrag.update({
