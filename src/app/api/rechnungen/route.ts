@@ -31,7 +31,6 @@ export async function POST(req: NextRequest) {
   if (!nummer) {
     const lastRechnung = await prisma.rechnung.findFirst({
       orderBy: { createdAt: "desc" },
-      where: { nummer: { not: null } },
       select: { nummer: true },
     })
     const lastNum = lastRechnung?.nummer
