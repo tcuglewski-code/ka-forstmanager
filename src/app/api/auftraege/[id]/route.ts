@@ -116,8 +116,8 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
     // Aus ForstManager DB löschen
     await prisma.auftrag.delete({ where: { id } })
 
-    // WP-ID zur Sync-Blockliste hinzufügen (verhindert Re-Import beim nächsten Sync)
     if (auftrag?.wpProjektId) {
+      // WP-ID zur Sync-Blockliste hinzufügen (verhindert Re-Import beim nächsten Sync)
       try {
         const config = await prisma.systemConfig.findUnique({ where: { key: "sync_blocked_wp_ids" } })
         const blocked: string[] = config?.value ? JSON.parse(config.value as string) : []
@@ -131,6 +131,20 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
         }
       } catch (err) {
         console.warn("[Auftraege DELETE] Blocklist-Update fehlgeschlagen:", err)
+      }
+
+      // WP-Post ebenfalls löschen (force=true → endgültig, kein Papierkorb)
+      try {
+        const wpDeleteUrl = `${WP_API_URL}/${auftrag.wpProjektId}?force=true`
+        const wpRes = await fetch(wpDeleteUrl, {
+          method: "DELETE",
+          headers: { Authorization: `Basic ${WP_AUTH}` },
+        })
+        if (!wpRes.ok) {
+          console.warn(`[Auftraege DELETE] WP-Post ${auftrag.wpProjektId} konnte nicht gelöscht werden: ${wpRes.status}`)
+        }
+      } catch (err) {
+        console.warn("[Auftraege DELETE] WP-Post-Löschung fehlgeschlagen:", err)
       }
     }
 
