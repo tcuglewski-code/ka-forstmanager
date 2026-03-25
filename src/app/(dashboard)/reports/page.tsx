@@ -186,7 +186,12 @@ export default function ReportsPage() {
                   <tbody className="divide-y divide-[#2a2a2a]">
                     {saisonReport.auftraege.map((a) => (
                       <tr key={a.id} className="hover:bg-[#1c1c1c]">
-                        <td className="px-6 py-3 text-sm text-white">{a.titel}</td>
+                        <td className="px-6 py-3 text-sm text-white">
+                          {a.titel}
+                          <a href={`/auftraege/${a.id}`} className="text-blue-400 hover:underline text-xs ml-2">
+                            Details →
+                          </a>
+                        </td>
                         <td className="px-6 py-3 text-sm text-zinc-400">{a.typ}</td>
                         <td className="px-6 py-3 text-sm text-zinc-400">{a.status}</td>
                         <td className="px-6 py-3 text-sm text-zinc-400">{a.flaeche_ha ?? "—"} ha</td>

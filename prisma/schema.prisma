@@ -67,6 +67,7 @@ model Mitarbeiter {
   vorschuesse       Vorschuss[]
   abwesenheiten     Abwesenheit[]
   lagerBewegungen   LagerBewegung[]
+  lohnabrechnungen  Lohnabrechnung[]
 }
 
 model Saison {
@@ -80,10 +81,11 @@ model Saison {
   ziel         String?
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
-  anmeldungen  SaisonAnmeldung[]
-  dokumente    Dokument[]
-  gruppen      Gruppe[]
-  auftraege    Auftrag[]
+  anmeldungen      SaisonAnmeldung[]
+  dokumente        Dokument[]
+  gruppen          Gruppe[]
+  auftraege        Auftrag[]
+  lohnabrechnungen Lohnabrechnung[]
 }
 
 model Tenant {
@@ -452,6 +454,27 @@ model Rechnung {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   auftrag        Auftrag?  @relation(fields: [auftragId], references: [id], onDelete: SetNull)
+}
+
+// LOHNABRECHNUNG (Sprint R)
+model Lohnabrechnung {
+  id            String      @id @default(cuid())
+  mitarbeiterId String
+  mitarbeiter   Mitarbeiter @relation(fields: [mitarbeiterId], references: [id])
+  saisonId      String?
+  saison        Saison?     @relation(fields: [saisonId], references: [id])
+  zeitraumVon   DateTime
+  zeitraumBis   DateTime
+  stunden       Float
+  bruttoLohn    Float
+  gesamtLohn    Float
+  maschinenBonus Float      @default(0)
+  vorschuesse   Float       @default(0)
+  auszahlung    Float
+  status        String      @default("erstellt")
+  notizen       String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }
 
 // SYSTEM-KONFIGURATION (Sprint P)
