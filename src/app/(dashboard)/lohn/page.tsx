@@ -682,7 +682,7 @@ export default function LohnPage() {
                   {a.notizen && (
                     <p className="text-xs text-zinc-500 mb-2 italic">{a.notizen}</p>
                   )}
-                  <div className="flex gap-2 mt-2">
+                  <div className="flex gap-2 mt-2 flex-wrap">
                     {a.status !== "ausgezahlt" && (
                       <button onClick={() => updateAbrechnung(a.id, { status: "ausgezahlt" })}
                         className="text-xs px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded hover:bg-emerald-500/20 transition-all">
@@ -699,6 +699,15 @@ export default function LohnPage() {
                       className="text-xs px-2 py-1 border border-zinc-700 text-zinc-400 rounded hover:border-zinc-500 transition-all">
                       Bearbeiten
                     </button>
+                    {/* PDF-Lohnabrechnung */}
+                    <a
+                      href={`/lohn/${a.mitarbeiter?.id}/abrechnung${a.saison?.id ? `?saisonId=${a.saison.id}` : ""}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs px-2 py-1 bg-zinc-700/50 border border-zinc-600 text-zinc-300 rounded hover:bg-zinc-600/60 transition-all flex items-center gap-1"
+                    >
+                      🖨️ PDF
+                    </a>
                   </div>
                 </div>
               ))}
