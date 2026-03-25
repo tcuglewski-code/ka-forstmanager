@@ -39,6 +39,13 @@ export default function RechnungenPage() {
   const [showModal, setShowModal] = useState(false)
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState({ nummer: "", auftragId: "", betrag: "", mwst: "19", faelligAm: "", notizen: "" })
+  const [selectedAuftragLink, setSelectedAuftragLink] = useState("")
+  const [loadingBetrag, setLoadingBetrag] = useState(false)
+
+  // Sprint Q: Filter + Sortierung
+  const [filterStatus, setFilterStatus] = useState("")
+  const [sortBy, setSortBy] = useState<"datum" | "betrag" | "status">("datum")
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc")
 
   const fetchAll = useCallback(async () => {
     setLoading(true)
@@ -58,14 +65,54 @@ export default function RechnungenPage() {
     await fetchAll()
   }
 
+  // Sprint Q: Auto-Betrag aus Wirtschaftlichkeit laden
+  async function onAuftragSelected(auftragId: string) {
+    setForm(prev => ({ ...prev, auftragId }))
+    setSelectedAuftragLink(auftragId ? `/auftraege/${auftragId}` : "")
+    if (!auftragId) return
+
+    setLoadingBetrag(true)
+    try {
+      const r = await fetch(`/api/auftraege/${auftragId}/wirtschaftlichkeit`)
+      const w = await r.json()
+      if (w.umsatz && w.umsatz > 0) {
+        setForm(prev => ({ ...prev, betrag: String(w.umsatz) }))
+      } else if (w.stundenAnzahl > 0) {
+        // Fallback: Stunden × vollkosten aus Config
+        const config = await fetch("/api/einstellungen/config").then(r => r.json())
+        const vollkosten = parseFloat(config.vollkosten_pro_stunde ?? "43.50")
+        setForm(prev => ({ ...prev, betrag: String(Math.round(w.stundenAnzahl * vollkosten * 100) / 100) }))
+      }
+    } catch {
+      // Fehler ignorieren, Betrag bleibt leer
+    }
+    setLoadingBetrag(false)
+  }
+
   async function create() {
     setSaving(true)
     await fetch("/api/rechnungen", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
     setShowModal(false)
     setForm({ nummer: "", auftragId: "", betrag: "", mwst: "19", faelligAm: "", notizen: "" })
+    setSelectedAuftragLink("")
     await fetchAll()
     setSaving(false)
   }
+
+  // Sprint Q: Filtern + Sortieren (client-seitig)
+  const gefilterteRechnungen = rechnungen
+    .filter(r => !filterStatus || r.status === filterStatus)
+    .sort((a, b) => {
+      let cmp = 0
+      if (sortBy === "datum") {
+        cmp = new Date(a.rechnungsDatum).getTime() - new Date(b.rechnungsDatum).getTime()
+      } else if (sortBy === "betrag") {
+        cmp = a.betrag - b.betrag
+      } else if (sortBy === "status") {
+        cmp = a.status.localeCompare(b.status)
+      }
+      return sortDir === "asc" ? cmp : -cmp
+    })
 
   const gesamtOffen = rechnungen.filter((r) => r.status === "offen" || r.status === "freigegeben").reduce((s, r) => s + r.betrag, 0)
 
@@ -85,6 +132,41 @@ export default function RechnungenPage() {
         </button>
       </div>
 
+      {/* Sprint Q: Filter + Sortierung */}
+      <div className="flex gap-3 mb-4 flex-wrap">
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="px-3 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white"
+        >
+          <option value="">Alle Status</option>
+          <option value="offen">Offen</option>
+          <option value="freigegeben">Freigegeben</option>
+          <option value="bezahlt">Bezahlt</option>
+          <option value="storniert">Storniert</option>
+        </select>
+        <select
+          value={`${sortBy}-${sortDir}`}
+          onChange={(e) => {
+            const [b, d] = e.target.value.split("-")
+            setSortBy(b as "datum" | "betrag" | "status")
+            setSortDir(d as "asc" | "desc")
+          }}
+          className="px-3 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white"
+        >
+          <option value="datum-desc">Datum (neueste)</option>
+          <option value="datum-asc">Datum (älteste)</option>
+          <option value="betrag-desc">Betrag (höchste)</option>
+          <option value="betrag-asc">Betrag (niedrigste)</option>
+          <option value="status-asc">Status (A–Z)</option>
+        </select>
+        {filterStatus && (
+          <span className="flex items-center text-xs text-zinc-500">
+            {gefilterteRechnungen.length} von {rechnungen.length} Rechnungen
+          </span>
+        )}
+      </div>
+
       {loading ? (
         <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
       ) : (
@@ -102,12 +184,20 @@ export default function RechnungenPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#2a2a2a]">
-              {rechnungen.length === 0 ? (
-                <tr><td colSpan={7} className="px-6 py-12 text-center text-zinc-600">Keine Rechnungen</td></tr>
-              ) : rechnungen.map((r) => (
+              {gefilterteRechnungen.length === 0 ? (
+                <tr><td colSpan={7} className="px-6 py-12 text-center text-zinc-600">
+                  {filterStatus ? "Keine Rechnungen mit diesem Status" : "Keine Rechnungen"}
+                </td></tr>
+              ) : gefilterteRechnungen.map((r) => (
                 <tr key={r.id} className="hover:bg-[#1c1c1c]">
                   <td className="px-6 py-4 text-sm font-mono text-white">{r.nummer}</td>
-                  <td className="px-6 py-4 text-sm text-zinc-400">{r.auftrag?.titel ?? "—"}</td>
+                  <td className="px-6 py-4 text-sm text-zinc-400">
+                    {r.auftrag ? (
+                      <a href={`/auftraege/${r.auftrag.id}`} className="hover:text-emerald-400 transition-colors">
+                        {r.auftrag.titel}
+                      </a>
+                    ) : "—"}
+                  </td>
                   <td className="px-6 py-4 text-sm font-medium text-white">{r.betrag.toFixed(2)} €</td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-0.5 rounded-full text-xs ${statusBadge[r.status] ?? "bg-zinc-700 text-zinc-400"}`}>
@@ -155,20 +245,49 @@ export default function RechnungenPage() {
             <h2 className="text-lg font-bold text-white mb-4">Rechnung erstellen</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Rechnungsnummer</label>
-                <input value={form.nummer} onChange={(e) => setForm({ ...form, nummer: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" placeholder="RE-2026-001" />
+                <label className="block text-xs text-zinc-400 mb-1">Rechnungsnummer (leer = auto-generiert)</label>
+                <input
+                  value={form.nummer}
+                  onChange={(e) => setForm({ ...form, nummer: e.target.value })}
+                  className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white"
+                  placeholder="RE-2026-0001 (wird automatisch vergeben)"
+                />
               </div>
               <div>
                 <label className="block text-xs text-zinc-400 mb-1">Auftrag</label>
-                <select value={form.auftragId} onChange={(e) => setForm({ ...form, auftragId: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
+                <select
+                  value={form.auftragId}
+                  onChange={(e) => onAuftragSelected(e.target.value)}
+                  className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white"
+                >
                   <option value="">— kein Auftrag —</option>
                   {auftraege.map((a) => <option key={a.id} value={a.id}>{a.titel}</option>)}
                 </select>
+                {/* Sprint Q: Link zum Auftrag */}
+                {selectedAuftragLink && (
+                  <a
+                    href={selectedAuftragLink}
+                    target="_blank"
+                    className="text-xs text-blue-400 hover:underline flex items-center gap-1 mt-1"
+                  >
+                    <ExternalLink className="w-3 h-3" /> Auftrag in neuem Tab öffnen
+                  </a>
+                )}
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Betrag (€)</label>
-                  <input type="number" step="0.01" value={form.betrag} onChange={(e) => setForm({ ...form, betrag: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
+                  <label className="block text-xs text-zinc-400 mb-1">
+                    Betrag (€)
+                    {loadingBetrag && <span className="ml-1 text-zinc-600">wird geladen...</span>}
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={form.betrag}
+                    onChange={(e) => setForm({ ...form, betrag: e.target.value })}
+                    className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white"
+                    placeholder="Wird aus Auftrag geladen"
+                  />
                 </div>
                 <div>
                   <label className="block text-xs text-zinc-400 mb-1">MwSt (%)</label>
@@ -185,8 +304,17 @@ export default function RechnungenPage() {
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 rounded-lg border border-[#333] text-zinc-400 text-sm hover:bg-[#222]">Abbrechen</button>
-              <button onClick={create} disabled={saving || !form.nummer || !form.betrag} className="flex-1 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium disabled:opacity-50">
+              <button
+                onClick={() => { setShowModal(false); setSelectedAuftragLink("") }}
+                className="flex-1 px-4 py-2 rounded-lg border border-[#333] text-zinc-400 text-sm hover:bg-[#222]"
+              >
+                Abbrechen
+              </button>
+              <button
+                onClick={create}
+                disabled={saving || !form.betrag}
+                className="flex-1 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium disabled:opacity-50"
+              >
                 {saving ? "Speichern..." : "Erstellen"}
               </button>
             </div>
