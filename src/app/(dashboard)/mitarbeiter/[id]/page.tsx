@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ArrowLeft, User, MapPin, Phone, Mail, CreditCard } from "lucide-react"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
 import { StatistikWidget } from "./StatistikWidget"
+import { AbwesenheitenSection } from "./AbwesenheitenSection"
 
 // Sprint Q: RolleBadge Komponente
 function RolleBadge({ rolle }: { rolle: string }) {
@@ -239,25 +240,19 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
           )}
         </Section>
 
-        {/* Abwesenheiten */}
-        <Section title={`Abwesenheiten (${ma.abwesenheiten.length})`} link="/stunden">
-          {ma.abwesenheiten.length === 0 ? (
-            <p className="text-zinc-600 text-sm">Keine Abwesenheiten</p>
-          ) : (
-            <div className="space-y-2">
-              {ma.abwesenheiten.map((a) => (
-                <div key={a.id} className="flex items-center justify-between py-2 border-b border-[#2a2a2a] last:border-0">
-                  <div>
-                    <p className="text-sm text-white">{a.typ}</p>
-                    <p className="text-xs text-zinc-500">{new Date(a.von).toLocaleDateString("de-DE")} – {new Date(a.bis).toLocaleDateString("de-DE")}</p>
-                  </div>
-                  <span className={`px-2 py-0.5 rounded-full text-xs ${a.genehmigt ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400"}`}>
-                    {a.genehmigt ? "Genehmigt" : "Ausstehend"}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
+        {/* Abwesenheiten (Sprint S: interaktive Client-Komponente) */}
+        <Section title={`Abwesenheiten`} link="/stunden">
+          <AbwesenheitenSection
+            mitarbeiterId={ma.id}
+            initialAbwesenheiten={ma.abwesenheiten.map(a => ({
+              id: a.id,
+              von: a.von.toISOString(),
+              bis: a.bis.toISOString(),
+              typ: a.typ,
+              genehmigt: a.genehmigt,
+              notiz: a.notiz,
+            }))}
+          />
         </Section>
       </div>
     </div>

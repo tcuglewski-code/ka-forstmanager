@@ -144,6 +144,21 @@ model Auftrag {
   rechnungen         Rechnung[]
   lagerBewegungen    LagerBewegung[]
   maschineneinsaetze Maschineneinsatz[]
+  stundeneintraege   Stundeneintrag[]
+  logs               AuftragLog[]
+  angebote           Angebot[]
+}
+
+// AUDIT-LOG FÜR AUFTRÄGE (Sprint S)
+model AuftragLog {
+  id        String   @id @default(cuid())
+  auftragId String
+  auftrag   Auftrag  @relation(fields: [auftragId], references: [id], onDelete: Cascade)
+  aktion    String   // status_geaendert, mitarbeiter_zugewiesen, rechnung_erstellt, etc.
+  von       String?  // alter Wert
+  nach      String?  // neuer Wert
+  userId    String?
+  createdAt DateTime @default(now())
 }
 
 // GRUPPE
@@ -303,6 +318,7 @@ model Stundeneintrag {
   maschinenzuschlag Float?      // Maschinenbonus (Sprint K1+)
   createdAt         DateTime    @default(now())
   mitarbeiter       Mitarbeiter @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
+  auftrag           Auftrag?    @relation(fields: [auftragId], references: [id], onDelete: SetNull)
 }
 
 model Abwesenheit {
@@ -483,4 +499,25 @@ model SystemConfig {
   key       String   @unique
   value     String
   updatedAt DateTime @updatedAt
+}
+
+// ANGEBOTE (Sprint T)
+model Angebot {
+  id                String    @id @default(cuid())
+  nummer            String?   @unique
+  auftragId         String?
+  auftrag           Auftrag?  @relation(fields: [auftragId], references: [id])
+  waldbesitzerName  String?
+  waldbesitzerEmail String?
+  flaeche_ha        Float?
+  baumanzahl        Int?
+  preisProBaum      Float?
+  stundenSchaetzung Float?
+  gesamtpreis       Float?
+  beschreibung      String?
+  status            String    @default("entwurf") // entwurf, versendet, angenommen, abgelehnt
+  gueltigBis        DateTime?
+  notizen           String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 }

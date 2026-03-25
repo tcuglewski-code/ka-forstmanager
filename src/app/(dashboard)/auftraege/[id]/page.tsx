@@ -566,6 +566,9 @@ export default function AuftragDetailPage() {
     marge: number
   } | null>(null)
 
+  // Audit-Log (Sprint S)
+  const [auftragLog, setAuftragLog] = useState<{ id: string; aktion: string; von?: string | null; nach?: string | null; createdAt: string }[]>([])
+
   useEffect(() => {
     async function fetchData() {
       const [auftragRes, saionsRes, gruppenRes, materialRes] = await Promise.all([
@@ -597,6 +600,15 @@ export default function AuftragDetailPage() {
         .catch(() => {})
     }
   }, [auftrag?.id])
+
+  useEffect(() => {
+    if (id) {
+      fetch(`/api/auftraege/${id}/log`)
+        .then(r => r.json())
+        .then(data => setAuftragLog(Array.isArray(data) ? data : []))
+        .catch(() => {})
+    }
+  }, [id])
 
   // Lade System-Konfiguration für konfigurierbaren Preis pro ha (Sprint P)
   useEffect(() => {
@@ -1131,6 +1143,25 @@ export default function AuftragDetailPage() {
 
         </div>
       </div>
+
+      {/* Audit-Log Timeline (Sprint S) */}
+      {auftragLog.length > 0 && (
+        <div className="mt-6 bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+          <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-3">Verlauf</h3>
+          <div className="space-y-2">
+            {auftragLog.map((l) => (
+              <div key={l.id} className="flex items-start gap-3 text-xs">
+                <span className="text-zinc-600 whitespace-nowrap">{new Date(l.createdAt).toLocaleString("de-DE")}</span>
+                <span className="text-zinc-400">
+                  {l.aktion === "status_geaendert"
+                    ? `Status: ${l.von ?? "—"} → ${l.nach ?? "—"}`
+                    : l.aktion}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-6">
         <button
