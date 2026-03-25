@@ -19,6 +19,9 @@ interface Mitarbeiter {
   status: string
   stundenlohn?: number | null
   notizen?: string | null
+  notfallName?: string | null
+  notfallTelefon?: string | null
+  notfallBeziehung?: string | null
 }
 
 interface MitarbeiterModalProps {
@@ -41,6 +44,9 @@ const defaultData: Partial<Mitarbeiter> = {
   status: "aktiv",
   stundenlohn: undefined,
   notizen: null,
+  notfallName: null,
+  notfallTelefon: null,
+  notfallBeziehung: null,
 }
 
 const rollenOptions = [
@@ -276,6 +282,45 @@ export function MitarbeiterModal({
               placeholder="z.B. 14.50"
               className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
             />
+          </div>
+
+          {/* Notfallkontakt (Sprint U) */}
+          <div className="border border-red-500/20 rounded-lg p-4 bg-red-500/5">
+            <p className="text-xs font-semibold text-red-400 uppercase tracking-wider mb-3">🚨 Notfallkontakt</p>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-1.5">Name</label>
+                <input
+                  type="text"
+                  value={form.notfallName || ""}
+                  onChange={(e) => update("notfallName", e.target.value || null)}
+                  placeholder="z.B. Maria Müller"
+                  className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-red-500/30 text-sm"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-zinc-400 mb-1.5">Telefon</label>
+                  <input
+                    type="tel"
+                    value={form.notfallTelefon || ""}
+                    onChange={(e) => update("notfallTelefon", e.target.value || null)}
+                    placeholder="+49 151 123 4567"
+                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-red-500/30 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-zinc-400 mb-1.5">Beziehung</label>
+                  <input
+                    type="text"
+                    value={form.notfallBeziehung || ""}
+                    onChange={(e) => update("notfallBeziehung", e.target.value || null)}
+                    placeholder="z.B. Partner, Mutter"
+                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-red-500/30 text-sm"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Notizen */}
