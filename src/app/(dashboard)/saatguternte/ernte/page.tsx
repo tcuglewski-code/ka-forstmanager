@@ -3,12 +3,14 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { History, Package, TreeDeciduous, MapPin, Users, BarChart3, ChevronLeft, ChevronRight, Eye } from "lucide-react"
 import { ErnteFilterClient } from "./ErnteFilterClient"
+import { StatistikTab } from "./StatistikTab"
 
 interface SearchParams {
   saison?: string
   baumart?: string
   bundesland?: string
   page?: string
+  tab?: string
 }
 
 export default async function ErnteHistoriePage({
@@ -17,6 +19,7 @@ export default async function ErnteHistoriePage({
   searchParams: Promise<SearchParams>
 }) {
   const params = await searchParams
+  const activeTab = params.tab ?? "historie"
   const saison = params.saison && params.saison !== "alle" ? parseInt(params.saison) : undefined
   const page = Math.max(1, parseInt(params.page ?? "1"))
   const limit = 25
@@ -114,13 +117,6 @@ export default async function ErnteHistoriePage({
         </div>
         <div className="flex items-center gap-3">
           <Link
-            href="/saatguternte/ernte/statistik"
-            className="flex items-center gap-2 px-4 py-2 bg-[#1e1e1e] hover:bg-[#2a2a2a] border border-[#2a2a2a] text-zinc-300 hover:text-white rounded-lg transition-colors text-sm"
-          >
-            <BarChart3 className="w-4 h-4 text-emerald-400" />
-            Statistiken
-          </Link>
-          <Link
             href="/saatguternte/ernte/neu"
             className="flex items-center gap-2 px-4 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg transition-colors text-sm font-medium"
           >
@@ -128,6 +124,36 @@ export default async function ErnteHistoriePage({
           </Link>
         </div>
       </div>
+
+      {/* ── Haupt-Tabs: Historie | Statistik ──────────────────────────────── */}
+      <div className="flex gap-1 border-b border-[#2a2a2a]">
+        <Link
+          href="/saatguternte/ernte"
+          className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === "historie"
+              ? "border-emerald-500 text-emerald-400"
+              : "border-transparent text-zinc-500 hover:text-zinc-300"
+          }`}
+        >
+          📋 Erntehistorie
+        </Link>
+        <Link
+          href="/saatguternte/ernte?tab=statistik"
+          className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === "statistik"
+              ? "border-emerald-500 text-emerald-400"
+              : "border-transparent text-zinc-500 hover:text-zinc-300"
+          }`}
+        >
+          📊 Statistik
+        </Link>
+      </div>
+
+      {/* ── Tab: Statistik ────────────────────────────────────────────────── */}
+      {activeTab === "statistik" && <StatistikTab />}
+
+      {/* ── Tab: Erntehistorie (Statistik-Cards, Filter, Tabelle) ─────────── */}
+      {activeTab === "historie" && <>
 
       {/* Statistik-Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -300,6 +326,8 @@ export default async function ErnteHistoriePage({
           </div>
         )}
       </div>
+
+      </> /* Ende Tab: historie */}
     </div>
   )
 }
