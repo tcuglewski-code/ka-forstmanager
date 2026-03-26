@@ -527,3 +527,151 @@ model Angebot {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 }
+
+// ============================================================
+// SAATGUTERNTE MODUL (Sprint W)
+// ============================================================
+
+// Registerquellen (z.B. Bayern, NW-FVA, Rheinland-Pfalz)
+model ErnteRegisterQuelle {
+  id             String    @id @default(cuid())
+  name           String
+  kuerzel        String    @unique
+  bundeslaender  String[]
+  baseUrl        String?
+  crawlUrl       String?
+  loginRequired  Boolean   @default(false)
+  crawlStatus    String    @default("idle")
+  letzterCrawl   DateTime?
+  naechsterCrawl DateTime?
+  crawlLog       String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  credential RegisterCredential?
+  flaechen   RegisterFlaeche[]
+}
+
+model RegisterCredential {
+  id            String   @id @default(cuid())
+  quelleId      String   @unique
+  encryptedUser String
+  encryptedPass String
+  iv            String
+  authTag       String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  quelle ErnteRegisterQuelle @relation(fields: [quelleId], references: [id], onDelete: Cascade)
+}
+
+model RegisterFlaeche {
+  id                    String    @id @default(cuid())
+  quelleId              String
+  registerNr            String
+  bundesland            String
+  baumart               String
+  baumartWiss           String?
+  baumartCode           String?
+  kategorie             String?
+  ausgangsmaterial      String?
+  herkunftsgebiet       String?
+  herkunftCode          String?
+  latDez                Float?
+  lonDez                Float?
+  koordinatenRaw        String?
+  flaecheHa             Float?
+  flaecheRedHa          Float?
+  hoeheVon              Int?
+  hoeheBis              Int?
+  forstamt              String?
+  revier                String?
+  besitzart             String?
+  eigentumsart          String?
+  landkreis             String?
+  wuchsbezirk           String?
+  zulaessigeFlaechen    String?
+  zulassungVon          DateTime?
+  zulassungBis          DateTime?
+  zulassungBisText      String?
+  zugelassen            Boolean   @default(true)
+  erstesJahr            Int?
+  ansprechpartner       String?
+  ansprechpartnerTel    String?
+  ansprechpartnerEmail  String?
+  hoheitlicheStelle     String?
+  genetischUntersucht   Boolean   @default(false)
+  alter                 String?
+  verwendungszweck      String?
+  verkehrsbeschraenkung Boolean   @default(false)
+  quelleUrl             String?
+  rohdaten              Json?
+  datenstand            String?
+  letzteAktualisierung  DateTime  @default(now())
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  quelle      ErnteRegisterQuelle @relation(fields: [quelleId], references: [id])
+  profil      FlaechenProfil?
+  wetterDaten WetterSnapshot[]
+
+  @@unique([quelleId, registerNr])
+}
+
+model FlaechenProfil {
+  id               String    @id @default(cuid())
+  flaecheId        String    @unique
+  status           String    @default("ungeprüft")
+  bewertung        Int?
+  notizen          String?
+  letzteInspektion DateTime?
+  naechsteErnte    DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  flaeche RegisterFlaeche @relation(fields: [flaecheId], references: [id], onDelete: Cascade)
+  ernten  Ernte[]
+}
+
+model Ernte {
+  id            String    @id @default(cuid())
+  profilId      String
+  saison        Int
+  datum         DateTime
+  baumart       String
+  mengeKgGesamt Float?
+  notizen       String?
+  exportiert    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  profil     FlaechenProfil  @relation(fields: [profilId], references: [id])
+  positionen ErntePosition[]
+}
+
+model ErntePosition {
+  id          String   @id @default(cuid())
+  ernteId     String
+  sammlerName String
+  datum       DateTime
+  mengeKg     Float
+  stunden     Float?
+  notizen     String?
+  createdAt   DateTime @default(now())
+
+  ernte Ernte @relation(fields: [ernteId], references: [id], onDelete: Cascade)
+}
+
+model WetterSnapshot {
+  id             String   @id @default(cuid())
+  flaecheId      String
+  datum          DateTime
+  tempMinC       Float?
+  tempMaxC       Float?
+  niederschlagMm Float?
+  frosttage      Int?
+  datenQuelle    String   @default("open-meteo")
+  createdAt      DateTime @default(now())
+
+  flaeche RegisterFlaeche @relation(fields: [flaecheId], references: [id], onDelete: Cascade)
+}
