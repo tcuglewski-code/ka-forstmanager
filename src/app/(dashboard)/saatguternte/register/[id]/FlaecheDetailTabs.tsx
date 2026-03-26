@@ -7,6 +7,7 @@ import {
   MapPin, Phone, Mail, ExternalLink, Database, Star,
   Calendar, ClipboardList, Cloud, Eye, Leaf
 } from "lucide-react"
+import { WetterTab } from "./WetterTab"
 
 interface Ernte {
   id: string
@@ -574,18 +575,11 @@ export function FlaecheDetailTabs({ flaeche }: { flaeche: Flaeche }) {
       )}
 
       {activeTab === "wetter" && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-10 flex flex-col items-center justify-center text-center">
-          <Cloud className="w-12 h-12 text-zinc-700 mb-3" />
-          <h3 className="text-lg font-semibold text-zinc-400 mb-2">Wetterdaten werden geladen...</h3>
-          <p className="text-zinc-600 text-sm">
-            Die Wetterintegration wird in Sprint AA implementiert.
-            {hasKoord && (
-              <span className="block mt-1 text-xs font-mono text-zinc-700">
-                Koordinaten: {lat?.toFixed(4)}°N, {lon?.toFixed(4)}°O
-              </span>
-            )}
-          </p>
-        </div>
+        <WetterTab
+          flaecheId={flaeche.id}
+          latDez={flaeche.latDez}
+          lonDez={flaeche.lonDez}
+        />
       )}
     </div>
   )
