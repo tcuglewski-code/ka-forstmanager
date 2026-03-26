@@ -238,19 +238,37 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
         </div>
       )}
 
-      {/* Pflanzverband-Vorschau */}
-      <PflanzverbandVorschau
-        pflanzverband={w.pflanzverband}
-        pflanzabstand={w.pflanzabstand}
-        reihenabstand={w.reihenabstand}
-        baumarten={w.baumarten}
-        baumart={w.baumart}
-        pflanzenzahl={w.pflanzenzahl_gesamt ? Number(w.pflanzenzahl_gesamt) : null}
-        flaeche_ha={w.flaeche_ha}
-        aussenreihe={w.aussenreihe === true || w.aussenreihe === 'true'}
-        aussenreiheArt={w.aussenreiheArt || null}
-        aussenreiheArtName={w.aussenreiheArt ? String(w.aussenreiheArt) : null}
-      />
+      {/* Pflanzverband-Vorschau — per Fläche wenn mehrere vorhanden */}
+      {Array.isArray(w.flaechen) && w.flaechen.length > 0 ? (
+        (w.flaechen as FlaecheItem[]).map((fl, i) => (
+          <div key={i}>
+            {w.flaechen!.length > 1 && (
+              <p className="text-xs text-zinc-500 font-medium mb-1">Fläche {i + 1} — Pflanzverband</p>
+            )}
+            <PflanzverbandVorschau
+              pflanzverband={fl.pflanzverband}
+              pflanzabstand={fl.abstand_p ? fl.abstand_p + 'm' : null}
+              reihenabstand={fl.abstand_r ? fl.abstand_r + 'm' : null}
+              baumarten={w.baumarten}
+              pflanzenzahl={fl.stueckzahl}
+              flaeche_ha={fl.ha}
+              aussenreihe={w.aussenreihe}
+              aussenreiheArt={w.aussenreiheArt}
+            />
+          </div>
+        ))
+      ) : (
+        <PflanzverbandVorschau
+          pflanzverband={w.pflanzverband}
+          pflanzabstand={w.pflanzabstand}
+          reihenabstand={w.reihenabstand}
+          baumarten={w.baumarten}
+          pflanzenzahl={w.pflanzenzahl_gesamt != null ? Number(w.pflanzenzahl_gesamt) : null}
+          flaeche_ha={w.flaeche_ha}
+          aussenreihe={w.aussenreihe}
+          aussenreiheArt={w.aussenreiheArt}
+        />
+      )}
 
       {/* Bezugsquelle */}
       {(w.bezugsquelle || w.lieferant || w.lieferort || w.lieferAdresse) && (
