@@ -616,6 +616,7 @@ model RegisterFlaeche {
   profil      FlaechenProfil?
   wetterDaten WetterSnapshot[]
   medien      MediaZuordnung[]
+  einsaetze   ErnteEinsatz[]
 
   @@unique([quelleId, registerNr])
 }
@@ -700,4 +701,88 @@ model MediaZuordnung {
   createdAt     DateTime  @default(now())
 
   flaeche RegisterFlaeche? @relation(fields: [flaecheId], references: [id], onDelete: SetNull)
+}
+
+// ===== SAATGUTERNTE — Erweitertes System (Sprint AC) =====
+
+model ErntePerson {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  nationalitaet String?
+  stundenlohn   Float     @default(12.5)
+  aktiv         Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  arbeitszeitEintraege  SammlerArbeitszeit[]
+  ernteLeistungen       ErnteLeistung[]
+}
+
+model ErnteSaison {
+  id              String    @id @default(cuid())
+  jahr            Int       @unique
+  gruppenFuehrer  String?
+  notizen         String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  einsaetze       ErnteEinsatz[]
+}
+
+model ErnteEinsatz {
+  id              String    @id @default(cuid())
+  saisonId        String
+  datum           DateTime
+  registerNr      String?
+  flaecheId       String?
+  baumart         String
+  forstamt        String?
+  eigentuemer     String?
+  ort             String?
+  ansprechpartner String?
+  bldh            String?
+  zeitVorOrt      Float?
+  herkunft        String?
+  notizen         String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  saison          ErnteSaison      @relation(fields: [saisonId], references: [id])
+  flaeche         RegisterFlaeche? @relation(fields: [flaecheId], references: [id])
+  leistungen      ErnteLeistung[]
+  sammlerZeiten   SammlerArbeitszeit[]
+}
+
+model ErnteLeistung {
+  id          String      @id @default(cuid())
+  einsatzId   String
+  personId    String
+  gesammeltKg Float
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  einsatz     ErnteEinsatz  @relation(fields: [einsatzId], references: [id])
+  person      ErntePerson   @relation(fields: [personId], references: [id])
+
+  @@unique([einsatzId, personId])
+}
+
+model SammlerArbeitszeit {
+  id            String      @id @default(cuid())
+  personId      String
+  einsatzId     String?
+  datum         DateTime
+  arbeitsBeginn DateTime?
+  arbeitsEnde   DateTime?
+  pause         Float?
+  stunden       Float?
+  kommentar     String?
+  stundenlohn   Float?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  person        ErntePerson   @relation(fields: [personId], references: [id])
+  einsatz       ErnteEinsatz? @relation(fields: [einsatzId], references: [id])
+
+  @@unique([personId, datum])
 }
