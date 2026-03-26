@@ -16,12 +16,15 @@ export async function GET(req: NextRequest) {
     const sortDir = (sp.get("sortDir") === "asc" ? "asc" : "desc") as "asc" | "desc"
     const skip = (page - 1) * limit
 
+    const sonderherkunft = sp.get("sonderherkunft")
+
     const where: Prisma.RegisterFlaecheWhereInput = {}
     if (bundesland) where.bundesland = bundesland
     if (baumart) where.baumart = { contains: baumart, mode: "insensitive" }
     if (quelleId) where.quelleId = quelleId
     if (status === "zugelassen") where.zugelassen = true
     if (status === "abgelaufen") where.zugelassen = false
+    if (sonderherkunft === "true") where.sonderherkunft = true
     if (search) {
       where.OR = [
         { registerNr: { contains: search, mode: "insensitive" } },

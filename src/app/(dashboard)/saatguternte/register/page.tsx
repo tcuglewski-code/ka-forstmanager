@@ -10,6 +10,7 @@ interface SearchParams {
   quelleId?: string
   search?: string
   status?: string
+  sonderherkunft?: string
   page?: string
   sortBy?: string
   sortDir?: string
@@ -35,6 +36,7 @@ export default async function RegisterPage({
   if (params.quelleId) where.quelleId = params.quelleId
   if (params.status === "zugelassen") where.zugelassen = true
   if (params.status === "abgelaufen") where.zugelassen = false
+  if (params.sonderherkunft === "true") where.sonderherkunft = true
   if (params.search) {
     const s = params.search
     where.OR = [
@@ -95,7 +97,8 @@ export default async function RegisterPage({
     params.baumart ||
     params.quelleId ||
     params.search ||
-    params.status
+    params.status ||
+    params.sonderherkunft
   )
 
   // Serialisierung für Client Component
@@ -107,6 +110,7 @@ export default async function RegisterPage({
     createdAt: f.createdAt.toISOString(),
     updatedAt: f.updatedAt.toISOString(),
     hatWetterdaten: f.wetterDaten.length > 0,
+    sonderherkunft: f.sonderherkunft,
   }))
 
   return (
@@ -191,6 +195,16 @@ export default async function RegisterPage({
           <option value="zugelassen">Zugelassen</option>
           <option value="abgelaufen">Abgelaufen/Widerruf</option>
         </select>
+        <label className="flex items-center gap-2 px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-zinc-300 cursor-pointer hover:border-amber-500/50 transition-all select-none">
+          <input
+            type="checkbox"
+            name="sonderherkunft"
+            value="true"
+            defaultChecked={params.sonderherkunft === "true"}
+            className="accent-amber-500"
+          />
+          ⭐ Nur Sonderherkünfte
+        </label>
         <button
           type="submit"
           className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-medium transition-all"
