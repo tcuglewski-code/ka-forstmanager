@@ -19,6 +19,7 @@ interface RegisterFlaeche {
   zulassungBis: string | null
   zulassungBisText: string | null
   zugelassen: boolean
+  sonderherkunft?: boolean
   hatWetterdaten?: boolean
   quelle: {
     name: string
@@ -177,7 +178,12 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
                     className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors"
                   >
                     <td className="px-4 py-3 text-white font-medium font-mono text-xs">
-                      {f.registerNr}
+                      <div className="flex items-center gap-1.5">
+                        {f.registerNr}
+                        {f.sonderherkunft && (
+                          <span title="Sonderherkunft" className="text-amber-400 text-sm leading-none">⭐</span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-4 py-3 text-zinc-400">{f.bundesland}</td>
                     <td className="px-4 py-3 text-zinc-300">{f.baumart}</td>

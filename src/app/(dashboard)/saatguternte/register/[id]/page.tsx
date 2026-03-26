@@ -113,6 +113,11 @@ export default async function FlaecheDetailPage({
         >
           {flaeche.zugelassen ? "Zugelassen" : "Widerruf/Abgelaufen"}
         </span>
+        {flaeche.sonderherkunft && (
+          <span className="mt-1 ml-2 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+            ⭐ Sonderherkunft
+          </span>
+        )}
         {hasKoord && (
           <a
             href={`/saatguternte/scout/${flaeche.id}`}

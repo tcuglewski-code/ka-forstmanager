@@ -601,6 +601,7 @@ model RegisterFlaeche {
   ansprechpartnerEmail  String?
   hoheitlicheStelle     String?
   genetischUntersucht   Boolean   @default(false)
+  sonderherkunft        Boolean   @default(false)
   alter                 String?
   verwendungszweck      String?
   verkehrsbeschraenkung Boolean   @default(false)
