@@ -50,12 +50,21 @@ export default async function RegisterPage({
   }
 
   // OrderBy aufbauen
-  const orderBy: Prisma.RegisterFlaecheOrderByWithRelationInput = {}
+  let orderBy: Prisma.RegisterFlaecheOrderByWithRelationInput | Prisma.RegisterFlaecheOrderByWithRelationInput[]
+  const numericSortFields = ["flaecheHa", "flaecheRedHa", "hoeheVon", "hoeheBis"]
   const validSortFields = ["registerNr", "bundesland", "baumart", "flaecheHa", "forstamt", "zulassungBis"]
   if (validSortFields.includes(sortBy)) {
-    (orderBy as Record<string, string>)[sortBy] = sortDir
+    if (numericSortFields.includes(sortBy)) {
+      // Numerische Felder: NULL-Werte immer ans Ende
+      orderBy = [
+        { [sortBy]: { sort: sortDir, nulls: "last" } } as Prisma.RegisterFlaecheOrderByWithRelationInput,
+        { registerNr: "asc" },
+      ]
+    } else {
+      orderBy = { [sortBy]: sortDir } as Prisma.RegisterFlaecheOrderByWithRelationInput
+    }
   } else {
-    orderBy.registerNr = "asc"
+    orderBy = { registerNr: "asc" }
   }
 
   const [flaechen, total] = await Promise.all([
