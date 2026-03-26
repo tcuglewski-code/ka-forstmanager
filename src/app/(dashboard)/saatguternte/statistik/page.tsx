@@ -103,11 +103,12 @@ export default function SaatgutStatistikV2Page() {
   const { kpis, ranking, jahresvergleich, flaechenPerformance, saisons } = data
   const total = ranking.length
 
-  // Farbe für Rang — heller Hintergrund → immer dunkle Schrift
-  const rowClass = (rang: number) => {
-    if (rang <= 3)         return "bg-green-50 dark:bg-green-950/30 text-gray-900 dark:text-gray-100"
-    if (rang >= total - 2) return "bg-red-50 dark:bg-red-950/30 text-gray-900 dark:text-gray-100"
-    return ""
+  // Rang-Badge statt Zeilen-Hintergrund
+  function RangBadge({ rang }: { rang: number }) {
+    if (rang === 1) return <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-500 text-white font-bold text-sm">1</span>
+    if (rang === 2) return <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-400 text-white font-bold text-sm">2</span>
+    if (rang === 3) return <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-700 text-white font-bold text-sm">3</span>
+    return <span className="text-gray-500 text-sm">{rang}</span>
   }
 
   // Jahresvergleich nach Gesamtmenge sortiert
@@ -239,17 +240,17 @@ export default function SaatgutStatistikV2Page() {
               Sammler-Ranking ({total} Personen)
             </span>
             <span className="text-xs text-gray-500 ml-2">
-              🟢 Top 3 — Grün &nbsp;|&nbsp; 🔴 Bottom 3 — Rot
+              🥇 Gold · 🥈 Silber · 🥉 Bronze
             </span>
           </div>
 
           {/* Mobile: Cards */}
           <div className="divide-y divide-gray-100 dark:divide-gray-700 sm:hidden">
             {ranking.map((r) => (
-              <div key={r.name} className={`p-3 ${rowClass(r.rang)}`}>
+              <div key={r.name} className="p-3">
                 <div className="flex items-start justify-between">
-                  <div>
-                    <span className="font-bold text-gray-400 text-sm mr-2">#{r.rang}</span>
+                  <div className="flex items-center gap-2">
+                    <RangBadge rang={r.rang} />
                     <span className="font-medium text-sm">{r.name}</span>
                   </div>
                   <span className="font-bold text-green-700 dark:text-green-400 text-sm">{fmt(r.gesamtKg)} kg</span>
@@ -287,8 +288,8 @@ export default function SaatgutStatistikV2Page() {
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                 {ranking.map((r) => (
-                  <tr key={r.name} className={`hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors ${rowClass(r.rang)}`}>
-                    <td className="px-3 py-2 font-bold text-gray-400 text-center">{r.rang}</td>
+                  <tr key={r.name} className="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors">
+                    <td className="px-3 py-2 text-center"><RangBadge rang={r.rang} /></td>
                     <td className="px-3 py-2">
                       <div>
                         <span className="font-medium">{r.name}</span>

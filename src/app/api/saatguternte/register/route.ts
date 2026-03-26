@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     const search = sp.get("search")
     const status = sp.get("status")
     const page = Math.max(1, parseInt(sp.get("page") ?? "1"))
-    const limit = Math.min(100, Math.max(1, parseInt(sp.get("limit") ?? "25")))
+    const limit = Math.min(1000, Math.max(1, parseInt(sp.get("limit") ?? "25")))
     const sortBy = sp.get("sortBy") ?? "registerNr"
     const sortDir = (sp.get("sortDir") === "asc" ? "asc" : "desc") as "asc" | "desc"
     const skip = (page - 1) * limit
@@ -51,12 +51,13 @@ export async function GET(req: NextRequest) {
         include: {
           quelle: { select: { name: true, kuerzel: true } },
           _count: { select: { medien: true } },
+          profil: { select: { status: true } },
         },
       }),
       prisma.registerFlaeche.count({ where }),
     ])
 
-    return NextResponse.json({ data, total, page, limit })
+    return NextResponse.json({ data, flaechen: data, total, page, limit })
   } catch (err) {
     console.error("GET /api/saatguternte/register", err)
     return NextResponse.json({ error: "Interner Fehler" }, { status: 500 })
