@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { Leaf, Bot, Filter, X } from "lucide-react"
@@ -50,21 +53,12 @@ export default async function RegisterPage({
   }
 
   // OrderBy aufbauen
-  let orderBy: Prisma.RegisterFlaecheOrderByWithRelationInput | Prisma.RegisterFlaecheOrderByWithRelationInput[]
-  const numericSortFields = ["flaecheHa", "flaecheRedHa", "hoeheVon", "hoeheBis"]
+  const orderBy: Prisma.RegisterFlaecheOrderByWithRelationInput = {}
   const validSortFields = ["registerNr", "bundesland", "baumart", "flaecheHa", "forstamt", "zulassungBis"]
   if (validSortFields.includes(sortBy)) {
-    if (numericSortFields.includes(sortBy)) {
-      // Numerische Felder: NULL-Werte immer ans Ende
-      orderBy = [
-        { [sortBy]: { sort: sortDir, nulls: "last" } } as Prisma.RegisterFlaecheOrderByWithRelationInput,
-        { registerNr: "asc" },
-      ]
-    } else {
-      orderBy = { [sortBy]: sortDir } as Prisma.RegisterFlaecheOrderByWithRelationInput
-    }
+    ;(orderBy as Record<string, string>)[sortBy] = sortDir
   } else {
-    orderBy = { registerNr: "asc" }
+    orderBy.registerNr = "asc"
   }
 
   const [flaechen, total] = await Promise.all([
