@@ -67,7 +67,6 @@ const saatgutSubItems = [
   { href: "/saatguternte/register", label: "Register-Übersicht", icon: List },
   { href: "/saatguternte/planung", label: "Flächenplanung", icon: Map },
   { href: "/saatguternte/ernte", label: "Erntehistorie", icon: History },
-  { href: "/saatguternte/statistik", label: "Statistik v2", icon: BarChart3 },
   { href: "/saatguternte/crawler", label: "Crawler", icon: Bot },
 ]
 

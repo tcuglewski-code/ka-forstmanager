@@ -2,6 +2,7 @@
 
 // @ts-nocheck
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import {
   BarChart3, TrendingUp, Calendar, Clock, Euro,
   Users, TreePine, MapPin, ChevronUp, ChevronDown, Minus,
@@ -102,10 +103,10 @@ export default function SaatgutStatistikV2Page() {
   const { kpis, ranking, jahresvergleich, flaechenPerformance, saisons } = data
   const total = ranking.length
 
-  // Farbe für Rang
+  // Farbe für Rang — heller Hintergrund → immer dunkle Schrift
   const rowClass = (rang: number) => {
-    if (rang <= 3)         return "bg-green-50 dark:bg-green-950/30"
-    if (rang >= total - 2) return "bg-red-50 dark:bg-red-950/30"
+    if (rang <= 3)         return "bg-green-50 dark:bg-green-950/30 text-gray-900 dark:text-gray-100"
+    if (rang >= total - 2) return "bg-red-50 dark:bg-red-950/30 text-gray-900 dark:text-gray-100"
     return ""
   }
 
@@ -420,8 +421,17 @@ export default function SaatgutStatistikV2Page() {
               <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                 {flaechenPerformance.map((f, idx) => (
                   <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors">
-                    <td className="px-3 py-2 font-mono text-xs text-gray-600 dark:text-gray-400">
-                      {f.registerNr ?? "–"}
+                    <td className="px-3 py-2">
+                      {f.registerNr ? (
+                        <Link
+                          href={`/saatguternte/register?search=${encodeURIComponent(f.registerNr)}`}
+                          className="text-blue-600 hover:underline font-mono text-sm"
+                        >
+                          {f.registerNr}
+                        </Link>
+                      ) : (
+                        <span className="text-gray-400 text-sm">—</span>
+                      )}
                     </td>
                     <td className="px-3 py-2 text-gray-600 dark:text-gray-400 text-xs">
                       {f.forstamt ?? "–"}
