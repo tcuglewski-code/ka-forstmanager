@@ -47,6 +47,7 @@ export async function GET(req: NextRequest) {
         take: limit,
         include: {
           quelle: { select: { name: true, kuerzel: true } },
+          _count: { select: { medien: true } },
         },
       }),
       prisma.registerFlaeche.count({ where }),

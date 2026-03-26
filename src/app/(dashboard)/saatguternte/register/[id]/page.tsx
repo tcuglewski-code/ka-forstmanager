@@ -6,10 +6,13 @@ import { FlaecheDetailTabs } from "./FlaecheDetailTabs"
 
 export default async function FlaecheDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ tab?: string }>
 }) {
   const { id } = await params
+  const { tab } = await searchParams
 
   const flaeche = await prisma.registerFlaeche.findUnique({
     where: { id },
@@ -121,7 +124,7 @@ export default async function FlaecheDetailPage({
       </div>
 
       {/* Tab System */}
-      <FlaecheDetailTabs flaeche={serialized} />
+      <FlaecheDetailTabs flaeche={serialized} initialTab={tab} />
     </div>
   )
 }

@@ -63,6 +63,7 @@ export default async function RegisterPage({
       include: {
         quelle: { select: { name: true, kuerzel: true } },
         wetterDaten: { select: { id: true }, take: 1 },
+        _count: { select: { medien: true } },
       },
     }),
     prisma.registerFlaeche.count({ where }),

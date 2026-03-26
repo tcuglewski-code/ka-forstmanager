@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { Eye, ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight } from "lucide-react"
+import { Eye, ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, Camera } from "lucide-react"
 
 interface RegisterFlaeche {
   id: string
@@ -23,6 +23,9 @@ interface RegisterFlaeche {
   quelle: {
     name: string
     kuerzel: string
+  }
+  _count?: {
+    medien: number
   }
 }
 
@@ -156,13 +159,14 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
                 </th>
                 <th className="text-left px-4 py-3 text-zinc-500 font-medium">Quelle</th>
                 <th className="text-center px-4 py-3 text-zinc-500 font-medium" title="Wetterdaten vorhanden">Wetter</th>
+                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Medien</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
             <tbody>
               {data.length === 0 ? (
                 <tr>
-                  <td colSpan={11} className="text-center py-12 text-zinc-600">
+                  <td colSpan={12} className="text-center py-12 text-zinc-600">
                     Keine Flächen gefunden
                   </td>
                 </tr>
@@ -203,6 +207,22 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
                     </td>
                     <td className="px-4 py-3 text-center text-base" title={f.hatWetterdaten ? "Wetterdaten vorhanden" : "Keine Wetterdaten"}>
                       {f.hatWetterdaten ? "🌤️" : <span className="text-zinc-700">—</span>}
+                    </td>
+                    <td className="px-4 py-3">
+                      {(f._count?.medien ?? 0) > 0 ? (
+                        <Link
+                          href={`/saatguternte/register/${f.id}?tab=medien`}
+                          className="flex items-center gap-1.5 group"
+                          title={`${f._count!.medien} Medien anzeigen`}
+                        >
+                          <Camera className="w-3.5 h-3.5 text-zinc-600 group-hover:text-emerald-400 transition-colors" />
+                          <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 rounded-full text-xs font-medium">
+                            {f._count!.medien}
+                          </span>
+                        </Link>
+                      ) : (
+                        <span className="text-zinc-700 text-xs">–</span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <Link
