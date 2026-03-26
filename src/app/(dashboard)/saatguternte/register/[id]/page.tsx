@@ -1,9 +1,8 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, MapPin, Phone, Mail, ExternalLink, Database } from "lucide-react"
-import { FlaechenProfilForm } from "./FlaechenProfilForm"
-import { RohdatenToggle } from "./RohdatenToggle"
+import { ArrowLeft, ExternalLink } from "lucide-react"
+import { FlaecheDetailTabs } from "./FlaecheDetailTabs"
 
 export default async function FlaecheDetailPage({
   params,
@@ -16,27 +15,67 @@ export default async function FlaecheDetailPage({
     where: { id },
     include: {
       quelle: true,
-      profil: true,
+      profil: {
+        include: {
+          ernten: {
+            include: {
+              positionen: true,
+            },
+            orderBy: { datum: "desc" },
+          },
+        },
+      },
     },
   })
 
   if (!flaeche) notFound()
 
-  function formatDatum(d: Date | null) {
-    if (!d) return "–"
-    return d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })
-  }
-
   const lat = flaeche.latDez
   const lon = flaeche.lonDez
   const hasKoord = lat != null && lon != null
 
-  // OSM iframe bbox
   let osmUrl: string | null = null
   if (hasKoord && lat != null && lon != null) {
     const delta = 0.05
     const bbox = `${lon - delta},${lat - delta},${lon + delta},${lat + delta}`
     osmUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`
+  }
+
+  // Serialize for client component
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const serialized: any = {
+    ...flaeche,
+    zulassungVon: flaeche.zulassungVon?.toISOString() ?? null,
+    zulassungBis: flaeche.zulassungBis?.toISOString() ?? null,
+    letzteAktualisierung: flaeche.letzteAktualisierung?.toISOString() ?? null,
+    osmUrl,
+    profil: flaeche.profil
+      ? {
+          ...flaeche.profil,
+          letzteInspektion: flaeche.profil.letzteInspektion?.toISOString() ?? null,
+          naechsteErnte: flaeche.profil.naechsteErnte?.toISOString() ?? null,
+          createdAt: flaeche.profil.createdAt?.toISOString() ?? null,
+          updatedAt: flaeche.profil.updatedAt?.toISOString() ?? null,
+          ernten: (flaeche.profil.ernten ?? []).map((e) => ({
+            ...e,
+            datum: e.datum?.toISOString() ?? null,
+            createdAt: e.createdAt?.toISOString() ?? null,
+            updatedAt: e.updatedAt?.toISOString() ?? null,
+            positionen: e.positionen.map((p) => ({
+              ...p,
+              datum: p.datum?.toISOString() ?? null,
+              createdAt: p.createdAt?.toISOString() ?? null,
+            })),
+          })),
+        }
+      : null,
+    quelle: {
+      ...flaeche.quelle,
+      letzterCrawl: flaeche.quelle.letzterCrawl?.toISOString() ?? null,
+      naechsterCrawl: flaeche.quelle.naechsterCrawl?.toISOString() ?? null,
+      createdAt: flaeche.quelle.createdAt?.toISOString() ?? null,
+      updatedAt: flaeche.quelle.updatedAt?.toISOString() ?? null,
+    },
   }
 
   return (
@@ -54,6 +93,7 @@ export default async function FlaecheDetailPage({
         <span className="text-sm text-zinc-400 font-mono">{flaeche.registerNr}</span>
       </div>
 
+      {/* Header */}
       <div className="flex items-start gap-2 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white font-mono">{flaeche.registerNr}</h1>
@@ -70,220 +110,18 @@ export default async function FlaecheDetailPage({
         >
           {flaeche.zugelassen ? "Zugelassen" : "Widerruf/Abgelaufen"}
         </span>
+        {hasKoord && (
+          <a
+            href={`/saatguternte/scout/${flaeche.id}`}
+            className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] hover:border-emerald-500 rounded-lg text-xs text-zinc-400 hover:text-emerald-400 transition-all"
+          >
+            📱 Scout-Ansicht <ExternalLink className="w-3 h-3" />
+          </a>
+        )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
-        {/* Linke Spalte */}
-        <div className="space-y-6">
-          {/* Grunddaten */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
-            <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-4">Grunddaten</h2>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
-              {[
-                ["Register-Nr", flaeche.registerNr],
-                ["Bundesland", flaeche.bundesland],
-                ["Baumart", flaeche.baumart],
-                ["Baumart wiss.", flaeche.baumartWiss ?? "–"],
-                ["Baumart-Code", flaeche.baumartCode ?? "–"],
-                ["Kategorie", flaeche.kategorie ?? "–"],
-                ["Ausgangsmaterial", flaeche.ausgangsmaterial ?? "–"],
-                ["Herkunftsgebiet", flaeche.herkunftsgebiet ?? "–"],
-                ["Fläche gesamt (ha)", flaeche.flaecheHa?.toFixed(2) ?? "–"],
-                ["Fläche reduziert (ha)", flaeche.flaecheRedHa?.toFixed(2) ?? "–"],
-                ["Höhe von", flaeche.hoeheVon ? `${flaeche.hoeheVon} m` : "–"],
-                ["Höhe bis", flaeche.hoeheBis ? `${flaeche.hoeheBis} m` : "–"],
-                ["Zulassung von", formatDatum(flaeche.zulassungVon)],
-                ["Zulassung bis", flaeche.zulassungBisText ?? formatDatum(flaeche.zulassungBis)],
-                ["Erstes Jahr", flaeche.erstesJahr?.toString() ?? "–"],
-                ["Alter", flaeche.alter ?? "–"],
-              ].map(([label, value]) => (
-                <div key={label}>
-                  <dt className="text-zinc-600 text-xs">{label}</dt>
-                  <dd className="text-zinc-300 mt-0.5">{value}</dd>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Standort */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
-            <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-4">Standort</h2>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm mb-4">
-              {[
-                ["Forstamt", flaeche.forstamt ?? "–"],
-                ["Revier", flaeche.revier ?? "–"],
-                ["Landkreis", flaeche.landkreis ?? "–"],
-                ["Wuchsbezirk", flaeche.wuchsbezirk ?? "–"],
-                ["Besitzart", flaeche.besitzart ?? "–"],
-                ["Eigentumsart", flaeche.eigentumsart ?? "–"],
-                ["Koordinaten", hasKoord ? `${lat?.toFixed(4)}°N, ${lon?.toFixed(4)}°O` : "–"],
-                ["Koordinaten (roh)", flaeche.koordinatenRaw ?? "–"],
-              ].map(([label, value]) => (
-                <div key={label}>
-                  <dt className="text-zinc-600 text-xs">{label}</dt>
-                  <dd className="text-zinc-300 mt-0.5">{value}</dd>
-                </div>
-              ))}
-            </div>
-
-            {/* OSM Karte */}
-            {osmUrl && (
-              <div className="mt-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <MapPin className="w-4 h-4 text-zinc-500" />
-                  <span className="text-xs text-zinc-500">OpenStreetMap</span>
-                  <a
-                    href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=13/${lat}/${lon}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-auto text-xs text-emerald-500 hover:text-emerald-400 flex items-center gap-1"
-                  >
-                    Vollbild <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
-                <iframe
-                  src={osmUrl}
-                  className="w-full h-64 rounded-lg border border-[#2a2a2a]"
-                  style={{ border: 0 }}
-                  loading="lazy"
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Flächenprofil */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
-            <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-4">
-              Internes Flächenprofil
-            </h2>
-            <FlaechenProfilForm
-              flaecheId={flaeche.id}
-              initialStatus={flaeche.profil?.status ?? "ungeprüft"}
-              initialNotizen={flaeche.profil?.notizen ?? null}
-            />
-          </div>
-        </div>
-
-        {/* Rechte Spalte */}
-        <div className="space-y-4">
-          {/* Quelle */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
-            <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Registerquelle</h2>
-            <div className="space-y-2 text-sm">
-              <div>
-                <dt className="text-zinc-600 text-xs">Name</dt>
-                <dd className="text-zinc-300">{flaeche.quelle.name}</dd>
-              </div>
-              <div>
-                <dt className="text-zinc-600 text-xs">Kürzel</dt>
-                <dd>
-                  <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-xs font-medium">
-                    {flaeche.quelle.kuerzel}
-                  </span>
-                </dd>
-              </div>
-              <div>
-                <dt className="text-zinc-600 text-xs">Bundesländer</dt>
-                <dd className="text-zinc-300 text-xs">{flaeche.quelle.bundeslaender.join(", ")}</dd>
-              </div>
-              {flaeche.quelle.baseUrl && (
-                <div>
-                  <a
-                    href={flaeche.quelle.baseUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-emerald-500 hover:text-emerald-400 flex items-center gap-1"
-                  >
-                    Zur Quelle <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
-              )}
-              {flaeche.quelleUrl && (
-                <div>
-                  <a
-                    href={flaeche.quelleUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-zinc-500 hover:text-zinc-400 flex items-center gap-1 break-all"
-                  >
-                    Direktlink <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                  </a>
-                </div>
-              )}
-              <div>
-                <dt className="text-zinc-600 text-xs">Datenstand</dt>
-                <dd className="text-zinc-400 text-xs">
-                  {flaeche.datenstand ?? formatDatum(flaeche.letzteAktualisierung)}
-                </dd>
-              </div>
-            </div>
-          </div>
-
-          {/* Ansprechpartner */}
-          {(flaeche.ansprechpartner || flaeche.ansprechpartnerTel || flaeche.ansprechpartnerEmail) && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
-              <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Ansprechpartner</h2>
-              <div className="space-y-2 text-sm">
-                {flaeche.ansprechpartner && (
-                  <div className="text-zinc-300">{flaeche.ansprechpartner}</div>
-                )}
-                {flaeche.hoheitlicheStelle && (
-                  <div className="text-zinc-500 text-xs">{flaeche.hoheitlicheStelle}</div>
-                )}
-                {flaeche.ansprechpartnerTel && (
-                  <a
-                    href={`tel:${flaeche.ansprechpartnerTel}`}
-                    className="flex items-center gap-2 text-zinc-400 hover:text-zinc-200 text-xs transition-colors"
-                  >
-                    <Phone className="w-3.5 h-3.5" />
-                    {flaeche.ansprechpartnerTel}
-                  </a>
-                )}
-                {flaeche.ansprechpartnerEmail && (
-                  <a
-                    href={`mailto:${flaeche.ansprechpartnerEmail}`}
-                    className="flex items-center gap-2 text-zinc-400 hover:text-zinc-200 text-xs transition-colors"
-                  >
-                    <Mail className="w-3.5 h-3.5" />
-                    {flaeche.ansprechpartnerEmail}
-                  </a>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Zusätzliche Infos */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
-            <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Weitere Angaben</h2>
-            <div className="space-y-2 text-xs">
-              {[
-                ["Verwendungszweck", flaeche.verwendungszweck],
-                ["Genetisch untersucht", flaeche.genetischUntersucht ? "Ja" : "Nein"],
-                ["Verkehrsbeschränkung", flaeche.verkehrsbeschraenkung ? "Ja" : "Nein"],
-                ["Zulässige Flächen", flaeche.zulaessigeFlaechen],
-              ].map(([label, value]) =>
-                value ? (
-                  <div key={label as string}>
-                    <dt className="text-zinc-600">{label}</dt>
-                    <dd className="text-zinc-400 mt-0.5">{value as string}</dd>
-                  </div>
-                ) : null
-              )}
-            </div>
-          </div>
-
-          {/* Rohdaten */}
-          {flaeche.rohdaten && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <Database className="w-3.5 h-3.5 text-zinc-600" />
-                <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide">Rohdaten (JSON)</h2>
-              </div>
-              <RohdatenToggle data={flaeche.rohdaten} />
-            </div>
-          )}
-        </div>
-      </div>
+      {/* Tab System */}
+      <FlaecheDetailTabs flaeche={serialized} />
     </div>
   )
 }
