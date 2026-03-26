@@ -34,6 +34,8 @@ import {
   Map,
   History,
   Bot,
+  ClipboardCheck,
+  UsersRound as GroupIcon,
 } from "lucide-react"
 import { signOut } from "next-auth/react"
 import { cn } from "@/lib/utils"
@@ -67,6 +69,8 @@ const saatgutSubItems = [
   { href: "/saatguternte/register", label: "Register-Übersicht", icon: List },
   { href: "/saatguternte/planung", label: "Flächenplanung", icon: Map },
   { href: "/saatguternte/ernte", label: "Erntehistorie", icon: History },
+  { href: "/saatguternte/anfragen", label: "Ernteanfragen", icon: ClipboardCheck },
+  { href: "/saatguternte/gruppen", label: "Gruppen", icon: UsersRound },
   { href: "/saatguternte/crawler", label: "Crawler", icon: Bot },
 ]
 
