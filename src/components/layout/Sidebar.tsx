@@ -11,7 +11,6 @@ import {
   ClipboardList,
   Package,
   Car,
-  Wrench,
   DollarSign,
   Clock,
   GraduationCap,
@@ -28,6 +27,13 @@ import {
   ScrollText,
   Menu,
   X,
+  Leaf,
+  ChevronDown,
+  ChevronRight,
+  List,
+  Map,
+  History,
+  Bot,
 } from "lucide-react"
 import { signOut } from "next-auth/react"
 import { cn } from "@/lib/utils"
@@ -57,9 +63,18 @@ const navItems = [
   { href: "/einstellungen", label: "Einstellungen", icon: Settings },
 ]
 
+const saatgutSubItems = [
+  { href: "/saatguternte/register", label: "Register-Übersicht", icon: List },
+  { href: "/saatguternte/planung", label: "Flächenplanung", icon: Map },
+  { href: "/saatguternte/ernte", label: "Erntehistorie", icon: History },
+  { href: "/saatguternte/crawler", label: "Crawler", icon: Bot },
+]
+
 export function Sidebar() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const isSaatgutActive = pathname.startsWith("/saatguternte")
+  const [saatgutOpen, setSaatgutOpen] = useState(isSaatgutActive)
 
   return (
     <>
@@ -133,6 +148,52 @@ export function Sidebar() {
               </Link>
             )
           })}
+
+          {/* Saatguternte mit Sub-Menü */}
+          <div>
+            <button
+              onClick={() => setSaatgutOpen((v) => !v)}
+              className={cn(
+                "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all",
+                isSaatgutActive
+                  ? "bg-[#2C3A1C] text-emerald-400 font-medium"
+                  : "text-zinc-400 hover:bg-[#1e1e1e] hover:text-white"
+              )}
+            >
+              <Leaf className="w-4 h-4 flex-shrink-0" />
+              <span className="flex-1 text-left">Saatguternte</span>
+              {saatgutOpen ? (
+                <ChevronDown className="w-3.5 h-3.5" />
+              ) : (
+                <ChevronRight className="w-3.5 h-3.5" />
+              )}
+            </button>
+            {saatgutOpen && (
+              <div className="mt-0.5 ml-3 pl-3 border-l border-[#2a2a2a] space-y-0.5">
+                {saatgutSubItems.map((sub) => {
+                  const SubIcon = sub.icon
+                  const isSubActive =
+                    pathname === sub.href || pathname.startsWith(sub.href + "/")
+                  return (
+                    <Link
+                      key={sub.href}
+                      href={sub.href}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-all",
+                        isSubActive
+                          ? "bg-[#2C3A1C] text-emerald-400 font-medium"
+                          : "text-zinc-500 hover:bg-[#1e1e1e] hover:text-white"
+                      )}
+                    >
+                      <SubIcon className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span>{sub.label}</span>
+                    </Link>
+                  )
+                })}
+              </div>
+            )}
+          </div>
         </nav>
 
         {/* Footer */}
