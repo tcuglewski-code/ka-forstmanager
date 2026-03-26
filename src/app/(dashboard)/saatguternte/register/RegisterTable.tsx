@@ -19,6 +19,7 @@ interface RegisterFlaeche {
   zulassungBis: string | null
   zulassungBisText: string | null
   zugelassen: boolean
+  hatWetterdaten?: boolean
   quelle: {
     name: string
     kuerzel: string
@@ -154,13 +155,14 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
                   <SortHeader label="Zulassung bis" field="zulassungBis" currentSort={sortBy} currentDir={sortDir} onClick={handleSort} />
                 </th>
                 <th className="text-left px-4 py-3 text-zinc-500 font-medium">Quelle</th>
+                <th className="text-center px-4 py-3 text-zinc-500 font-medium" title="Wetterdaten vorhanden">Wetter</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
             <tbody>
               {data.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="text-center py-12 text-zinc-600">
+                  <td colSpan={11} className="text-center py-12 text-zinc-600">
                     Keine Flächen gefunden
                   </td>
                 </tr>
@@ -198,6 +200,9 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
                       >
                         {f.quelle.kuerzel}
                       </span>
+                    </td>
+                    <td className="px-4 py-3 text-center text-base" title={f.hatWetterdaten ? "Wetterdaten vorhanden" : "Keine Wetterdaten"}>
+                      {f.hatWetterdaten ? "🌤️" : <span className="text-zinc-700">—</span>}
                     </td>
                     <td className="px-4 py-3">
                       <Link

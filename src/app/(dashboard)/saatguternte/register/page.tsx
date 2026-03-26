@@ -62,6 +62,7 @@ export default async function RegisterPage({
       take: limit,
       include: {
         quelle: { select: { name: true, kuerzel: true } },
+        wetterDaten: { select: { id: true }, take: 1 },
       },
     }),
     prisma.registerFlaeche.count({ where }),
@@ -104,6 +105,7 @@ export default async function RegisterPage({
     letzteAktualisierung: f.letzteAktualisierung.toISOString(),
     createdAt: f.createdAt.toISOString(),
     updatedAt: f.updatedAt.toISOString(),
+    hatWetterdaten: f.wetterDaten.length > 0,
   }))
 
   return (

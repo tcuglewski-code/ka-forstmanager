@@ -663,15 +663,24 @@ model ErntePosition {
 }
 
 model WetterSnapshot {
-  id             String   @id @default(cuid())
-  flaecheId      String
-  datum          DateTime
-  tempMinC       Float?
-  tempMaxC       Float?
-  niederschlagMm Float?
-  frosttage      Int?
-  datenQuelle    String   @default("open-meteo")
-  createdAt      DateTime @default(now())
+  id              String   @id @default(cuid())
+  flaecheId       String
+  datum           DateTime
+  jahr            Int?
+  tempMinAvgC     Float?
+  tempMaxAvgC     Float?
+  tempMinC        Float?
+  tempMaxC        Float?
+  niederschlagMm  Float?
+  frosttage       Int?
+  hitzetage       Int?
+  regentage       Int?
+  monatlichDaten  Json?
+  datenQuelle     String   @default("open-meteo")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   flaeche RegisterFlaeche @relation(fields: [flaecheId], references: [id], onDelete: Cascade)
+
+  @@unique([flaecheId, jahr])
 }
