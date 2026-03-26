@@ -11,6 +11,7 @@ interface SearchParams {
   search?: string
   status?: string
   sonderherkunft?: string
+  eigentumsart?: string
   page?: string
   sortBy?: string
   sortDir?: string
@@ -37,6 +38,7 @@ export default async function RegisterPage({
   if (params.status === "zugelassen") where.zugelassen = true
   if (params.status === "abgelaufen") where.zugelassen = false
   if (params.sonderherkunft === "true") where.sonderherkunft = true
+  if (params.eigentumsart) where.eigentumsart = params.eigentumsart
   if (params.search) {
     const s = params.search
     where.OR = [
@@ -72,7 +74,7 @@ export default async function RegisterPage({
   ])
 
   // Filter-Optionen
-  const [bundeslaender, baumarten, quellen] = await Promise.all([
+  const [bundeslaender, baumarten, quellen, eigentumsarten] = await Promise.all([
     prisma.registerFlaeche.findMany({
       select: { bundesland: true },
       distinct: ["bundesland"],
@@ -87,6 +89,12 @@ export default async function RegisterPage({
       select: { id: true, name: true, kuerzel: true },
       orderBy: { name: "asc" },
     }),
+    prisma.registerFlaeche.findMany({
+      select: { eigentumsart: true },
+      distinct: ["eigentumsart"],
+      where: { eigentumsart: { not: null } },
+      orderBy: { eigentumsart: "asc" },
+    }),
   ])
 
   // Gesamtanzahl aller Flächen
@@ -98,7 +106,8 @@ export default async function RegisterPage({
     params.quelleId ||
     params.search ||
     params.status ||
-    params.sonderherkunft
+    params.sonderherkunft ||
+    params.eigentumsart
   )
 
   // Serialisierung für Client Component
@@ -194,6 +203,18 @@ export default async function RegisterPage({
           <option value="">Alle Status</option>
           <option value="zugelassen">Zugelassen</option>
           <option value="abgelaufen">Abgelaufen/Widerruf</option>
+        </select>
+        <select
+          name="eigentumsart"
+          defaultValue={params.eigentumsart ?? ""}
+          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+        >
+          <option value="">Alle Eigentumsarten</option>
+          {eigentumsarten.map((e) => (
+            <option key={e.eigentumsart} value={e.eigentumsart ?? ""}>
+              {e.eigentumsart}
+            </option>
+          ))}
         </select>
         <label className="flex items-center gap-2 px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-zinc-300 cursor-pointer hover:border-amber-500/50 transition-all select-none">
           <input
