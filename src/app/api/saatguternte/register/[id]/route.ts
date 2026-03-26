@@ -32,6 +32,12 @@ export async function PATCH(
     const body = await req.json()
     const { status, notizen, bewertung, naechsteErnte, letzteInspektion } = body
 
+    // letzteAktualisierung auf RegisterFlaeche setzen
+    await prisma.registerFlaeche.update({
+      where: { id },
+      data: { letzteAktualisierung: new Date() },
+    }).catch(() => {}) // ignorieren falls nicht existent
+
     // Upsert FlaechenProfil
     const profil = await prisma.flaechenProfil.upsert({
       where: { flaecheId: id },
