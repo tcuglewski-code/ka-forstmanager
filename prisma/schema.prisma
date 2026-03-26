@@ -614,6 +614,7 @@ model RegisterFlaeche {
   quelle      ErnteRegisterQuelle @relation(fields: [quelleId], references: [id])
   profil      FlaechenProfil?
   wetterDaten WetterSnapshot[]
+  medien      MediaZuordnung[]
 
   @@unique([quelleId, registerNr])
 }
@@ -683,4 +684,19 @@ model WetterSnapshot {
   flaeche RegisterFlaeche @relation(fields: [flaecheId], references: [id], onDelete: Cascade)
 
   @@unique([flaecheId, jahr])
+}
+
+// MEDIEN & DROHNEN (Sprint AB)
+model MediaZuordnung {
+  id            String    @id @default(cuid())
+  flaecheId     String?
+  nextcloudPath String
+  dateiname     String
+  typ           String    // bild, video
+  datum         DateTime?
+  mission       String?
+  vorschauUrl   String?
+  createdAt     DateTime  @default(now())
+
+  flaeche RegisterFlaeche? @relation(fields: [flaecheId], references: [id], onDelete: SetNull)
 }

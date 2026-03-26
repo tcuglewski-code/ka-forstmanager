@@ -5,9 +5,10 @@ import { useState } from "react"
 import { toast } from "sonner"
 import {
   MapPin, Phone, Mail, ExternalLink, Database, Star,
-  Calendar, ClipboardList, Cloud, Eye, Leaf
+  Calendar, ClipboardList, Cloud, Eye, Leaf, Video
 } from "lucide-react"
 import { WetterTab } from "./WetterTab"
+import { MediaViewer } from "@/components/saatguternte/MediaViewer"
 
 interface Ernte {
   id: string
@@ -79,7 +80,7 @@ interface Flaeche {
   osmUrl: string | null
 }
 
-type Tab = "uebersicht" | "profil" | "erntehistorie" | "wetter"
+type Tab = "uebersicht" | "profil" | "erntehistorie" | "wetter" | "medien"
 
 function formatDatum(d: string | null): string {
   if (!d) return "–"
@@ -341,8 +342,10 @@ function AnsprechpartnerBlock({ flaeche }: { flaeche: Flaeche }) {
   )
 }
 
-export function FlaecheDetailTabs({ flaeche }: { flaeche: Flaeche }) {
-  const [activeTab, setActiveTab] = useState<Tab>("uebersicht")
+export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; initialTab?: string }) {
+  const validTabs: Tab[] = ["uebersicht", "profil", "erntehistorie", "wetter", "medien"]
+  const startTab: Tab = validTabs.includes(initialTab as Tab) ? (initialTab as Tab) : "uebersicht"
+  const [activeTab, setActiveTab] = useState<Tab>(startTab)
 
   const lat = flaeche.latDez
   const lon = flaeche.lonDez
@@ -353,6 +356,7 @@ export function FlaecheDetailTabs({ flaeche }: { flaeche: Flaeche }) {
     { id: "profil", label: "Profil & Scout", icon: <Leaf className="w-3.5 h-3.5" /> },
     { id: "erntehistorie", label: "Erntehistorie", icon: <ClipboardList className="w-3.5 h-3.5" /> },
     { id: "wetter", label: "Wetter", icon: <Cloud className="w-3.5 h-3.5" /> },
+    { id: "medien", label: "🎥 Medien", icon: <Video className="w-3.5 h-3.5" /> },
   ]
 
   return (
@@ -580,6 +584,10 @@ export function FlaecheDetailTabs({ flaeche }: { flaeche: Flaeche }) {
           latDez={flaeche.latDez}
           lonDez={flaeche.lonDez}
         />
+      )}
+
+      {activeTab === "medien" && (
+        <MediaViewer flaecheId={flaeche.id} />
       )}
     </div>
   )
