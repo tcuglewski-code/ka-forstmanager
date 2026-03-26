@@ -714,8 +714,9 @@ model ErntePerson {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  arbeitszeitEintraege  SammlerArbeitszeit[]
-  ernteLeistungen       ErnteLeistung[]
+  arbeitszeitEintraege    SammlerArbeitszeit[]
+  ernteLeistungen         ErnteLeistung[]
+  gruppenMitgliedschaften ErnteGruppeMitglied[]
 }
 
 model ErnteSaison {
@@ -727,11 +728,14 @@ model ErnteSaison {
   updatedAt       DateTime  @updatedAt
 
   einsaetze       ErnteEinsatz[]
+  anfragen        Ernteanfrage[]
+  gruppen         ErnteGruppe[]
 }
 
 model ErnteEinsatz {
   id              String    @id @default(cuid())
   saisonId        String
+  gruppeId        String?
   datum           DateTime
   registerNr      String?
   flaecheId       String?
@@ -748,9 +752,74 @@ model ErnteEinsatz {
   updatedAt       DateTime  @updatedAt
 
   saison          ErnteSaison      @relation(fields: [saisonId], references: [id])
+  gruppe          ErnteGruppe?     @relation(fields: [gruppeId], references: [id])
   flaeche         RegisterFlaeche? @relation(fields: [flaecheId], references: [id])
   leistungen      ErnteLeistung[]
   sammlerZeiten   SammlerArbeitszeit[]
+}
+
+// ===== SPRINT AD: Baumschulen · Ernteanfragen · Gruppen =====
+
+model Baumschule {
+  id              String   @id @default(cuid())
+  name            String   @unique
+  ort             String?
+  bundesland      String?
+  ansprechpartner String?
+  email           String?
+  telefon         String?
+  notizen         String?
+  aktiv           Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  anfragen        Ernteanfrage[]
+}
+
+model Ernteanfrage {
+  id           String    @id @default(cuid())
+  baumschuleId String
+  saisonId     String?
+  baumart      String
+  herkunft     String?
+  zielmenge    Float
+  gesammelteKg Float     @default(0)
+  deadline     DateTime?
+  status       String    @default("offen")
+  notizen      String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  baumschule   Baumschule   @relation(fields: [baumschuleId], references: [id])
+  saison       ErnteSaison? @relation(fields: [saisonId], references: [id])
+}
+
+model ErnteGruppe {
+  id                 String   @id @default(cuid())
+  saisonId           String
+  name               String
+  gruppenfuehrerName String?
+  stundenlohnGF      Float?   @default(17.0)
+  notizen            String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  saison             ErnteSaison          @relation(fields: [saisonId], references: [id])
+  mitglieder         ErnteGruppeMitglied[]
+  einsaetze          ErnteEinsatz[]
+}
+
+model ErnteGruppeMitglied {
+  id        String   @id @default(cuid())
+  gruppeId  String
+  personId  String
+  rolle     String   @default("sammler")
+  createdAt DateTime @default(now())
+
+  gruppe    ErnteGruppe @relation(fields: [gruppeId], references: [id])
+  person    ErntePerson @relation(fields: [personId], references: [id])
+
+  @@unique([gruppeId, personId])
 }
 
 model ErnteLeistung {
