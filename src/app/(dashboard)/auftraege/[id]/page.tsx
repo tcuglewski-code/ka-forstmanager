@@ -27,6 +27,7 @@ interface FlaecheItem {
   abstand_p?: string
   abstand_r?: string
   stueckzahl?: number
+  baumarten_verteilung?: Record<string, number>
 }
 
 interface MaterialBewegung {
@@ -245,16 +246,27 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
             {w.flaechen!.length > 1 && (
               <p className="text-xs text-zinc-500 font-medium mb-1">Fläche {i + 1} — Pflanzverband</p>
             )}
-            <PflanzverbandVorschau
-              pflanzverband={fl.pflanzverband}
-              pflanzabstand={fl.abstand_p ? fl.abstand_p + 'm' : null}
-              reihenabstand={fl.abstand_r ? fl.abstand_r + 'm' : null}
-              baumarten={w.baumarten}
-              pflanzenzahl={fl.stueckzahl}
-              flaeche_ha={fl.ha}
-              aussenreihe={w.aussenreihe}
-              aussenreiheArt={w.aussenreiheArt}
-            />
+            {(() => {
+              // Per-Fläche baumarten aus baumarten_verteilung
+              const flBaumarten = fl.baumarten_verteilung && typeof fl.baumarten_verteilung === 'object'
+                ? Object.entries(fl.baumarten_verteilung as Record<string, number>)
+                    .filter(([, count]) => (count as number) > 0)
+                    .map(([name, count]) => `${name}: ${count} Stk.`)
+                    .join(', ')
+                : w.baumarten
+              return (
+                <PflanzverbandVorschau
+                  pflanzverband={fl.pflanzverband}
+                  pflanzabstand={fl.abstand_p ? fl.abstand_p + 'm' : null}
+                  reihenabstand={fl.abstand_r ? fl.abstand_r + 'm' : null}
+                  baumarten={flBaumarten}
+                  pflanzenzahl={fl.stueckzahl}
+                  flaeche_ha={fl.ha}
+                  aussenreihe={w.aussenreihe}
+                  aussenreiheArt={w.aussenreiheArt}
+                />
+              )
+            })()}
           </div>
         ))
       ) : (
