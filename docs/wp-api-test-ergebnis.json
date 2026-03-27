@@ -1,0 +1,56 @@
+{
+  "testDatum": "2026-03-27T03:02:12.807Z",
+  "zusammenfassung": {
+    "gesamt": 5,
+    "erfolgreich": 4,
+    "fehlgeschlagen": 1,
+    "gesamtDauer_ms": 777
+  },
+  "endpunkte": [
+    {
+      "beschreibung": "KA Custom: Projektkarte (Aufforstungsprojekte für Karten-Widget)",
+      "endpoint": "https://peru-otter-113714.hostingersite.com/wp-json/ka/v1/projekte-karte",
+      "status": 200,
+      "erfolg": true,
+      "dauer_ms": 269,
+      "content_type": "application/json; charset=UTF-8",
+      "antwort_vorschau": "[{\"id\":639,\"titel\":\"Kulturpflege Odenwald 2025\",\"lat\":49.55,\"lon\":8.85,\"leistung\":\"Kulturpflege\",\"status\":\"anfrage\",\"flaeche\":\"5 ha\",\"region\":\"Odenwald, Baden-W\\u00fcrttemberg\",\"referenz\":\"KA-TEST-003..."
+    },
+    {
+      "beschreibung": "KA Custom: Wizard-Event (Fördermittel-Wizard Formular-Einreichung)",
+      "endpoint": "https://peru-otter-113714.hostingersite.com/wp-json/ka/v1/wizard-event",
+      "status": 404,
+      "erfolg": false,
+      "dauer_ms": 120,
+      "content_type": "application/json; charset=UTF-8",
+      "antwort_vorschau": "{\"code\":\"rest_no_route\",\"message\":\"Es wurde keine Route gefunden, die mit der URL und der Request-Methode identisch ist.\",\"data\":{\"status\":404}}"
+    },
+    {
+      "beschreibung": "WP Standard: Posts (Neuigkeiten / Blog)",
+      "endpoint": "https://peru-otter-113714.hostingersite.com/wp-json/wp/v2/posts",
+      "status": 200,
+      "erfolg": true,
+      "dauer_ms": 90,
+      "content_type": "application/json; charset=UTF-8",
+      "antwort_vorschau": "[]"
+    },
+    {
+      "beschreibung": "WP REST API Root (Verfügbare Namespaces prüfen)",
+      "endpoint": "https://peru-otter-113714.hostingersite.com/wp-json/",
+      "status": 200,
+      "erfolg": true,
+      "dauer_ms": 117,
+      "content_type": "application/json; charset=UTF-8",
+      "antwort_vorschau": "{\"name\":\"Koch Aufforstung GmbH\",\"description\":\"Professionelle Aufforstung &amp; Forstdienstleistungen seit 38 Jahren. Fl\\u00e4chenvorbereitung, Pflanzung, Kulturpflege, Zaunbau. Z\\u00dcF-zertifiziert...."
+    },
+    {
+      "beschreibung": "WP Standard: Seiten",
+      "endpoint": "https://peru-otter-113714.hostingersite.com/wp-json/wp/v2/pages",
+      "status": 200,
+      "erfolg": true,
+      "dauer_ms": 181,
+      "content_type": "application/json; charset=UTF-8",
+      "antwort_vorschau": "[{\"id\":640,\"date\":\"2026-03-27T02:49:54\",\"date_gmt\":\"2026-03-27T02:49:54\",\"guid\":{\"rendered\":\"https:\\/\\/peru-otter-113714.hostingersite.com\\/projektekarte\\/\"},\"modified\":\"2026-03-27T02:49:54\",\"modified..."
+    }
+  ]
+}
