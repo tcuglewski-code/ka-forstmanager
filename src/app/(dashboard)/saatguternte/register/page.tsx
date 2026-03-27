@@ -10,6 +10,7 @@ import { Prisma } from "@prisma/client"
 interface SearchParams {
   bundesland?: string
   baumart?: string
+  herkunft?: string
   quelleId?: string
   search?: string
   status?: string
@@ -37,6 +38,7 @@ export default async function RegisterPage({
 
   if (params.bundesland) where.bundesland = params.bundesland
   if (params.baumart) where.baumart = { contains: params.baumart, mode: "insensitive" }
+  if (params.herkunft) where.herkunftsgebiet = { contains: params.herkunft, mode: "insensitive" }
   if (params.quelleId) where.quelleId = params.quelleId
   if (params.status === "zugelassen") where.zugelassen = true
   if (params.status === "abgelaufen") where.zugelassen = false
@@ -100,12 +102,25 @@ export default async function RegisterPage({
     }),
   ])
 
+  // Herkunfts-Optionen: nur wenn Baumart-Filter aktiv
+  let herkunftsOptionen: string[] = []
+  if (params.baumart) {
+    const herkünfte = await prisma.registerFlaeche.findMany({
+      where: { baumart: { contains: params.baumart, mode: "insensitive" }, herkunftsgebiet: { not: null } },
+      select: { herkunftsgebiet: true },
+      distinct: ["herkunftsgebiet"],
+      orderBy: { herkunftsgebiet: "asc" },
+    })
+    herkunftsOptionen = herkünfte.map((h) => h.herkunftsgebiet!).filter(Boolean)
+  }
+
   // Gesamtanzahl aller Flächen
   const gesamtanzahl = await prisma.registerFlaeche.count()
 
   const hasFilter = !!(
     params.bundesland ||
     params.baumart ||
+    params.herkunft ||
     params.quelleId ||
     params.search ||
     params.status ||
@@ -186,6 +201,19 @@ export default async function RegisterPage({
             </option>
           ))}
         </select>
+        {/* Herkunft-Filter — erscheint nur wenn Baumart ausgewählt */}
+        {params.baumart && herkunftsOptionen.length > 0 && (
+          <select
+            name="herkunft"
+            defaultValue={params.herkunft ?? ""}
+            className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          >
+            <option value="">Alle Herkünfte ({herkunftsOptionen.length})</option>
+            {herkunftsOptionen.map((h) => (
+              <option key={h} value={h}>{h}</option>
+            ))}
+          </select>
+        )}
         <select
           name="quelleId"
           defaultValue={params.quelleId ?? ""}
