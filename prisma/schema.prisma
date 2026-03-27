@@ -560,19 +560,42 @@ model Maschineneinsatz {
 
 // RECHNUNGEN
 model Rechnung {
-  id             String    @id @default(cuid())
-  auftragId      String?
-  nummer         String    @unique
-  betrag         Float
-  mwst           Float     @default(19)
-  status         String    @default("offen")
-  rechnungsDatum DateTime  @default(now())
-  faelligAm      DateTime?
-  pdfUrl         String?
-  notizen        String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  auftrag        Auftrag?  @relation(fields: [auftragId], references: [id], onDelete: SetNull)
+  id                String             @id @default(cuid())
+  auftragId         String?
+  nummer            String             @unique
+  betrag            Float
+  mwst              Float              @default(19)
+  status            String             @default("offen")
+  rechnungsDatum    DateTime           @default(now())
+  faelligAm         DateTime?
+  pdfUrl            String?
+  notizen           String?
+  // Sprint BQ: Erweiterte Felder
+  rabatt            Float?             @default(0)   // Rabatt in Prozent (0-100)
+  rabattBetrag      Float?             @default(0)   // Absoluter Rabattbetrag
+  rabattGrund       String?
+  nettoBetrag       Float?
+  bruttoBetrag      Float?
+  zahlungsBedingung String?            @default("30 Tage netto")
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  auftrag           Auftrag?           @relation(fields: [auftragId], references: [id], onDelete: SetNull)
+  positionen        RechnungPosition[]
+}
+
+// RECHNUNGS-POSITIONEN (Sprint BQ)
+model RechnungPosition {
+  id              String   @id @default(cuid())
+  rechnungId      String
+  rechnung        Rechnung @relation(fields: [rechnungId], references: [id], onDelete: Cascade)
+  beschreibung    String
+  menge           Float
+  einheit         String   // "Stk", "ha", "Std", "lfm", "pauschal"
+  preisProEinheit Float
+  gesamt          Float
+  protokollId     String?  // Welches Protokoll hat diese Position erzeugt
+  typ             String   @default("leistung") // leistung|material|fahrt
+  createdAt       DateTime @default(now())
 }
 
 // LOHNABRECHNUNG (Sprint R)
