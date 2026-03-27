@@ -8,15 +8,19 @@ export async function GET(req: Request) {
     const saisonId = searchParams.get("saisonId")
     const baumart = searchParams.get("baumart")
     const status = searchParams.get("status")
+    const herkunftCode = searchParams.get("herkunftCode")
+    const nurSonderherkunft = searchParams.get("sonderherkunft")
 
     const where: any = {}
     if (saisonId) where.saisonId = saisonId
     if (baumart) where.baumart = { contains: baumart, mode: "insensitive" }
     if (status) where.status = status
+    if (herkunftCode) where.herkunftCode = { contains: herkunftCode, mode: "insensitive" }
+    if (nurSonderherkunft === "true") where.sonderherkunft = true
 
     const anfragen = await prisma.ernteanfrage.findMany({
       where,
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ baumart: "asc" }, { herkunftCode: "asc" }, { createdAt: "desc" }],
       include: {
         baumschule: { select: { id: true, name: true } },
         saison: { select: { id: true, jahr: true } },
@@ -33,7 +37,20 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { baumschuleId, saisonId, baumart, herkunft, zielmenge, deadline, notizen } = body
+    const {
+      baumschuleId,
+      saisonId,
+      baumart,
+      herkunft,
+      herkunftCode,
+      herkunftName,
+      sonderherkunft,
+      sonderherkunftCode,
+      sonderherkunftName,
+      zielmenge,
+      deadline,
+      notizen,
+    } = body
 
     if (!baumschuleId || !baumart || !zielmenge) {
       return NextResponse.json(
@@ -47,10 +64,15 @@ export async function POST(req: Request) {
         baumschuleId,
         saisonId: saisonId || null,
         baumart,
-        herkunft,
+        herkunft: herkunft || null,
+        herkunftCode: herkunftCode || null,
+        herkunftName: herkunftName || null,
+        sonderherkunft: sonderherkunft === true || sonderherkunft === "true",
+        sonderherkunftCode: sonderherkunftCode || null,
+        sonderherkunftName: sonderherkunftName || null,
         zielmenge: parseFloat(zielmenge),
         deadline: deadline ? new Date(deadline) : null,
-        notizen,
+        notizen: notizen || null,
       },
       include: {
         baumschule: { select: { id: true, name: true } },

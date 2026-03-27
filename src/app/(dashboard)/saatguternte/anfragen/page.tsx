@@ -1,21 +1,22 @@
 // @ts-nocheck
 "use client"
 
-import { useState, useEffect } from "react"
-import { Plus, Search, Filter, ChevronDown, X, Loader2 } from "lucide-react"
+import { useState, useEffect, useMemo } from "react"
+import { Plus, X, Loader2, ChevronDown, ChevronRight, ExternalLink } from "lucide-react"
+import Link from "next/link"
 
 const BAUMARTEN = [
   "Stieleiche", "Traubeneiche", "Rotbuche", "Fichte", "Kiefer", "Lärche",
   "Kastanie", "Roteiche", "Walnuss", "Schwarznuss", "Baumhasel", "Esche",
-  "Bergahorn", "Spitzahorn", "Douglasie", "Weißtanne",
+  "Bergahorn", "Spitzahorn", "Douglasie", "Weißtanne", "Gemeine Kiefer",
 ]
 
 const STATUS_CONFIG = {
-  offen:       { label: "Offen",        color: "bg-zinc-700 text-zinc-300" },
-  in_ernte:    { label: "In Ernte",     color: "bg-blue-900/60 text-blue-300" },
-  "erfüllt":   { label: "Erfüllt ✅",   color: "bg-emerald-900/60 text-emerald-300" },
-  teilerfüllt: { label: "Teilerfüllt 🟡", color: "bg-yellow-900/60 text-yellow-300" },
-  storniert:   { label: "Storniert",    color: "bg-red-900/60 text-red-300" },
+  offen:         { label: "Offen",            color: "bg-zinc-700 text-zinc-300" },
+  in_ernte:      { label: "In Ernte",         color: "bg-blue-900/60 text-blue-300" },
+  "erfüllt":     { label: "Erfüllt ✅",       color: "bg-emerald-900/60 text-emerald-300" },
+  teilerfüllt:   { label: "Teilerfüllt 🟡",   color: "bg-yellow-900/60 text-yellow-300" },
+  storniert:     { label: "Storniert",        color: "bg-red-900/60 text-red-300" },
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -30,16 +31,145 @@ function StatusBadge({ status }: { status: string }) {
 function ProgressBar({ gesammelt, ziel }: { gesammelt: number; ziel: number }) {
   const pct = ziel > 0 ? Math.min(100, (gesammelt / ziel) * 100) : 0
   const color = pct >= 100 ? "bg-emerald-500" : pct >= 50 ? "bg-blue-500" : "bg-amber-500"
+  const filled = Math.round(pct / 20)
+  const empty = 5 - filled
+  const blocks = "█".repeat(filled) + "░".repeat(empty)
   return (
-    <div className="space-y-1 min-w-[120px]">
+    <div className="space-y-1 min-w-[160px]">
       <div className="w-full bg-zinc-700 rounded-full h-2">
         <div className={`h-2 rounded-full transition-all ${color}`} style={{ width: `${pct}%` }} />
       </div>
-      <p className="text-xs text-zinc-400">
-        {gesammelt.toFixed(1)} / {ziel.toFixed(1)} kg ({pct.toFixed(0)}%)
+      <p className="text-xs text-zinc-400 font-mono">
+        {blocks} {gesammelt.toLocaleString("de-DE")} / {ziel.toLocaleString("de-DE")} kg ({pct.toFixed(0)}%)
       </p>
     </div>
   )
+}
+
+function SHKBadge({ anfrage }: { anfrage: any }) {
+  if (!anfrage.sonderherkunft) {
+    return <span className="text-zinc-600">—</span>
+  }
+  return (
+    <div>
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-yellow-900/50 text-yellow-300 border border-yellow-700/40">
+        ⭐ SHK
+      </span>
+      {anfrage.sonderherkunftCode && (
+        <p className="text-xs text-zinc-500 mt-0.5">{anfrage.sonderherkunftCode}</p>
+      )}
+    </div>
+  )
+}
+
+function HerkunftCell({ anfrage }: { anfrage: any }) {
+  if (!anfrage.herkunftCode && !anfrage.herkunft) {
+    return <span className="text-zinc-600">—</span>
+  }
+  return (
+    <div>
+      <span className="text-zinc-200 font-medium">{anfrage.herkunftCode ?? anfrage.herkunft}</span>
+      {anfrage.herkunftName && (
+        <p className="text-xs text-zinc-500 mt-0.5">{anfrage.herkunftName}</p>
+      )}
+    </div>
+  )
+}
+
+function RegisterLink({ anfrage }: { anfrage: any }) {
+  const code = anfrage.herkunftCode || anfrage.herkunft
+  if (!code) return null
+  const href = `/saatguternte/register?search=${encodeURIComponent(code)}&baumart=${encodeURIComponent(anfrage.baumart)}`
+  return (
+    <Link
+      href={href}
+      className="inline-flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 mt-1"
+      title="Passende Flächen im Register"
+    >
+      <ExternalLink className="w-3 h-3" />
+      Flächen
+    </Link>
+  )
+}
+
+function BaumartGruppe({ baumart, items, collapsed, onToggle }: {
+  baumart: string
+  items: any[]
+  collapsed: boolean
+  onToggle: () => void
+}) {
+  const totalZiel = items.reduce((s, a) => s + a.zielmenge, 0)
+  return (
+    <>
+      {/* Subheader */}
+      <tr
+        className="bg-[#1a2a1a] border-b border-[#2a2a2a] cursor-pointer hover:bg-[#1e2e1e] transition"
+        onClick={onToggle}
+      >
+        <td colSpan={9} className="px-4 py-2">
+          <div className="flex items-center gap-2">
+            {collapsed ? (
+              <ChevronRight className="w-4 h-4 text-emerald-400" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-emerald-400" />
+            )}
+            <span className="text-emerald-300 font-semibold text-sm tracking-wide uppercase">
+              {baumart}
+            </span>
+            <span className="text-zinc-500 text-xs">
+              ({items.length} {items.length === 1 ? "Anfrage" : "Anfragen"} · {totalZiel.toLocaleString("de-DE")} kg gesamt)
+            </span>
+          </div>
+        </td>
+      </tr>
+      {/* Rows */}
+      {!collapsed && items.map((a) => (
+        <tr key={a.id} className="border-b border-[#1e1e1e] hover:bg-[#1a1a1a] transition">
+          <td className="px-4 py-3 text-white font-medium">
+            <div>{a.baumschule?.name ?? "—"}</div>
+            <div className="text-xs text-zinc-500">{a.saison?.jahr ?? ""}</div>
+          </td>
+          <td className="px-4 py-3 text-zinc-300">{a.baumart}</td>
+          <td className="px-4 py-3">
+            <HerkunftCell anfrage={a} />
+            <RegisterLink anfrage={a} />
+          </td>
+          <td className="px-4 py-3">
+            <SHKBadge anfrage={a} />
+          </td>
+          <td className="px-4 py-3 text-right text-zinc-300 tabular-nums">
+            {a.zielmenge.toLocaleString("de-DE")} kg
+          </td>
+          <td className="px-4 py-3 text-right text-zinc-400 tabular-nums">
+            {a.gesammelteKg.toLocaleString("de-DE")} kg
+          </td>
+          <td className="px-4 py-3">
+            <ProgressBar gesammelt={a.gesammelteKg} ziel={a.zielmenge} />
+          </td>
+          <td className="px-4 py-3">
+            <StatusBadge status={a.status} />
+          </td>
+          <td className="px-4 py-3 text-zinc-500 text-xs">
+            {a.deadline ? new Date(a.deadline).toLocaleDateString("de-DE") : "—"}
+          </td>
+        </tr>
+      ))}
+    </>
+  )
+}
+
+const EMPTY_FORM = {
+  baumschuleId: "",
+  saisonId: "",
+  baumart: "",
+  herkunftCode: "",
+  herkunftName: "",
+  sonderherkunft: false,
+  sonderherkunftCode: "",
+  sonderherkunftName: "",
+  zielmenge: "",
+  deadline: "",
+  notizen: "",
 }
 
 export default function ErnteanfragenPage() {
@@ -53,18 +183,15 @@ export default function ErnteanfragenPage() {
   // Filter
   const [filterSaison, setFilterSaison] = useState("")
   const [filterBaumart, setFilterBaumart] = useState("")
+  const [filterHerkunft, setFilterHerkunft] = useState("")
+  const [filterNurSHK, setFilterNurSHK] = useState(false)
   const [filterStatus, setFilterStatus] = useState("")
 
+  // Collapsed groups
+  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({})
+
   // Form
-  const [form, setForm] = useState({
-    baumschuleId: "",
-    baumart: "",
-    herkunft: "",
-    zielmenge: "",
-    deadline: "",
-    saisonId: "",
-    notizen: "",
-  })
+  const [form, setForm] = useState({ ...EMPTY_FORM })
 
   async function load() {
     setLoading(true)
@@ -72,6 +199,8 @@ export default function ErnteanfragenPage() {
     if (filterSaison) params.set("saisonId", filterSaison)
     if (filterBaumart) params.set("baumart", filterBaumart)
     if (filterStatus) params.set("status", filterStatus)
+    if (filterHerkunft) params.set("herkunftCode", filterHerkunft)
+    if (filterNurSHK) params.set("sonderherkunft", "true")
 
     const [aRes, bRes, sRes] = await Promise.all([
       fetch(`/api/saatguternte/anfragen?${params}`),
@@ -84,7 +213,31 @@ export default function ErnteanfragenPage() {
     setLoading(false)
   }
 
-  useEffect(() => { load() }, [filterSaison, filterBaumart, filterStatus])
+  useEffect(() => { load() }, [filterSaison, filterBaumart, filterStatus, filterHerkunft, filterNurSHK])
+
+  // Gruppierung nach Baumart
+  const grouped = useMemo(() => {
+    const map: Record<string, any[]> = {}
+    for (const a of anfragen) {
+      if (!map[a.baumart]) map[a.baumart] = []
+      map[a.baumart].push(a)
+    }
+    // Sort groups by name, sort within group by herkunftCode
+    const result: Array<{ baumart: string; items: any[] }> = []
+    for (const baumart of Object.keys(map).sort()) {
+      const items = map[baumart].sort((a, b) => {
+        const ca = a.herkunftCode ?? a.herkunft ?? ""
+        const cb = b.herkunftCode ?? b.herkunft ?? ""
+        return ca.localeCompare(cb)
+      })
+      result.push({ baumart, items })
+    }
+    return result
+  }, [anfragen])
+
+  function toggleGroup(baumart: string) {
+    setCollapsedGroups((prev) => ({ ...prev, [baumart]: !prev[baumart] }))
+  }
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -96,11 +249,13 @@ export default function ErnteanfragenPage() {
     })
     if (res.ok) {
       setShowModal(false)
-      setForm({ baumschuleId: "", baumart: "", herkunft: "", zielmenge: "", deadline: "", saisonId: "", notizen: "" })
+      setForm({ ...EMPTY_FORM })
       load()
     }
     setSaving(false)
   }
+
+  const hasFilter = filterSaison || filterBaumart || filterStatus || filterHerkunft || filterNurSHK
 
   return (
     <div className="p-6 space-y-6">
@@ -108,7 +263,9 @@ export default function ErnteanfragenPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Ernteanfragen</h1>
-          <p className="text-sm text-zinc-400 mt-1">Baumschul-Aufträge · Zielmenge vs. gesammelt</p>
+          <p className="text-sm text-zinc-400 mt-1">
+            Baumschul-Aufträge · Herkunftsgebiet · Sonderherkünfte
+          </p>
         </div>
         <button
           onClick={() => setShowModal(true)}
@@ -119,8 +276,8 @@ export default function ErnteanfragenPage() {
         </button>
       </div>
 
-      {/* Filter */}
-      <div className="flex flex-wrap gap-3">
+      {/* Filter-Bar */}
+      <div className="flex flex-wrap gap-3 items-center">
         <select
           value={filterSaison}
           onChange={(e) => setFilterSaison(e.target.value)}
@@ -143,6 +300,24 @@ export default function ErnteanfragenPage() {
           ))}
         </select>
 
+        <input
+          type="text"
+          value={filterHerkunft}
+          onChange={(e) => setFilterHerkunft(e.target.value)}
+          placeholder="Herkunft-Code…"
+          className="bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2 w-36"
+        />
+
+        <label className="flex items-center gap-2 cursor-pointer select-none text-sm text-zinc-300">
+          <input
+            type="checkbox"
+            checked={filterNurSHK}
+            onChange={(e) => setFilterNurSHK(e.target.checked)}
+            className="accent-yellow-400 w-4 h-4"
+          />
+          ⭐ Nur Sonderherkünfte
+        </label>
+
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
@@ -154,9 +329,15 @@ export default function ErnteanfragenPage() {
           ))}
         </select>
 
-        {(filterSaison || filterBaumart || filterStatus) && (
+        {hasFilter && (
           <button
-            onClick={() => { setFilterSaison(""); setFilterBaumart(""); setFilterStatus("") }}
+            onClick={() => {
+              setFilterSaison("")
+              setFilterBaumart("")
+              setFilterStatus("")
+              setFilterHerkunft("")
+              setFilterNurSHK(false)
+            }}
             className="flex items-center gap-1 px-3 py-2 text-xs text-zinc-400 hover:text-white border border-[#2a2a2a] rounded-lg"
           >
             <X className="w-3 h-3" /> Filter zurücksetzen
@@ -182,31 +363,23 @@ export default function ErnteanfragenPage() {
                   <th className="text-left px-4 py-3">Baumschule</th>
                   <th className="text-left px-4 py-3">Baumart</th>
                   <th className="text-left px-4 py-3">Herkunft</th>
-                  <th className="text-right px-4 py-3">Zielmenge</th>
+                  <th className="text-left px-4 py-3">SHK</th>
+                  <th className="text-right px-4 py-3">Ziel kg</th>
+                  <th className="text-right px-4 py-3">Gesammelt</th>
                   <th className="text-left px-4 py-3">Fortschritt</th>
-                  <th className="text-left px-4 py-3">Deadline</th>
-                  <th className="text-left px-4 py-3">Saison</th>
                   <th className="text-left px-4 py-3">Status</th>
+                  <th className="text-left px-4 py-3">Deadline</th>
                 </tr>
               </thead>
               <tbody>
-                {anfragen.map((a) => (
-                  <tr key={a.id} className="border-b border-[#1e1e1e] hover:bg-[#1a1a1a] transition">
-                    <td className="px-4 py-3 text-white font-medium">{a.baumschule?.name ?? "—"}</td>
-                    <td className="px-4 py-3 text-zinc-300">{a.baumart}</td>
-                    <td className="px-4 py-3 text-zinc-400">{a.herkunft ?? "—"}</td>
-                    <td className="px-4 py-3 text-right text-zinc-300">{a.zielmenge.toFixed(1)} kg</td>
-                    <td className="px-4 py-3">
-                      <ProgressBar gesammelt={a.gesammelteKg} ziel={a.zielmenge} />
-                    </td>
-                    <td className="px-4 py-3 text-zinc-400">
-                      {a.deadline ? new Date(a.deadline).toLocaleDateString("de-DE") : "—"}
-                    </td>
-                    <td className="px-4 py-3 text-zinc-400">{a.saison?.jahr ?? "—"}</td>
-                    <td className="px-4 py-3">
-                      <StatusBadge status={a.status} />
-                    </td>
-                  </tr>
+                {grouped.map(({ baumart, items }) => (
+                  <BaumartGruppe
+                    key={baumart}
+                    baumart={baumart}
+                    items={items}
+                    collapsed={!!collapsedGroups[baumart]}
+                    onToggle={() => toggleGroup(baumart)}
+                  />
                 ))}
               </tbody>
             </table>
@@ -219,9 +392,9 @@ export default function ErnteanfragenPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: "Gesamt Anfragen", value: anfragen.length },
-            { label: "Gesamt Zielmenge", value: `${anfragen.reduce((s, a) => s + a.zielmenge, 0).toFixed(0)} kg` },
-            { label: "Gesamt Gesammelt", value: `${anfragen.reduce((s, a) => s + a.gesammelteKg, 0).toFixed(0)} kg` },
-            { label: "Erfüllt", value: anfragen.filter((a) => a.status === "erfüllt").length },
+            { label: "Gesamt Zielmenge", value: `${anfragen.reduce((s, a) => s + a.zielmenge, 0).toLocaleString("de-DE")} kg` },
+            { label: "Gesamt Gesammelt", value: `${anfragen.reduce((s, a) => s + a.gesammelteKg, 0).toLocaleString("de-DE")} kg` },
+            { label: "Sonderherkünfte", value: anfragen.filter((a) => a.sonderherkunft).length },
           ].map((stat) => (
             <div key={stat.label} className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
               <p className="text-xs text-zinc-500 mb-1">{stat.label}</p>
@@ -234,7 +407,7 @@ export default function ErnteanfragenPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
               <h2 className="text-lg font-semibold text-white">Neue Ernteanfrage</h2>
               <button onClick={() => setShowModal(false)} className="text-zinc-400 hover:text-white">
@@ -242,6 +415,8 @@ export default function ErnteanfragenPage() {
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
+
+              {/* Baumschule */}
               <div>
                 <label className="block text-xs text-zinc-400 mb-1">Baumschule *</label>
                 <select
@@ -257,6 +432,22 @@ export default function ErnteanfragenPage() {
                 </select>
               </div>
 
+              {/* Saison */}
+              <div>
+                <label className="block text-xs text-zinc-400 mb-1">Saison</label>
+                <select
+                  value={form.saisonId}
+                  onChange={(e) => setForm({ ...form, saisonId: e.target.value })}
+                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+                >
+                  <option value="">Saison wählen…</option>
+                  {saisons.map((s) => (
+                    <option key={s.id} value={s.id}>{s.jahr}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Baumart */}
               <div>
                 <label className="block text-xs text-zinc-400 mb-1">Baumart *</label>
                 <select
@@ -272,17 +463,68 @@ export default function ErnteanfragenPage() {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-xs text-zinc-400 mb-1">Herkunft / Provenienz</label>
-                <input
-                  type="text"
-                  value={form.herkunft}
-                  onChange={(e) => setForm({ ...form, herkunft: e.target.value })}
-                  placeholder="z.B. Hessen, Bayern, RLP Mix"
-                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
-                />
+              {/* Herkunft */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-zinc-400 mb-1">Herkunftsgebiet-Code</label>
+                  <input
+                    type="text"
+                    value={form.herkunftCode}
+                    onChange={(e) => setForm({ ...form, herkunftCode: e.target.value })}
+                    placeholder="z.B. 06, 818 07"
+                    className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-zinc-400 mb-1">Herkunftsgebiet-Name</label>
+                  <input
+                    type="text"
+                    value={form.herkunftName}
+                    onChange={(e) => setForm({ ...form, herkunftName: e.target.value })}
+                    placeholder="optional"
+                    className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+                  />
+                </div>
               </div>
 
+              {/* Sonderherkunft */}
+              <div className="border border-[#2a2a2a] rounded-lg p-4 space-y-3">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={form.sonderherkunft}
+                    onChange={(e) => setForm({ ...form, sonderherkunft: e.target.checked })}
+                    className="accent-yellow-400 w-4 h-4"
+                  />
+                  <span className="text-sm text-white font-medium">⭐ Sonderherkunft (DKV)</span>
+                </label>
+                {form.sonderherkunft && (
+                  <div className="grid grid-cols-2 gap-3 pt-1">
+                    <div>
+                      <label className="block text-xs text-zinc-400 mb-1">Sonderherkunft-Code</label>
+                      <input
+                        type="text"
+                        value={form.sonderherkunftCode}
+                        onChange={(e) => setForm({ ...form, sonderherkunftCode: e.target.value })}
+                        placeholder="z.B. DKV-818-001"
+                        className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-zinc-400 mb-1">Sonderherkunft-Name</label>
+                      <input
+                        type="text"
+                        value={form.sonderherkunftName}
+                        onChange={(e) => setForm({ ...form, sonderherkunftName: e.target.value })}
+                        placeholder="optional"
+                        className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Zielmenge + Deadline */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs text-zinc-400 mb-1">Zielmenge (kg) *</label>
@@ -307,20 +549,7 @@ export default function ErnteanfragenPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs text-zinc-400 mb-1">Saison</label>
-                <select
-                  value={form.saisonId}
-                  onChange={(e) => setForm({ ...form, saisonId: e.target.value })}
-                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
-                >
-                  <option value="">Saison wählen…</option>
-                  {saisons.map((s) => (
-                    <option key={s.id} value={s.id}>{s.jahr}</option>
-                  ))}
-                </select>
-              </div>
-
+              {/* Notizen */}
               <div>
                 <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
                 <textarea
