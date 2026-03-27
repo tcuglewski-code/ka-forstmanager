@@ -517,6 +517,8 @@ model Wochenplan {
   gruppeId        String?             // Zugewiesene Gruppe
   gruppe          Gruppe?             @relation(fields: [gruppeId], references: [id])
   erstelltVon     String?             // User-ID des Erstellers
+  dienstleistung  String?             // Haupt-Dienstleistungstyp: pflanzung|flaechenvorbereitung|kulturpflege|kulturschutz|saatguternte|sonstiges
+  gruppenleiter   String?             // Name des Gruppenführers für Unterschrift
   status          String              @default("entwurf") // entwurf, freigegeben, abgeschlossen
   notizen         String?
   createdAt       DateTime            @default(now())
@@ -531,14 +533,18 @@ model WochenplanPosition {
   wochenplanId        String
   wochenplan          Wochenplan @relation(fields: [wochenplanId], references: [id], onDelete: Cascade)
   dienstleistungstyp  String    // pflanzung, flaechenvorbereitung, kulturpflege, kulturschutz, saatguternte, sonstiges
+  tag                 Int?      // Wochentag: 1=Mo, 2=Di, 3=Mi, 4=Do, 5=Fr
   datum               DateTime?
   auftragId           String?   // Optionale Verknüpfung mit Auftrag
+  aufgabe             String?   // Aufgabenbeschreibung für die Position
+  einheit             String?   // Einheit: kg, Stück, ha
+  erledigt            Boolean   @default(false)
   status              String    @default("geplant") // geplant, in_arbeit, abgeschlossen
   notizen             String?
 
   // ── Gemeinsame Felder ──────────────────────────────────────
   flaeche             String?   // Flächen-Bezeichnung / Waldstück
-  gpsPosition         String?   // GPS-Koordinate als "lat,lon" String
+  gpsPosition         String?   // GPS-Koordinate als "lat,lon" String (alias gpsKoordinaten)
   treffpunkt          String?   // Treffpunkt-Beschreibung oder GPS
 
   // ── Pflanzung-spezifisch ───────────────────────────────────
@@ -547,7 +553,7 @@ model WochenplanPosition {
 
   // ── Saatguternte-spezifisch ────────────────────────────────
   herkunftscode       String?   // Herkunftscode z.B. "06 NRW-818-07"
-  zielkg              Float?    // Ziel in Kilogramm
+  zielkg              Float?    // Ziel in Kilogramm (alias zielMenge)
   gesammelteKg        Float?    @default(0)
 
   createdAt           DateTime  @default(now())
