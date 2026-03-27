@@ -10,6 +10,7 @@ export interface TagesprotokollFull {
   id: string
   datum: string
   status: string
+  ersteller?: string | null
   auftrag?: { titel: string; nummer?: string | null } | null
   // Sektion 1
   forstamt?: string | null
@@ -183,6 +184,9 @@ export default function TagesprotokollDetail({ protokoll: p }: TagesprotokollDet
         </div>
         <StatusBadge status={p.status} />
       </div>
+      {p.ersteller && (
+        <p className="text-xs text-zinc-500">Gruppenführer: <span className="text-zinc-300">{p.ersteller}</span></p>
+      )}
 
       {/* Revier */}
       {hasRevier && (

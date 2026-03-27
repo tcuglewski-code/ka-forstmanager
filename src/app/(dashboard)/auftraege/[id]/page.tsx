@@ -11,6 +11,7 @@ import { toast } from "sonner"
 import { PflanzverbandVorschau } from "@/components/auftraege/PflanzverbandVorschau"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
+import { TagesprotokollFull } from "@/components/tagesprotokoll/TagesprotokollDetail"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -646,6 +647,8 @@ export default function AuftragDetailPage() {
 
   // Audit-Log (Sprint S)
   const [auftragLog, setAuftragLog] = useState<{ id: string; aktion: string; von?: string | null; nach?: string | null; createdAt: string }[]>([])
+  const [tagesprotokolle, setTagesprotokolle] = useState<TagesprotokollFull[]>([])
+  const [tagesprotokollExpanded, setTagesprotokollExpanded] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchData() {
@@ -687,6 +690,16 @@ export default function AuftragDetailPage() {
       fetch(`/api/auftraege/${id}/log`)
         .then(r => r.json())
         .then(data => setAuftragLog(Array.isArray(data) ? data : []))
+        .catch(() => {})
+    }
+  }, [id])
+
+  // Lade Tagesprotokolle für diesen Auftrag
+  useEffect(() => {
+    if (id) {
+      fetch(`/api/tagesprotokoll?auftragId=${id}`)
+        .then(r => r.json())
+        .then(data => setTagesprotokolle(Array.isArray(data) ? data : []))
         .catch(() => {})
     }
   }, [id])
@@ -992,60 +1005,72 @@ export default function AuftragDetailPage() {
           )}
 
           {/* Tagesprotokolle */}
-          {auftrag.protokolle && auftrag.protokolle.length > 0 && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
-              <SectionHeading icon={<FileText className="w-4 h-4" />} label={`Tagesprotokolle (${auftrag.protokolle.length})`} />
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-[#2a2a2a]">
-                    <th className="text-left py-2 text-xs text-zinc-500">Datum</th>
-                    <th className="text-left py-2 text-xs text-zinc-500">Ersteller</th>
-                    <th className="text-left py-2 text-xs text-zinc-500">Gepflanzt</th>
-                    <th className="text-left py-2 text-xs text-zinc-500">Witterung</th>
-                    <th className="text-left py-2 text-xs text-zinc-500">Fotos</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {auftrag.protokolle.map(p => {
-                    const fotoListe = p.fotos
-                      ? p.fotos.split(",").map(u => u.trim()).filter(Boolean)
-                      : []
-                    return (
-                    <tr key={p.id} className="border-b border-[#1e1e1e] last:border-0">
-                      <td className="py-2 text-zinc-400">{new Date(p.datum).toLocaleDateString("de-DE")}</td>
-                      <td className="py-2 text-zinc-400">{p.ersteller ?? "—"}</td>
-                      <td className="py-2 text-emerald-400">{p.gepflanzt != null ? `${p.gepflanzt.toLocaleString()} Stk.` : "—"}</td>
-                      <td className="py-2 text-zinc-400">{p.witterung ?? "—"}</td>
-                      <td className="py-2">
-                        {fotoListe.length > 0 ? (
-                          <div className="flex flex-wrap gap-1">
-                            {fotoListe.map((url, i) => (
-                              <a key={i} href={url} target="_blank" rel="noopener noreferrer"
-                                className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
-                                <Camera className="w-3 h-3" /> Foto {fotoListe.length > 1 ? i + 1 : "ansehen"}
-                              </a>
-                            ))}
-                          </div>
-                        ) : (
-                          <span className="text-zinc-600">—</span>
-                        )}
-                      </td>
-                    </tr>
-                    )
-                  })}
-                </tbody>
-                <tfoot>
-                  <tr className="border-t border-[#2a2a2a]">
-                    <td colSpan={2} className="py-2 text-xs text-zinc-500 font-medium">Gesamt:</td>
-                    <td className="py-2 text-sm font-bold text-emerald-400">
-                      {auftrag.protokolle.reduce((s, p) => s + (p.gepflanzt ?? 0), 0).toLocaleString()} Stk.
-                    </td>
-                    <td colSpan={2}></td>
-                  </tr>
-                </tfoot>
-              </table>
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <SectionHeading icon={<FileText className="w-4 h-4" />} label={`Tagesprotokolle (${tagesprotokolle.length})`} />
+              <Link
+                href={`/auftraege/${auftrag.id}/protokoll/neu`}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-emerald-500/20 border border-emerald-500/40 rounded-lg text-emerald-400 hover:bg-emerald-500/30 transition-all"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Neues Tagesprotokoll
+              </Link>
             </div>
-          )}
+            {tagesprotokolle.length === 0 ? (
+              <p className="text-zinc-600 text-sm">Noch keine Tagesprotokolle vorhanden.</p>
+            ) : (
+              <div className="space-y-2">
+                {tagesprotokolle.map(p => {
+                  const statusColors: Record<string, string> = {
+                    entwurf: "bg-zinc-700 text-zinc-300 border-zinc-600",
+                    eingereicht: "bg-emerald-500/20 text-emerald-400 border-emerald-500/40",
+                    genehmigt: "bg-blue-500/20 text-blue-400 border-blue-500/40",
+                    abgelehnt: "bg-red-500/20 text-red-400 border-red-500/40",
+                  }
+                  const statusLabels: Record<string, string> = {
+                    entwurf: "Entwurf", eingereicht: "Eingereicht",
+                    genehmigt: "Genehmigt", abgelehnt: "Abgelehnt",
+                  }
+                  const isExpanded = tagesprotokollExpanded === p.id
+                  return (
+                    <div key={p.id} className="border border-[#2a2a2a] rounded-lg overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => setTagesprotokollExpanded(isExpanded ? null : p.id)}
+                        className="w-full flex items-center justify-between px-4 py-3 bg-[#111] hover:bg-[#181818] transition-colors text-left"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm text-zinc-300">
+                            {new Date(p.datum).toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric" })}
+                          </span>
+                          {p.ersteller && <span className="text-xs text-zinc-500">{p.ersteller}</span>}
+                          {p.witterung && <span className="text-xs text-zinc-600">{p.witterung}</span>}
+                        </div>
+                        <span className={`text-xs px-2 py-0.5 rounded-full border ${statusColors[p.status] ?? "bg-zinc-700 text-zinc-400 border-zinc-600"}`}>
+                          {statusLabels[p.status] ?? p.status}
+                        </span>
+                      </button>
+                      {isExpanded && (
+                        <div className="p-4 bg-[#0d0d0d]">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs text-zinc-400">
+                            {p.forstamt && <div><span className="text-zinc-600 block">Forstamt</span>{p.forstamt}</div>}
+                            {p.revier && <div><span className="text-zinc-600 block">Revier</span>{p.revier}</div>}
+                            {p.waldbesitzerName && <div><span className="text-zinc-600 block">Waldbesitzer</span>{p.waldbesitzerName}</div>}
+                            {p.witterung && <div><span className="text-zinc-600 block">Witterung</span>{p.witterung}</div>}
+                            {(p.std_handpflanzung ?? 0) > 0 && <div><span className="text-zinc-600 block">Pflanzung (Std)</span>{p.std_handpflanzung}</div>}
+                            {(p.stk_pflanzung ?? 0) > 0 && <div><span className="text-zinc-600 block">Gepflanzt (Stk)</span>{p.stk_pflanzung?.toLocaleString()}</div>}
+                          </div>
+                          {p.kommentar && (
+                            <p className="mt-3 text-xs text-zinc-400 whitespace-pre-wrap border-t border-[#2a2a2a] pt-3">{p.kommentar}</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
 
           {/* ── Abnahmen ──────────────────────────────────────────── */}
           {auftrag.abnahmen && auftrag.abnahmen.length > 0 && (
