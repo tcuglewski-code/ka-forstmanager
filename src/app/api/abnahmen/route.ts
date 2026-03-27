@@ -27,10 +27,28 @@ export async function POST(req: NextRequest) {
     data: {
       auftragId: body.auftragId,
       datum: body.datum ? new Date(body.datum) : new Date(),
+      // Förster
       foersterId: body.foersterId ?? null,
+      foersterName: body.foersterName ?? null,
+      foersterEmail: body.foersterEmail ?? null,
+      foersterTelefon: body.foersterTelefon ?? null,
+      // Status
       status: body.status ?? "offen",
+      // Details
       notizen: body.notizen ?? null,
+      abnahmeProtokoll: body.abnahmeProtokoll ?? null,
+      // Mängel
+      haengelListe: body.haengelListe ?? undefined,
+      maengelFrist: body.maengelFrist ? new Date(body.maengelFrist) : null,
+      // GPS
+      gpsLat: body.gpsLat ?? null,
+      gpsLon: body.gpsLon ?? null,
+      // Dokumentation
+      fotos: body.fotos ?? undefined,
       signaturUrl: body.signaturUrl ?? null,
+      pdfUrl: body.pdfUrl ?? null,
+      // Freigabe
+      rechnungFreigegeben: body.rechnungFreigegeben ?? false,
     },
     include: { auftrag: { select: { id: true, titel: true } } },
   })

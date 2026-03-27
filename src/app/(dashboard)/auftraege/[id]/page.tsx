@@ -12,6 +12,7 @@ import { PflanzverbandVorschau } from "@/components/auftraege/PflanzverbandVorsc
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 import { TagesprotokollFull } from "@/components/tagesprotokoll/TagesprotokollDetail"
+import { AbnahmeStatus } from "@/components/abnahme/AbnahmeStatus"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1137,6 +1138,9 @@ export default function AuftragDetailPage() {
               </div>
             </div>
           )}
+
+          {/* ── Abnahme-Workflow ───────────────────────────────────── */}
+          {auftrag && <AbnahmeStatus auftragId={auftrag.id} />}
 
           {/* ── Materialzuweisung ──────────────────────────────────── */}
           <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">

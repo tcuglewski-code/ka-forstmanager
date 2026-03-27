@@ -419,15 +419,44 @@ model Dokument {
 
 // ABNAHMEN
 model Abnahme {
-  id          String   @id @default(cuid())
-  auftragId   String
-  datum       DateTime @default(now())
-  foersterId  String?
-  status      String   @default("offen")
-  notizen     String?
-  signaturUrl String?
-  createdAt   DateTime @default(now())
-  auftrag     Auftrag  @relation(fields: [auftragId], references: [id], onDelete: Cascade)
+  id              String    @id @default(cuid())
+  auftragId       String
+  auftrag         Auftrag   @relation(fields: [auftragId], references: [id], onDelete: Cascade)
+  datum           DateTime  @default(now())
+
+  // Förster
+  foersterId      String?
+  foersterName    String?   // Name des Försters (Freitext oder aus Kontakt)
+  foersterEmail   String?
+  foersterTelefon String?
+
+  // Status-Workflow
+  status          String    @default("offen")  // offen|bestätigt|abgelehnt|mängel
+
+  // Abnahme-Details
+  notizen         String?
+  abnahmeProtokoll String?  // Detailliertes Abnahmeprotokoll
+
+  // Mängel
+  haengelListe    Json?     // Array: [{beschreibung, priorität, erledigtAm}]
+  maengelFrist    DateTime? // Bis wann müssen Mängel behoben sein
+
+  // GPS Standort der Abnahme
+  gpsLat          Float?
+  gpsLon          Float?
+
+  // Dokumentation
+  fotos           Json?     // Array: [{url, nextcloudPath, caption}]
+  signaturUrl     String?   // Unterschrift Förster (Base64 oder URL)
+  pdfUrl          String?   // Generiertes Abnahme-Protokoll PDF
+
+  // Auftrag-Freigabe
+  rechnungFreigegeben Boolean @default(false)
+  freigegebenAm   DateTime?
+  freigegebenVon  String?   // userId
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now()) @updatedAt
 }
 
 // TAGESPROTOKOLL
