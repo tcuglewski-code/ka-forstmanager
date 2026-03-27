@@ -1,451 +1,248 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { ChevronDown, ChevronUp } from "lucide-react"
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
-interface Auftrag {
-  id: string
-  titel: string
-  waldbesitzer?: string | null
-  gruppe?: { name: string } | null
+interface Props {
+  auftragId: string
+  auftragTitel?: string
+  waldbesitzer?: string
+  gruppeId?: string
+  onSaved?: () => void
 }
 
-interface TagesprotokollFormularProps {
-  auftrag: Auftrag
-  onSuccess: () => void
-  onCancel: () => void
-  initialData?: Partial<FormData>
-  protokollId?: string
-}
+export default function TagesprotokollFormular({ auftragId, auftragTitel, waldbesitzer, gruppeId, onSaved }: Props) {
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({
+    datum: new Date().toISOString().split('T')[0],
+    ersteller: '',
+    // Revier & Gruppe
+    forstamt: '', revier: '', revierleiter: '', abteilung: '', waldbesitzerName: waldbesitzer || '', gruppe: '',
+    // Arbeitszeit
+    zeitBeginn: '', zeitEnde: '', pausezeit: '',
+    // Pflanzung Hand
+    std_einschlag: '', std_handpflanzung: '', stk_pflanzung: '',
+    // Pflanzung Bohrer
+    std_zum_bohrer: '', std_mit_bohrer: '', stk_pflanzung_mit_bohrer: '',
+    // Freischneider/Motorsäge
+    std_freischneider: '', std_motorsaege: '',
+    // Pflanzenschutz
+    std_wuchshuellen: '', stk_wuchshuellen: '', std_netze_staebe_spiralen: '', stk_netze_staebe_spiralen: '',
+    // Zaunbau
+    std_zaunbau: '', stk_drahtverbinder: '', lfm_zaunbau: '',
+    // Nachbesserung
+    std_nachbesserung: '', stk_nachbesserung: '', std_sonstige_arbeiten: '',
+    // Witterung
+    witterung: 'sonnig',
+    gpsStartLat: '', gpsStartLon: '',
+    // Kommentar
+    kommentar: '',
+    bericht: '',
+  })
 
-interface FormData {
-  datum: string
-  // Sektion 1
-  forstamt: string
-  revier: string
-  revierleiter: string
-  abteilung: string
-  waldbesitzerName: string
-  gruppeNr: string
-  // Sektion 2
-  zeitBeginn: string
-  zeitEnde: string
-  pausezeit: string
-  // Sektion 3
-  std_einschlag: string
-  std_handpflanzung: string
-  stk_pflanzung: string
-  // Sektion 4
-  std_zum_bohrer: string
-  std_mit_bohrer: string
-  stk_pflanzung_mit_bohrer: string
-  // Sektion 5
-  std_freischneider: string
-  std_motorsaege: string
-  // Sektion 6
-  std_wuchshuellen: string
-  stk_wuchshuellen: string
-  std_netze_staebe_spiralen: string
-  stk_netze_staebe_spiralen: string
-  // Sektion 7
-  std_zaunbau: string
-  stk_drahtverbinder: string
-  lfm_zaunbau: string
-  // Sektion 8
-  std_nachbesserung: string
-  stk_nachbesserung: string
-  std_sonstige_arbeiten: string
-  // Sektion 9
-  witterung: string
-  gpsStartLat: string
-  gpsStartLon: string
-  // Sektion 10
-  kommentar: string
-  bericht: string
-}
+  const n = (val: string) => val === '' ? null : Number(val)
 
-const emptyForm = (auftrag: Auftrag): FormData => ({
-  datum: new Date().toISOString().split("T")[0],
-  forstamt: "",
-  revier: "",
-  revierleiter: "",
-  abteilung: "",
-  waldbesitzerName: auftrag.waldbesitzer ?? "",
-  gruppeNr: auftrag.gruppe?.name ?? "",
-  zeitBeginn: "",
-  zeitEnde: "",
-  pausezeit: "",
-  std_einschlag: "",
-  std_handpflanzung: "",
-  stk_pflanzung: "",
-  std_zum_bohrer: "",
-  std_mit_bohrer: "",
-  stk_pflanzung_mit_bohrer: "",
-  std_freischneider: "",
-  std_motorsaege: "",
-  std_wuchshuellen: "",
-  stk_wuchshuellen: "",
-  std_netze_staebe_spiralen: "",
-  stk_netze_staebe_spiralen: "",
-  std_zaunbau: "",
-  stk_drahtverbinder: "",
-  lfm_zaunbau: "",
-  std_nachbesserung: "",
-  stk_nachbesserung: "",
-  std_sonstige_arbeiten: "",
-  witterung: "",
-  gpsStartLat: "",
-  gpsStartLon: "",
-  kommentar: "",
-  bericht: "",
-})
-
-function SektionBlock({
-  title,
-  children,
-  defaultOpen = true,
-}: {
-  title: string
-  children: React.ReactNode
-  defaultOpen?: boolean
-}) {
-  const [open, setOpen] = useState(defaultOpen)
-  return (
-    <div className="border border-[#2a2a2a] rounded-lg overflow-hidden">
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-[#111] hover:bg-[#181818] transition-colors text-left"
-      >
-        <span className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">{title}</span>
-        {open ? (
-          <ChevronUp className="w-4 h-4 text-zinc-500" />
-        ) : (
-          <ChevronDown className="w-4 h-4 text-zinc-500" />
-        )}
-      </button>
-      {open && (
-        <div className="p-4 bg-[#0d0d0d] space-y-3">
-          {children}
-        </div>
-      )}
-    </div>
-  )
-}
-
-function Field({
-  label,
-  children,
-}: {
-  label: string
-  children: React.ReactNode
-}) {
-  return (
-    <div>
-      <label className="block text-xs text-zinc-500 mb-1">{label}</label>
-      {children}
-    </div>
-  )
-}
-
-const inputCls = "w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500/60"
-
-function numField(
-  value: string,
-  onChange: (v: string) => void,
-  placeholder = ""
-) {
-  return (
-    <input
-      type="number"
-      step="any"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      className={inputCls}
-    />
-  )
-}
-
-function textField(
-  value: string,
-  onChange: (v: string) => void,
-  placeholder = ""
-) {
-  return (
-    <input
-      type="text"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      className={inputCls}
-    />
-  )
-}
-
-export default function TagesprotokollFormular({
-  auftrag,
-  onSuccess,
-  onCancel,
-  initialData,
-  protokollId,
-}: TagesprotokollFormularProps) {
-  const base = emptyForm(auftrag)
-  const [form, setForm] = useState<FormData>({ ...base, ...initialData })
-  const [saving, setSaving] = useState(false)
-
-  const set = (key: keyof FormData) => (val: string) =>
-    setForm((prev) => ({ ...prev, [key]: val }))
-
-  function buildPayload(status: string) {
-    const numOrNull = (v: string) => (v === "" ? null : Number(v))
-    const dateOrNull = (v: string) => (v === "" ? null : new Date(v).toISOString())
-
-    return {
-      auftragId: auftrag.id,
-      datum: new Date(form.datum).toISOString(),
-      status,
-      // Sektion 1
-      forstamt: form.forstamt || null,
-      revier: form.revier || null,
-      revierleiter: form.revierleiter || null,
-      abteilung: form.abteilung || null,
-      waldbesitzerName: form.waldbesitzerName || null,
-      // Sektion 2
-      zeitBeginn: dateOrNull(form.zeitBeginn),
-      zeitEnde: dateOrNull(form.zeitEnde),
-      pausezeit: numOrNull(form.pausezeit),
-      // Sektion 3
-      std_einschlag: numOrNull(form.std_einschlag),
-      std_handpflanzung: numOrNull(form.std_handpflanzung),
-      stk_pflanzung: numOrNull(form.stk_pflanzung),
-      // Sektion 4
-      std_zum_bohrer: numOrNull(form.std_zum_bohrer),
-      std_mit_bohrer: numOrNull(form.std_mit_bohrer),
-      stk_pflanzung_mit_bohrer: numOrNull(form.stk_pflanzung_mit_bohrer),
-      // Sektion 5
-      std_freischneider: numOrNull(form.std_freischneider),
-      std_motorsaege: numOrNull(form.std_motorsaege),
-      // Sektion 6
-      std_wuchshuellen: numOrNull(form.std_wuchshuellen),
-      stk_wuchshuellen: numOrNull(form.stk_wuchshuellen),
-      std_netze_staebe_spiralen: numOrNull(form.std_netze_staebe_spiralen),
-      stk_netze_staebe_spiralen: numOrNull(form.stk_netze_staebe_spiralen),
-      // Sektion 7
-      std_zaunbau: numOrNull(form.std_zaunbau),
-      stk_drahtverbinder: numOrNull(form.stk_drahtverbinder),
-      lfm_zaunbau: numOrNull(form.lfm_zaunbau),
-      // Sektion 8
-      std_nachbesserung: numOrNull(form.std_nachbesserung),
-      stk_nachbesserung: numOrNull(form.stk_nachbesserung),
-      std_sonstige_arbeiten: numOrNull(form.std_sonstige_arbeiten),
-      // Sektion 9
-      witterung: form.witterung || null,
-      gpsStartLat: numOrNull(form.gpsStartLat),
-      gpsStartLon: numOrNull(form.gpsStartLon),
-      // Sektion 10
-      kommentar: form.kommentar || null,
-      bericht: form.bericht || "",
-    }
-  }
-
-  async function handleSave(status: string) {
-    setSaving(true)
-    const payload = buildPayload(status)
+  const handleSubmit = async (status: 'entwurf' | 'eingereicht') => {
+    setLoading(true)
     try {
-      if (protokollId) {
-        await fetch(`/api/tagesprotokoll/${protokollId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        })
-      } else {
-        await fetch("/api/tagesprotokoll", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        })
+      const payload = {
+        auftragId,
+        gruppeId,
+        datum: new Date(form.datum).toISOString(),
+        ersteller: form.ersteller,
+        status,
+        eingereichtAm: status === 'eingereicht' ? new Date().toISOString() : null,
+        // Revier
+        forstamt: form.forstamt || null,
+        revier: form.revier || null,
+        revierleiter: form.revierleiter || null,
+        abteilung: form.abteilung || null,
+        waldbesitzerName: form.waldbesitzerName || null,
+        // Arbeitszeit
+        zeitBeginn: form.zeitBeginn ? new Date(form.zeitBeginn).toISOString() : null,
+        zeitEnde: form.zeitEnde ? new Date(form.zeitEnde).toISOString() : null,
+        pausezeit: n(form.pausezeit),
+        // Pflanzung Hand
+        std_einschlag: n(form.std_einschlag),
+        std_handpflanzung: n(form.std_handpflanzung),
+        stk_pflanzung: n(form.stk_pflanzung),
+        // Pflanzung Bohrer
+        std_zum_bohrer: n(form.std_zum_bohrer),
+        std_mit_bohrer: n(form.std_mit_bohrer),
+        stk_pflanzung_mit_bohrer: n(form.stk_pflanzung_mit_bohrer),
+        // Freischneider/Motorsäge
+        std_freischneider: n(form.std_freischneider),
+        std_motorsaege: n(form.std_motorsaege),
+        // Pflanzenschutz
+        std_wuchshuellen: n(form.std_wuchshuellen),
+        stk_wuchshuellen: n(form.stk_wuchshuellen),
+        std_netze_staebe_spiralen: n(form.std_netze_staebe_spiralen),
+        stk_netze_staebe_spiralen: n(form.stk_netze_staebe_spiralen),
+        // Zaunbau
+        std_zaunbau: n(form.std_zaunbau),
+        stk_drahtverbinder: n(form.stk_drahtverbinder),
+        lfm_zaunbau: n(form.lfm_zaunbau),
+        // Nachbesserung
+        std_nachbesserung: n(form.std_nachbesserung),
+        stk_nachbesserung: n(form.stk_nachbesserung),
+        std_sonstige_arbeiten: n(form.std_sonstige_arbeiten),
+        // Witterung & GPS
+        witterung: form.witterung,
+        gpsStartLat: n(form.gpsStartLat),
+        gpsStartLon: n(form.gpsStartLon),
+        // Kommentar
+        kommentar: form.kommentar || null,
+        bericht: form.bericht || '',
       }
-      onSuccess()
-    } catch (err) {
-      console.error("Fehler beim Speichern:", err)
+      const res = await fetch('/api/tagesprotokoll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) throw new Error('Fehler beim Speichern')
+      if (onSaved) onSaved()
+      else router.back()
+    } catch (e) {
+      alert('Fehler: ' + (e as Error).message)
     } finally {
-      setSaving(false)
+      setLoading(false)
     }
   }
 
+  const inp = (field: keyof typeof form, type = 'text', placeholder = '') => (
+    <input
+      type={type}
+      value={form[field]}
+      onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
+      placeholder={placeholder}
+      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+    />
+  )
+
+  const sel = (field: keyof typeof form, opts: string[]) => (
+    <select
+      value={form[field]}
+      onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
+      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+    >
+      {opts.map(o => <option key={o} value={o}>{o}</option>)}
+    </select>
+  )
+
+  const section = (title: string, icon: string, children: React.ReactNode) => (
+    <div className="mb-6 bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center gap-2">
+        <span>{icon}</span>
+        <h3 className="font-semibold text-gray-800 text-sm">{title}</h3>
+      </div>
+      <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>
+    </div>
+  )
+
+  const field = (label: string, child: React.ReactNode) => (
+    <div>
+      <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
+      {child}
+    </div>
+  )
+
   return (
-    <div className="space-y-3">
-      {/* Datum (immer sichtbar oben) */}
-      <div>
-        <label className="block text-xs text-zinc-500 mb-1">Datum *</label>
-        <input
-          type="date"
-          value={form.datum}
-          onChange={(e) => set("datum")(e.target.value)}
-          className={inputCls}
-          required
-        />
+    <div className="max-w-3xl mx-auto p-4">
+      <h2 className="text-xl font-bold text-gray-800 mb-1">Tagesprotokoll</h2>
+      {auftragTitel && <p className="text-sm text-gray-500 mb-6">Auftrag: {auftragTitel}</p>}
+
+      <div className="mb-4 grid grid-cols-2 gap-4">
+        {field('Datum *', inp('datum', 'date'))}
+        {field('Gruppenführer (Name)', inp('ersteller', 'text', 'Stefan Weber'))}
       </div>
 
-      {/* Sektion 1 */}
-      <SektionBlock title="1 · Revier und Gruppe">
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Forstamt">{textField(form.forstamt, set("forstamt"))}</Field>
-          <Field label="Revier">{textField(form.revier, set("revier"))}</Field>
-          <Field label="Revierleiter">{textField(form.revierleiter, set("revierleiter"))}</Field>
-          <Field label="Abteilung">{textField(form.abteilung, set("abteilung"))}</Field>
-          <Field label="Waldbesitzer">{textField(form.waldbesitzerName, set("waldbesitzerName"))}</Field>
-          <Field label="Gruppe">{textField(form.gruppeNr, set("gruppeNr"))}</Field>
-        </div>
-      </SektionBlock>
+      {section('Revier und Gruppe', '🌲', <>
+        {field('Forstamt', inp('forstamt', 'text', 'Forstamt Darmstadt'))}
+        {field('Revier', inp('revier', 'text', 'Revier Nord'))}
+        {field('Revierleiter', inp('revierleiter', 'text', 'Name des Revierleiters'))}
+        {field('Abteilung', inp('abteilung', 'text', 'Abt. 12a'))}
+        {field('Waldbesitzer', inp('waldbesitzerName', 'text', 'Klaus Hoffmann'))}
+        {field('Gruppe', inp('gruppe', 'text', 'Gruppe A'))}
+      </>)}
 
-      {/* Sektion 2 */}
-      <SektionBlock title="2 · Arbeitszeit vor Ort">
-        <div className="grid grid-cols-1 gap-3">
-          <Field label="Beginn">
-            <input
-              type="datetime-local"
-              value={form.zeitBeginn}
-              onChange={(e) => set("zeitBeginn")(e.target.value)}
-              className={inputCls}
-            />
-          </Field>
-          <Field label="Ende">
-            <input
-              type="datetime-local"
-              value={form.zeitEnde}
-              onChange={(e) => set("zeitEnde")(e.target.value)}
-              className={inputCls}
-            />
-          </Field>
-          <Field label="Pause (Minuten)">{numField(form.pausezeit, set("pausezeit"), "0")}</Field>
-        </div>
-      </SektionBlock>
+      {section('Arbeitszeit vor Ort', '⏰', <>
+        {field('Beginn', inp('zeitBeginn', 'datetime-local'))}
+        {field('Ende', inp('zeitEnde', 'datetime-local'))}
+        {field('Pause (Minuten)', inp('pausezeit', 'number', '45'))}
+      </>)}
 
-      {/* Sektion 3 */}
-      <SektionBlock title="3 · Pflanzung mit Hand" defaultOpen={false}>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Einschlag (Std.)">{numField(form.std_einschlag, set("std_einschlag"))}</Field>
-          <Field label="Std. Handpflanzung">{numField(form.std_handpflanzung, set("std_handpflanzung"))}</Field>
-          <Field label="Stückzahl Handpflanzung">{numField(form.stk_pflanzung, set("stk_pflanzung"))}</Field>
-        </div>
-      </SektionBlock>
+      {section('Pflanzung mit Hand', '🤲', <>
+        {field('Einschlag (Stunden)', inp('std_einschlag', 'number', '0'))}
+        {field('Stunden Pflanzung', inp('std_handpflanzung', 'number', '0'))}
+        {field('Stückzahl Handpflanzung', inp('stk_pflanzung', 'number', '0'))}
+      </>)}
 
-      {/* Sektion 4 */}
-      <SektionBlock title="4 · Pflanzung mit Bohrer" defaultOpen={false}>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Handpflanzung zum Bohrer (Std.)">{numField(form.std_zum_bohrer, set("std_zum_bohrer"))}</Field>
-          <Field label="Laufzeit Bohrer (Std.)">{numField(form.std_mit_bohrer, set("std_mit_bohrer"))}</Field>
-          <Field label="Stückzahl mit Bohrer">{numField(form.stk_pflanzung_mit_bohrer, set("stk_pflanzung_mit_bohrer"))}</Field>
-        </div>
-      </SektionBlock>
+      {section('Pflanzung mit Bohrer', '🔩', <>
+        {field('Handpflanzung zum Bohrer (Std)', inp('std_zum_bohrer', 'number', '0'))}
+        {field('Laufzeit des Bohrers (Std)', inp('std_mit_bohrer', 'number', '0'))}
+        {field('Stückzahl Bohrerpflanzung', inp('stk_pflanzung_mit_bohrer', 'number', '0'))}
+      </>)}
 
-      {/* Sektion 5 */}
-      <SektionBlock title="5 · Freischneider & Motorsäge" defaultOpen={false}>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Std. Freischneider">{numField(form.std_freischneider, set("std_freischneider"))}</Field>
-          <Field label="Std. Motorsäge">{numField(form.std_motorsaege, set("std_motorsaege"))}</Field>
-        </div>
-      </SektionBlock>
+      {section('Freischneider und Motorsäge', '⚙️', <>
+        {field('Stunden Freischneider', inp('std_freischneider', 'number', '0'))}
+        {field('Stunden Motorsäge', inp('std_motorsaege', 'number', '0'))}
+      </>)}
 
-      {/* Sektion 6 */}
-      <SektionBlock title="6 · Pflanzenschutz" defaultOpen={false}>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Std. Wuchshüllen anbringen">{numField(form.std_wuchshuellen, set("std_wuchshuellen"))}</Field>
-          <Field label="Stk. Wuchshüllen">{numField(form.stk_wuchshuellen, set("stk_wuchshuellen"))}</Field>
-          <Field label="Std. Netz/Stäbe/Spiralen">{numField(form.std_netze_staebe_spiralen, set("std_netze_staebe_spiralen"))}</Field>
-          <Field label="Stk. Netz/Stäbe/Spiralen">{numField(form.stk_netze_staebe_spiralen, set("stk_netze_staebe_spiralen"))}</Field>
-        </div>
-      </SektionBlock>
+      {section('Pflanzenschutz', '🛡️', <>
+        {field('Std Wuchshüllen anbringen', inp('std_wuchshuellen', 'number', '0'))}
+        {field('Stückzahl Wuchshüllen', inp('stk_wuchshuellen', 'number', '0'))}
+        {field('Std Netz/Stäbe/Spiralen', inp('std_netze_staebe_spiralen', 'number', '0'))}
+        {field('Stk Netz/Stäbe/Spiralen', inp('stk_netze_staebe_spiralen', 'number', '0'))}
+      </>)}
 
-      {/* Sektion 7 */}
-      <SektionBlock title="7 · Zaunbau" defaultOpen={false}>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Std. Zaunbau">{numField(form.std_zaunbau, set("std_zaunbau"))}</Field>
-          <Field label="Stk. Drahtverbinder">{numField(form.stk_drahtverbinder, set("stk_drahtverbinder"))}</Field>
-          <Field label="Laufmeter Zaunbau">{numField(form.lfm_zaunbau, set("lfm_zaunbau"))}</Field>
-        </div>
-      </SektionBlock>
+      {section('Zaunbau', '🪵', <>
+        {field('Stunden Zaunbau', inp('std_zaunbau', 'number', '0'))}
+        {field('Stückzahl Drahtverbinder', inp('stk_drahtverbinder', 'number', '0'))}
+        {field('Laufmeter Zaunbau (lfm)', inp('lfm_zaunbau', 'number', '0'))}
+      </>)}
 
-      {/* Sektion 8 */}
-      <SektionBlock title="8 · Nachbesserung" defaultOpen={false}>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Std. Nachbesserung">{numField(form.std_nachbesserung, set("std_nachbesserung"))}</Field>
-          <Field label="Stk. Nachbesserung">{numField(form.stk_nachbesserung, set("stk_nachbesserung"))}</Field>
-          <Field label="Std. sonstige Arbeiten">{numField(form.std_sonstige_arbeiten, set("std_sonstige_arbeiten"))}</Field>
-        </div>
-      </SektionBlock>
+      {section('Nachbesserung', '🔄', <>
+        {field('Stunden Nachbesserung', inp('std_nachbesserung', 'number', '0'))}
+        {field('Stückzahl Nachbesserung', inp('stk_nachbesserung', 'number', '0'))}
+        {field('Std sonstige Arbeiten', inp('std_sonstige_arbeiten', 'number', '0'))}
+      </>)}
 
-      {/* Sektion 9 */}
-      <SektionBlock title="9 · Witterung & Standort">
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Witterung">
-            <select
-              value={form.witterung}
-              onChange={(e) => set("witterung")(e.target.value)}
-              className={inputCls}
-            >
-              <option value="">— bitte wählen —</option>
-              <option value="sonnig">Sonnig</option>
-              <option value="bedeckt">Bedeckt</option>
-              <option value="Regen">Regen</option>
-              <option value="Schnee">Schnee</option>
-              <option value="Nebel">Nebel</option>
-            </select>
-          </Field>
-          <div />
-          <Field label="GPS Lat Start">{numField(form.gpsStartLat, set("gpsStartLat"), "z.B. 48.1234")}</Field>
-          <Field label="GPS Lon Start">{numField(form.gpsStartLon, set("gpsStartLon"), "z.B. 11.5678")}</Field>
-        </div>
-      </SektionBlock>
+      {section('Witterung & GPS', '🌤️', <>
+        {field('Witterung', sel('witterung', ['sonnig', 'bedeckt', 'leichter Regen', 'starker Regen', 'Schnee', 'Nebel', 'Frost']))}
+        {field('GPS Breitengrad (Start)', inp('gpsStartLat', 'number', '49.8488'))}
+        {field('GPS Längengrad (Start)', inp('gpsStartLon', 'number', '8.6427'))}
+      </>)}
 
-      {/* Sektion 10 */}
-      <SektionBlock title="10 · Kommentar & Bericht">
-        <Field label="Kommentar">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
+        <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
+          <h3 className="font-semibold text-gray-800 text-sm">💬 Kommentar</h3>
+        </div>
+        <div className="p-4">
           <textarea
             value={form.kommentar}
-            onChange={(e) => set("kommentar")(e.target.value)}
-            className={inputCls}
+            onChange={e => setForm(f => ({ ...f, kommentar: e.target.value }))}
+            placeholder="Tageskommentar des Gruppenführers..."
             rows={4}
-            placeholder="Freitextkommentar zum Einsatz..."
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 resize-none"
           />
-        </Field>
-        <Field label="Bericht (intern)">
-          <textarea
-            value={form.bericht}
-            onChange={(e) => set("bericht")(e.target.value)}
-            className={inputCls}
-            rows={3}
-            placeholder="Internes Notizfeld..."
-          />
-        </Field>
-      </SektionBlock>
+        </div>
+      </div>
 
-      {/* Buttons */}
-      <div className="flex gap-3 pt-2">
+      <div className="flex gap-3">
         <button
-          type="button"
-          onClick={onCancel}
-          className="flex-1 px-4 py-2.5 rounded-lg border border-[#333] text-zinc-400 text-sm hover:bg-[#222] transition-colors"
+          onClick={() => handleSubmit('entwurf')}
+          disabled={loading}
+          className="flex-1 border border-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-50 disabled:opacity-50"
         >
-          Abbrechen
+          {loading ? '...' : 'Entwurf speichern'}
         </button>
         <button
-          type="button"
-          onClick={() => handleSave("entwurf")}
-          disabled={saving}
-          className="flex-1 px-4 py-2.5 rounded-lg border border-zinc-600 text-zinc-300 bg-[#1e1e1e] text-sm hover:bg-[#282828] transition-colors disabled:opacity-50"
+          onClick={() => handleSubmit('eingereicht')}
+          disabled={loading}
+          className="flex-1 bg-green-800 text-white py-3 px-6 rounded-xl font-semibold hover:bg-green-700 disabled:opacity-50"
         >
-          {saving ? "Speichern..." : "Entwurf speichern"}
-        </button>
-        <button
-          type="button"
-          onClick={() => handleSave("eingereicht")}
-          disabled={saving}
-          className="flex-1 px-4 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition-colors disabled:opacity-50"
-        >
-          {saving ? "..." : "Einreichen ✓"}
+          {loading ? '...' : 'Einreichen ✓'}
         </button>
       </div>
     </div>
