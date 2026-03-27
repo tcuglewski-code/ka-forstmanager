@@ -83,7 +83,7 @@ interface Dokument {
   id: string
   name: string
   typ: string
-  url: string
+  url: string | null
   createdAt: string | Date
 }
 
