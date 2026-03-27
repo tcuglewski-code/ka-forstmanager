@@ -17,16 +17,16 @@ export async function GET(req: Request) {
       prisma.auftrag.findMany({
         where: { updatedAt: { gte: sinceDate } },
         select: {
-          id: true, titel: true, status: true, flaeche: true,
+          id: true, titel: true, status: true, flaeche_ha: true,
           baumarten: true, updatedAt: true, createdAt: true,
         },
         take: 500,
       }),
-      prisma.protokoll.findMany({
+      prisma.tagesprotokoll.findMany({
         where: { updatedAt: { gte: sinceDate } },
         select: {
-          id: true, auftragId: true, datum: true, notizen: true,
-          gpsLat: true, gpsLng: true, updatedAt: true, createdAt: true,
+          id: true, auftragId: true, datum: true,
+          gpsStartLat: true, gpsStartLon: true, updatedAt: true, createdAt: true,
         },
         take: 500,
       }).catch(() => []),
@@ -39,7 +39,7 @@ export async function GET(req: Request) {
         auftraege: {
           created: auftraege.filter(a => a.createdAt >= sinceDate).map(a => ({
             id: String(a.id), titel: a.titel, status: a.status,
-            flaeche: a.flaeche, baumarten: a.baumarten,
+            flaeche: a.flaeche_ha, baumarten: a.baumarten,
           })),
           updated: auftraege.filter(a => a.createdAt < sinceDate).map(a => ({
             id: String(a.id), titel: a.titel, status: a.status,
@@ -49,8 +49,8 @@ export async function GET(req: Request) {
         protokolle: {
           created: protokolle.filter(p => p.createdAt >= sinceDate).map(p => ({
             id: String(p.id), auftragId: String(p.auftragId ?? ""),
-            datum: p.datum?.toISOString() ?? null, notizen: p.notizen ?? "",
-            gpsLat: p.gpsLat, gpsLng: p.gpsLng,
+            datum: p.datum instanceof Date ? p.datum.toISOString() : null,
+            gpsLat: p.gpsStartLat, gpsLng: p.gpsStartLon,
           })),
           updated: [],
           deleted: [],

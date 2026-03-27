@@ -289,12 +289,12 @@ export default function ProtokolleSeite() {
 
             <div className="px-6 py-4">
               <TagesprotokollFormular
-                auftrag={selectedAuftrag}
-                onSuccess={async () => {
+                auftragId={selectedAuftrag?.id ?? ""}
+                auftragTitel={selectedAuftrag?.titel}
+                onSaved={async () => {
                   setShowForm(false)
                   await fetchAll()
                 }}
-                onCancel={() => setShowForm(false)}
               />
             </div>
           </div>

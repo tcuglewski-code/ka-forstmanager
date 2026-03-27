@@ -17,16 +17,15 @@ export async function POST(req: Request) {
     const protokolle = changes?.protokolle
     if (protokolle) {
       for (const p of protokolle.created ?? []) {
-        await prisma.protokoll.upsert({
-          where: { id: p.id ?? undefined },
-          update: { notizen: p.notizen, gpsLat: p.gpsLat, gpsLng: p.gpsLng },
+        await prisma.tagesprotokoll.upsert({
+          where: { id: p.id ?? "" },
+          update: { gpsStartLat: p.gpsLat, gpsStartLon: p.gpsLng },
           create: {
             id: p.id,
-            auftragId: p.auftragId ? parseInt(p.auftragId) : undefined,
+            auftragId: p.auftragId ?? "",
             datum: p.datum ? new Date(p.datum) : new Date(),
-            notizen: p.notizen ?? "",
-            gpsLat: p.gpsLat,
-            gpsLng: p.gpsLng,
+            gpsStartLat: p.gpsLat,
+            gpsStartLon: p.gpsLng,
           },
         }).catch(() => null)
         totalProcessed++
