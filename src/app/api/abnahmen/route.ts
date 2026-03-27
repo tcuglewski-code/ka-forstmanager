@@ -1,3 +1,13 @@
+/**
+ * Abnahme-Berechtigungen:
+ * - Abnahme erstellen (POST): alle eingeloggten Nutzer (Admin, Gruppenführer, Mitarbeiter)
+ * - Abnahme lesen (GET): alle eingeloggten Nutzer
+ * - Abnahme bearbeiten (PUT): Admin + Gruppenführer
+ * - Abnahme bestätigen: Admin + Gruppenführer
+ * - Abnahme löschen (DELETE): nur Admin
+ *
+ * Prinzip: Flexibilität und Modularität — kein zentraler Admin-Engpass
+ */
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
