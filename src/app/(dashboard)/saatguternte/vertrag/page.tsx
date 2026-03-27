@@ -22,11 +22,23 @@ function VertragPageInner() {
 
   const urlIds = searchParams.get("flaechenIds")?.split(",").filter(Boolean) ?? []
 
+  // Vertragspartei-Vorauswahl
+  const VP_VORLAGEN = [
+    { label: "Koch Aufforstung GmbH (Standard)", name: "Koch Aufforstung GmbH", strasse: "Breitwieser Weg 98", plz: "64319", ort: "Pfungstadt" },
+    { label: "Darmstädter Forstbaumschulen GmbH", name: "Darmstädter Forstbaumschulen GmbH", strasse: "Brandschneise 2", plz: "64295", ort: "Darmstadt" },
+    { label: "Andere (manuell eingeben)", name: "", strasse: "", plz: "", ort: "" },
+  ]
+
   // Formular-State
   const [erntejahr, setErntejahr] = useState(new Date().getFullYear() + 1)
   const [ernteKw, setErnteKw] = useState(38)
   const [entschaedigungKg, setEntschaedigungKg] = useState(0.80)
-  const [ortVertragspartei, setOrtVertragspartei] = useState("Espenau")
+  const [vpVorlageIdx, setVpVorlageIdx] = useState(0)
+  const [vpName, setVpName] = useState("Koch Aufforstung GmbH")
+  const [vpStrasse, setVpStrasse] = useState("Breitwieser Weg 98")
+  const [vpPlz, setVpPlz] = useState("64319")
+  const [vpOrt, setVpOrt] = useState("Pfungstadt")
+  const [ortVertragspartei, setOrtVertragspartei] = useState("Pfungstadt")
   const [ortWaldbesitzer, setOrtWaldbesitzer] = useState("")
   const [datum, setDatum] = useState(() => new Date().toLocaleDateString("de-DE"))
 
@@ -179,8 +191,35 @@ function VertragPageInner() {
                   className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
                 />
               </div>
+              <div className="col-span-2">
+                <label className="block text-xs text-zinc-500 mb-1">Vertragspartei</label>
+                <select
+                  value={vpVorlageIdx}
+                  onChange={(e) => {
+                    const idx = Number(e.target.value)
+                    setVpVorlageIdx(idx)
+                    const v = VP_VORLAGEN[idx]
+                    setVpName(v.name); setVpStrasse(v.strasse); setVpPlz(v.plz); setVpOrt(v.ort)
+                    setOrtVertragspartei(v.ort)
+                  }}
+                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 mb-2"
+                >
+                  {VP_VORLAGEN.map((v, i) => <option key={i} value={i}>{v.label}</option>)}
+                </select>
+                {/* Manuelle Eingabe wenn "Andere" */}
+                {vpVorlageIdx === VP_VORLAGEN.length - 1 && (
+                  <div className="grid grid-cols-2 gap-2 mt-1">
+                    <input placeholder="Firmenname" value={vpName} onChange={e => setVpName(e.target.value)} className="col-span-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
+                    <input placeholder="Straße" value={vpStrasse} onChange={e => setVpStrasse(e.target.value)} className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
+                    <div className="flex gap-2">
+                      <input placeholder="PLZ" value={vpPlz} onChange={e => setVpPlz(e.target.value)} className="w-24 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
+                      <input placeholder="Ort" value={vpOrt} onChange={e => { setVpOrt(e.target.value); setOrtVertragspartei(e.target.value) }} className="flex-1 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
+                    </div>
+                  </div>
+                )}
+              </div>
               <div>
-                <label className="block text-xs text-zinc-500 mb-1">Ort Vertragspartei</label>
+                <label className="block text-xs text-zinc-500 mb-1">Ort Vertragspartei (Unterschrift)</label>
                 <input
                   type="text"
                   value={ortVertragspartei}
@@ -227,7 +266,7 @@ function VertragPageInner() {
                 <>
                   {/* Kopfzeile */}
                   <div className="text-center mb-8">
-                    <p className="text-xs text-zinc-500 mb-1">Koch Aufforstung GmbH · An der Kirche 5 · 34314 Espenau</p>
+                    <p className="text-xs text-zinc-500 mb-1">{vpName} · {vpStrasse} · {vpPlz} {vpOrt}</p>
                     <h1 className="text-2xl font-bold mt-4 mb-2" style={{ fontFamily: "Arial, sans-serif" }}>
                       Ernteüberlassungsvertrag
                     </h1>
@@ -242,9 +281,9 @@ function VertragPageInner() {
 
                   <p className="mb-1">und</p>
                   <div className="ml-6 mb-4">
-                    <p><strong>Koch Aufforstung GmbH</strong></p>
-                    <p>An der Kirche 5</p>
-                    <p>34314 Espenau</p>
+                    <p><strong>{vpName}</strong></p>
+                    <p>{vpStrasse}</p>
+                    <p>{vpPlz} {vpOrt}</p>
                     <p className="italic">- im Folgenden „Vertragspartei" genannt -</p>
                   </div>
 
@@ -359,7 +398,7 @@ function VertragPageInner() {
                         {ortVertragspartei}, den {datum}
                       </p>
                       <p className="text-xs mt-1 text-zinc-500">
-                        Koch Aufforstung GmbH (Vertragspartei)
+                        {vpName} (Vertragspartei)
                       </p>
                     </div>
                     <div>
