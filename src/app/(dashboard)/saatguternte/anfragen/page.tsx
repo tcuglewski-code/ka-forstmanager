@@ -17,6 +17,7 @@ const STATUS_CONFIG = {
   "erfüllt":     { label: "Erfüllt ✅",       color: "bg-emerald-900/60 text-emerald-300" },
   teilerfüllt:   { label: "Teilerfüllt 🟡",   color: "bg-yellow-900/60 text-yellow-300" },
   storniert:     { label: "Storniert",        color: "bg-red-900/60 text-red-300" },
+  "überschuss":  { label: "Überschuss ↑",     color: "bg-purple-900/60 text-purple-300" },
 }
 
 function StatusBadge({ status }: { status: string }) {
