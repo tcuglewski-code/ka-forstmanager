@@ -87,8 +87,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   const aktualisiert = await prisma.ernteEinsatz.update({
     where: { id },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    data: { gpsTrack: aktualisiertTrack as any },
+    data: { gpsTrack: aktualisiertTrack as unknown as import('@prisma/client').Prisma.InputJsonValue },
     select: { id: true, gpsTrack: true },
   })
 

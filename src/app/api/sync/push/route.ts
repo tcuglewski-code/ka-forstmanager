@@ -19,13 +19,19 @@ export async function POST(req: Request) {
       for (const p of protokolle.created ?? []) {
         await prisma.tagesprotokoll.upsert({
           where: { id: p.id ?? "" },
-          update: { gpsStartLat: p.gpsLat, gpsStartLon: p.gpsLng },
+          update: {
+            kommentar: p.notizen,
+            gpsStartLat: p.gpsLat,
+            gpsStartLon: p.gpsLng,
+          },
           create: {
             id: p.id,
             auftragId: p.auftragId ?? "",
             datum: p.datum ? new Date(p.datum) : new Date(),
-            gpsStartLat: p.gpsLat,
-            gpsStartLon: p.gpsLng,
+            ersteller: p.ersteller ?? "",
+            kommentar: p.notizen ?? "",
+            gpsStartLat: p.gpsLat ?? null,
+            gpsStartLon: p.gpsLng ?? null,
           },
         }).catch(() => null)
         totalProcessed++

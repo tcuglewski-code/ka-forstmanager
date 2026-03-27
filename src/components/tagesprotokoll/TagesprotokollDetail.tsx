@@ -152,7 +152,7 @@ export default function TagesprotokollDetail({ protokoll: p }: TagesprotokollDet
     p.std_nachbesserung,
     p.std_sonstige_arbeiten,
   ]
-  const gesamtStd = stdFields.reduce((sum: number, v) => (sum ?? 0) + (v ?? 0), 0)
+  const gesamtStd = stdFields.reduce((sum: number, v) => sum + (v ?? 0), 0)
 
   const hasRevier = hasValue(p.forstamt) || hasValue(p.revier) || hasValue(p.revierleiter) || hasValue(p.abteilung) || hasValue(p.waldbesitzerName)
   const hasArbeitszeit = hasValue(p.zeitBeginn) || hasValue(p.zeitEnde) || hasValue(p.pausezeit)
