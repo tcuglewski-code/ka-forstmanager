@@ -45,6 +45,7 @@ function VertragPageInner() {
   const [flaechen, setFlaechen] = useState<Flaeche[]>([])
   const [loading, setLoading] = useState(urlIds.length > 0)
   const [generating, setGenerating] = useState(false)
+  const [aktivesForstamt, setAktivesForstamt] = useState<string>("")
 
   useEffect(() => {
     if (urlIds.length === 0) {
@@ -63,7 +64,25 @@ function VertragPageInner() {
       .finally(() => setLoading(false))
   }, [urlIds.join(",")])
 
-  const forstamtName = flaechen[0]?.forstamt ?? "–"
+  // Flächen nach Forstamt gruppieren
+  const flaechenByForstamt = flaechen.reduce((acc, f) => {
+    const key = f.forstamt ?? "Unbekannt"
+    if (!acc[key]) acc[key] = []
+    acc[key].push(f)
+    return acc
+  }, {} as Record<string, Flaeche[]>)
+
+  const forstaemter = Object.keys(flaechenByForstamt).sort()
+
+  // Beim Laden: erstes Forstamt als aktiv setzen
+  useEffect(() => {
+    if (forstaemter.length > 0 && !aktivesForstamt) {
+      setAktivesForstamt(forstaemter[0])
+    }
+  }, [forstaemter.length])
+
+  const aktiveFlächen = flaechenByForstamt[aktivesForstamt] ?? []
+  const forstamtName = aktivesForstamt || flaechen[0]?.forstamt || "–"
 
   async function handleDocxDownload() {
     setGenerating(true)
@@ -72,7 +91,7 @@ function VertragPageInner() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          flaechenIds: flaechen.map((f) => f.id),
+          flaechenIds: aktiveFlächen.map((f) => f.id),
           erntejahr,
           ernteKw,
           entschaedigungKg,
@@ -153,6 +172,37 @@ function VertragPageInner() {
             DOCX herunterladen
           </button>
         </div>
+
+        {/* Info-Banner: mehrere Forstämter */}
+        {forstaemter.length > 1 && (
+          <div className="no-print mb-4 p-3 bg-blue-900/30 border border-blue-600/30 rounded-lg text-sm text-blue-300">
+            ℹ️ Du hast Flächen aus {forstaemter.length} verschiedenen Forstämtern ausgewählt.
+            Bitte generiere für jedes Forstamt einen separaten Vertrag (Tab wechseln → herunterladen).
+          </div>
+        )}
+
+        {/* Tab-Leiste: 1 Forstamt = 1 Vertrag */}
+        {forstaemter.length > 1 && (
+          <div className="no-print flex gap-2 mb-4 flex-wrap">
+            {forstaemter.map((fa) => (
+              <button
+                key={fa}
+                onClick={() => { setAktivesForstamt(fa); setOrtWaldbesitzer(fa) }}
+                className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${
+                  aktivesForstamt === fa
+                    ? "bg-emerald-600 border-emerald-500 text-white"
+                    : "bg-[#1e1e1e] border-[#2a2a2a] text-zinc-400 hover:border-zinc-500"
+                }`}
+              >
+                {fa}
+                <span className="ml-2 text-xs opacity-70">({flaechenByForstamt[fa].length} Fl.)</span>
+              </button>
+            ))}
+            <span className="text-xs text-zinc-600 self-center ml-2">
+              = {forstaemter.length} separate Verträge
+            </span>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Formular */}
@@ -309,14 +359,14 @@ function VertragPageInner() {
                         </tr>
                       </thead>
                       <tbody>
-                        {flaechen.length === 0 ? (
+                        {aktiveFlächen.length === 0 ? (
                           <tr>
                             <td colSpan={5} className="border border-zinc-400 px-2 py-2 text-center text-zinc-400 italic">
                               Keine Flächen ausgewählt
                             </td>
                           </tr>
                         ) : (
-                          flaechen.map((f) => (
+                          aktiveFlächen.map((f) => (
                             <tr key={f.id}>
                               <td className="border border-zinc-400 px-2 py-1">{f.registerNr}</td>
                               <td className="border border-zinc-400 px-2 py-1">{f.baumart}</td>

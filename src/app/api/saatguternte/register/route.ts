@@ -17,10 +17,12 @@ export async function GET(req: NextRequest) {
     const skip = (page - 1) * limit
 
     const sonderherkunft = sp.get("sonderherkunft")
+    const herkunft = sp.get("herkunft")
 
     const where: Prisma.RegisterFlaecheWhereInput = {}
     if (bundesland) where.bundesland = bundesland
     if (baumart) where.baumart = { contains: baumart, mode: "insensitive" }
+    if (herkunft) where.herkunftsgebiet = { contains: herkunft, mode: "insensitive" }
     if (quelleId) where.quelleId = quelleId
     if (status === "zugelassen") where.zugelassen = true
     if (status === "abgelaufen") where.zugelassen = false
