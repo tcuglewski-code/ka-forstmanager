@@ -11,6 +11,7 @@ model User {
   name        String
   email       String   @unique
   password    String
+  // Rollen: ka_admin, ka_gruppenführer, ka_mitarbeiter, baumschule, kunde
   role        String   @default("mitarbeiter")
   avatar      String?
   active      Boolean  @default(true)
@@ -18,6 +19,8 @@ model User {
   updatedAt   DateTime @updatedAt
   sessions    Session[]
   mitarbeiter Mitarbeiter?
+  // Sprint AJ: Baumschul-Verknüpfung
+  baumschule  Baumschule?
 }
 
 model Session {
@@ -180,6 +183,8 @@ model Gruppe {
   auftraege           Auftrag[]
   mitglieder          GruppeMitglied[]
   maschineneinsaetze  Maschineneinsatz[]
+  // Sprint AO: Wochenplanung
+  wochenplaene        Wochenplan[]
 }
 
 model GruppeMitglied {
@@ -499,6 +504,56 @@ model Lohnabrechnung {
   updatedAt     DateTime    @updatedAt
 }
 
+// ============================================================
+// WOCHENPLAN-SYSTEM (Sprint AO)
+// Für alle Dienstleistungen: Pflanzung, Flächenvorbereitung, Kulturpflege,
+// Kulturschutz, Saatguternte, Sonstiges
+// ============================================================
+
+model Wochenplan {
+  id              String              @id @default(cuid())
+  kalenderwoche   Int                 // KW-Nummer (1-53)
+  jahr            Int                 // Jahr
+  gruppeId        String?             // Zugewiesene Gruppe
+  gruppe          Gruppe?             @relation(fields: [gruppeId], references: [id])
+  erstelltVon     String?             // User-ID des Erstellers
+  status          String              @default("entwurf") // entwurf, freigegeben, abgeschlossen
+  notizen         String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  positionen      WochenplanPosition[]
+
+  @@unique([kalenderwoche, jahr, gruppeId])
+}
+
+model WochenplanPosition {
+  id                  String    @id @default(cuid())
+  wochenplanId        String
+  wochenplan          Wochenplan @relation(fields: [wochenplanId], references: [id], onDelete: Cascade)
+  dienstleistungstyp  String    // pflanzung, flaechenvorbereitung, kulturpflege, kulturschutz, saatguternte, sonstiges
+  datum               DateTime?
+  auftragId           String?   // Optionale Verknüpfung mit Auftrag
+  status              String    @default("geplant") // geplant, in_arbeit, abgeschlossen
+  notizen             String?
+
+  // ── Gemeinsame Felder ──────────────────────────────────────
+  flaeche             String?   // Flächen-Bezeichnung / Waldstück
+  gpsPosition         String?   // GPS-Koordinate als "lat,lon" String
+  treffpunkt          String?   // Treffpunkt-Beschreibung oder GPS
+
+  // ── Pflanzung-spezifisch ───────────────────────────────────
+  baumart             String?
+  stueckzahl          Int?
+
+  // ── Saatguternte-spezifisch ────────────────────────────────
+  herkunftscode       String?   // Herkunftscode z.B. "06 NRW-818-07"
+  zielkg              Float?    // Ziel in Kilogramm
+  gesammelteKg        Float?    @default(0)
+
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
 // SYSTEM-KONFIGURATION (Sprint P)
 model SystemConfig {
   id        String   @id @default(cuid())
@@ -748,6 +803,8 @@ model ErnteEinsatz {
   zeitVorOrt      Float?
   herkunft        String?
   notizen         String?
+  // Sprint AH: GPS-Track als JSON-Array [{lat, lon, timestamp}]
+  gpsTrack        Json?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -770,10 +827,31 @@ model Baumschule {
   telefon         String?
   notizen         String?
   aktiv           Boolean  @default(true)
+  // Sprint AJ: Baumschul-Authentifizierung
+  loginToken      String?  @unique // Login-Link-Token (einmalig, zeitlich begrenzt)
+  loginTokenExpiry DateTime?       // Ablaufzeit des Login-Tokens
+  userId          String?  @unique // Verknüpfter User-Account (Rolle: baumschule)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   anfragen        Ernteanfrage[]
+  preislisten     BaumschulPreisliste[]
+  user            User?    @relation(fields: [userId], references: [id])
+}
+
+// Sprint AI: Preislistenverwaltung für Baumschulen
+model BaumschulPreisliste {
+  id           String     @id @default(cuid())
+  baumschuleId String
+  baumschule   Baumschule @relation(fields: [baumschuleId], references: [id], onDelete: Cascade)
+  baumart      String     // z.B. "Eiche", "Buche", "Fichte"
+  preis        Float      // Preis in Euro
+  einheit      String     @default("kg") // kg, Stück, Bündel
+  saison       String?    // z.B. "2025", "2025/2026"
+  aktiv        Boolean    @default(true)
+  notizen      String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 model Ernteanfrage {
