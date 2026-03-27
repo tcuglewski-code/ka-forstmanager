@@ -790,6 +790,12 @@ model Ernteanfrage {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
+  herkunftCode       String?   // z.B. "06", "07", "818 07"
+  herkunftName       String?   // z.B. "Nordrhein-Westfalen Tiefland" (optional)
+  sonderherkunft     Boolean   @default(false)
+  sonderherkunftCode String?   // Code der DKV-Sonderherkunft, z.B. "DKV-818-001"
+  sonderherkunftName String?   // Name der Sonderherkunft
+
   baumschule   Baumschule   @relation(fields: [baumschuleId], references: [id])
   saison       ErnteSaison? @relation(fields: [saisonId], references: [id])
 }
