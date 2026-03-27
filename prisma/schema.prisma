@@ -421,17 +421,78 @@ model Abnahme {
 
 // TAGESPROTOKOLL
 model Tagesprotokoll {
-  id        String   @id @default(cuid())
-  auftragId String?
-  gruppeId  String?
-  datum     DateTime
-  ersteller String?
-  bericht   String?
-  gepflanzt Int?
-  witterung String?
-  fotos     String?
-  createdAt DateTime @default(now())
-  auftrag   Auftrag? @relation(fields: [auftragId], references: [id], onDelete: SetNull)
+  id            String    @id @default(cuid())
+  auftragId     String
+  auftrag       Auftrag   @relation(fields: [auftragId], references: [id], onDelete: Cascade)
+  gruppeId      String?
+  datum         DateTime
+  ersteller     String    @default("")
+  erstellerId   String?
+
+  // Revier und Gruppe
+  forstamt                    String?
+  revier                      String?
+  revierleiter                String?
+  abteilung                   String?
+  waldbesitzerName            String?
+
+  // Arbeitszeit vor Ort
+  zeitBeginn                  DateTime?
+  zeitEnde                    DateTime?
+  pausezeit                   Int?      @default(0)
+
+  // Pflanzung mit Hand
+  std_einschlag               Float?
+  std_handpflanzung           Float?
+  stk_pflanzung               Int?
+
+  // Pflanzung mit Bohrer
+  std_zum_bohrer              Float?
+  std_mit_bohrer              Float?
+  stk_pflanzung_mit_bohrer    Int?
+
+  // Freischneider und Motorsäge
+  std_freischneider           Float?
+  std_motorsaege              Float?
+
+  // Pflanzenschutz
+  std_wuchshuellen            Float?
+  stk_wuchshuellen            Int?
+  std_netze_staebe_spiralen   Float?
+  stk_netze_staebe_spiralen   Int?
+
+  // Zaunbau
+  std_zaunbau                 Float?
+  stk_drahtverbinder          Int?
+  lfm_zaunbau                 Float?
+
+  // Nachbesserung
+  std_nachbesserung           Float?
+  stk_nachbesserung           Int?
+  std_sonstige_arbeiten       Float?
+
+  // Kommentar & Bericht
+  kommentar                   String?
+  bericht                     String    @default("")
+  witterung                   String?
+
+  // GPS
+  gpsStartLat                 Float?
+  gpsStartLon                 Float?
+  gpsEndLat                   Float?
+  gpsEndLon                   Float?
+  gpsTrack                    Json?
+
+  // Dokumentation
+  fotos                       Json?
+  unterschriftGf              String?
+
+  // Status
+  status                      String    @default("entwurf")
+  eingereichtAm               DateTime?
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 // KONTAKTE
