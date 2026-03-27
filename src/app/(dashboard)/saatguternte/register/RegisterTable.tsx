@@ -1,8 +1,9 @@
 "use client"
 
+import { useState } from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { Eye, ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, Camera } from "lucide-react"
+import { Eye, ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, Camera, MapPin } from "lucide-react"
 
 interface RegisterFlaeche {
   id: string
@@ -88,6 +89,31 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
+  // Checkbox-Auswahl für "Zur Planung"
+  const [ausgewaehlt, setAusgewaehlt] = useState<Set<string>>(new Set())
+
+  function toggleFlaeche(id: string) {
+    setAusgewaehlt((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function alleToggle() {
+    if (ausgewaehlt.size === data.length) {
+      setAusgewaehlt(new Set())
+    } else {
+      setAusgewaehlt(new Set(data.map((f) => f.id)))
+    }
+  }
+
+  function zurPlanung() {
+    const ids = Array.from(ausgewaehlt).join(",")
+    router.push(`/saatguternte/planung?flaechenIds=${ids}`)
+  }
+
   const totalPages = Math.ceil(total / limit)
 
   function buildUrl(overrides: Record<string, string | number>) {
@@ -138,6 +164,15 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#2a2a2a]">
+                <th className="px-4 py-3 text-zinc-500 font-medium w-10">
+                  <input
+                    type="checkbox"
+                    checked={data.length > 0 && ausgewaehlt.size === data.length}
+                    onChange={alleToggle}
+                    className="accent-emerald-500 cursor-pointer"
+                    title="Alle auswählen"
+                  />
+                </th>
                 <th className="text-left px-4 py-3 text-zinc-500 font-medium">
                   <SortHeader label="Register-Nr" field="registerNr" currentSort={sortBy} currentDir={sortDir} onClick={handleSort} />
                 </th>
@@ -167,7 +202,7 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
             <tbody>
               {data.length === 0 ? (
                 <tr>
-                  <td colSpan={12} className="text-center py-12 text-zinc-600">
+                  <td colSpan={13} className="text-center py-12 text-zinc-600">
                     Keine Flächen gefunden
                   </td>
                 </tr>
@@ -175,8 +210,16 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
                 data.map((f) => (
                   <tr
                     key={f.id}
-                    className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors"
+                    className={`border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors ${ausgewaehlt.has(f.id) ? "bg-emerald-900/10" : ""}`}
                   >
+                    <td className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={ausgewaehlt.has(f.id)}
+                        onChange={() => toggleFlaeche(f.id)}
+                        className="accent-emerald-500 cursor-pointer"
+                      />
+                    </td>
                     <td className="px-4 py-3 text-white font-medium font-mono text-xs">
                       <div className="flex items-center gap-1.5">
                         {f.registerNr}
@@ -245,6 +288,28 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
           </table>
         </div>
       </div>
+
+      {/* Floating Action Bar — Zur Planung */}
+      {ausgewaehlt.size > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-gray-800 border border-gray-600 rounded-xl shadow-2xl px-6 py-3 flex items-center gap-4">
+          <span className="text-white font-medium">
+            {ausgewaehlt.size} Fläche{ausgewaehlt.size !== 1 ? "n" : ""} ausgewählt
+          </span>
+          <button
+            onClick={zurPlanung}
+            className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+          >
+            <MapPin className="w-4 h-4" />
+            Zur Planung →
+          </button>
+          <button
+            onClick={() => setAusgewaehlt(new Set())}
+            className="text-gray-400 hover:text-white px-2 transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Pagination */}
       {totalPages > 1 && (

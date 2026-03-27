@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Map, Search, X, MapPin, ChevronUp, ChevronDown, AlertTriangle } from "lucide-react"
+import { useSearchParams } from "next/navigation"
+import { Map, Search, X, MapPin, ChevronUp, ChevronDown, AlertTriangle, CheckCircle } from "lucide-react"
 
 interface Flaeche {
   id: string
@@ -69,7 +70,10 @@ const STATUS_COLORS: Record<string, string> = {
   pausiert: "bg-orange-500/20 text-orange-400",
 }
 
-export default function PlanungPage() {
+function PlanungPageInner() {
+  const searchParams = useSearchParams()
+  const vorgFlaechenIds = searchParams.get("flaechenIds")?.split(",").filter(Boolean) ?? []
+
   const [flaechen, setFlaechen] = useState<Flaeche[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
@@ -79,6 +83,7 @@ export default function PlanungPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [planungIds, setPlanungIds] = useState<string[]>([])
   const [googleMapsWarning, setGoogleMapsWarning] = useState(false)
+  const [vorgBanner, setVorgBanner] = useState(true)
 
   // Load from localStorage
   useEffect(() => {
@@ -93,15 +98,43 @@ export default function PlanungPage() {
     localStorage.setItem("planung-ids", JSON.stringify(planungIds))
   }, [planungIds])
 
-  // Fetch Flächen
+  // Fetch Flächen — wenn flaechenIds übergeben: lade nur diese, sonst alle (Limit 2000)
   useEffect(() => {
-    fetch("/api/saatguternte/register?limit=500")
-      .then((r) => r.json())
-      .then((data) => {
-        setFlaechen(data.flaechen ?? data ?? [])
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
+    if (vorgFlaechenIds.length > 0) {
+      // Lade nur die übergebenen Flächen per IDs
+      fetch(`/api/saatguternte/flaechen-by-ids?ids=${vorgFlaechenIds.join(",")}`)
+        .then((r) => r.json())
+        .then((data) => {
+          const flaechenData = Array.isArray(data) ? data : []
+          setFlaechen(flaechenData)
+          // Vorausgewählte Flächen in Planung übernehmen
+          setPlanungIds((prev) => {
+            const next = [...prev]
+            for (const id of vorgFlaechenIds) {
+              if (!next.includes(id)) next.push(id)
+            }
+            return next
+          })
+          setLoading(false)
+        })
+        .catch(() => setLoading(false))
+      // Auch alle Flächen nachladen für die Auswahlliste
+      fetch("/api/saatguternte/register?limit=2000")
+        .then((r) => r.json())
+        .then((data) => {
+          setFlaechen(data.flaechen ?? data ?? [])
+        })
+        .catch(() => {})
+    } else {
+      fetch("/api/saatguternte/register?limit=2000")
+        .then((r) => r.json())
+        .then((data) => {
+          setFlaechen(data.flaechen ?? data ?? [])
+          setLoading(false)
+        })
+        .catch(() => setLoading(false))
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const bundeslaender = [...new Set(flaechen.map((f) => f.bundesland))].sort()
@@ -348,6 +381,24 @@ export default function PlanungPage() {
             )}
           </div>
 
+          {/* Info-Banner: Flächen aus Register übernommen */}
+          {vorgFlaechenIds.length > 0 && vorgBanner && (
+            <div className="mx-4 mt-3 p-3 bg-emerald-900/30 border border-emerald-600/30 rounded-lg flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Info className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <p className="text-xs text-emerald-300">
+                  {vorgFlaechenIds.length} Fläche{vorgFlaechenIds.length !== 1 ? "n" : ""} aus Register-Übersicht übernommen
+                </p>
+              </div>
+              <button
+                onClick={() => setVorgBanner(false)}
+                className="text-emerald-500 hover:text-emerald-300 text-xs"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+
           {/* Google Maps Warning */}
           {googleMapsWarning && (
             <div className="mx-4 mt-3 p-3 bg-yellow-900/30 border border-yellow-600/30 rounded-lg flex items-center gap-2">
@@ -464,5 +515,13 @@ export default function PlanungPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function PlanungPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-zinc-500">Lade Planung...</div>}>
+      <PlanungPageInner />
+    </Suspense>
   )
 }
