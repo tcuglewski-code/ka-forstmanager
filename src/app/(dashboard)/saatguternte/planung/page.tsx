@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { Map, Search, X, MapPin, ChevronUp, ChevronDown, AlertTriangle, CheckCircle } from "lucide-react"
 
