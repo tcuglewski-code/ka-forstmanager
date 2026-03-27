@@ -421,78 +421,109 @@ model Abnahme {
 
 // TAGESPROTOKOLL
 model Tagesprotokoll {
-  id            String    @id @default(cuid())
-  auftragId     String
-  auftrag       Auftrag   @relation(fields: [auftragId], references: [id], onDelete: Cascade)
-  gruppeId      String?
-  datum         DateTime
-  ersteller     String    @default("")
-  erstellerId   String?
+  id                    String    @id @default(cuid())
+  auftragId             String
+  auftrag               Auftrag   @relation(fields: [auftragId], references: [id], onDelete: Cascade)
+  gruppeId              String?
+  datum                 DateTime
+  ersteller             String    @default("")
+  erstellerId           String?
 
-  // Revier und Gruppe
-  forstamt                    String?
-  revier                      String?
-  revierleiter                String?
-  abteilung                   String?
-  waldbesitzerName            String?
+  // ── Arbeitszeit (Sprint BP) ───────────────────────────────────
+  arbeitsbeginn         String?
+  arbeitsende           String?
+  pauseMinuten          Int?      @default(0)
 
-  // Arbeitszeit vor Ort
-  zeitBeginn                  DateTime?
-  zeitEnde                    DateTime?
-  pausezeit                   Int?      @default(0)
+  // ── Fläche & Leistung ─────────────────────────────────────────
+  flaecheBearbeitetHa   Float?
+  abschnitt             String?
 
-  // Pflanzung mit Hand
-  std_einschlag               Float?
-  std_handpflanzung           Float?
-  stk_pflanzung               Int?
+  // ── Pflanzung Details ─────────────────────────────────────────
+  gepflanztGesamt       Int?
+  gepflanzt             Int?
+  pflanzDetails         Json?
+  pflanzverband         String?
+  pflanztiefe           String?
 
-  // Pflanzung mit Bohrer
-  std_zum_bohrer              Float?
-  std_mit_bohrer              Float?
-  stk_pflanzung_mit_bohrer    Int?
+  // ── Boden & Standort ──────────────────────────────────────────
+  bodenVorbereitung     String?
+  bodenbeschaffenheit   String?
+  hangneigung           String?
 
-  // Freischneider und Motorsäge
-  std_freischneider           Float?
-  std_motorsaege              Float?
+  // ── Witterung ─────────────────────────────────────────────────
+  witterung             String?
+  temperaturMin         Int?
+  temperaturMax         Int?
+  wind                  String?
+  frost                 Boolean?  @default(false)
 
-  // Pflanzenschutz
-  std_wuchshuellen            Float?
-  stk_wuchshuellen            Int?
-  std_netze_staebe_spiralen   Float?
-  stk_netze_staebe_spiralen   Int?
+  // ── GPS ───────────────────────────────────────────────────────
+  gpsStartLat           Float?
+  gpsStartLon           Float?
+  gpsEndLat             Float?
+  gpsEndLon             Float?
+  gpsTrack              Json?
 
-  // Zaunbau
-  std_zaunbau                 Float?
-  stk_drahtverbinder          Int?
-  lfm_zaunbau                 Float?
+  // ── Team ──────────────────────────────────────────────────────
+  mitarbeiterAnzahl     Int?
+  mitarbeiterListe      Json?
 
-  // Nachbesserung
-  std_nachbesserung           Float?
-  stk_nachbesserung           Int?
-  std_sonstige_arbeiten       Float?
+  // ── Material & Maschinen ──────────────────────────────────────
+  materialVerbraucht    Json?
+  maschinenEinsatz      Json?
 
-  // Kommentar & Bericht
-  kommentar                   String?
-  bericht                     String    @default("")
-  witterung                   String?
+  // ── Qualitätskontrolle ────────────────────────────────────────
+  ausfaelleAnzahl       Int?      @default(0)
+  ausfaelleGrund        String?
+  nachpflanzungNoetig   Boolean?  @default(false)
+  qualitaetsBewertung   Int?
 
-  // GPS
-  gpsStartLat                 Float?
-  gpsStartLon                 Float?
-  gpsEndLat                   Float?
-  gpsEndLon                   Float?
-  gpsTrack                    Json?
+  // ── Protokoll & Notizen ───────────────────────────────────────
+  bericht               String    @default("")
+  besonderheiten        String?
+  naechsteSchritte      String?
+  waldbesitzerAnwesend  Boolean?  @default(false)
+  waldbesitzerNotiz     String?
 
-  // Dokumentation
-  fotos                       Json?
-  unterschriftGf              String?
+  // ── Dokumentation ─────────────────────────────────────────────
+  fotos                 Json?
+  unterschriftGf        String?
 
-  // Status
-  status                      String    @default("entwurf")
-  eingereichtAm               DateTime?
+  // ── Legacy-Felder (Abwärtskompatibilität) ─────────────────────
+  kommentar             String?
+  forstamt              String?
+  revier                String?
+  revierleiter          String?
+  abteilung             String?
+  waldbesitzerName      String?
+  zeitBeginn            DateTime?
+  zeitEnde              DateTime?
+  pausezeit             Int?
+  std_einschlag         Float?
+  std_handpflanzung     Float?
+  stk_pflanzung         Int?
+  std_zum_bohrer        Float?
+  std_mit_bohrer        Float?
+  stk_pflanzung_mit_bohrer Int?
+  std_freischneider     Float?
+  std_motorsaege        Float?
+  std_wuchshuellen      Float?
+  stk_wuchshuellen      Int?
+  std_netze_staebe_spiralen Float?
+  stk_netze_staebe_spiralen Int?
+  std_zaunbau           Float?
+  stk_drahtverbinder    Int?
+  lfm_zaunbau           Float?
+  std_nachbesserung     Float?
+  stk_nachbesserung     Int?
+  std_sonstige_arbeiten Float?
 
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  // ── Status ────────────────────────────────────────────────────
+  status                String    @default("entwurf")
+  eingereichtAm         DateTime?
+
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @default(now()) @updatedAt
 }
 
 // KONTAKTE
