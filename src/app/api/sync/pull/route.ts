@@ -25,7 +25,7 @@ export async function GET(req: Request) {
       prisma.tagesprotokoll.findMany({
         where: { updatedAt: { gte: sinceDate } },
         select: {
-          id: true, auftragId: true, datum: true,
+          id: true, auftragId: true, datum: true, kommentar: true,
           gpsStartLat: true, gpsStartLon: true, updatedAt: true, createdAt: true,
         },
         take: 500,
@@ -49,7 +49,7 @@ export async function GET(req: Request) {
         protokolle: {
           created: protokolle.filter(p => p.createdAt >= sinceDate).map(p => ({
             id: String(p.id), auftragId: String(p.auftragId ?? ""),
-            datum: p.datum instanceof Date ? p.datum.toISOString() : null,
+            datum: p.datum?.toISOString() ?? null, notizen: p.kommentar ?? "",
             gpsLat: p.gpsStartLat, gpsLng: p.gpsStartLon,
           })),
           updated: [],

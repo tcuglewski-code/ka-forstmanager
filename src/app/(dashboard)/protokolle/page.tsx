@@ -291,6 +291,8 @@ export default function ProtokolleSeite() {
               <TagesprotokollFormular
                 auftragId={selectedAuftrag?.id ?? ""}
                 auftragTitel={selectedAuftrag?.titel}
+                waldbesitzer={selectedAuftrag?.waldbesitzer ?? undefined}
+                gruppeId={selectedAuftrag?.gruppe?.name}
                 onSaved={async () => {
                   setShowForm(false)
                   await fetchAll()
