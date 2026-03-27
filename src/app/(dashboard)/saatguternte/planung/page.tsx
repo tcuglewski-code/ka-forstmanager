@@ -305,6 +305,16 @@ function PlanungPageInner() {
                 🌍 Google Maps öffnen
               </button>
             </div>
+            <button
+              onClick={() => {
+                const ids = planungFlaechen.map((f) => f.id).join(",")
+                router.push(`/saatguternte/vertrag?flaechenIds=${ids}`)
+              }}
+              disabled={planungFlaechen.length === 0}
+              className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-[#2a2a2a] hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
+            >
+              📄 Vertrag generieren
+            </button>
           </div>
         </div>
       )}
