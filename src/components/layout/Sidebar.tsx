@@ -71,6 +71,7 @@ const saatgutSubItems = [
   { href: "/saatguternte/ernte", label: "Erntehistorie", icon: History },
   { href: "/saatguternte/anfragen", label: "Ernteanfragen", icon: ClipboardCheck },
   { href: "/saatguternte/gruppen", label: "Gruppen", icon: UsersRound },
+  { href: "/saatguternte/vertrag", label: "Verträge", icon: FileText },
   { href: "/saatguternte/crawler", label: "Crawler", icon: Bot },
 ]
 
