@@ -142,7 +142,8 @@ export default async function LohnabrechnungPage({
     <div className="p-8 max-w-4xl mx-auto print:p-4">
       {/* ── Aktions-Buttons (beim Drucken ausgeblendet) ─────────────── */}
       <div className="print:hidden mb-6 flex gap-3 flex-wrap">
-        <PrintButton />
+        {/* Sprint AF: PDF-Export-Button (abrechnungId wird übergeben wenn Abrechnung vorhanden) */}
+        <PrintButton abrechnungId={lohnabrechnung?.id} />
         <a
           href={`/lohn`}
           className="px-4 py-2 border border-zinc-600 text-zinc-400 rounded-lg hover:border-zinc-400 hover:text-white transition-colors"
