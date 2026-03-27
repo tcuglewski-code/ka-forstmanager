@@ -74,6 +74,7 @@ model Mitarbeiter {
   abwesenheiten     Abwesenheit[]
   lagerBewegungen   LagerBewegung[]
   lohnabrechnungen  Lohnabrechnung[]
+  dokumente         Dokument[]
 }
 
 model Saison {
@@ -396,12 +397,22 @@ model Dokument {
   id             String   @id @default(cuid())
   name           String
   typ            String   @default("sonstiges")
-  url            String
+  url            String?
   nextcloudPath  String?
   auftragId      String?
   saisonId       String?
   hochgeladenVon String?
   createdAt      DateTime @default(now())
+  // Mitarbeiter-Dokumente (Sprint BQ)
+  mitarbeiterId  String?
+  mitarbeiter    Mitarbeiter? @relation(fields: [mitarbeiterId], references: [id])
+  kategorie      String?   // "a1", "sicherheitsunterweisung", "versicherung", "lohnsteuer", "vertrag", "fuehrerschein", "sonstiges"
+  jahr           Int?      // Jahrgang des Dokuments (z.B. 2026)
+  ablaufDatum    DateTime? // für Dokumente die ablaufen (A1, Führerschein etc.)
+  vertraulich    Boolean   @default(false) // nur Admin sichtbar
+  groesse        Int?      // Dateigröße in Bytes
+  mimeType       String?   // z.B. "application/pdf"
+  beschreibung   String?
   auftrag        Auftrag? @relation(fields: [auftragId], references: [id], onDelete: SetNull)
   saison         Saison?  @relation(fields: [saisonId], references: [id], onDelete: SetNull)
 }

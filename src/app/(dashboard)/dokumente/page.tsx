@@ -8,7 +8,7 @@ interface Dokument {
   id: string
   name: string
   typ: string
-  url: string
+  url: string | null
   createdAt: string
   hochgeladenVon?: string | null
   auftrag?: { id: string; titel: string } | null
@@ -159,7 +159,7 @@ export default function DokumentePage() {
                   <td className="px-6 py-4 text-sm text-zinc-500">{d.hochgeladenVon ?? "—"}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2 justify-end">
-                      <a href={d.url} target="_blank" rel="noreferrer" className="text-zinc-600 hover:text-emerald-400 transition-all">
+                      <a href={d.url ?? ""} target="_blank" rel="noreferrer" className="text-zinc-600 hover:text-emerald-400 transition-all">
                         <ExternalLink className="w-4 h-4" />
                       </a>
                       <button onClick={() => deleteDok(d.id)} className="text-zinc-600 hover:text-red-400 transition-all">
