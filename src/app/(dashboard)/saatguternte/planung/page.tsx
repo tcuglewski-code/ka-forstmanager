@@ -1,14 +1,16 @@
 "use client"
 
-import { useState, useEffect, useCallback, Suspense } from "react"
-import { useSearchParams } from "next/navigation"
-import { Map, Search, X, MapPin, ChevronUp, ChevronDown, AlertTriangle, CheckCircle, Info } from "lucide-react"
+import { useState, useEffect, Suspense } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
+import { Map, X, MapPin, ChevronUp, ChevronDown, AlertTriangle, ArrowLeft } from "lucide-react"
 
 interface Flaeche {
   id: string
   registerNr: string
   baumart: string
   bundesland: string
+  flaecheHa: number | null
+  forstamt: string | null
   latDez: number | null
   lonDez: number | null
   profil: { status: string } | null
@@ -20,160 +22,78 @@ function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): nu
   const dLon = ((lon2 - lon1) * Math.PI) / 180
   const a =
     Math.sin(dLat / 2) ** 2 +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) ** 2
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
 function nearestNeighborTSP(points: { id: string; lat: number; lon: number }[]): string[] {
-  if (points.length === 0) return []
-  if (points.length === 1) return [points[0].id]
-
+  if (points.length <= 1) return points.map((p) => p.id)
   const visited = new Set<string>()
   const result: string[] = []
   let current = points[0]
   visited.add(current.id)
   result.push(current.id)
-
   while (visited.size < points.length) {
     let nearest: { id: string; lat: number; lon: number } | null = null
     let minDist = Infinity
-
     for (const p of points) {
       if (visited.has(p.id)) continue
       const d = haversineKm(current.lat, current.lon, p.lat, p.lon)
-      if (d < minDist) {
-        minDist = d
-        nearest = p
-      }
+      if (d < minDist) { minDist = d; nearest = p }
     }
-
     if (!nearest) break
     visited.add(nearest.id)
     result.push(nearest.id)
     current = nearest
   }
-
   return result
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  geeignet: "bg-emerald-500/20 text-emerald-400",
-  geprüft: "bg-blue-500/20 text-blue-400",
-  geplant: "bg-purple-500/20 text-purple-400",
-  aktiv: "bg-green-500/20 text-green-400",
-  verworfen: "bg-red-500/20 text-red-400",
-  nicht_geeignet: "bg-red-500/20 text-red-400",
-  ungeprüft: "bg-zinc-700/50 text-zinc-400",
-  interessant: "bg-yellow-500/20 text-yellow-400",
-  pausiert: "bg-orange-500/20 text-orange-400",
+function totalDistKm(flaechen: Flaeche[]): number {
+  let total = 0
+  for (let i = 1; i < flaechen.length; i++) {
+    const a = flaechen[i - 1], b = flaechen[i]
+    if (a.latDez && a.lonDez && b.latDez && b.lonDez) {
+      total += haversineKm(a.latDez, a.lonDez, b.latDez, b.lonDez)
+    }
+  }
+  return total
 }
 
 function PlanungPageInner() {
   const searchParams = useSearchParams()
-  const vorgFlaechenIds = searchParams.get("flaechenIds")?.split(",").filter(Boolean) ?? []
+  const router = useRouter()
+  const urlIds = searchParams.get("flaechenIds")?.split(",").filter(Boolean) ?? []
 
-  const [flaechen, setFlaechen] = useState<Flaeche[]>([])
-  const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState("")
-  const [filterBundesland, setFilterBundesland] = useState("")
-  const [filterBaumart, setFilterBaumart] = useState("")
-  const [filterStatus, setFilterStatus] = useState("")
-  const [selected, setSelected] = useState<Set<string>>(new Set())
-  const [planungIds, setPlanungIds] = useState<string[]>([])
-  const [googleMapsWarning, setGoogleMapsWarning] = useState(false)
-  const [vorgBanner, setVorgBanner] = useState(true)
+  const [planungFlaechen, setPlanungFlaechen] = useState<Flaeche[]>([])
+  const [loading, setLoading] = useState(urlIds.length > 0)
+  const [mapsWarning, setMapsWarning] = useState(false)
 
-  // Load from localStorage
+  // Beim Laden: URL-IDs direkt als Planungsflächen laden
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("planung-ids")
-      if (saved) setPlanungIds(JSON.parse(saved))
-    } catch {}
-  }, [])
-
-  // Save to localStorage
-  useEffect(() => {
-    localStorage.setItem("planung-ids", JSON.stringify(planungIds))
-  }, [planungIds])
-
-  // Fetch Flächen — wenn flaechenIds übergeben: lade nur diese, sonst alle (Limit 2000)
-  useEffect(() => {
-    if (vorgFlaechenIds.length > 0) {
-      // Lade nur die übergebenen Flächen per IDs
-      fetch(`/api/saatguternte/flaechen-by-ids?ids=${vorgFlaechenIds.join(",")}`)
-        .then((r) => r.json())
-        .then((data) => {
-          const flaechenData = Array.isArray(data) ? data : []
-          setFlaechen(flaechenData)
-          // Vorausgewählte Flächen in Planung übernehmen
-          setPlanungIds((prev) => {
-            const next = [...prev]
-            for (const id of vorgFlaechenIds) {
-              if (!next.includes(id)) next.push(id)
-            }
-            return next
-          })
-          setLoading(false)
-        })
-        .catch(() => setLoading(false))
-      // Auch alle Flächen nachladen für die Auswahlliste
-      fetch("/api/saatguternte/register?limit=2000")
-        .then((r) => r.json())
-        .then((data) => {
-          setFlaechen(data.flaechen ?? data ?? [])
-        })
-        .catch(() => {})
-    } else {
-      fetch("/api/saatguternte/register?limit=2000")
-        .then((r) => r.json())
-        .then((data) => {
-          setFlaechen(data.flaechen ?? data ?? [])
-          setLoading(false)
-        })
-        .catch(() => setLoading(false))
+    if (urlIds.length === 0) {
+      setLoading(false)
+      return
     }
+    fetch(`/api/saatguternte/flaechen-by-ids?ids=${urlIds.join(",")}`)
+      .then((r) => r.json())
+      .then((data: Flaeche[]) => {
+        // Reihenfolge der URL-IDs beibehalten
+        const ordered = urlIds
+          .map((id) => data.find((f) => f.id === id))
+          .filter(Boolean) as Flaeche[]
+        setPlanungFlaechen(ordered)
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const bundeslaender = [...new Set(flaechen.map((f) => f.bundesland))].sort()
-  const baumarten = [...new Set(flaechen.map((f) => f.baumart))].sort()
-
-  const filtered = flaechen.filter((f) => {
-    const matchSearch =
-      !search ||
-      f.registerNr.toLowerCase().includes(search.toLowerCase()) ||
-      f.baumart.toLowerCase().includes(search.toLowerCase()) ||
-      f.bundesland.toLowerCase().includes(search.toLowerCase())
-    const matchBl = !filterBundesland || f.bundesland === filterBundesland
-    const matchBa = !filterBaumart || f.baumart === filterBaumart
-    const matchStatus = !filterStatus || (f.profil?.status ?? "ungeprüft") === filterStatus
-    return matchSearch && matchBl && matchBa && matchStatus
-  })
-
-  const planungFlaechen = planungIds
-    .map((id) => flaechen.find((f) => f.id === id))
-    .filter(Boolean) as Flaeche[]
-
-  const addToPlanung = useCallback(() => {
-    setPlanungIds((prev) => {
-      const next = [...prev]
-      for (const id of selected) {
-        if (!next.includes(id)) next.push(id)
-      }
-      setSelected(new Set())
-      return next
-    })
-  }, [selected])
-
-  const removeFromPlanung = (id: string) => {
-    setPlanungIds((prev) => prev.filter((p) => p !== id))
-  }
+  const remove = (id: string) => setPlanungFlaechen((prev) => prev.filter((f) => f.id !== id))
 
   const moveUp = (idx: number) => {
     if (idx === 0) return
-    setPlanungIds((prev) => {
+    setPlanungFlaechen((prev) => {
       const next = [...prev]
       ;[next[idx - 1], next[idx]] = [next[idx], next[idx - 1]]
       return next
@@ -181,8 +101,8 @@ function PlanungPageInner() {
   }
 
   const moveDown = (idx: number) => {
-    if (idx === planungIds.length - 1) return
-    setPlanungIds((prev) => {
+    if (idx === planungFlaechen.length - 1) return
+    setPlanungFlaechen((prev) => {
       const next = [...prev]
       ;[next[idx], next[idx + 1]] = [next[idx + 1], next[idx]]
       return next
@@ -193,319 +113,193 @@ function PlanungPageInner() {
     const withCoords = planungFlaechen
       .filter((f) => f.latDez != null && f.lonDez != null)
       .map((f) => ({ id: f.id, lat: f.latDez!, lon: f.lonDez! }))
-
     if (withCoords.length < 2) return
-
     const optimized = nearestNeighborTSP(withCoords)
-    // Preserve items without coords at the end
-    const withoutCoords = planungFlaechen
-      .filter((f) => f.latDez == null || f.lonDez == null)
-      .map((f) => f.id)
-
-    setPlanungIds([...optimized, ...withoutCoords])
+    const withoutCoords = planungFlaechen.filter((f) => !f.latDez).map((f) => f.id)
+    const allIds = [...optimized, ...withoutCoords]
+    setPlanungFlaechen(allIds.map((id) => planungFlaechen.find((f) => f.id === id)!).filter(Boolean))
   }
 
   const openGoogleMaps = () => {
-    const withCoords = planungFlaechen.filter((f) => f.latDez != null && f.lonDez != null)
-    if (withCoords.length === 0) return
-
-    if (withCoords.length > 10) {
-      setGoogleMapsWarning(true)
-      setTimeout(() => setGoogleMapsWarning(false), 5000)
-    }
-
-    const waypoints = withCoords
-      .slice(0, 10)
-      .map((f) => `${f.latDez},${f.lonDez}`)
-      .join("/")
+    const pts = planungFlaechen.filter((f) => f.latDez && f.lonDez)
+    if (pts.length === 0) return
+    if (pts.length > 10) { setMapsWarning(true); setTimeout(() => setMapsWarning(false), 5000) }
+    const waypoints = pts.slice(0, 10).map((f) => `${f.latDez},${f.lonDez}`).join("/")
     window.open(`https://maps.google.com/maps/dir/${waypoints}/`, "_blank")
   }
 
   const exportEinsatzliste = () => {
-    if (planungIds.length === 0) return
-    window.open(`/api/saatguternte/einsatzliste?ids=${planungIds.join(",")}`, "_blank")
+    if (planungFlaechen.length === 0) return
+    window.open(`/api/saatguternte/einsatzliste?ids=${planungFlaechen.map((f) => f.id).join(",")}`, "_blank")
   }
 
+  const gesKm = totalDistKm(planungFlaechen)
+  const mitKoords = planungFlaechen.filter((f) => f.latDez).length
+
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-4xl mx-auto">
+      {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <Map className="w-6 h-6 text-emerald-400" />
-        <h1 className="text-2xl font-bold text-white">Flächenplanung</h1>
+        <button
+          onClick={() => router.push("/saatguternte/register")}
+          className="flex items-center gap-2 text-zinc-500 hover:text-zinc-300 text-sm transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Zurück zur Register-Übersicht
+        </button>
       </div>
 
-      <div className="flex gap-4 h-[calc(100vh-160px)] min-h-[600px]">
-        {/* Linkes Panel — Flächen-Auswahl (40%) */}
-        <div className="w-[40%] flex flex-col bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-          {/* Filter-Header */}
-          <div className="p-4 border-b border-[#2a2a2a] space-y-3">
-            <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600" />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Suchen (Nr, Baumart, Bundesland)..."
-                className="w-full pl-9 pr-3 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
-              />
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              <select
-                value={filterBundesland}
-                onChange={(e) => setFilterBundesland(e.target.value)}
-                className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-2 py-1.5 text-xs text-zinc-400 focus:outline-none focus:border-emerald-500"
-              >
-                <option value="">Alle Länder</option>
-                {bundeslaender.map((bl) => (
-                  <option key={bl} value={bl}>{bl}</option>
-                ))}
-              </select>
-              <select
-                value={filterBaumart}
-                onChange={(e) => setFilterBaumart(e.target.value)}
-                className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-2 py-1.5 text-xs text-zinc-400 focus:outline-none focus:border-emerald-500"
-              >
-                <option value="">Alle Baumarten</option>
-                {baumarten.map((ba) => (
-                  <option key={ba} value={ba}>{ba}</option>
-                ))}
-              </select>
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-2 py-1.5 text-xs text-zinc-400 focus:outline-none focus:border-emerald-500"
-              >
-                <option value="">Alle Status</option>
-                {["geeignet", "geprüft", "geplant", "ungeprüft", "verworfen"].map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Flächen-Liste */}
-          <div className="flex-1 overflow-y-auto">
-            {loading ? (
-              <div className="p-8 text-center text-zinc-600">Lade Flächen...</div>
-            ) : filtered.length === 0 ? (
-              <div className="p-8 text-center text-zinc-600">Keine Flächen gefunden</div>
-            ) : (
-              filtered.map((f) => {
-                const isSelected = selected.has(f.id)
-                const inPlanung = planungIds.includes(f.id)
-                const status = f.profil?.status ?? "ungeprüft"
-                return (
-                  <label
-                    key={f.id}
-                    className={`flex items-start gap-3 px-4 py-3 border-b border-[#1e1e1e] cursor-pointer hover:bg-[#1a1a1a] transition-colors ${
-                      isSelected ? "bg-emerald-900/20" : ""
-                    } ${inPlanung ? "opacity-50" : ""}`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      disabled={inPlanung}
-                      onChange={(e) => {
-                        setSelected((prev) => {
-                          const next = new Set(prev)
-                          if (e.target.checked) next.add(f.id)
-                          else next.delete(f.id)
-                          return next
-                        })
-                      }}
-                      className="mt-0.5 accent-emerald-500"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono text-sm text-zinc-200">{f.registerNr}</span>
-                        <span
-                          className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${STATUS_COLORS[status] ?? "bg-zinc-700 text-zinc-400"}`}
-                        >
-                          {status}
-                        </span>
-                        {inPlanung && (
-                          <span className="text-[10px] text-emerald-500">✓ in Planung</span>
-                        )}
-                      </div>
-                      <div className="text-xs text-zinc-500 mt-0.5">
-                        {f.baumart} · {f.bundesland}
-                      </div>
-                      {f.latDez != null && (
-                        <div className="text-[10px] text-zinc-700 font-mono mt-0.5">
-                          {f.latDez.toFixed(4)}°N {f.lonDez?.toFixed(4)}°O
-                        </div>
-                      )}
-                    </div>
-                  </label>
-                )
-              })
-            )}
-          </div>
-
-          {/* Footer */}
-          <div className="p-3 border-t border-[#2a2a2a] flex items-center justify-between">
-            <span className="text-xs text-zinc-500">
-              {selected.size > 0
-                ? `${selected.size} Fläche${selected.size !== 1 ? "n" : ""} ausgewählt`
-                : `${filtered.length} Flächen gefunden`}
-            </span>
-            <button
-              onClick={addToPlanung}
-              disabled={selected.size === 0}
-              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg text-xs font-medium transition-all"
-            >
-              Zur Planung hinzufügen →
-            </button>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <Map className="w-6 h-6 text-emerald-400" />
+          <div>
+            <h1 className="text-2xl font-bold text-white">Flächenplanung</h1>
+            <p className="text-sm text-zinc-500 mt-0.5">
+              {planungFlaechen.length} Fläche{planungFlaechen.length !== 1 ? "n" : ""}
+              {mitKoords > 0 && ` · ${mitKoords} mit Koordinaten`}
+              {gesKm > 0 && ` · ${gesKm.toFixed(0)} km Gesamtstrecke`}
+            </p>
           </div>
         </div>
+        {planungFlaechen.length > 0 && (
+          <button
+            onClick={() => setPlanungFlaechen([])}
+            className="text-xs text-zinc-600 hover:text-red-400 flex items-center gap-1 transition-colors"
+          >
+            <X className="w-3 h-3" /> Alle entfernen
+          </button>
+        )}
+      </div>
 
-        {/* Rechtes Panel — Einsatzplan (60%) */}
-        <div className="flex-1 flex flex-col bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-          {/* Header */}
-          <div className="p-4 border-b border-[#2a2a2a] flex items-center justify-between">
-            <div>
-              <h2 className="text-sm font-semibold text-white">Einsatzplan</h2>
-              <p className="text-xs text-zinc-500 mt-0.5">
-                {planungFlaechen.length} Fläche{planungFlaechen.length !== 1 ? "n" : ""} geplant
-              </p>
-            </div>
-            {planungIds.length > 0 && (
-              <button
-                onClick={() => {
-                  setPlanungIds([])
-                  localStorage.removeItem("planung-ids")
-                }}
-                className="text-xs text-zinc-600 hover:text-red-400 flex items-center gap-1"
-              >
-                <X className="w-3 h-3" /> Leeren
-              </button>
-            )}
-          </div>
+      {/* Info-Banner */}
+      {urlIds.length > 0 && !loading && (
+        <div className="mb-4 p-3 bg-emerald-900/30 border border-emerald-600/30 rounded-lg flex items-center gap-2">
+          <MapPin className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+          <p className="text-sm text-emerald-300">
+            {planungFlaechen.length} Fläche{planungFlaechen.length !== 1 ? "n" : ""} aus der Register-Übersicht übernommen.
+            Weitere Flächen kannst du jederzeit über{" "}
+            <button onClick={() => router.push("/saatguternte/register")} className="underline hover:text-emerald-200">
+              Register → Flächen auswählen
+            </button>{" "}
+            hinzufügen.
+          </p>
+        </div>
+      )}
 
-          {/* Info-Banner: Flächen aus Register übernommen */}
-          {vorgFlaechenIds.length > 0 && vorgBanner && (
-            <div className="mx-4 mt-3 p-3 bg-emerald-900/30 border border-emerald-600/30 rounded-lg flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <Info className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <p className="text-xs text-emerald-300">
-                  {vorgFlaechenIds.length} Fläche{vorgFlaechenIds.length !== 1 ? "n" : ""} aus Register-Übersicht übernommen
-                </p>
-              </div>
-              <button
-                onClick={() => setVorgBanner(false)}
-                className="text-emerald-500 hover:text-emerald-300 text-xs"
-              >
-                ✕
-              </button>
-            </div>
-          )}
+      {/* Google Maps Warning */}
+      {mapsWarning && (
+        <div className="mb-4 p-3 bg-yellow-900/30 border border-yellow-600/30 rounded-lg flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-yellow-400 flex-shrink-0" />
+          <p className="text-sm text-yellow-300">Google Maps unterstützt max. 10 Wegpunkte. Erste 10 Flächen werden angezeigt.</p>
+        </div>
+      )}
 
-          {/* Google Maps Warning */}
-          {googleMapsWarning && (
-            <div className="mx-4 mt-3 p-3 bg-yellow-900/30 border border-yellow-600/30 rounded-lg flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-yellow-400 flex-shrink-0" />
-              <p className="text-xs text-yellow-300">
-                Google Maps unterstützt max. 10 Wegpunkte. Es werden nur die ersten 10 Flächen angezeigt.
-              </p>
-            </div>
-          )}
+      {/* Leer-Zustand */}
+      {!loading && planungFlaechen.length === 0 && (
+        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-16 flex flex-col items-center justify-center text-center">
+          <MapPin className="w-12 h-12 text-zinc-800 mb-4" />
+          <p className="text-zinc-400 font-medium mb-2">Keine Flächen in der Planung</p>
+          <p className="text-zinc-600 text-sm mb-6">Wähle Flächen in der Register-Übersicht aus und klicke auf „Zur Planung →"</p>
+          <button
+            onClick={() => router.push("/saatguternte/register")}
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-medium transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Zur Register-Übersicht
+          </button>
+        </div>
+      )}
 
-          {/* Planung-Liste */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-2">
-            {planungFlaechen.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center text-zinc-600">
-                <MapPin className="w-10 h-10 mb-3 text-zinc-800" />
-                <p className="text-sm">Noch keine Flächen in der Planung.</p>
-                <p className="text-xs mt-1">Wähle links Flächen aus und füge sie hinzu.</p>
-              </div>
-            ) : (
-              planungFlaechen.map((f, idx) => {
-                const prev = idx > 0 ? planungFlaechen[idx - 1] : null
-                let distKm: number | null = null
-                if (
-                  prev &&
-                  prev.latDez != null &&
-                  prev.lonDez != null &&
-                  f.latDez != null &&
-                  f.lonDez != null
-                ) {
-                  distKm = haversineKm(prev.latDez, prev.lonDez, f.latDez, f.lonDez)
-                }
+      {/* Laden */}
+      {loading && (
+        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-16 text-center text-zinc-600">
+          Lade Flächen...
+        </div>
+      )}
 
-                return (
-                  <div
-                    key={f.id}
-                    className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg p-3 flex items-start gap-3"
-                  >
-                    <div className="flex flex-col items-center gap-0.5 mt-0.5">
-                      <span className="text-xs font-mono text-zinc-600 w-5 text-center">{idx + 1}</span>
-                      <button
-                        onClick={() => moveUp(idx)}
-                        disabled={idx === 0}
-                        className="text-zinc-700 hover:text-zinc-400 disabled:opacity-20"
-                      >
-                        <ChevronUp className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => moveDown(idx)}
-                        disabled={idx === planungFlaechen.length - 1}
-                        className="text-zinc-700 hover:text-zinc-400 disabled:opacity-20"
-                      >
-                        <ChevronDown className="w-4 h-4" />
-                      </button>
-                    </div>
+      {/* Planungs-Liste */}
+      {!loading && planungFlaechen.length > 0 && (
+        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+          <div className="divide-y divide-[#1e1e1e]">
+            {planungFlaechen.map((f, idx) => {
+              const prev = idx > 0 ? planungFlaechen[idx - 1] : null
+              let distKm: number | null = null
+              if (prev?.latDez && prev?.lonDez && f.latDez && f.lonDez) {
+                distKm = haversineKm(prev.latDez, prev.lonDez, f.latDez, f.lonDez)
+              }
 
-                    <MapPin className="w-4 h-4 text-emerald-500 mt-1 flex-shrink-0" />
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm text-zinc-200">{f.registerNr}</span>
-                        <span className="text-xs text-zinc-500">{f.baumart}</span>
-                      </div>
-                      <div className="text-xs text-zinc-600 mt-0.5">{f.bundesland}</div>
-                      {f.latDez != null && (
-                        <div className="text-[10px] font-mono text-zinc-700 mt-0.5">
-                          {f.latDez.toFixed(5)}°N, {f.lonDez?.toFixed(5)}°O
-                        </div>
-                      )}
-                      {distKm != null && (
-                        <div className="text-[10px] text-blue-400 mt-1">
-                          ↕ {distKm.toFixed(1)} km Luftlinie zur vorherigen Fläche
-                        </div>
-                      )}
-                    </div>
-
-                    <button
-                      onClick={() => removeFromPlanung(f.id)}
-                      className="text-zinc-700 hover:text-red-400 transition-colors"
-                    >
-                      <X className="w-4 h-4" />
+              return (
+                <div key={f.id} className="flex items-start gap-4 px-4 py-4 hover:bg-[#1a1a1a] transition-colors">
+                  {/* Rang + Pfeile */}
+                  <div className="flex flex-col items-center gap-0.5 pt-0.5 min-w-[28px]">
+                    <span className="text-xs font-mono text-zinc-600 text-center">{idx + 1}</span>
+                    <button onClick={() => moveUp(idx)} disabled={idx === 0} className="text-zinc-700 hover:text-zinc-400 disabled:opacity-20">
+                      <ChevronUp className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => moveDown(idx)} disabled={idx === planungFlaechen.length - 1} className="text-zinc-700 hover:text-zinc-400 disabled:opacity-20">
+                      <ChevronDown className="w-4 h-4" />
                     </button>
                   </div>
-                )
-              })
-            )}
+
+                  {/* MapPin */}
+                  <MapPin className="w-4 h-4 text-emerald-500 mt-1 flex-shrink-0" />
+
+                  {/* Infos */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <span className="font-mono text-sm text-zinc-200">{f.registerNr}</span>
+                      <span className="text-sm text-zinc-400">{f.baumart}</span>
+                      {f.flaecheHa && (
+                        <span className="text-xs text-zinc-600">{f.flaecheHa.toFixed(1)} ha</span>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
+                      <span className="text-xs text-zinc-500">{f.bundesland}</span>
+                      {f.forstamt && <span className="text-xs text-zinc-600">{f.forstamt}</span>}
+                    </div>
+                    {f.latDez != null && (
+                      <div className="text-[10px] font-mono text-zinc-700 mt-1">
+                        {f.latDez.toFixed(5)}°N, {f.lonDez?.toFixed(5)}°O
+                      </div>
+                    )}
+                    {distKm != null && (
+                      <div className="text-xs text-blue-400 mt-1">
+                        ↕ {distKm.toFixed(1)} km zur vorherigen Fläche
+                      </div>
+                    )}
+                    {!f.latDez && (
+                      <div className="text-xs text-zinc-700 mt-1 italic">Keine Koordinaten</div>
+                    )}
+                  </div>
+
+                  {/* Entfernen */}
+                  <button onClick={() => remove(f.id)} className="text-zinc-700 hover:text-red-400 transition-colors mt-1">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )
+            })}
           </div>
 
-          {/* Aktions-Buttons */}
-          <div className="p-4 border-t border-[#2a2a2a] space-y-2">
+          {/* Aktionen */}
+          <div className="p-4 border-t border-[#2a2a2a] space-y-3">
             <button
               onClick={optimizeRoute}
-              disabled={planungFlaechen.filter((f) => f.latDez != null).length < 2}
+              disabled={mitKoords < 2}
               className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-[#2a2a2a] hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
             >
-              🗺️ Optimale Route berechnen
+              🗺️ Optimale Route berechnen (TSP)
             </button>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={exportEinsatzliste}
-                disabled={planungIds.length === 0}
-                className="px-4 py-2.5 bg-[#1e1e1e] border border-[#2a2a2a] hover:border-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-blue-400 rounded-lg text-sm font-medium transition-all"
+                className="px-4 py-2.5 bg-[#1e1e1e] border border-[#2a2a2a] hover:border-blue-500 text-zinc-300 hover:text-blue-400 rounded-lg text-sm font-medium transition-all"
               >
                 📋 Einsatzliste exportieren
               </button>
               <button
                 onClick={openGoogleMaps}
-                disabled={planungFlaechen.filter((f) => f.latDez != null).length === 0}
+                disabled={mitKoords === 0}
                 className="px-4 py-2.5 bg-[#1e1e1e] border border-[#2a2a2a] hover:border-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-orange-400 rounded-lg text-sm font-medium transition-all"
               >
                 🌍 Google Maps öffnen
@@ -513,7 +307,7 @@ function PlanungPageInner() {
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
