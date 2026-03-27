@@ -33,8 +33,8 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
     datum: einsatz.datum,
     baumart: einsatz.baumart,
     ort: einsatz.ort,
-    gpsTrack: (einsatz.gpsTrack as GpsPunkt[]) ?? [],
-    punkteAnzahl: Array.isArray(einsatz.gpsTrack) ? (einsatz.gpsTrack as GpsPunkt[]).length : 0,
+    gpsTrack: (einsatz.gpsTrack as unknown as GpsPunkt[]) ?? [],
+    punkteAnzahl: Array.isArray(einsatz.gpsTrack) ? (einsatz.gpsTrack as unknown as GpsPunkt[]).length : 0,
   })
 }
 
@@ -82,12 +82,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   }))
 
   // Neue Punkte zum bestehenden Track hinzufügen
-  const bestehendeTrack = Array.isArray(einsatz.gpsTrack) ? (einsatz.gpsTrack as GpsPunkt[]) : []
+  const bestehendeTrack = Array.isArray(einsatz.gpsTrack) ? (einsatz.gpsTrack as unknown as GpsPunkt[]) : []
   const aktualisiertTrack = [...bestehendeTrack, ...punkteMitTimestamp]
 
   const aktualisiert = await prisma.ernteEinsatz.update({
     where: { id },
-    data: { gpsTrack: aktualisiertTrack },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: { gpsTrack: aktualisiertTrack as any },
     select: { id: true, gpsTrack: true },
   })
 

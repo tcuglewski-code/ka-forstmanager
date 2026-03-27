@@ -65,7 +65,7 @@ export async function dateiHochladen(
         Authorization: authHeader(),
         "Content-Type": mimeType,
       },
-      body: inhalt,
+      body: inhalt as BodyInit,
     })
 
     if (res.status === 201 || res.status === 204) {
@@ -203,4 +203,91 @@ export function downloadUrl(pfad: string): string {
 
 export function downloadHeaders(): { Authorization: string } {
   return { Authorization: authHeader() }
+}
+
+// ── Englische Alias-Exports (für Kompatibilität mit bestehenden Importen) ────
+
+/**
+ * NextcloudFile: Englische Schnittstelle für Dateieinträge
+ * (kompatibel mit browse/route.ts und anderen Importen)
+ */
+export interface NextcloudFile {
+  name: string
+  path: string
+  size: number
+  lastModified: string
+  type: "file" | "directory"
+  contentType?: string
+}
+
+/**
+ * Gibt die vollständige WebDAV-URL für einen Nextcloud-Pfad zurück
+ */
+export function getNextcloudFileUrl(pfad: string): string {
+  return `${WEBDAV_BASE}${normalizePath(pfad)}`
+}
+
+/**
+ * Gibt den Basic-Auth Header-Wert zurück
+ */
+export function getNextcloudAuthHeader(): string {
+  return authHeader()
+}
+
+/**
+ * Listet den Inhalt eines Nextcloud-Ordners auf (englischer Alias für dateiListeAbrufen)
+ */
+export async function listNextcloudFolder(pfad: string): Promise<NextcloudFile[]> {
+  const eintraege = await dateiListeAbrufen(pfad)
+  return eintraege.map((e) => ({
+    name: e.name,
+    path: e.pfad,
+    size: e.groesse,
+    lastModified: e.geaendertAm,
+    type: e.istOrdner ? "directory" : "file",
+    contentType: e.contentType,
+  }))
+}
+
+/**
+ * Prüft ob ein Dateiname ein Bild ist
+ */
+export function isImage(dateiname: string): boolean {
+  return /\.(jpe?g|png|gif|webp|svg|bmp|tiff?)$/i.test(dateiname)
+}
+
+/**
+ * Prüft ob ein Dateiname ein Video ist
+ */
+export function isVideo(dateiname: string): boolean {
+  return /\.(mp4|mov|avi|mkv|webm|ogv|m4v)$/i.test(dateiname)
+}
+
+/**
+ * Lädt eine Datei in Nextcloud hoch (englischer Alias für dateiHochladen)
+ */
+export async function uploadToNextcloud(
+  filePath: string,
+  content: Buffer,
+  mimeType: string = "application/octet-stream"
+): Promise<string> {
+  const ergebnis = await dateiHochladen(content, filePath, mimeType)
+  if (!ergebnis.erfolg) {
+    throw new Error(`Upload fehlgeschlagen: ${ergebnis.fehler}`)
+  }
+  return ergebnis.url
+}
+
+/**
+ * Erstellt einen Ordner in Nextcloud (englischer Alias für ordnerErstellen)
+ */
+export async function createNextcloudFolder(folderPath: string): Promise<void> {
+  await ordnerErstellen(folderPath)
+}
+
+/**
+ * Löscht eine Datei in Nextcloud (englischer Alias für dateiLoeschen)
+ */
+export async function deleteFromNextcloud(filePath: string): Promise<void> {
+  await dateiLoeschen(filePath)
 }

@@ -346,7 +346,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
 
   const dateiname = `Wochenplan_KW${wochenplan.kalenderwoche}_${wochenplan.jahr}${wochenplan.gruppe?.name ? `_${wochenplan.gruppe.name.replace(/\s+/g, "_")}` : ""}.pdf`
 
-  return new NextResponse(pdfBuffer, {
+  return new NextResponse(pdfBuffer as unknown as BodyInit, {
     status: 200,
     headers: {
       "Content-Type": "application/pdf",

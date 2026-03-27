@@ -475,7 +475,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   // PDF-Dateiname
   const dateiname = `Lohnabrechnung_${abrechnung.mitarbeiter.nachname}_${abrechnung.mitarbeiter.vorname}_${new Date(abrechnung.zeitraumVon).toLocaleDateString("de-DE").replace(/\./g, "-")}.pdf`
 
-  return new NextResponse(pdfBuffer, {
+  return new NextResponse(pdfBuffer as unknown as BodyInit, {
     status: 200,
     headers: {
       "Content-Type": "application/pdf",
