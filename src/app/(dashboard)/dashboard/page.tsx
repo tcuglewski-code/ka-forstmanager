@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { Users, Sprout, ClipboardList, TrendingUp, Package, AlertTriangle, Wrench, Clock, BookOpen, CheckSquare, DollarSign } from "lucide-react"
 import Link from "next/link"
+import { FoerderungWidget } from "@/components/foerderung/FoerderungWidget"
 
 async function getStats() {
   try {
@@ -397,6 +398,9 @@ export default async function DashboardPage() {
             </div>
           )}
         </div>
+
+        {/* Förderprogramme Widget */}
+        <FoerderungWidget />
 
         {/* Schnellzugriff */}
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">

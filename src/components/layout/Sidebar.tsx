@@ -60,6 +60,7 @@ const navItems = [
   { href: "/abnahmen", label: "Abnahmen", icon: CheckSquare },
   { href: "/kontakte", label: "Kontakte", icon: MapPin },
   { href: "/wissensbank", label: "Wissensbank", icon: BookOpen },
+  { href: "/foerderung", label: "Förderprogramme", icon: Leaf },
   { href: "/reports", label: "Reports", icon: BarChart3 },
   { href: "/jahresuebersicht", label: "Jahresübersicht", icon: BarChart3 },
   { href: "/einstellungen", label: "Einstellungen", icon: Settings },
