@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+// Sprint AG: E-Mail-Benachrichtigung beim Erstellen eines Auftrags
+import { emailService } from "@/lib/email"
 
 export async function GET(req: NextRequest) {
   // ⚠️ GET ist auth-geschützt — Aufträge sind interne Dashboard-Daten
@@ -86,6 +88,17 @@ export async function POST(req: NextRequest) {
         endDatum: body.endDatum ? new Date(body.endDatum) : null,
       },
     })
+    // Sprint AG: E-Mail-Benachrichtigung — Auftrag erstellt
+    emailService.auftragErstellt({
+      auftragId: auftrag.id,
+      auftragNummer: auftrag.nummer ?? auftrag.id,
+      auftragTitel: auftrag.titel,
+      waldbesitzerName: auftrag.waldbesitzer ?? undefined,
+      waldbesitzerEmail: auftrag.waldbesitzerEmail ?? undefined,
+      flaeche_ha: auftrag.flaeche_ha ?? undefined,
+      standort: auftrag.standort ?? undefined,
+    }).catch((err) => console.error("[Email] auftragErstellt fehlgeschlagen:", err))
+
     return NextResponse.json(auftrag, { status: 201 })
   } catch (error) {
     console.error("[Auftraege POST]", error)

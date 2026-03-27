@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+// Sprint AG: E-Mail-Benachrichtigung bei Status-Änderung
+import { emailService } from "@/lib/email"
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -86,6 +88,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           userId: (session?.user as { id?: string })?.id ?? null,
         },
       }).catch(() => {}) // Silent fail — Log ist nicht kritisch
+
+      // Sprint AG: E-Mail-Benachrichtigung — Auftrag Status-Update
+      emailService.auftragStatusUpdate({
+        auftragId: id,
+        auftragNummer: auftrag.nummer ?? id,
+        auftragTitel: auftrag.titel,
+        alterStatus: auftragVorher.status ?? "unbekannt",
+        neuerStatus: body.status,
+        waldbesitzerEmail: auftrag.waldbesitzerEmail ?? undefined,
+      }).catch((err) => console.error("[Email] auftragStatusUpdate fehlgeschlagen:", err))
     }
 
     return NextResponse.json(auftrag)
