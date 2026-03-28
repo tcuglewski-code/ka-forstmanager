@@ -13,6 +13,7 @@ import { Breadcrumb } from "@/components/layout/Breadcrumb"
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 import { TagesprotokollFull } from "@/components/tagesprotokoll/TagesprotokollDetail"
 import { AbnahmeStatus } from "@/components/abnahme/AbnahmeStatus"
+import { AuftragFoerderCheck } from "@/components/foerderung/AuftragFoerderCheck"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1193,6 +1194,17 @@ export default function AuftragDetailPage() {
 
         {/* ── Right (sidebar) ─────────────────────────────────────────── */}
         <div className="space-y-6">
+
+          {/* Förderprüfung */}
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+            <SectionHeading icon={<TreePine className="w-4 h-4" />} label="Förderprogramm-Check" />
+            <AuftragFoerderCheck
+              auftragId={auftrag.id}
+              bundesland={auftrag.bundesland ?? null}
+              flaeche_ha={auftrag.flaeche_ha ?? null}
+              baumarten={auftrag.baumarten ?? null}
+            />
+          </div>
 
           {/* Interne Verwaltung */}
           <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
