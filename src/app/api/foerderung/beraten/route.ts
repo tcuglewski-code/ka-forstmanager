@@ -1,7 +1,66 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { querySecondBrain as query } from '@/lib/secondbrain-db';
-// TODO: Anthropic-Import für spätere KI-Synthese-Nachrüstung
-// import Anthropic from '@anthropic-ai/sdk';
+import Anthropic from '@anthropic-ai/sdk';
+
+const anthropic = process.env.ANTHROPIC_API_KEY
+  ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+  : null;
+
+async function genKISynthese(
+  programme: Record<string, unknown>[],
+  frage: string,
+  bundesland: string,
+  kombinationen: Record<string, unknown>[],
+  praxis: Record<string, unknown>[]
+): Promise<string> {
+  if (!anthropic) throw new Error('Kein API-Key');
+
+  const progText = programme.slice(0, 8).map((p, i) => {
+    const name = p.name as string;
+    const beschr = (p.beschreibung as string || '').slice(0, 200);
+    const satz = p.foerdersatz as string || '';
+    const frist = p.antragsfrist as string || 'laufend';
+    const weg = p.antragsweg as string || '';
+    return `${i + 1}. **${name}**\n   Förderung: ${satz || 'k.A.'} | Frist: ${frist}\n   ${beschr}${weg ? '\n   Antragsweg: ' + weg : ''}`;
+  }).join('\n\n');
+
+  const kombText = kombinationen.length > 0
+    ? '\nKombinierbare Programme:\n' + (kombinationen as Array<{prog_a_name: string; prog_b_name: string; bedingung?: string}>)
+        .slice(0, 3).map(k => `- ${k.prog_a_name} + ${k.prog_b_name}${k.bedingung ? ' (' + k.bedingung + ')' : ''}`).join('\n')
+    : '';
+
+  const praxisText = praxis.length > 0
+    ? '\nPraxis-Hinweise:\n' + (praxis as Array<{programm_name: string; annotation: string; fallstricke?: string}>)
+        .slice(0, 2).map(p => `- ${p.programm_name}: ${p.annotation}${p.fallstricke ? ' ⚠️ ' + p.fallstricke : ''}`).join('\n')
+    : '';
+
+  const systemPrompt = `Du bist ein Förderberater für Forstbetriebe in Deutschland. Deine Antworten sind präzise, praxisnah und auf Deutsch. Du hilfst Waldbesitzern, die richtigen Förderprogramme zu finden.`;
+
+  const userPrompt = `Frage des Nutzers: "${frage || 'Welche Förderprogramme passen zu mir?'}"
+${bundesland ? `Region: ${bundesland}` : ''}
+
+Gefundene Förderprogramme (${programme.length} Treffer):
+${progText}
+${kombText}
+${praxisText}
+
+Erstelle eine strukturierte Förderberatung (max. 4 Absätze):
+1. Kurze Einschätzung zur Situation
+2. Top-Empfehlungen mit konkretem Nutzen
+3. Kombinationsmöglichkeiten (falls vorhanden)
+4. Nächste Schritte / Handlungsempfehlung
+
+Schreibe direkt und ohne Einleitung. Verwende Markdown (fett, Listen). Abschließend ein kurzer Haftungshinweis.`;
+
+  const msg = await anthropic.messages.create({
+    model: 'claude-3-5-haiku-20241022',
+    max_tokens: 600,
+    system: systemPrompt,
+    messages: [{ role: 'user', content: userPrompt }],
+  });
+
+  return (msg.content[0] as { type: string; text: string }).text;
+}
 
 export async function POST(req: NextRequest) {
   // ── Integrität: Input-Validierung ──────────────────────────────────────────
@@ -144,52 +203,30 @@ export async function POST(req: NextRequest) {
       );
     } catch {}
 
-    // 5. Strukturierte Synthese (ohne externe KI — serverside, kostenlos)
-    // TODO: Anthropic API-Anbindung optional nachrüsten wenn API-Key verfügbar
+    // 5. KI-Synthese via Anthropic (Haiku) oder Fallback
     const quellenAngaben: string[] = programme.map((p) => p.url as string).filter(Boolean);
-
-    const topProgramme = programme.slice(0, 3).map((p) => (p.name as string)).join(', ');
     const flaecheText = flaecheClean ? ` für ${flaecheClean} ha` : '';
     const kalamitaetText = kalamitaet ? ', Kalamitätsfläche' : '';
 
     let synthese = '';
+    let kiSynthese = false;
 
     if (programme.length === 0) {
       synthese = `Für Ihre Anfrage${bundeslandClean ? ' in ' + bundeslandClean : ''}${flaecheText}${kalamitaetText} wurden keine passenden Förderprogramme gefunden. Versuchen Sie eine breitere Suche ohne Bundesland-Filter.`;
+    } else if (anthropic) {
+      try {
+        synthese = await genKISynthese(programme, frageClean, bundeslandClean, kombinationen, praxis);
+        kiSynthese = true;
+      } catch (err) {
+        console.error('KI-Synthese fehlgeschlagen, Fallback:', err);
+        // Fallback zu statischer Synthese
+        const topProgramme = programme.slice(0, 3).map((p) => (p.name as string)).join(', ');
+        synthese = `${programme.length} passende Förderprogramm${programme.length === 1 ? '' : 'e'} gefunden${bundeslandClean ? ' für ' + bundeslandClean : ''}.\n\n**Empfohlene Programme:** ${topProgramme}${programme.length > 3 ? ` und ${programme.length - 3} weitere` : ''}.\n\n⚠️ Alle Angaben ohne Gewähr. Aktuelle Konditionen direkt bei der zuständigen Behörde prüfen.`;
+      }
     } else {
-      // Hauptsatz
-      synthese = `${programme.length} passende Förderprogramm${programme.length === 1 ? '' : 'e'} gefunden`;
-      if (bundeslandClean) synthese += ` für ${bundeslandClean}`;
-      if (flaecheClean) synthese += ` (${flaecheClean} ha)`;
-      if (kalamitaet) synthese += ` — Kalamität/Schadholz berücksichtigt`;
-      synthese += '.';
-
-      // Top-Programme
-      if (programme.length > 0) {
-        synthese += `\n\n**Empfohlene Programme:** ${topProgramme}${programme.length > 3 ? ` und ${programme.length - 3} weitere` : ''}.`;
-      }
-
-      // Kombinationen
-      if (kombinationen.length > 0) {
-        const kombText = (kombinationen as Array<{prog_a_name: string; prog_b_name: string}>)
-          .slice(0, 2)
-          .map(k => `${k.prog_a_name} + ${k.prog_b_name}`)
-          .join('; ');
-        synthese += `\n\n**Kombinierbar:** ${kombText}.`;
-      }
-
-      // Praxis-Hinweise
-      if (praxis.length > 0) {
-        synthese += `\n\n**Praxis-Hinweis:** ${(praxis[0] as {annotation: string}).annotation}`;
-      }
-
-      // Fristen
-      const mitFrist = programme.filter((p) => p.antragsfrist && !(p.antragsfrist as string).toLowerCase().includes('laufend'));
-      if (mitFrist.length > 0) {
-        synthese += `\n\n**Fristen beachten:** ${mitFrist.length} Programm${mitFrist.length === 1 ? '' : 'e'} mit konkreter Antragsfrist — direkt bei der Bewilligungsstelle prüfen.`;
-      }
-
-      synthese += '\n\n⚠️ Alle Angaben ohne Gewähr. Aktuelle Konditionen direkt bei der zuständigen Behörde prüfen.';
+      // Statischer Fallback ohne API-Key
+      const topProgramme = programme.slice(0, 3).map((p) => (p.name as string)).join(', ');
+      synthese = `${programme.length} passende Förderprogramm${programme.length === 1 ? '' : 'e'} gefunden${bundeslandClean ? ' für ' + bundeslandClean : ''}.\n\n**Empfohlene Programme:** ${topProgramme}${programme.length > 3 ? ` und ${programme.length - 3} weitere` : ''}.\n\n⚠️ Alle Angaben ohne Gewähr. Aktuelle Konditionen direkt bei der zuständigen Behörde prüfen.`;
     }
 
     // ── Ausgabe-Validierung: Programme ohne Namen filtern ──
@@ -197,18 +234,11 @@ export async function POST(req: NextRequest) {
       p.name && typeof p.name === 'string' && (p.name as string).length > 10
     );
 
-    // Disclaimer anhängen wenn kein KI-Text
-    const syntheseFinal = synthese + (
-      !synthese.includes('Behörde') && !synthese.includes('Antragstellung')
-        ? '\n\n⚠️ Alle Angaben ohne Gewähr. Prüfen Sie aktuelle Konditionen direkt bei der zuständigen Bewilligungsstelle.'
-        : ''
-    );
-
     return NextResponse.json({
       programme: programmeValidiert,
       kombinationen,
       praxis,
-      synthese: syntheseFinal,
+      synthese,
       quellen: quellenAngaben,
       meta: {
         bundesland: bundeslandClean || null,
@@ -216,7 +246,7 @@ export async function POST(req: NextRequest) {
         flaeche_ha: flaecheClean || null,
         kalamitaet: kalamitaet || null,
         programme_gefunden: programmeValidiert.length,
-        ki_synthese: false, // TODO: auf true setzen wenn Anthropic API-Key verfügbar
+        ki_synthese: kiSynthese,
       }
     });
   } catch (error) {
