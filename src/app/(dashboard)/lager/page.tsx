@@ -17,6 +17,9 @@ interface LagerArtikel {
   mindestbestand: number
   lagerort?: string | null
   artikelnummer?: string | null
+  // Sprint FS: EK/VK Preise
+  einkaufspreis?: number | null
+  verkaufspreis?: number | null
 }
 
 interface AuftragOption { id: string; titel: string }
@@ -118,7 +121,8 @@ function QrPrintModal({ artikel, onClose }: { artikel: LagerArtikel; onClose: ()
 
 function ArtikelModal({ onClose, onSave }: { onClose: () => void; onSave: () => void }) {
   const [loading, setLoading] = useState(false)
-  const [form, setForm] = useState({ name: "", kategorie: "material", einheit: "Stück", bestand: "0", mindestbestand: "0", lagerort: "", artikelnummer: "" })
+  // Sprint FS: EK/VK Preise hinzugefügt
+  const [form, setForm] = useState({ name: "", kategorie: "material", einheit: "Stück", bestand: "0", mindestbestand: "0", lagerort: "", artikelnummer: "", einkaufspreis: "", verkaufspreis: "" })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -179,6 +183,21 @@ function ArtikelModal({ onClose, onSave }: { onClose: () => void; onSave: () => 
               <label className="block text-xs text-zinc-400 mb-1">Mindestbestand</label>
               <input type="number" value={form.mindestbestand} onChange={e => setForm(f => ({ ...f, mindestbestand: e.target.value }))}
                 placeholder="5"
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500" />
+            </div>
+          </div>
+          {/* Sprint FS: Einkaufs- und Verkaufspreise */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Einkaufspreis (€)</label>
+              <input type="number" step="0.01" min="0" value={form.einkaufspreis} onChange={e => setForm(f => ({ ...f, einkaufspreis: e.target.value }))}
+                placeholder="0.00"
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500" />
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Verkaufspreis (€)</label>
+              <input type="number" step="0.01" min="0" value={form.verkaufspreis} onChange={e => setForm(f => ({ ...f, verkaufspreis: e.target.value }))}
+                placeholder="0.00"
                 className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
