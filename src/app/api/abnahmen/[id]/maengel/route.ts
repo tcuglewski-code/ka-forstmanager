@@ -20,6 +20,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     },
   })
 
+  // Sprint FV (E3): Auftrag-Status auf "maengel_offen" setzen
+  if (updated.auftragId) {
+    await prisma.auftrag.update({
+      where: { id: updated.auftragId },
+      data: { status: "maengel_offen" },
+    })
+  }
+
   return NextResponse.json(updated)
 }
 
