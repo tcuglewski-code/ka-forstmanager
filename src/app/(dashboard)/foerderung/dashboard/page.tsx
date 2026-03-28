@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { RefreshCw, TrendingUp, Clock, Euro, FileText, ArrowUpRight, ArrowDownRight } from "lucide-react"
 import Link from "next/link"
+import { FristenWidget } from "@/components/foerderung/FristenWidget"
 
 interface KPIs {
   gesamt_programme: number
@@ -100,6 +101,9 @@ export default function FoerderungDashboardPage() {
           </Link>
         </div>
       </div>
+
+      {/* Fristen-Widget — zeigt Programme mit konkreten Antragsfristen */}
+      <FristenWidget />
 
       {/* KPI-Karten */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
