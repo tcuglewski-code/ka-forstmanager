@@ -877,6 +877,15 @@ export default function AuftragDetailPage() {
                 📝 Gegenangebot
               </button>
             )}
+            {/* Sprint FW (E4): Schnelllink Rechnung erstellen */}
+            {auftrag.status === "abgeschlossen" && (
+              <a
+                href={`/rechnungen/neu?auftragId=${auftrag.id}`}
+                className="px-4 py-2 bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 rounded-lg text-sm hover:bg-emerald-500/30 transition-colors"
+              >
+                💰 Rechnung erstellen
+              </a>
+            )}
             {wpAdminUrl && (
               <a
                 href={wpAdminUrl}
