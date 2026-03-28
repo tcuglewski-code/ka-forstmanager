@@ -119,6 +119,9 @@ export default function EinstellungenPage() {
             vollkosten_pro_stunde: config.vollkosten_pro_stunde,
             maschinenzuschlag_kunde: config.maschinenzuschlag_kunde,
             maschinenbonus_mitarbeiter: config.maschinenbonus_mitarbeiter,
+            // Sprint FQ (B2): Neue Kalkulations-Parameter
+            preis_pro_baum_default: config.preis_pro_baum_default,
+            mwst_satz: config.mwst_satz,
           },
         }),
       })
@@ -261,7 +264,7 @@ export default function EinstellungenPage() {
                 </div>
               </div>
 
-              {/* Kalkulations-Einstellungen (Sprint Q) */}
+              {/* Kalkulations-Einstellungen (Sprint Q + FQ B2) */}
               <div className="space-y-4 mt-6 pt-4 border-t border-[#2a2a2a]">
                 <h3 className="text-sm font-semibold text-zinc-300">Kalkulations-Einstellungen</h3>
                 <div className="grid grid-cols-2 gap-4">
@@ -295,6 +298,30 @@ export default function EinstellungenPage() {
                       min="0"
                       value={config.vollkosten_pro_stunde ?? "43.50"}
                       onChange={(e) => setConfig(prev => ({ ...prev, vollkosten_pro_stunde: e.target.value }))}
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                    />
+                  </div>
+                  {/* Sprint FQ (B2): Preis pro Baum + MwSt */}
+                  <div>
+                    <label className="text-xs text-zinc-500 mb-1 block">Preis pro Baum Standard (€)</label>
+                    <input
+                      type="number"
+                      step="0.10"
+                      min="0"
+                      value={config.preis_pro_baum_default ?? "2.50"}
+                      onChange={(e) => setConfig(prev => ({ ...prev, preis_pro_baum_default: e.target.value }))}
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-zinc-500 mb-1 block">MwSt.-Satz (%)</label>
+                    <input
+                      type="number"
+                      step="1"
+                      min="0"
+                      max="100"
+                      value={config.mwst_satz ?? "19"}
+                      onChange={(e) => setConfig(prev => ({ ...prev, mwst_satz: e.target.value }))}
                       className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
                     />
                   </div>
