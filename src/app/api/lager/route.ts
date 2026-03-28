@@ -53,6 +53,9 @@ export async function POST(req: NextRequest) {
         mindestbestand: body.mindestbestand ? parseFloat(body.mindestbestand) : 0,
         lagerort: body.lagerort ?? null,
         artikelnummer,
+        // Sprint FS: EK/VK Preise
+        einkaufspreis: body.einkaufspreis ? parseFloat(body.einkaufspreis) : null,
+        verkaufspreis: body.verkaufspreis ? parseFloat(body.verkaufspreis) : null,
       },
     })
     return NextResponse.json(artikel, { status: 201 })
