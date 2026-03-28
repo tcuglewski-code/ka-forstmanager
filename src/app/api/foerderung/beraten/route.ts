@@ -3,10 +3,62 @@ import { querySecondBrain as query } from '@/lib/secondbrain-db';
 import Anthropic from '@anthropic-ai/sdk';
 
 export async function POST(req: NextRequest) {
-  try {
-    const { frage, bundesland, waldtyp, flaeche_ha, kalamitaet } = await req.json();
+  // ── Integrität: Input-Validierung ──────────────────────────────────────────
+  const ERLAUBTE_BUNDESLAENDER = new Set([
+    'Baden-Württemberg', 'Bayern', 'Berlin', 'Brandenburg', 'Bremen',
+    'Hamburg', 'Hessen', 'Mecklenburg-Vorpommern', 'Niedersachsen',
+    'Nordrhein-Westfalen', 'Rheinland-Pfalz', 'Saarland', 'Sachsen',
+    'Sachsen-Anhalt', 'Schleswig-Holstein', 'Thüringen',
+    'Bund', 'Bundesweit', 'EU', '', // leer = alle
+  ]);
 
+  let body: Record<string, unknown>;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'Ungültiges JSON' }, { status: 400 });
+  }
+
+  const { frage, bundesland, waldtyp, flaeche_ha, kalamitaet } = body as {
+    frage?: string; bundesland?: string; waldtyp?: string;
+    flaeche_ha?: number; kalamitaet?: string;
+  };
+
+  // Frage: maximal 500 Zeichen, kein Null-Byte, keine System-Prompt-Injection
+  if (frage && typeof frage !== 'string') {
+    return NextResponse.json({ error: 'frage muss ein String sein' }, { status: 400 });
+  }
+  const frageClean = (frage || '').slice(0, 500).replace(/\0/g, '').trim();
+  const INJECTION_PATTERNS = [/ignore previous/i, /system prompt/i, /\[INST\]/i, /<\|im_start\|>/i];
+  if (INJECTION_PATTERNS.some(p => p.test(frageClean))) {
+    return NextResponse.json({ error: 'Ungültige Eingabe' }, { status: 400 });
+  }
+
+  // Bundesland: muss aus erlaubter Liste sein
+  const bundeslandClean = typeof bundesland === 'string' ? bundesland.trim() : '';
+  if (bundeslandClean && !ERLAUBTE_BUNDESLAENDER.has(bundeslandClean)) {
+    return NextResponse.json({ error: `Ungültiges Bundesland: ${bundeslandClean}` }, { status: 400 });
+  }
+
+  // Fläche: muss eine positive Zahl sein, max. 100.000 ha
+  const flaecheClean = flaeche_ha ? Math.min(Math.max(0, Number(flaeche_ha)), 100000) : undefined;
+  if (flaeche_ha && isNaN(flaecheClean!)) {
+    return NextResponse.json({ error: 'flaeche_ha muss eine Zahl sein' }, { status: 400 });
+  }
+
+  // Rate-Limiting: max 10 Anfragen/Min pro IP
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  const { checkRateLimit } = await import('@/lib/rate-limit');
+  if (!checkRateLimit(`foerder-beraten:${ip}`, 10, 60_000)) {
+    return NextResponse.json(
+      { error: 'Zu viele Anfragen. Bitte warte eine Minute.' },
+      { status: 429, headers: { 'Retry-After': '60' } }
+    );
+  }
+
+  try {
     // 1. Strukturierte DB-Suche
+    // ── SQL-Injection: Durch parameterisierte Queries ($1, $2, ...) gesichert ──
     // Garbage-Namen ausfiltern (Crawler hat HTML-Spaltenheader als Programmnamen gespeichert)
     const GARBAGE_NAMES = ['Hinweis', 'Fördersatz', 'Fördergegenstand', 'Hinweise', 'Antragsweg',
       'Bewilligungsstelle', 'Förderart', 'Förderkulisse', 'Antragsfrist', 'Zielgruppe', 'Status'];
@@ -25,8 +77,8 @@ export async function POST(req: NextRequest) {
       AND length(name) > 10
       AND name NOT IN (${garbageList})`;
 
-    if (bundesland) {
-      params.push(bundesland);
+    if (bundeslandClean) {
+      params.push(bundeslandClean);
       queryText += ` AND (bundesland = $${params.length} OR bundesland = 'Bund' OR bundesland = 'EU')`;
     }
     if (kalamitaet) {
@@ -36,8 +88,8 @@ export async function POST(req: NextRequest) {
       params.push(waldtyp);
       queryText += ` AND (waldbesitzart IS NULL OR waldbesitzart @> ARRAY[$${params.length}]::text[])`;
     }
-    if (flaeche_ha) {
-      params.push(Number(flaeche_ha));
+    if (flaecheClean) {
+      params.push(flaecheClean);
       queryText += ` AND (mindestflaeche_ha IS NULL OR mindestflaeche_ha <= $${params.length})`;
     }
     // DISTINCT ON erfordert ORDER BY mit der DISTINCT-Spalte zuerst
@@ -122,8 +174,8 @@ export async function POST(req: NextRequest) {
           system: 'Du bist ein Experte für deutsche Forstförderung. Du hilfst Waldbesitzern und Forstdienstleistern dabei, passende Förderprogramme zu finden und zu kombinieren. Antworte präzise, klar und praktisch auf Deutsch.',
           messages: [{
             role: 'user',
-            content: `Anfrage: "${frage}"
-${bundesland ? `Bundesland: ${bundesland}` : ''}${waldtyp ? `\nWaldtyp: ${waldtyp}` : ''}${flaeche_ha ? `\nFläche: ${flaeche_ha} ha` : ''}${kalamitaet ? `\nKalamität: ${kalamitaet}` : ''}
+            content: `Anfrage: "${frageClean}"
+${bundeslandClean ? `Bundesland: ${bundeslandClean}` : ''}${waldtyp ? `\nWaldtyp: ${waldtyp}` : ''}${flaecheClean ? `\nFläche: ${flaecheClean} ha` : ''}${kalamitaet ? `\nKalamität: ${kalamitaet}` : ''}
 
 Gefundene Förderprogramme:
 ${programmeListe}
@@ -147,24 +199,36 @@ Erstelle eine strukturierte Empfehlung (max. 400 Wörter):
         ];
       } catch (err) {
         console.error('Anthropic error:', err);
-        synthese = `${programme.length} passende Förderprogramme gefunden für ${bundesland || 'Deutschland'}. Bitte prüfen Sie die Antragsfristen direkt bei den Behörden.`;
+        synthese = `${programme.length} passende Förderprogramme gefunden für ${bundeslandClean || 'Deutschland'}. Bitte prüfen Sie die Antragsfristen direkt bei den Behörden.`;
       }
     } else {
-      synthese = `${programme.length} passende Förderprogramme gefunden${bundesland ? ' für ' + bundesland : ''}. ${kombinationen.length > 0 ? kombinationen.length + ' Programme können kombiniert werden.' : ''} Bitte aktuelle Antragsfristen bei den Behörden prüfen.`;
+      synthese = `${programme.length} passende Förderprogramme gefunden${bundeslandClean ? ' für ' + bundeslandClean : ''}. ${kombinationen.length > 0 ? kombinationen.length + ' Programme können kombiniert werden.' : ''} Bitte aktuelle Antragsfristen bei den Behörden prüfen.`;
     }
 
+    // ── Ausgabe-Validierung: Programme ohne Namen filtern ──
+    const programmeValidiert = programme.filter((p: Record<string, unknown>) =>
+      p.name && typeof p.name === 'string' && (p.name as string).length > 10
+    );
+
+    // Disclaimer anhängen wenn kein KI-Text
+    const syntheseFinal = synthese + (
+      !synthese.includes('Behörde') && !synthese.includes('Antragstellung')
+        ? '\n\n⚠️ Alle Angaben ohne Gewähr. Prüfen Sie aktuelle Konditionen direkt bei der zuständigen Bewilligungsstelle.'
+        : ''
+    );
+
     return NextResponse.json({
-      programme,
+      programme: programmeValidiert,
       kombinationen,
       praxis,
-      synthese,
+      synthese: syntheseFinal,
       quellen: quellenAngaben,
       meta: {
-        bundesland: bundesland || null,
+        bundesland: bundeslandClean || null,
         waldtyp: waldtyp || null,
-        flaeche_ha: flaeche_ha || null,
+        flaeche_ha: flaecheClean || null,
         kalamitaet: kalamitaet || null,
-        programme_gefunden: programme.length,
+        programme_gefunden: programmeValidiert.length,
         ki_synthese: !!process.env.ANTHROPIC_API_KEY,
       }
     });
