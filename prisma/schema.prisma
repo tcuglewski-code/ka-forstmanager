@@ -15,6 +15,12 @@ model User {
   role        String   @default("mitarbeiter")
   avatar      String?
   active      Boolean  @default(true)
+  // Sprint UX: Permissions & Benachrichtigungen
+  permissions String[] @default([])
+  lastLoginAt DateTime?
+  notifyMaengel Boolean @default(true)
+  notifyAuftraege Boolean @default(true)
+  notifyAbnahmen Boolean @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   sessions    Session[]

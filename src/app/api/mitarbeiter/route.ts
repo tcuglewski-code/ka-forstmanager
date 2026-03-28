@@ -7,8 +7,9 @@ export async function GET(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const { searchParams } = new URL(req.url)
-  const suche = searchParams.get("suche") || ""
+  const suche = searchParams.get("suche") || searchParams.get("search") || ""
   const rolle = searchParams.get("rolle") || ""
+  const limit = Math.min(parseInt(searchParams.get("limit") ?? "100"), 200)
 
   const mitarbeiter = await prisma.mitarbeiter.findMany({
     where: {
@@ -26,6 +27,7 @@ export async function GET(req: NextRequest) {
       ],
     },
     orderBy: { nachname: "asc" },
+    take: limit,
   })
 
   return NextResponse.json(mitarbeiter)

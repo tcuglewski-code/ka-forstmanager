@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { AppShell } from "@/components/layout/AppShell"
+import { SessionProvider } from "@/components/providers/SessionProvider"
 
 export default async function DashboardLayout({
   children,
@@ -10,5 +11,9 @@ export default async function DashboardLayout({
   const session = await auth()
   if (!session) redirect("/login")
 
-  return <AppShell>{children}</AppShell>
+  return (
+    <SessionProvider>
+      <AppShell>{children}</AppShell>
+    </SessionProvider>
+  )
 }

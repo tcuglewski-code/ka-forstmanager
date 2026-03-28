@@ -12,14 +12,26 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const status = searchParams.get("status")
   const typ = searchParams.get("typ")
+  const search = searchParams.get("search")
 
   // Paginierung (Sprint P)
   const take = Math.min(parseInt(searchParams.get("limit") ?? "50"), 200)
   const skip = parseInt(searchParams.get("offset") ?? "0")
 
-  const where: Record<string, string> = {}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const where: any = {}
   if (status) where.status = status
   if (typ) where.typ = typ
+
+  // Sprint UX: Schnellsuche
+  if (search) {
+    where.OR = [
+      { titel: { contains: search, mode: "insensitive" } },
+      { nummer: { contains: search, mode: "insensitive" } },
+      { waldbesitzer: { contains: search, mode: "insensitive" } },
+      { standort: { contains: search, mode: "insensitive" } },
+    ]
+  }
 
   const [auftraege, total] = await Promise.all([
     prisma.auftrag.findMany({
