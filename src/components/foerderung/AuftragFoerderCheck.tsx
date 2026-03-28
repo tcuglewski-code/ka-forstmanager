@@ -95,14 +95,17 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
       })
 
       if (!res.ok) {
-        throw new Error("Fehler bei der Förderprüfung")
+        const errData = await res.json().catch(() => ({}))
+        const msg = (errData as {error?: string}).error || `Serverfehler (${res.status})`
+        throw new Error(msg)
       }
 
       const data: BeratungsResult = await res.json()
       setResult(data)
     } catch (err) {
-      console.error("Förderprüfung Fehler:", err)
-      toast.error("Fehler bei der Förderprüfung")
+      const msg = err instanceof Error ? err.message : "Unbekannter Fehler"
+      console.error("Förderprüfung Fehler:", msg)
+      toast.error(msg)
     } finally {
       setLoading(false)
     }

@@ -35,11 +35,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Ungültige Eingabe' }, { status: 400 });
   }
 
-  // Bundesland: muss aus erlaubter Liste sein
-  const bundeslandClean = typeof bundesland === 'string' ? bundesland.trim() : '';
-  if (bundeslandClean && !ERLAUBTE_BUNDESLAENDER.has(bundeslandClean)) {
-    return NextResponse.json({ error: `Ungültiges Bundesland: ${bundeslandClean}` }, { status: 400 });
-  }
+  // Bundesland: Sanitize — wenn nicht in Whitelist, ignorieren statt ablehnen
+  // (Auftragsfelder können Abkürzungen oder abweichende Schreibweise enthalten)
+  const bundeslandRaw = typeof bundesland === 'string' ? bundesland.trim() : '';
+  const bundeslandClean = ERLAUBTE_BUNDESLAENDER.has(bundeslandRaw) ? bundeslandRaw : '';
 
   // Fläche: muss eine positive Zahl sein, max. 100.000 ha
   const flaecheClean = flaeche_ha ? Math.min(Math.max(0, Number(flaeche_ha)), 100000) : undefined;
