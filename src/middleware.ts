@@ -5,8 +5,19 @@ import { NextResponse } from "next/server"
 const { auth } = NextAuth(authConfig)
 
 export default auth((req) => {
+  const { pathname } = req.nextUrl
+
+  // API-Routen, statische Assets und Favicon immer durchlassen
+  if (
+    pathname.startsWith('/api/') ||
+    pathname.startsWith('/_next/') ||
+    pathname === '/favicon.ico'
+  ) {
+    return NextResponse.next()
+  }
+
   const isLoggedIn = !!req.auth
-  const isLoginPage = req.nextUrl.pathname === "/login"
+  const isLoginPage = pathname === "/login"
 
   if (!isLoggedIn && !isLoginPage) {
     return NextResponse.redirect(new URL("/login", req.url))
@@ -18,6 +29,5 @@ export default auth((req) => {
 })
 
 export const config = {
-  // API-Routen, statische Assets und Favicon von Auth ausschließen
-  matcher: ["/((?!api/|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/(.*)", "/api/(.*)"],
 }
