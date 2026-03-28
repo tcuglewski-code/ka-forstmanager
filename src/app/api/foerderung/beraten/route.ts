@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { querySecondBrain as query } from '@/lib/secondbrain-db';
-import Anthropic from '@anthropic-ai/sdk';
+// TODO: Anthropic-Import für spätere KI-Synthese-Nachrüstung
+// import Anthropic from '@anthropic-ai/sdk';
 
 export async function POST(req: NextRequest) {
   // ── Integrität: Input-Validierung ──────────────────────────────────────────
@@ -144,67 +145,52 @@ export async function POST(req: NextRequest) {
       );
     } catch {}
 
-    // 5. LLM-Synthese mit Anthropic
+    // 5. Strukturierte Synthese (ohne externe KI — serverside, kostenlos)
+    // TODO: Anthropic API-Anbindung optional nachrüsten wenn API-Key verfügbar
+    const quellenAngaben: string[] = programme.map((p) => p.url as string).filter(Boolean);
+
+    const topProgramme = programme.slice(0, 3).map((p) => (p.name as string)).join(', ');
+    const flaecheText = flaecheClean ? ` für ${flaecheClean} ha` : '';
+    const kalamitaetText = kalamitaet ? ', Kalamitätsfläche' : '';
+
     let synthese = '';
-    let quellenAngaben: string[] = [];
 
-    if (process.env.ANTHROPIC_API_KEY && programme.length > 0) {
-      try {
-        const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
-        const programmeListe = programme.map((p) =>
-          `**${p.name}** (${p.bundesland}): ${p.beschreibung || ''} | Fördersatz: ${p.foerdersatz || 'variabel'} | Antragsfrist: ${p.antragsfrist || 'laufend'}`
-        ).join('\n');
-
-        const kombinationenListe = kombinationen.length > 0
-          ? kombinationen.map((k) => `${k.prog_a_name} + ${k.prog_b_name}: ${k.bedingung || 'kombinierbar'}`).join('\n')
-          : 'Keine Kombinations-Regeln bekannt.';
-
-        const praxisListe = praxis.length > 0
-          ? praxis.map((p) => `${p.programm_name}: ${p.annotation}${p.fallstricke ? ' ⚠️ ' + p.fallstricke : ''}`).join('\n')
-          : '';
-
-        const dokListe = dokChunks.length > 0
-          ? dokChunks.map((d) => `[${d.dokument_titel}${d.paragraf_ref ? ' ' + d.paragraf_ref : ''}]: ${d.content}`).join('\n\n')
-          : '';
-
-        const message = await client.messages.create({
-          model: 'claude-3-5-sonnet-20241022',
-          max_tokens: 1024,
-          system: 'Du bist ein Experte für deutsche Forstförderung. Du hilfst Waldbesitzern und Forstdienstleistern dabei, passende Förderprogramme zu finden und zu kombinieren. Antworte präzise, klar und praktisch auf Deutsch.',
-          messages: [{
-            role: 'user',
-            content: `Anfrage: "${frageClean}"
-${bundeslandClean ? `Bundesland: ${bundeslandClean}` : ''}${waldtyp ? `\nWaldtyp: ${waldtyp}` : ''}${flaecheClean ? `\nFläche: ${flaecheClean} ha` : ''}${kalamitaet ? `\nKalamität: ${kalamitaet}` : ''}
-
-Gefundene Förderprogramme:
-${programmeListe}
-
-Kombinierbare Programme:
-${kombinationenListe}
-${praxisListe ? `\nPraxis-Erfahrungen:\n${praxisListe}` : ''}${dokListe ? `\n\nRelevante Förderrichtlinien:\n${dokListe}` : ''}
-
-Erstelle eine strukturierte Empfehlung (max. 400 Wörter):
-1. Welche Programme passen am besten?
-2. Welche können kombiniert werden?
-3. Wichtige Fristen und nächste Schritte?
-4. Praxis-Hinweise und Fallstricke?`
-          }],
-        });
-
-        synthese = message.content[0].type === 'text' ? message.content[0].text : '';
-        quellenAngaben = [
-          ...programme.map((p) => p.url as string).filter(Boolean),
-          ...dokChunks.map((d) => `${d.dokument_titel}${d.paragraf_ref ? ' ' + d.paragraf_ref : ''}`).filter(Boolean),
-        ];
-      } catch (err) {
-        const errMsg = err instanceof Error ? err.message : String(err);
-        console.error('Anthropic error:', errMsg);
-        // Debug: Fehlermeldung temporär in Synthese einblenden
-        synthese = `[KI-Fehler: ${errMsg.slice(0, 200)}] — ${programme.length} Programme gefunden für ${bundeslandClean || 'Deutschland'}.`;
-      }
+    if (programme.length === 0) {
+      synthese = `Für Ihre Anfrage${bundeslandClean ? ' in ' + bundeslandClean : ''}${flaecheText}${kalamitaetText} wurden keine passenden Förderprogramme gefunden. Versuchen Sie eine breitere Suche ohne Bundesland-Filter.`;
     } else {
-      synthese = `${programme.length} passende Förderprogramme gefunden${bundeslandClean ? ' für ' + bundeslandClean : ''}. ${kombinationen.length > 0 ? kombinationen.length + ' Programme können kombiniert werden.' : ''} Bitte aktuelle Antragsfristen bei den Behörden prüfen.`;
+      // Hauptsatz
+      synthese = `${programme.length} passende Förderprogramm${programme.length === 1 ? '' : 'e'} gefunden`;
+      if (bundeslandClean) synthese += ` für ${bundeslandClean}`;
+      if (flaecheClean) synthese += ` (${flaecheClean} ha)`;
+      if (kalamitaet) synthese += ` — Kalamität/Schadholz berücksichtigt`;
+      synthese += '.';
+
+      // Top-Programme
+      if (programme.length > 0) {
+        synthese += `\n\n**Empfohlene Programme:** ${topProgramme}${programme.length > 3 ? ` und ${programme.length - 3} weitere` : ''}.`;
+      }
+
+      // Kombinationen
+      if (kombinationen.length > 0) {
+        const kombText = (kombinationen as Array<{prog_a_name: string; prog_b_name: string}>)
+          .slice(0, 2)
+          .map(k => `${k.prog_a_name} + ${k.prog_b_name}`)
+          .join('; ');
+        synthese += `\n\n**Kombinierbar:** ${kombText}.`;
+      }
+
+      // Praxis-Hinweise
+      if (praxis.length > 0) {
+        synthese += `\n\n**Praxis-Hinweis:** ${(praxis[0] as {annotation: string}).annotation}`;
+      }
+
+      // Fristen
+      const mitFrist = programme.filter((p) => p.antragsfrist && !(p.antragsfrist as string).toLowerCase().includes('laufend'));
+      if (mitFrist.length > 0) {
+        synthese += `\n\n**Fristen beachten:** ${mitFrist.length} Programm${mitFrist.length === 1 ? '' : 'e'} mit konkreter Antragsfrist — direkt bei der Bewilligungsstelle prüfen.`;
+      }
+
+      synthese += '\n\n⚠️ Alle Angaben ohne Gewähr. Aktuelle Konditionen direkt bei der zuständigen Behörde prüfen.';
     }
 
     // ── Ausgabe-Validierung: Programme ohne Namen filtern ──
@@ -231,7 +217,7 @@ Erstelle eine strukturierte Empfehlung (max. 400 Wörter):
         flaeche_ha: flaecheClean || null,
         kalamitaet: kalamitaet || null,
         programme_gefunden: programmeValidiert.length,
-        ki_synthese: !!process.env.ANTHROPIC_API_KEY,
+        ki_synthese: false, // TODO: auf true setzen wenn Anthropic API-Key verfügbar
       }
     });
   } catch (error) {
