@@ -638,11 +638,11 @@ export default function FoerderungPage() {
                   {beratungsErgebnis.programme.length} passende Programme
                 </p>
                 <div className="grid gap-2">
-                  {(beratungsErgebnis.programme as Array<{id:number,name:string,bundesland:string,foerdersatz_prozent:number,antragsfrist:string,url:string}>).slice(0, 5).map((p) => (
+                  {(beratungsErgebnis.programme as Array<{id:number,name:string,bundesland:string,foerdersatz:string,antragsfrist:string,url:string}>).slice(0, 5).map((p) => (
                     <div key={p.id} className="flex items-center justify-between bg-[#0f0f0f] rounded-lg px-3 py-2.5 border border-[#1e1e1e]">
                       <div>
-                        <p className="text-sm text-white font-medium">{p.name}</p>
-                        <p className="text-xs text-zinc-500">{p.bundesland} {p.foerdersatz_prozent ? `· ${p.foerdersatz_prozent}%` : ""} {p.antragsfrist ? `· Frist: ${p.antragsfrist}` : ""}</p>
+                        <p className="text-sm text-white font-medium">{p.name || "Unbekanntes Programm"}</p>
+                        <p className="text-xs text-zinc-500">{p.bundesland} {p.foerdersatz ? `· ${p.foerdersatz}` : ""} {p.antragsfrist ? `· Frist: ${p.antragsfrist}` : ""}</p>
                       </div>
                       {p.url && (
                         <a href={p.url} target="_blank" rel="noopener noreferrer"

@@ -7,11 +7,23 @@ export async function POST(req: NextRequest) {
     const { frage, bundesland, waldtyp, flaeche_ha, kalamitaet } = await req.json();
 
     // 1. Strukturierte DB-Suche
-    let queryText = `SELECT id, name, bundesland, foerdergegenstand as beschreibung, foerdersatz, kategorien,
+    // Garbage-Namen ausfiltern (Crawler hat HTML-Spaltenheader als Programmnamen gespeichert)
+    const GARBAGE_NAMES = ['Hinweis', 'Fördersatz', 'Fördergegenstand', 'Hinweise', 'Antragsweg',
+      'Bewilligungsstelle', 'Förderart', 'Förderkulisse', 'Antragsfrist', 'Zielgruppe', 'Status'];
+
+    const params: (string | number)[] = [];
+
+    // Base WHERE clauses (garbage filter via static SQL — no injection risk on static list)
+    const garbageList = GARBAGE_NAMES.map(n => `'${n.replace(/'/g, "''")}'`).join(', ');
+
+    let queryText = `SELECT DISTINCT ON (COALESCE(url, id::text)) id, name, bundesland,
+      foerdergegenstand as beschreibung, foerdersatz, kategorien,
       url, foerderkulisse, antragsfrist, antragsweg, min_foerdersumme_eur, max_foerdersumme_eur,
       waldbesitzart, mindestflaeche_ha, required_docs, foerderperiode_start, foerderperiode_ende
-      FROM foerderprogramme WHERE status = 'OFFEN'`;
-    const params: (string | number)[] = [];
+      FROM foerderprogramme WHERE status = 'OFFEN'
+      AND name IS NOT NULL
+      AND length(name) > 10
+      AND name NOT IN (${garbageList})`;
 
     if (bundesland) {
       params.push(bundesland);
@@ -28,7 +40,8 @@ export async function POST(req: NextRequest) {
       params.push(Number(flaeche_ha));
       queryText += ` AND (mindestflaeche_ha IS NULL OR mindestflaeche_ha <= $${params.length})`;
     }
-    queryText += ` ORDER BY id DESC LIMIT 8`;
+    // DISTINCT ON erfordert ORDER BY mit der DISTINCT-Spalte zuerst
+    queryText += ` ORDER BY COALESCE(url, id::text), id DESC LIMIT 8`;
 
     const programme = await query(queryText, params);
 
