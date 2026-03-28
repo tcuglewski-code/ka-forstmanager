@@ -9,7 +9,16 @@ interface Auftrag {
   id: string
   titel: string
   waldbesitzer?: string | null
-  gruppe?: { name: string } | null
+  gruppe?: { id: string; name: string } | null
+  // Sprint FP (A7): Felder für Autofill
+  wizardDaten?: {
+    flaeche_forstamt?: string
+    flaeche_revier?: string
+    forstamt?: string
+    revier?: string
+  } | null
+  lat?: number | null
+  lng?: number | null
 }
 
 interface ProtokollListItem {
@@ -292,7 +301,12 @@ export default function ProtokolleSeite() {
                 auftragId={selectedAuftrag?.id ?? ""}
                 auftragTitel={selectedAuftrag?.titel}
                 waldbesitzer={selectedAuftrag?.waldbesitzer ?? undefined}
-                gruppeId={selectedAuftrag?.gruppe?.name}
+                gruppeId={selectedAuftrag?.gruppe?.id}
+                // Sprint FP (A7): Autofill Revier + Forstamt aus Auftrag
+                defaultFoerstamt={selectedAuftrag?.wizardDaten?.flaeche_forstamt ?? selectedAuftrag?.wizardDaten?.forstamt ?? ""}
+                defaultRevier={selectedAuftrag?.wizardDaten?.flaeche_revier ?? selectedAuftrag?.wizardDaten?.revier ?? ""}
+                defaultGpsLat={selectedAuftrag?.lat ?? undefined}
+                defaultGpsLon={selectedAuftrag?.lng ?? undefined}
                 onSaved={async () => {
                   setShowForm(false)
                   await fetchAll()

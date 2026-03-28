@@ -70,7 +70,8 @@ export default async function ArbeitsanweisungPage({
   )
 
   return (
-    <div className="p-8 max-w-4xl mx-auto print:p-4">
+    // Sprint FP (A6): Expliziter weißer Hintergrund + dunkler Text für besseren Kontrast
+    <div className="p-8 max-w-4xl mx-auto print:p-4 bg-white text-gray-900 rounded-lg shadow-lg">
       {/* ── Aktions-Buttons (werden beim Drucken ausgeblendet) ─────── */}
       <div className="print:hidden mb-6 flex gap-3 flex-wrap">
         <PrintButton />
