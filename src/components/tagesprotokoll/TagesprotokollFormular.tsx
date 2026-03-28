@@ -234,11 +234,59 @@ export default function TagesprotokollFormular({
   }
 
   // ──────────────────────────────────────────────────────────────────────────
+  // Sprint FU (D5): Live-Berechnungen
+  // ──────────────────────────────────────────────────────────────────────────
+  const gesamtStunden = team.reduce((sum, m) => sum + (m.krank ? 0 : parseFloat(m.stunden) || 0), 0)
+  const baumanzahl = (parseFloat(form.stk_pflanzung) || 0) + (parseFloat(form.stk_pflanzung_mit_bohrer) || 0)
+  const stckProStunde = gesamtStunden > 0 && baumanzahl > 0 ? Math.round(baumanzahl / gesamtStunden) : 0
+  // ha/Stunde braucht Fläche — falls aus Auftrag übernehmen
+
+  // Sprint FU (D6): Validierung
+  const [validationErrors, setValidationErrors] = useState<string[]>([])
+
+  const validateForm = (): boolean => {
+    const errors: string[] = []
+    const heute = new Date().toISOString().split('T')[0]
+    
+    if (form.datum > heute) {
+      errors.push('Datum darf nicht in der Zukunft liegen')
+    }
+    
+    if (form.zeitBeginn && form.zeitEnde) {
+      const beginn = new Date(form.zeitBeginn)
+      const ende = new Date(form.zeitEnde)
+      if (beginn >= ende) {
+        errors.push('Beginn muss vor Ende liegen')
+      }
+    }
+    
+    const mengenFelder = [
+      { name: 'Stückzahl Pflanzung', val: form.stk_pflanzung },
+      { name: 'Stückzahl Bohrer', val: form.stk_pflanzung_mit_bohrer },
+      { name: 'Wuchshüllen', val: form.stk_wuchshuellen },
+    ]
+    for (const f of mengenFelder) {
+      const v = parseFloat(f.val)
+      if (f.val && v < 0) {
+        errors.push(`${f.name} darf nicht negativ sein`)
+      }
+    }
+    
+    setValidationErrors(errors)
+    return errors.length === 0
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
   // Submit
   // ──────────────────────────────────────────────────────────────────────────
   const n = (val: string) => (val === '' ? null : Number(val))
 
   const handleSubmit = async (status: 'entwurf' | 'eingereicht') => {
+    // Sprint FU (D6): Validierung vor Submit
+    if (status === 'eingereicht' && !validateForm()) {
+      return // Fehler werden angezeigt, nicht senden
+    }
+    
     setLoading(true)
     try {
       // FIX 6: Team-Daten serialisieren
@@ -661,6 +709,37 @@ export default function TagesprotokollFormular({
           />
         </div>
       </div>
+
+      {/* Sprint FU (D5): Live-Berechnungen */}
+      {(gesamtStunden > 0 || baumanzahl > 0) && (
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
+          <h3 className="font-semibold text-green-800 text-sm mb-3">📊 Berechnete Kennzahlen</h3>
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <p className="text-xs text-green-600">Gesamtstunden</p>
+              <p className="text-lg font-bold text-green-800">{gesamtStunden.toFixed(1)}h</p>
+            </div>
+            <div>
+              <p className="text-xs text-green-600">Gepflanzte Bäume</p>
+              <p className="text-lg font-bold text-green-800">{baumanzahl.toLocaleString('de-DE')}</p>
+            </div>
+            <div>
+              <p className="text-xs text-green-600">Stück/Stunde</p>
+              <p className="text-lg font-bold text-green-800">{stckProStunde}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sprint FU (D6): Validierungsfehler */}
+      {validationErrors.length > 0 && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+          <h3 className="font-semibold text-red-800 text-sm mb-2">⚠️ Bitte korrigieren:</h3>
+          <ul className="list-disc list-inside text-sm text-red-700">
+            {validationErrors.map((err, i) => <li key={i}>{err}</li>)}
+          </ul>
+        </div>
+      )}
 
       {/* Submit */}
       <div className="flex gap-3">
