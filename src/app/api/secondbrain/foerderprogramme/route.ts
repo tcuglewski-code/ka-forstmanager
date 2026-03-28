@@ -52,15 +52,19 @@ export async function GET(req: NextRequest) {
         name
     `
 
-    const rows = await querySecondBrain(sql, params)
-
-    const kategorienRows = await querySecondBrain(
-      "SELECT DISTINCT kategorie FROM foerderprogramme WHERE kategorie IS NOT NULL ORDER BY kategorie"
-    )
+    // Parallele Abfragen: Daten, Gesamtzahl, Kategorien
+    const [rows, countRows, kategorienRows] = await Promise.all([
+      querySecondBrain(sql, params),
+      querySecondBrain("SELECT COUNT(*) as total FROM foerderprogramme"),
+      querySecondBrain(
+        "SELECT DISTINCT kategorie FROM foerderprogramme WHERE kategorie IS NOT NULL ORDER BY kategorie"
+      ),
+    ])
 
     return NextResponse.json({
       data: rows,
-      total: rows.length,
+      total: parseInt(countRows[0]?.total || "0"),
+      filtered: rows.length,
       kategorien: kategorienRows.map((r) => r.kategorie),
     })
   } catch (error) {
