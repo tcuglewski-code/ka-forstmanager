@@ -36,6 +36,8 @@ import {
   Bot,
   ClipboardCheck,
   UsersRound as GroupIcon,
+  Sparkles,
+  TrendingUp,
 } from "lucide-react"
 import { signOut } from "next-auth/react"
 import { cn } from "@/lib/utils"
