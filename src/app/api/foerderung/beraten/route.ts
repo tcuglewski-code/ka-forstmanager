@@ -1,18 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Pool } from 'pg';
+import { querySecondBrain as query } from '@/lib/secondbrain-db';
 import Anthropic from '@anthropic-ai/sdk';
-
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-
-async function query(text: string, params?: unknown[]) {
-  const client = await pool.connect();
-  try {
-    const res = await client.query(text, params);
-    return res.rows;
-  } finally {
-    client.release();
-  }
-}
 
 export async function POST(req: NextRequest) {
   try {
