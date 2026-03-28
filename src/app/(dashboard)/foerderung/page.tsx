@@ -428,6 +428,48 @@ function ProgrammKarte({
 // ─────────────── Hauptseite ───────────────
 
 export default function FoerderungPage() {
+  // ── KI-Förderberater State ──
+  const [beratungsFrage, setBeratungsFrage] = useState("")
+  const [beratungsBundesland, setBeratungsBundesland] = useState("")
+  const [beratungsFlaeche, setBeratungsFlaeche] = useState("")
+  const [beratungsKalamitaet, setBeratungsKalamitaet] = useState(false)
+  const [beratungsLaeuft, setBeratungsLaeuft] = useState(false)
+  const [beratungsErgebnis, setBeratungsErgebnis] = useState<{
+    synthese: string
+    programme: unknown[]
+    kombinationen: unknown[]
+    ki_synthese: boolean
+  } | null>(null)
+  const [beratungsFehler, setBeratungsFehler] = useState<string | null>(null)
+
+  async function starteBeratung() {
+    if (!beratungsFrage.trim()) return
+    setBeratungsLaeuft(true)
+    setBeratungsErgebnis(null)
+    setBeratungsFehler(null)
+    try {
+      const res = await fetch("/api/foerderung/beraten", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          frage: beratungsFrage,
+          bundesland: beratungsBundesland || undefined,
+          waldtyp: "privatwald",
+          flaeche_ha: beratungsFlaeche ? parseFloat(beratungsFlaeche) : undefined,
+          kalamitaet: beratungsKalamitaet ? "schaden" : undefined,
+        }),
+      })
+      const data = await res.json()
+      if (data.error) throw new Error(data.error)
+      setBeratungsErgebnis(data)
+    } catch (e: unknown) {
+      setBeratungsFehler(e instanceof Error ? e.message : "Fehler bei der Beratung")
+    } finally {
+      setBeratungsLaeuft(false)
+    }
+  }
+
+  // ── Filter State ──
   const [suche, setSuche] = useState("")
   const [bundesland, setBundesland] = useState("")
   const [typ, setTyp] = useState("")
@@ -491,6 +533,140 @@ export default function FoerderungPage() {
               : "Suche nach passenden Förderprogrammen für Ihre Projekte"}
           </p>
         </div>
+      </div>
+
+      {/* KI-Förderberater Block */}
+      <div className="bg-gradient-to-br from-[#1a2412] to-[#161616] border border-emerald-900/40 rounded-2xl p-6 mb-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 bg-emerald-500/20 rounded-lg">
+            <TreePine className="w-5 h-5 text-emerald-400" />
+          </div>
+          <div>
+            <h2 className="text-white font-semibold text-base">KI-Förderberater</h2>
+            <p className="text-zinc-400 text-xs">Stellen Sie eine Frage zu Fördermöglichkeiten — KI durchsucht 255 Programme</p>
+          </div>
+        </div>
+
+        {/* Eingabe */}
+        <div className="space-y-3">
+          <textarea
+            value={beratungsFrage}
+            onChange={(e) => setBeratungsFrage(e.target.value)}
+            placeholder="z.B. Welche Förderung gibt es für Wiederbewaldung nach Borkenkäfer in Bayern? Oder: Wie kombiniere ich GAK und ELER-Förderung?"
+            className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-700/60 resize-none"
+            rows={3}
+            onKeyDown={(e) => { if (e.key === "Enter" && e.metaKey) starteBeratung() }}
+          />
+
+          <div className="flex flex-wrap gap-3 items-end">
+            <div className="flex-1 min-w-[140px]">
+              <label className="text-xs text-zinc-500 mb-1 block">Bundesland (optional)</label>
+              <select
+                value={beratungsBundesland}
+                onChange={(e) => setBeratungsBundesland(e.target.value)}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-700/60"
+              >
+                <option value="">Alle Bundesländer</option>
+                {BUNDESLAENDER.map((bl) => (
+                  <option key={bl} value={bl}>{bl}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="w-32">
+              <label className="text-xs text-zinc-500 mb-1 block">Fläche (ha)</label>
+              <input
+                type="number"
+                value={beratungsFlaeche}
+                onChange={(e) => setBeratungsFlaeche(e.target.value)}
+                placeholder="z.B. 5.5"
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-700/60"
+              />
+            </div>
+
+            <label className="flex items-center gap-2 cursor-pointer pb-1">
+              <input
+                type="checkbox"
+                checked={beratungsKalamitaet}
+                onChange={(e) => setBeratungsKalamitaet(e.target.checked)}
+                className="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-emerald-500"
+              />
+              <span className="text-sm text-zinc-300">Kalamität / Schaden</span>
+            </label>
+
+            <button
+              onClick={starteBeratung}
+              disabled={beratungsLaeuft || !beratungsFrage.trim()}
+              className="flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-zinc-700 disabled:text-zinc-500 text-white rounded-xl text-sm font-medium transition-colors"
+            >
+              {beratungsLaeuft ? (
+                <><Loader2 className="w-4 h-4 animate-spin" /> Analysiere...</>
+              ) : (
+                <><Search className="w-4 h-4" /> Beraten lassen</>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Fehler */}
+        {beratungsFehler && (
+          <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-sm text-red-400">
+            {beratungsFehler}
+          </div>
+        )}
+
+        {/* Ergebnis */}
+        {beratungsErgebnis && (
+          <div className="mt-5 space-y-4 border-t border-emerald-900/30 pt-5">
+            {/* KI-Synthese */}
+            {beratungsErgebnis.synthese && (
+              <div className="bg-[#0f0f0f] rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
+                  <span className="text-xs text-emerald-400 font-medium">
+                    {beratungsErgebnis.ki_synthese ? "KI-Analyse (Claude)" : "Automatische Analyse"}
+                  </span>
+                </div>
+                <p className="text-sm text-zinc-200 leading-relaxed whitespace-pre-wrap">{beratungsErgebnis.synthese}</p>
+              </div>
+            )}
+
+            {/* Top Programme */}
+            {Array.isArray(beratungsErgebnis.programme) && beratungsErgebnis.programme.length > 0 && (
+              <div>
+                <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider mb-2">
+                  {beratungsErgebnis.programme.length} passende Programme
+                </p>
+                <div className="grid gap-2">
+                  {(beratungsErgebnis.programme as Array<{id:number,name:string,bundesland:string,foerdersatz_prozent:number,antragsfrist:string,url:string}>).slice(0, 5).map((p) => (
+                    <div key={p.id} className="flex items-center justify-between bg-[#0f0f0f] rounded-lg px-3 py-2.5 border border-[#1e1e1e]">
+                      <div>
+                        <p className="text-sm text-white font-medium">{p.name}</p>
+                        <p className="text-xs text-zinc-500">{p.bundesland} {p.foerdersatz_prozent ? `· ${p.foerdersatz_prozent}%` : ""} {p.antragsfrist ? `· Frist: ${p.antragsfrist}` : ""}</p>
+                      </div>
+                      {p.url && (
+                        <a href={p.url} target="_blank" rel="noopener noreferrer"
+                          className="ml-3 p-1.5 text-zinc-500 hover:text-emerald-400 transition-colors flex-shrink-0">
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Kombinationen */}
+            {Array.isArray(beratungsErgebnis.kombinationen) && beratungsErgebnis.kombinationen.length > 0 && (
+              <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-3">
+                <p className="text-xs text-amber-400 font-medium mb-1">💡 Kombinierbar</p>
+                {(beratungsErgebnis.kombinationen as Array<{prog_a_name:string,prog_b_name:string,bedingung:string}>).map((k, i) => (
+                  <p key={i} className="text-xs text-zinc-300">{k.prog_a_name} + {k.prog_b_name}{k.bedingung ? ` — ${k.bedingung}` : ""}</p>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Suchleiste + Filter */}
