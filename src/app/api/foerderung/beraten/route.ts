@@ -169,7 +169,7 @@ export async function POST(req: NextRequest) {
           : '';
 
         const message = await client.messages.create({
-          model: 'claude-sonnet-4-6',
+          model: 'claude-3-5-sonnet-20241022',
           max_tokens: 1024,
           system: 'Du bist ein Experte für deutsche Forstförderung. Du hilfst Waldbesitzern und Forstdienstleistern dabei, passende Förderprogramme zu finden und zu kombinieren. Antworte präzise, klar und praktisch auf Deutsch.',
           messages: [{
