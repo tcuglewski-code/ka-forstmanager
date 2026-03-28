@@ -37,8 +37,46 @@ function KontaktModal({ kontakt, onClose, onSave }: { kontakt?: Kontakt | null; 
     forstamt: kontakt?.forstamt ?? "",
     revier: kontakt?.revier ?? "",
     adresse: kontakt?.adresse ?? "",
+    // Sprint FY (G1): PLZ + Ort Felder
+    plz: "",
+    ort: "",
     notizen: kontakt?.notizen ?? "",
   })
+
+  // Sprint FY (G1): PLZ → Ort Autofill
+  const handlePlzBlur = async () => {
+    if (!form.plz || form.plz.length < 5) return
+    try {
+      const res = await fetch(`https://api.zippopotam.us/de/${form.plz}`)
+      if (res.ok) {
+        const data = await res.json()
+        if (data.places?.[0]) {
+          setForm(f => ({ ...f, ort: data.places[0]["place name"] }))
+        }
+      }
+    } catch {
+      // Stille Fehler
+    }
+  }
+
+  // Sprint FY (G2): Forstamt-Vorschläge
+  const [forstamtSuggestions, setForstamtSuggestions] = useState<Array<{ name: string; forstamt: string }>>([])
+  const [showForstamtDropdown, setShowForstamtDropdown] = useState(false)
+
+  const searchForstamt = async (q: string) => {
+    if (q.length < 2) { setForstamtSuggestions([]); return }
+    try {
+      const res = await fetch(`/api/kontakte/suche?q=${encodeURIComponent(q)}&typ=foerster`)
+      if (res.ok) {
+        const data = await res.json()
+        const unique = Array.from(new Set(data.map((k: { forstamt?: string }) => k.forstamt).filter(Boolean)))
+        setForstamtSuggestions(unique.slice(0, 5).map(f => ({ name: String(f), forstamt: String(f) })))
+        setShowForstamtDropdown(true)
+      }
+    } catch {
+      // Stille Fehler
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -85,13 +123,63 @@ function KontaktModal({ kontakt, onClose, onSave }: { kontakt?: Kontakt | null; 
                 {TYPEN.map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
               </select>
             </div>
-            {[["Telefon", "telefon", "tel"], ["E-Mail", "email", "email"], ["Forstamt", "forstamt", "text"], ["Revier", "revier", "text"], ["Adresse", "adresse", "text"]].map(([label, key, type]) => (
-              <div key={key}>
-                <label className="block text-xs text-zinc-400 mb-1">{label}</label>
-                <input type={type} value={(form as Record<string, string>)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Telefon</label>
+              <input type="tel" value={form.telefon} onChange={e => setForm(f => ({ ...f, telefon: e.target.value }))}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">E-Mail</label>
+              <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+            </div>
+            {/* Sprint FY (G2): Forstamt mit Autocomplete */}
+            <div className="relative">
+              <label className="block text-xs text-zinc-400 mb-1">Forstamt</label>
+              <input type="text" value={form.forstamt}
+                onChange={e => { setForm(f => ({ ...f, forstamt: e.target.value })); searchForstamt(e.target.value) }}
+                onFocus={() => form.forstamt && searchForstamt(form.forstamt)}
+                onBlur={() => setTimeout(() => setShowForstamtDropdown(false), 200)}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              {showForstamtDropdown && forstamtSuggestions.length > 0 && (
+                <div className="absolute z-10 top-full mt-1 w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg max-h-32 overflow-y-auto">
+                  {forstamtSuggestions.map((s, i) => (
+                    <button key={i} type="button" onClick={() => { setForm(f => ({ ...f, forstamt: s.forstamt })); setShowForstamtDropdown(false) }}
+                      className="w-full text-left px-3 py-2 text-sm text-zinc-300 hover:bg-[#222] transition-colors">
+                      {s.forstamt}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Revier</label>
+              <input type="text" value={form.revier} onChange={e => setForm(f => ({ ...f, revier: e.target.value }))}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+            </div>
+            {/* Sprint FY (G1): PLZ + Ort mit Autofill */}
+            <div className="grid grid-cols-3 gap-2">
+              <div>
+                <label className="block text-xs text-zinc-400 mb-1">PLZ</label>
+                <input type="text" value={form.plz}
+                  onChange={e => setForm(f => ({ ...f, plz: e.target.value }))}
+                  onBlur={handlePlzBlur}
+                  placeholder="12345"
                   className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
               </div>
-            ))}
+              <div className="col-span-2">
+                <label className="block text-xs text-zinc-400 mb-1">Ort</label>
+                <input type="text" value={form.ort}
+                  onChange={e => setForm(f => ({ ...f, ort: e.target.value }))}
+                  placeholder="wird automatisch befüllt"
+                  className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 placeholder-zinc-600" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Adresse (Straße)</label>
+              <input type="text" value={form.adresse} onChange={e => setForm(f => ({ ...f, adresse: e.target.value }))}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+            </div>
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
               <textarea value={form.notizen} onChange={e => setForm(f => ({ ...f, notizen: e.target.value }))} rows={3}
