@@ -36,10 +36,13 @@ const STATUS_FARBEN: Record<string, string> = {
   geprueft: "bg-sky-500/20 text-sky-400",
   angebot: "bg-violet-500/20 text-violet-400",
   bestaetigt: "bg-amber-500/20 text-amber-400",
+  angenommen: "bg-green-500/20 text-green-400",  // Sprint FP (A2)
   in_ausfuehrung: "bg-emerald-500/20 text-emerald-400",
-  abgeschlossen: "bg-zinc-500/20 text-zinc-400",
+  abgeschlossen: "bg-green-600/30 text-green-300",  // Sprint FP (A2): grüner Badge
   laufend: "bg-emerald-500/20 text-emerald-400",
   auftrag: "bg-amber-500/20 text-amber-400",
+  maengel_offen: "bg-red-500/20 text-red-400",  // Sprint FV
+  abnahme: "bg-purple-500/20 text-purple-400",  // Sprint FV
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -47,10 +50,13 @@ const STATUS_LABELS: Record<string, string> = {
   geprueft: "Geprüft",
   angebot: "Angebot",
   bestaetigt: "Bestätigt",
+  angenommen: "Angenommen",  // Sprint FP (A2)
   in_ausfuehrung: "In Ausführung",
   abgeschlossen: "Abgeschlossen",
   laufend: "Laufend",
   auftrag: "Auftrag",
+  maengel_offen: "Mängel offen",  // Sprint FV
+  abnahme: "Abnahme",  // Sprint FV
 }
 
 const TYP_FARBEN: Record<string, string> = {

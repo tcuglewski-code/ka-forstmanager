@@ -65,7 +65,7 @@ export default function RechnungenPage() {
     await fetchAll()
   }
 
-  // Sprint Q: Auto-Betrag aus Wirtschaftlichkeit laden
+  // Sprint Q + FP (A5): Auto-Laden aus Auftrag (Betrag, Kundename, Bezeichnung)
   async function onAuftragSelected(auftragId: string) {
     setForm(prev => ({ ...prev, auftragId }))
     setSelectedAuftragLink(auftragId ? `/auftraege/${auftragId}` : "")
@@ -73,18 +73,39 @@ export default function RechnungenPage() {
 
     setLoadingBetrag(true)
     try {
-      const r = await fetch(`/api/auftraege/${auftragId}/wirtschaftlichkeit`)
-      const w = await r.json()
+      // Sprint FP (A5): Auch Auftragsdaten laden für Kundename + Bezeichnung
+      const [wirtschaftRes, auftragRes] = await Promise.all([
+        fetch(`/api/auftraege/${auftragId}/wirtschaftlichkeit`),
+        fetch(`/api/auftraege/${auftragId}`),
+      ])
+      const w = await wirtschaftRes.json()
+      const auftragData = await auftragRes.json()
+
+      // Betrag aus Wirtschaftlichkeit
+      let betrag = ""
       if (w.umsatz && w.umsatz > 0) {
-        setForm(prev => ({ ...prev, betrag: String(w.umsatz) }))
+        betrag = String(w.umsatz)
       } else if (w.stundenAnzahl > 0) {
-        // Fallback: Stunden × vollkosten aus Config
         const config = await fetch("/api/einstellungen/config").then(r => r.json())
         const vollkosten = parseFloat(config.vollkosten_pro_stunde ?? "43.50")
-        setForm(prev => ({ ...prev, betrag: String(Math.round(w.stundenAnzahl * vollkosten * 100) / 100) }))
+        betrag = String(Math.round(w.stundenAnzahl * vollkosten * 100) / 100)
       }
+
+      // Sprint FP (A5): Notizen mit Kunde + Bezeichnung vorausfüllen
+      const kunde = auftragData.waldbesitzer || ""
+      const bezeichnung = auftragData.titel || ""
+      const notizen = [
+        kunde ? `Kunde: ${kunde}` : "",
+        bezeichnung ? `Auftrag: ${bezeichnung}` : "",
+      ].filter(Boolean).join("\n")
+
+      setForm(prev => ({
+        ...prev,
+        betrag: betrag || prev.betrag,
+        notizen: notizen || prev.notizen,
+      }))
     } catch {
-      // Fehler ignorieren, Betrag bleibt leer
+      // Fehler ignorieren
     }
     setLoadingBetrag(false)
   }

@@ -81,6 +81,17 @@ export async function PATCH(
   const updateData: Record<string, unknown> = {}
 
   if (body.status) updateData.status = body.status
+
+  // ─── Sprint FP (A1): Wenn Angebot "angenommen" → Auftrag-Status updaten ────
+  if (body.status === "angenommen") {
+    const angebot = await prisma.angebot.findUnique({ where: { id } })
+    if (angebot?.auftragId) {
+      await prisma.auftrag.update({
+        where: { id: angebot.auftragId },
+        data: { status: "angenommen" },
+      })
+    }
+  }
   if (body.waldbesitzerName !== undefined) updateData.waldbesitzerName = body.waldbesitzerName
   if (body.waldbesitzerEmail !== undefined) updateData.waldbesitzerEmail = body.waldbesitzerEmail
   if (body.flaeche_ha !== undefined) updateData.flaeche_ha = body.flaeche_ha ? parseFloat(body.flaeche_ha) : null
