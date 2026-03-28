@@ -234,6 +234,12 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
                             {p.foerdersatz}
                           </span>
                         )}
+                        {/* Antragsfrist-Hinweis wenn vorhanden */}
+                        {p.antragsfrist && (
+                          <span className="inline-flex items-center gap-1 text-xs text-amber-400">
+                            📅 Frist: {p.antragsfrist}
+                          </span>
+                        )}
                       </div>
                     </div>
                     {p.url && (
