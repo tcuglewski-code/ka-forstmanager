@@ -213,7 +213,7 @@ model SaisonAnmeldung {
   @@unique([saisonId, mitarbeiterId])
 }
 
-// LAGER
+// LAGER (Sprint FS erweitert)
 model LagerArtikel {
   id             String          @id @default(cuid())
   name           String
@@ -223,6 +223,9 @@ model LagerArtikel {
   mindestbestand Float           @default(0)
   lagerort       String?
   artikelnummer  String?
+  // Sprint FS (C4-C6): Einkaufs- und Verkaufspreise
+  einkaufspreis  Float?
+  verkaufspreis  Float?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   bewegungen     LagerBewegung[]
@@ -723,7 +726,7 @@ model SystemConfig {
   updatedAt DateTime @updatedAt
 }
 
-// ANGEBOTE (Sprint T)
+// ANGEBOTE (Sprint T + FQ)
 model Angebot {
   id                String    @id @default(cuid())
   nummer            String?   @unique
@@ -740,6 +743,13 @@ model Angebot {
   status            String    @default("entwurf") // entwurf, versendet, angenommen, abgelehnt
   gueltigBis        DateTime?
   notizen           String?
+  // Sprint FQ (B5): Ersteller für Berechtigungsprüfung
+  createdById       String?
+  // Sprint FQ (B6): Kundenbudget als optionales Feld
+  budgetKunde       Float?
+  // Sprint FQ (B1): Kalkulations-Transparenz
+  kalkulationsModus String?   // "flaeche" | "stueck" | "stunden"
+  kalkulationsDetails String? // JSON mit Berechnungsdetails
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 }

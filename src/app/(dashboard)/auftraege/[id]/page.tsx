@@ -849,6 +849,34 @@ export default function AuftragDetailPage() {
                 📋 Angebot erstellen
               </button>
             )}
+            {/* Sprint FQ (B3): Gegenangebot erstellen */}
+            {(auftrag.status === "angebot" || auftrag.status === "angenommen") && (
+              <button
+                onClick={async () => {
+                  const r = await fetch("/api/angebote", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      auftragId: auftrag.id,
+                      waldbesitzerName: auftrag.waldbesitzer,
+                      waldbesitzerEmail: auftrag.waldbesitzerEmail,
+                      flaeche_ha: auftrag.flaeche_ha,
+                      beschreibung: `Gegenangebot zu ${auftrag.nummer ?? auftrag.titel}`,
+                    }),
+                  })
+                  if (r.ok) {
+                    const data = await r.json()
+                    toast.success(`Gegenangebot ${data.nummer} erstellt`)
+                    router.push(`/angebote`)
+                  } else {
+                    toast.error("Fehler beim Erstellen des Gegenangebots")
+                  }
+                }}
+                className="px-4 py-2 bg-violet-500/20 border border-violet-500/40 text-violet-400 rounded-lg text-sm hover:bg-violet-500/30 transition-colors"
+              >
+                📝 Gegenangebot
+              </button>
+            )}
             {wpAdminUrl && (
               <a
                 href={wpAdminUrl}
