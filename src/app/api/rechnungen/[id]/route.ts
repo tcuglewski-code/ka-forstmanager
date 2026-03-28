@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import { isAdmin } from "@/lib/permissions"
+// Sprint FW (E5): Email bei Freigabe
+import { sendEmail, rechnungEmailHtml } from "@/lib/email"
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -32,8 +34,35 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       ...(body.pdfUrl !== undefined && { pdfUrl: body.pdfUrl }),
       ...(body.faelligAm && { faelligAm: new Date(body.faelligAm) }),
     },
-    include: { auftrag: { select: { id: true, titel: true } } },
+    include: {
+      auftrag: {
+        select: {
+          id: true,
+          titel: true,
+          waldbesitzer: true,
+          waldbesitzerEmail: true,
+        },
+      },
+    },
   })
+
+  // Sprint FW (E5): Email bei Freigabe senden
+  if (body.status === "freigegeben" && rechnung.auftrag?.waldbesitzerEmail) {
+    const emailHtml = rechnungEmailHtml({
+      rechnungNummer: rechnung.nummer,
+      kundenName: rechnung.auftrag.waldbesitzer ?? "Kunde",
+      betrag: rechnung.betrag,
+      faelligAm: rechnung.faelligAm?.toISOString(),
+    })
+
+    // Async Email senden (nicht blockierend)
+    sendEmail({
+      to: rechnung.auftrag.waldbesitzerEmail,
+      subject: `Rechnung ${rechnung.nummer} - Koch Aufforstung GmbH`,
+      html: emailHtml,
+    }).catch(err => console.error("[Rechnung Email Fehler]", err))
+  }
+
   return NextResponse.json(rechnung)
 }
 
