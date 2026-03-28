@@ -1,6 +1,10 @@
 "use client"
 
+import { useState } from "react"
 import { Sidebar } from "./Sidebar"
+import { ForstManagerTour } from "@/components/tour/ForstManagerTour"
+import { QuickSearch } from "@/components/search/QuickSearch"
+import { KeyboardShortcuts } from "@/components/shortcuts/KeyboardShortcuts"
 
 interface AppShellProps {
   children: React.ReactNode
@@ -8,6 +12,8 @@ interface AppShellProps {
 }
 
 export function AppShell({ children, title }: AppShellProps) {
+  const [searchOpen, setSearchOpen] = useState(false)
+
   return (
     <div className="flex min-h-screen bg-[#0f0f0f]">
       <Sidebar />
@@ -19,6 +25,11 @@ export function AppShell({ children, title }: AppShellProps) {
         )}
         <main className="p-8">{children}</main>
       </div>
+
+      {/* Global Components */}
+      <ForstManagerTour autoStart={true} />
+      <QuickSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      <KeyboardShortcuts onOpenSearch={() => setSearchOpen(true)} />
     </div>
   )
 }

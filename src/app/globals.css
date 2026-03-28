@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "driver.js/dist/driver.css";
 
 :root {
   --background: #0f0f0f;
@@ -39,4 +40,52 @@ body {
 /* Date input colors */
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1) opacity(0.4);
+}
+
+/* Driver.js Tour Styles */
+.driver-popover {
+  background: #1a1a1a !important;
+  border: 1px solid #2a2a2a !important;
+  color: #fff !important;
+}
+
+.driver-popover-title {
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+.driver-popover-description {
+  color: #a1a1aa !important;
+}
+
+.driver-popover-progress-text {
+  color: #71717a !important;
+}
+
+.driver-popover-prev-btn,
+.driver-popover-next-btn {
+  background: #2C3A1C !important;
+  color: #34d399 !important;
+  border: none !important;
+  font-weight: 500 !important;
+}
+
+.driver-popover-prev-btn:hover,
+.driver-popover-next-btn:hover {
+  background: #3d4f28 !important;
+}
+
+.driver-popover-close-btn {
+  color: #71717a !important;
+}
+
+.driver-popover-close-btn:hover {
+  color: #fff !important;
+}
+
+.driver-popover-arrow-side-left.driver-popover-arrow,
+.driver-popover-arrow-side-right.driver-popover-arrow,
+.driver-popover-arrow-side-top.driver-popover-arrow,
+.driver-popover-arrow-side-bottom.driver-popover-arrow {
+  border-color: #1a1a1a !important;
 }

@@ -3,13 +3,32 @@ import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import { isAdmin, isAdminOrGF } from "@/lib/permissions"
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!isAdminOrGF(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+
+  const { searchParams } = new URL(req.url)
+  const search = searchParams.get("search")
+  const limit = Math.min(parseInt(searchParams.get("limit") ?? "100"), 200)
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const where: any = {}
+
+  // Sprint UX: Schnellsuche
+  if (search) {
+    where.OR = [
+      { nummer: { contains: search, mode: "insensitive" } },
+      { auftrag: { titel: { contains: search, mode: "insensitive" } } },
+      { auftrag: { waldbesitzer: { contains: search, mode: "insensitive" } } },
+    ]
+  }
+
   const data = await prisma.rechnung.findMany({
+    where,
     include: { auftrag: { select: { id: true, titel: true } } },
     orderBy: { createdAt: "desc" },
+    take: limit,
   })
   return NextResponse.json(data)
 }
