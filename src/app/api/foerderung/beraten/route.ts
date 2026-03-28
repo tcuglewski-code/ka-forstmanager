@@ -198,8 +198,10 @@ Erstelle eine strukturierte Empfehlung (max. 400 Wörter):
           ...dokChunks.map((d) => `${d.dokument_titel}${d.paragraf_ref ? ' ' + d.paragraf_ref : ''}`).filter(Boolean),
         ];
       } catch (err) {
-        console.error('Anthropic error:', err);
-        synthese = `${programme.length} passende Förderprogramme gefunden für ${bundeslandClean || 'Deutschland'}. Bitte prüfen Sie die Antragsfristen direkt bei den Behörden.`;
+        const errMsg = err instanceof Error ? err.message : String(err);
+        console.error('Anthropic error:', errMsg);
+        // Debug: Fehlermeldung temporär in Synthese einblenden
+        synthese = `[KI-Fehler: ${errMsg.slice(0, 200)}] — ${programme.length} Programme gefunden für ${bundeslandClean || 'Deutschland'}.`;
       }
     } else {
       synthese = `${programme.length} passende Förderprogramme gefunden${bundeslandClean ? ' für ' + bundeslandClean : ''}. ${kombinationen.length > 0 ? kombinationen.length + ' Programme können kombiniert werden.' : ''} Bitte aktuelle Antragsfristen bei den Behörden prüfen.`;
