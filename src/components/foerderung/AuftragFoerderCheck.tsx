@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { TreePine, Loader2, Euro, ExternalLink, Save, CheckCircle, MapPin, Ruler } from "lucide-react"
+import { TreePine, Loader2, Euro, ExternalLink, Save, CheckCircle, MapPin, Ruler, Plus } from "lucide-react"
 import { toast } from "sonner"
 
 interface FoerderprogrammResult {
@@ -48,6 +48,34 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [result, setResult] = useState<BeratungsResult | null>(null)
+  const [erfassteAntraege, setErfassteAntraege] = useState<Set<number>>(new Set())
+
+  /**
+   * Erfasst einen neuen Antragsverlauf für das angegebene Förderprogramm
+   */
+  const erfasseAntrag = async (programmId: number) => {
+    try {
+      const res = await fetch("/api/foerderung/antragsverlauf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          programm_id: programmId,
+          auftrag_id: auftragId,
+          status: "geplant",
+        }),
+      })
+
+      if (!res.ok) {
+        throw new Error("Fehler beim Erfassen")
+      }
+
+      setErfassteAntraege((prev) => new Set([...prev, programmId]))
+      toast.success("Antrag als 'geplant' erfasst")
+    } catch (err) {
+      console.error("Antrag erfassen Fehler:", err)
+      toast.error("Fehler beim Erfassen des Antrags")
+    }
+  }
 
   const handlePruefen = async () => {
     setLoading(true)
@@ -242,16 +270,34 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
                         )}
                       </div>
                     </div>
-                    {p.url && (
-                      <a
-                        href={p.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-shrink-0 p-1.5 rounded-lg hover:bg-[#1e1e1e] transition-colors"
-                      >
-                        <ExternalLink className="w-4 h-4 text-zinc-500 hover:text-emerald-400" />
-                      </a>
-                    )}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {/* Antrag erfassen Button */}
+                      {erfassteAntraege.has(p.id) ? (
+                        <span className="flex items-center gap-1 text-xs text-emerald-400">
+                          <CheckCircle className="w-3 h-3" />
+                          erfasst
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => erfasseAntrag(p.id)}
+                          className="flex items-center gap-1 text-xs text-zinc-600 hover:text-emerald-400 transition-colors"
+                          title="Antrag als geplant erfassen"
+                        >
+                          <Plus className="w-3 h-3" />
+                          Antrag erfassen
+                        </button>
+                      )}
+                      {p.url && (
+                        <a
+                          href={p.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1.5 rounded-lg hover:bg-[#1e1e1e] transition-colors"
+                        >
+                          <ExternalLink className="w-4 h-4 text-zinc-500 hover:text-emerald-400" />
+                        </a>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
