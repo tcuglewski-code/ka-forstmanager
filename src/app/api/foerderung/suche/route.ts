@@ -11,24 +11,82 @@ const TYP_KATEGORIEN: Record<string, string[]> = {
   sonstiges: ["foerderung_allgemein", "forschung", "klimaanpassung", "zaunbau"],
 }
 
+// Synonyme-Mapping für semantische Keyword-Expansion
+// Fachbegriffe werden auf DB-kompatible Suchbegriffe erweitert
+const KEYWORD_SYNONYME: Record<string, string> = {
+  borkenkäfer: "kalamität wiederbewaldung waldschutz",
+  borkenkaefer: "kalamität wiederbewaldung waldschutz",
+  käfer: "waldschutz kalamität",
+  sturm: "kalamität wiederbewaldung sturmschaden",
+  sturmschaden: "kalamität wiederbewaldung",
+  trockenheit: "klimaanpassung waldumbau",
+  dürre: "klimaanpassung waldumbau",
+  fichte: "nadelholz wiederbewaldung waldumbau",
+  fichtenwald: "nadelholz wiederbewaldung waldumbau",
+  eiche: "laubholz waldumbau",
+  buche: "laubholz waldumbau",
+  lärche: "laubholz waldumbau",
+  mischwald: "waldumbau klimaanpassung",
+  pflanzung: "erstaufforstung wiederbewaldung",
+  aufforsten: "erstaufforstung wiederbewaldung",
+  zaun: "zaunbau wildschutz",
+  wildschutz: "zaunbau wildschutz",
+}
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
     const q = searchParams.get("q") || ""
     const bundesland = searchParams.get("bundesland") || ""
     const typ = searchParams.get("typ") || ""
+    const semantic = searchParams.get("semantic") === "1"
 
     const params: any[] = []
     const conditions: string[] = []
     let idx = 1
 
-    // Volltext-Suche (ILIKE Fallback)
+    // Semantische Suche: Keyword-Expansion mit Synonymen
+    // Erweitert Suchbegriffe um fachlich verwandte Terme
     if (q.trim()) {
-      conditions.push(
-        `(name ILIKE $${idx} OR foerdergegenstand ILIKE $${idx} OR traeger ILIKE $${idx} OR foerdersatz ILIKE $${idx} OR kategorie ILIKE $${idx})`
-      )
-      params.push(`%${q.trim()}%`)
-      idx++
+      if (semantic) {
+        // Semantische Keyword-Expansion
+        let expandedQuery = q.toLowerCase()
+        
+        // Synonyme ersetzen
+        for (const [term, expansion] of Object.entries(KEYWORD_SYNONYME)) {
+          if (expandedQuery.includes(term)) {
+            expandedQuery = expandedQuery.replace(term, `${term} ${expansion}`)
+          }
+        }
+        
+        // Keywords extrahieren (>3 Zeichen, max 6 Keywords)
+        const keywords = expandedQuery
+          .split(/\s+/)
+          .filter((w) => w.length > 3)
+          .filter((w, i, arr) => arr.indexOf(w) === i) // Duplikate entfernen
+          .slice(0, 6)
+        
+        if (keywords.length > 0) {
+          // Jedes Keyword als OR-Bedingung über alle Textfelder
+          const keywordClauses = keywords
+            .map((_, i) => {
+              const paramIdx = idx + i
+              return `(name ILIKE $${paramIdx} OR foerdergegenstand ILIKE $${paramIdx} OR zielgruppe ILIKE $${paramIdx} OR foerderkulisse ILIKE $${paramIdx})`
+            })
+            .join(" OR ")
+          
+          keywords.forEach((kw) => params.push(`%${kw}%`))
+          idx += keywords.length
+          conditions.push(`(${keywordClauses})`)
+        }
+      } else {
+        // Standard ILIKE-Suche (Fallback)
+        conditions.push(
+          `(name ILIKE $${idx} OR foerdergegenstand ILIKE $${idx} OR traeger ILIKE $${idx} OR foerdersatz ILIKE $${idx} OR kategorie ILIKE $${idx})`
+        )
+        params.push(`%${q.trim()}%`)
+        idx++
+      }
     }
 
     // Bundesland-Filter
