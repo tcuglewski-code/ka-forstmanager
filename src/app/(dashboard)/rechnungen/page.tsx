@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { Receipt, Plus, Loader2, CheckCircle, ExternalLink, Printer } from "lucide-react"
+import SwiftTapButton from "@/components/payments/SwiftTapButton"
 
 interface Rechnung {
   id: string
@@ -241,6 +242,15 @@ export default function RechnungenPage() {
                         className="text-xs text-zinc-400 hover:text-white flex items-center gap-1">
                         <Printer className="w-3 h-3" /> Drucken
                       </a>
+                      {/* SwiftTap Integration für offene/freigegebene Rechnungen */}
+                      {(r.status === "offen" || r.status === "freigegeben") && (
+                        <SwiftTapButton
+                          amount={r.betrag}
+                          description={`Rechnung ${r.nummer}`}
+                          invoiceId={r.id}
+                          onPaymentSuccess={() => patch(r.id, { status: "bezahlt" })}
+                        />
+                      )}
                       {r.status === "offen" && (
                         <button onClick={() => patch(r.id, { status: "freigegeben" })} className="px-2 py-1 bg-amber-500/20 text-amber-400 rounded text-xs hover:bg-amber-500/30">
                           Freigeben
