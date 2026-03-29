@@ -21,6 +21,11 @@ model User {
   notifyMaengel Boolean @default(true)
   notifyAuftraege Boolean @default(true)
   notifyAbnahmen Boolean @default(false)
+  // Sprint Q015: 2FA TOTP
+  twoFactorSecret      String?     // Base32-encoded TOTP secret (encrypted)
+  twoFactorEnabled     Boolean     @default(false)
+  twoFactorBackupCodes String[]    @default([]) // Hashed backup codes
+  twoFactorVerifiedAt  DateTime?   // When 2FA was first verified
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   sessions    Session[]

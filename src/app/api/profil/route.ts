@@ -24,6 +24,9 @@ export async function GET() {
         lastLoginAt: true,
         permissions: true,
         createdAt: true,
+        // Sprint Q015: 2FA
+        twoFactorEnabled: true,
+        twoFactorVerifiedAt: true,
       },
     })
 
@@ -70,6 +73,9 @@ export async function PUT(req: NextRequest) {
         lastLoginAt: true,
         permissions: true,
         createdAt: true,
+        // Sprint Q015: 2FA
+        twoFactorEnabled: true,
+        twoFactorVerifiedAt: true,
       },
     })
 
