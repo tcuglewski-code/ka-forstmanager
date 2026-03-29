@@ -43,6 +43,16 @@ model Session {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+// Magic-Link Token für passwortlosen Login (Waldbesitzer)
+model MagicToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
 model Mitarbeiter {
   id                String                     @id @default(cuid())
   userId            String?                    @unique
