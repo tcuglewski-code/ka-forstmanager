@@ -5,6 +5,22 @@ import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { TreePine, Loader2, Shield, Key } from "lucide-react"
 
+// Hilfsfunktion um Redirect-URL basierend auf Rolle zu ermitteln
+async function getRedirectUrl(): Promise<string> {
+  try {
+    const res = await fetch("/api/auth/session")
+    if (res.ok) {
+      const session = await res.json()
+      if (session?.user?.role === "kunde") {
+        return "/kunde/dashboard"
+      }
+    }
+  } catch {
+    // Fallback bei Fehler
+  }
+  return "/dashboard"
+}
+
 export default function LoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState("")
@@ -56,7 +72,9 @@ export default function LoginPage() {
         if (result?.error) {
           setError("Ungültige Anmeldedaten. Bitte erneut versuchen.")
         } else {
-          router.push("/dashboard")
+          // Redirect basierend auf Rolle
+          const redirectUrl = await getRedirectUrl()
+          router.push(redirectUrl)
           router.refresh()
         }
       } else {
@@ -92,7 +110,9 @@ export default function LoginPage() {
         if (result?.error) {
           setError("Anmeldung fehlgeschlagen. Bitte erneut versuchen.")
         } else {
-          router.push("/dashboard")
+          // Redirect basierend auf Rolle
+          const redirectUrl = await getRedirectUrl()
+          router.push(redirectUrl)
           router.refresh()
         }
       }
