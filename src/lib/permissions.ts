@@ -54,6 +54,20 @@ export const ROLE_TEMPLATES: Record<string, Permission[]> = {
     "lager.view",
   ],
   baumschule: ["angebote.view"],
+  // Waldbesitzer-Kunden: nur read-only Zugriff auf eigene Daten
+  kunde: [],
+}
+
+// ============================================================
+// KUNDEN-HELPERS
+// ============================================================
+
+export function isKunde(session: Session | null): boolean {
+  return hasRole(session, "kunde")
+}
+
+export function getKundenDashboardUrl(): string {
+  return "/kunde/dashboard"
 }
 
 // Permission-Gruppen für die UI
