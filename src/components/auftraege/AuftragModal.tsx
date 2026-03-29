@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { X } from "lucide-react"
+import { X, MapPin, Plus, Trash2 } from "lucide-react"
 
 interface Saison {
   id: string
@@ -11,6 +11,18 @@ interface Gruppe {
   id: string
   name: string
 }
+
+// Flächen-Typ für Multi-Flächen (FM-05)
+interface Flaeche {
+  id: string
+  flaeche_ha: string
+  standort: string
+  forstamt: string
+  revier: string
+  lat: string
+  lng: string
+}
+
 interface Auftrag {
   id?: string
   titel?: string
@@ -22,10 +34,35 @@ interface Auftrag {
   bundesland?: string
   waldbesitzer?: string | null
   waldbesitzerEmail?: string | null
+  waldbesitzerTelefon?: string | null
+  lat?: number | null
+  lng?: number | null
   saisonId?: string | null
   gruppeId?: string | null
   startDatum?: string | null
   endDatum?: string | null
+  wizardDaten?: {
+    treffpunkt?: string
+    flaeche_forstamt?: string
+    flaeche_revier?: string
+    flaechen?: Flaeche[]
+    // Typspezifische Felder (FM-06)
+    bezugsquelle?: string
+    lieferant?: string
+    baumarten?: string
+    pflanzverband?: string
+    zauntyp?: string
+    zaunlaenge?: string
+    schutztyp?: string[]
+    schutzart?: string
+    anzahlHuellen?: string
+    robinienstab?: string
+    aufwuchsart?: string[]
+    arbeitsmethode?: string
+    turnus?: string
+    bestandstyp?: string
+    pflegeart?: string
+  } | null
 }
 
 const TYPEN = [
@@ -38,13 +75,55 @@ const TYPEN = [
   { value: "pflanzenbeschaffung", label: "Pflanzenbeschaffung" },
 ]
 
+// FM-08: Status-Liste erweitert um "geplant" und "aktiv"
 const STATUS_LIST = [
   { value: "anfrage", label: "Anfrage" },
+  { value: "geplant", label: "Geplant" },
+  { value: "aktiv", label: "Aktiv" },
   { value: "geprueft", label: "Geprüft" },
   { value: "angebot", label: "Angebot" },
   { value: "bestaetigt", label: "Bestätigt" },
   { value: "in_ausfuehrung", label: "In Ausführung" },
   { value: "abgeschlossen", label: "Abgeschlossen" },
+]
+
+// FM-06: Optionen für typspezifische Felder
+const PFLANZVERBAND_OPTIONS = [
+  { value: "", label: "— wählen —" },
+  { value: "reihe", label: "Reihenverband" },
+  { value: "dreieck", label: "Dreiecksverband" },
+  { value: "quadrat", label: "Quadratverband" },
+  { value: "unregelmaessig", label: "Unregelmäßig" },
+]
+
+const ZAUNTYP_OPTIONS = [
+  { value: "", label: "— wählen —" },
+  { value: "wildzaun", label: "Wildzaun" },
+  { value: "knotengeflecht", label: "Knotengeflecht" },
+  { value: "elektrozaun", label: "Elektrozaun" },
+  { value: "einzelschutz", label: "Einzelschutz" },
+]
+
+const SCHUTZART_OPTIONS = [
+  { value: "", label: "— wählen —" },
+  { value: "wuchshuellen", label: "Wuchshüllen" },
+  { value: "drahthosen", label: "Drahthosen" },
+  { value: "verbissschutz", label: "Verbissschutz" },
+  { value: "fegeschutz", label: "Fegeschutz" },
+]
+
+const AUFWUCHSART_OPTIONS = [
+  { value: "gras", label: "Gras" },
+  { value: "brombeere", label: "Brombeere" },
+  { value: "adlerfarn", label: "Adlerfarn" },
+  { value: "naturverjuengung", label: "Naturverjüngung" },
+  { value: "schlagabraum", label: "Schlagabraum" },
+]
+
+const ARBEITSMETHODE_OPTIONS = [
+  { value: "freischneider", label: "Freischneider" },
+  { value: "mulcher", label: "Mulcher" },
+  { value: "handarbeit", label: "Handarbeit" },
 ]
 
 const BUNDESLAENDER = [
@@ -53,6 +132,20 @@ const BUNDESLAENDER = [
   "Nordrhein-Westfalen", "Rheinland-Pfalz", "Saarland", "Sachsen",
   "Sachsen-Anhalt", "Schleswig-Holstein", "Thüringen",
 ]
+
+// Hilfsfunktion für eindeutige IDs
+const generateId = () => Math.random().toString(36).substring(2, 9)
+
+// Leere Fläche erstellen
+const createEmptyFlaeche = (): Flaeche => ({
+  id: generateId(),
+  flaeche_ha: "",
+  standort: "",
+  forstamt: "",
+  revier: "",
+  lat: "",
+  lng: "",
+})
 
 export function AuftragModal({
   auftrag,
@@ -66,6 +159,26 @@ export function AuftragModal({
   const [saisons, setSaisons] = useState<Saison[]>([])
   const [gruppen, setGruppen] = useState<Gruppe[]>([])
   const [loading, setLoading] = useState(false)
+  const [geoLoading, setGeoLoading] = useState(false)
+  
+  // FM-05: Multi-Flächen State
+  const [flaechen, setFlaechen] = useState<Flaeche[]>(() => {
+    const wizardFlaechen = auftrag?.wizardDaten?.flaechen
+    if (wizardFlaechen && wizardFlaechen.length > 0) {
+      return wizardFlaechen
+    }
+    // Initialisiere mit einer Fläche, befüllt mit existierenden Daten
+    return [{
+      id: generateId(),
+      flaeche_ha: auftrag?.flaeche_ha?.toString() ?? "",
+      standort: auftrag?.standort ?? "",
+      forstamt: auftrag?.wizardDaten?.flaeche_forstamt ?? "",
+      revier: auftrag?.wizardDaten?.flaeche_revier ?? "",
+      lat: auftrag?.lat?.toString() ?? "",
+      lng: auftrag?.lng?.toString() ?? "",
+    }]
+  })
+
   const [form, setForm] = useState({
     titel: auftrag?.titel ?? "",
     typ: auftrag?.typ ?? "pflanzung",
@@ -76,10 +189,34 @@ export function AuftragModal({
     bundesland: auftrag?.bundesland ?? "",
     waldbesitzer: auftrag?.waldbesitzer ?? "",
     waldbesitzerEmail: auftrag?.waldbesitzerEmail ?? "",
+    waldbesitzerTelefon: auftrag?.waldbesitzerTelefon ?? "",
+    lat: auftrag?.lat?.toString() ?? "",
+    lng: auftrag?.lng?.toString() ?? "",
     saisonId: auftrag?.saisonId ?? "",
     gruppeId: auftrag?.gruppeId ?? "",
     startDatum: auftrag?.startDatum?.substring(0, 10) ?? "",
     endDatum: auftrag?.endDatum?.substring(0, 10) ?? "",
+    // FM-03: Treffpunkt
+    treffpunkt: auftrag?.wizardDaten?.treffpunkt ?? "",
+    // FM-01: Forstamt/Revier (Haupt, falls Single-Fläche)
+    forstamt: auftrag?.wizardDaten?.flaeche_forstamt ?? "",
+    revier: auftrag?.wizardDaten?.flaeche_revier ?? "",
+    // FM-06: Typspezifische Felder
+    bezugsquelle: auftrag?.wizardDaten?.bezugsquelle ?? "",
+    lieferant: auftrag?.wizardDaten?.lieferant ?? "",
+    baumarten: auftrag?.wizardDaten?.baumarten ?? "",
+    pflanzverband: auftrag?.wizardDaten?.pflanzverband ?? "",
+    zauntyp: auftrag?.wizardDaten?.zauntyp ?? "",
+    zaunlaenge: auftrag?.wizardDaten?.zaunlaenge ?? "",
+    schutztyp: auftrag?.wizardDaten?.schutztyp ?? [],
+    schutzart: auftrag?.wizardDaten?.schutzart ?? "",
+    anzahlHuellen: auftrag?.wizardDaten?.anzahlHuellen ?? "",
+    robinienstab: auftrag?.wizardDaten?.robinienstab ?? "",
+    aufwuchsart: auftrag?.wizardDaten?.aufwuchsart ?? [],
+    arbeitsmethode: auftrag?.wizardDaten?.arbeitsmethode ?? "",
+    turnus: auftrag?.wizardDaten?.turnus ?? "",
+    bestandstyp: auftrag?.wizardDaten?.bestandstyp ?? "",
+    pflegeart: auftrag?.wizardDaten?.pflegeart ?? "",
   })
 
   useEffect(() => {
@@ -87,17 +224,151 @@ export function AuftragModal({
     fetch("/api/gruppen").then(r => r.json()).then(setGruppen)
   }, [])
 
+  // FM-02: GPS-Koordinaten ermitteln
+  const getGPSLocation = async () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation wird von diesem Browser nicht unterstützt")
+      return
+    }
+    setGeoLoading(true)
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setForm(f => ({
+          ...f,
+          lat: position.coords.latitude.toFixed(6),
+          lng: position.coords.longitude.toFixed(6),
+        }))
+        setGeoLoading(false)
+      },
+      (error) => {
+        console.error("GPS Fehler:", error)
+        alert("Standort konnte nicht ermittelt werden")
+        setGeoLoading(false)
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    )
+  }
+
+  // FM-02: GPS für spezifische Fläche ermitteln
+  const getGPSForFlaeche = (flaecheId: string) => {
+    if (!navigator.geolocation) {
+      alert("Geolocation wird von diesem Browser nicht unterstützt")
+      return
+    }
+    setGeoLoading(true)
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setFlaechen(prev => prev.map(f => 
+          f.id === flaecheId 
+            ? { ...f, lat: position.coords.latitude.toFixed(6), lng: position.coords.longitude.toFixed(6) }
+            : f
+        ))
+        setGeoLoading(false)
+      },
+      (error) => {
+        console.error("GPS Fehler:", error)
+        alert("Standort konnte nicht ermittelt werden")
+        setGeoLoading(false)
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    )
+  }
+
+  // FM-05: Fläche hinzufügen
+  const addFlaeche = () => {
+    setFlaechen(prev => [...prev, createEmptyFlaeche()])
+  }
+
+  // FM-05: Fläche entfernen
+  const removeFlaeche = (id: string) => {
+    if (flaechen.length <= 1) return // Mindestens eine Fläche
+    setFlaechen(prev => prev.filter(f => f.id !== id))
+  }
+
+  // FM-05: Fläche aktualisieren
+  const updateFlaeche = (id: string, field: keyof Flaeche, value: string) => {
+    setFlaechen(prev => prev.map(f => f.id === id ? { ...f, [field]: value } : f))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+
+    // FM-05: Gesamtfläche berechnen
+    const gesamtFlaeche = flaechen.reduce((sum, f) => {
+      const ha = parseFloat(f.flaeche_ha)
+      return sum + (isNaN(ha) ? 0 : ha)
+    }, 0)
+
+    // wizardDaten zusammenbauen
+    const wizardDaten = {
+      // FM-03: Treffpunkt
+      treffpunkt: form.treffpunkt || null,
+      // FM-01: Forstamt/Revier (Haupt - für Single-Fläche Kompatibilität)
+      flaeche_forstamt: flaechen[0]?.forstamt || form.forstamt || null,
+      flaeche_revier: flaechen[0]?.revier || form.revier || null,
+      // FM-05: Multi-Flächen
+      flaechen: flaechen.length > 1 || (flaechen[0]?.flaeche_ha || flaechen[0]?.standort) 
+        ? flaechen.map(f => ({
+            id: f.id,
+            flaeche_ha: f.flaeche_ha,
+            standort: f.standort,
+            forstamt: f.forstamt,
+            revier: f.revier,
+            lat: f.lat,
+            lng: f.lng,
+          }))
+        : null,
+      // FM-06: Typspezifische Felder
+      ...(form.typ === "pflanzung" && {
+        bezugsquelle: form.bezugsquelle || null,
+        lieferant: form.lieferant || null,
+        baumarten: form.baumarten || null,
+        pflanzverband: form.pflanzverband || null,
+      }),
+      ...(form.typ === "zaunbau" && {
+        zauntyp: form.zauntyp || null,
+        zaunlaenge: form.zaunlaenge || null,
+      }),
+      ...(form.typ === "kulturschutz" && {
+        schutztyp: form.schutztyp.length > 0 ? form.schutztyp : null,
+        schutzart: form.schutzart || null,
+        anzahlHuellen: form.anzahlHuellen || null,
+        robinienstab: form.robinienstab || null,
+      }),
+      ...(form.typ === "flaechenvorbereitung" && {
+        aufwuchsart: form.aufwuchsart.length > 0 ? form.aufwuchsart : null,
+        arbeitsmethode: form.arbeitsmethode || null,
+        turnus: form.turnus || null,
+      }),
+      ...(form.typ === "kulturpflege" && {
+        bestandstyp: form.bestandstyp || null,
+        pflegeart: form.pflegeart || null,
+      }),
+    }
+
     const payload = {
-      ...form,
-      flaeche_ha: form.flaeche_ha || null,
+      titel: form.titel,
+      typ: form.typ,
+      status: form.status,
+      beschreibung: form.beschreibung,
+      // FM-05: Gesamtfläche oder Single-Fläche
+      flaeche_ha: flaechen.length > 1 ? gesamtFlaeche : (form.flaeche_ha || flaechen[0]?.flaeche_ha || null),
+      standort: flaechen[0]?.standort || form.standort || null,
+      bundesland: form.bundesland || null,
+      waldbesitzer: form.waldbesitzer || null,
+      waldbesitzerEmail: form.waldbesitzerEmail || null,
+      waldbesitzerTelefon: form.waldbesitzerTelefon || null,
+      // FM-02: GPS-Koordinaten (Haupt - erste Fläche oder manuell)
+      lat: flaechen[0]?.lat || form.lat || null,
+      lng: flaechen[0]?.lng || form.lng || null,
       saisonId: form.saisonId || null,
       gruppeId: form.gruppeId || null,
       startDatum: form.startDatum || null,
       endDatum: form.endDatum || null,
+      wizardDaten,
     }
+
     const url = auftrag?.id ? `/api/auftraege/${auftrag.id}` : "/api/auftraege"
     const method = auftrag?.id ? "PATCH" : "POST"
     await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
@@ -161,10 +432,127 @@ export function AuftragModal({
                 placeholder="Beschreibung der Maßnahme..."
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              {field("Fläche (ha)", "flaeche_ha", "number", "0.00")}
-              {field("Standort", "standort", "text", "z.B. Revier Nord, Abt. 5")}
+
+            {/* FM-05: Multi-Flächen Section */}
+            <div className="border border-[#2a2a2a] rounded-lg p-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-white">Flächen</h3>
+                <button
+                  type="button"
+                  onClick={addFlaeche}
+                  className="flex items-center gap-1 text-xs text-emerald-500 hover:text-emerald-400"
+                >
+                  <Plus className="w-3 h-3" />
+                  Weitere Fläche
+                </button>
+              </div>
+              
+              {flaechen.map((flaeche, idx) => (
+                <div key={flaeche.id} className="bg-[#0a0a0a] rounded-lg p-3 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-zinc-500">Fläche {idx + 1}</span>
+                    {flaechen.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeFlaeche(flaeche.id)}
+                        className="text-zinc-500 hover:text-red-500"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs text-zinc-400 mb-1">Fläche (ha)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={flaeche.flaeche_ha}
+                        onChange={e => updateFlaeche(flaeche.id, "flaeche_ha", e.target.value)}
+                        placeholder="0.00"
+                        className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-zinc-400 mb-1">Standort</label>
+                      <input
+                        type="text"
+                        value={flaeche.standort}
+                        onChange={e => updateFlaeche(flaeche.id, "standort", e.target.value)}
+                        placeholder="z.B. Abt. 5"
+                        className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                  </div>
+                  {/* FM-01: Forstamt/Revier pro Fläche */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs text-zinc-400 mb-1">Forstamt</label>
+                      <input
+                        type="text"
+                        value={flaeche.forstamt}
+                        onChange={e => updateFlaeche(flaeche.id, "forstamt", e.target.value)}
+                        placeholder="z.B. Forstamt Arnsberg"
+                        className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-zinc-400 mb-1">Revier</label>
+                      <input
+                        type="text"
+                        value={flaeche.revier}
+                        onChange={e => updateFlaeche(flaeche.id, "revier", e.target.value)}
+                        placeholder="z.B. Revier Nord"
+                        className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                  </div>
+                  {/* FM-02: GPS pro Fläche */}
+                  <div className="flex items-end gap-2">
+                    <div className="flex-1 grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs text-zinc-400 mb-1">Breitengrad (Lat)</label>
+                        <input
+                          type="text"
+                          value={flaeche.lat}
+                          onChange={e => updateFlaeche(flaeche.id, "lat", e.target.value)}
+                          placeholder="51.4556"
+                          className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-zinc-400 mb-1">Längengrad (Lng)</label>
+                        <input
+                          type="text"
+                          value={flaeche.lng}
+                          onChange={e => updateFlaeche(flaeche.id, "lng", e.target.value)}
+                          placeholder="7.0116"
+                          className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => getGPSForFlaeche(flaeche.id)}
+                      disabled={geoLoading}
+                      className="px-3 py-2 rounded-lg bg-emerald-600/20 border border-emerald-600/30 text-emerald-500 text-xs hover:bg-emerald-600/30 transition-colors disabled:opacity-50"
+                    >
+                      <MapPin className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              
+              {flaechen.length > 1 && (
+                <div className="text-xs text-zinc-500 text-right">
+                  Gesamtfläche: {flaechen.reduce((sum, f) => sum + (parseFloat(f.flaeche_ha) || 0), 0).toFixed(2)} ha
+                </div>
+              )}
             </div>
+
+            {/* FM-03: Treffpunkt */}
+            {field("Treffpunkt mit Förster", "treffpunkt", "text", "z.B. Parkplatz Forsthaus Revier Nord")}
+            
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs text-zinc-400 mb-1">Bundesland</label>
@@ -179,7 +567,212 @@ export function AuftragModal({
               </div>
               {field("Waldbesitzer", "waldbesitzer", "text", "Name")}
             </div>
-            {field("E-Mail Waldbesitzer", "waldbesitzerEmail", "email", "waldbesitzer@example.de")}
+            {/* FM-04: Waldbesitzer Kontakt */}
+            <div className="grid grid-cols-2 gap-4">
+              {field("E-Mail Waldbesitzer", "waldbesitzerEmail", "email", "waldbesitzer@example.de")}
+              {field("Telefon Waldbesitzer", "waldbesitzerTelefon", "tel", "+49 123 456789")}
+            </div>
+
+            {/* FM-02: GPS-Koordinaten (Haupt - falls nur 1 Fläche ohne GPS) */}
+            {flaechen.length === 1 && !flaechen[0].lat && !flaechen[0].lng && (
+              <div className="border border-[#2a2a2a] rounded-lg p-4">
+                <label className="block text-xs text-zinc-400 mb-2">GPS-Standort (alternativ)</label>
+                <div className="flex items-end gap-2">
+                  <div className="flex-1 grid grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      value={form.lat}
+                      onChange={e => setForm(f => ({ ...f, lat: e.target.value }))}
+                      placeholder="Breitengrad (51.4556)"
+                      className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                    />
+                    <input
+                      type="text"
+                      value={form.lng}
+                      onChange={e => setForm(f => ({ ...f, lng: e.target.value }))}
+                      placeholder="Längengrad (7.0116)"
+                      className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={getGPSLocation}
+                    disabled={geoLoading}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600/20 border border-emerald-600/30 text-emerald-500 text-xs hover:bg-emerald-600/30 transition-colors disabled:opacity-50"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    {geoLoading ? "..." : "Standort ermitteln"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* FM-06: Typspezifische Zusatzfelder */}
+            {form.typ === "pflanzung" && (
+              <div className="border border-emerald-600/30 rounded-lg p-4 space-y-4">
+                <h3 className="text-sm font-medium text-emerald-500">Pflanzung Details</h3>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs text-zinc-400 mb-2">Bezugsquelle</label>
+                    <div className="flex gap-4">
+                      {["koch", "kunde", "baumschule"].map(opt => (
+                        <label key={opt} className="flex items-center gap-2 text-sm text-white cursor-pointer">
+                          <input
+                            type="radio"
+                            name="bezugsquelle"
+                            value={opt}
+                            checked={form.bezugsquelle === opt}
+                            onChange={e => setForm(f => ({ ...f, bezugsquelle: e.target.value }))}
+                            className="accent-emerald-500"
+                          />
+                          {opt === "koch" ? "Koch Aufforstung" : opt === "kunde" ? "Kunde" : "Baumschule direkt"}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  {field("Lieferant", "lieferant", "text", "Name der Baumschule")}
+                  <div>
+                    <label className="block text-xs text-zinc-400 mb-1">Baumarten</label>
+                    <textarea
+                      value={form.baumarten}
+                      onChange={e => setForm(f => ({ ...f, baumarten: e.target.value }))}
+                      rows={2}
+                      placeholder="z.B. 500 Eiche, 300 Buche, 200 Lärche"
+                      className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 resize-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-zinc-400 mb-1">Pflanzverband</label>
+                    <select
+                      value={form.pflanzverband}
+                      onChange={e => setForm(f => ({ ...f, pflanzverband: e.target.value }))}
+                      className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                    >
+                      {PFLANZVERBAND_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {form.typ === "zaunbau" && (
+              <div className="border border-emerald-600/30 rounded-lg p-4 space-y-4">
+                <h3 className="text-sm font-medium text-emerald-500">Zaunbau Details</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-zinc-400 mb-1">Zauntyp</label>
+                    <select
+                      value={form.zauntyp}
+                      onChange={e => setForm(f => ({ ...f, zauntyp: e.target.value }))}
+                      className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                    >
+                      {ZAUNTYP_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                    </select>
+                  </div>
+                  {field("Zaunlänge (m)", "zaunlaenge", "number", "0")}
+                </div>
+              </div>
+            )}
+
+            {form.typ === "kulturschutz" && (
+              <div className="border border-emerald-600/30 rounded-lg p-4 space-y-4">
+                <h3 className="text-sm font-medium text-emerald-500">Kulturschutz Details</h3>
+                <div>
+                  <label className="block text-xs text-zinc-400 mb-2">Schutztyp</label>
+                  <div className="flex flex-wrap gap-3">
+                    {["wuchshuellen", "drahthosen", "verbissschutz", "fegeschutz"].map(opt => (
+                      <label key={opt} className="flex items-center gap-2 text-sm text-white cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={form.schutztyp.includes(opt)}
+                          onChange={e => {
+                            if (e.target.checked) {
+                              setForm(f => ({ ...f, schutztyp: [...f.schutztyp, opt] }))
+                            } else {
+                              setForm(f => ({ ...f, schutztyp: f.schutztyp.filter(t => t !== opt) }))
+                            }
+                          }}
+                          className="accent-emerald-500"
+                        />
+                        {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-zinc-400 mb-1">Schutzart</label>
+                    <select
+                      value={form.schutzart}
+                      onChange={e => setForm(f => ({ ...f, schutzart: e.target.value }))}
+                      className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                    >
+                      {SCHUTZART_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                    </select>
+                  </div>
+                  {field("Anzahl Hüllen/Schutze", "anzahlHuellen", "number", "0")}
+                </div>
+                {field("Robinienstab", "robinienstab", "text", "z.B. 1.20m")}
+              </div>
+            )}
+
+            {form.typ === "flaechenvorbereitung" && (
+              <div className="border border-emerald-600/30 rounded-lg p-4 space-y-4">
+                <h3 className="text-sm font-medium text-emerald-500">Flächenvorbereitung Details</h3>
+                <div>
+                  <label className="block text-xs text-zinc-400 mb-2">Aufwuchsart</label>
+                  <div className="flex flex-wrap gap-3">
+                    {AUFWUCHSART_OPTIONS.map(opt => (
+                      <label key={opt.value} className="flex items-center gap-2 text-sm text-white cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={form.aufwuchsart.includes(opt.value)}
+                          onChange={e => {
+                            if (e.target.checked) {
+                              setForm(f => ({ ...f, aufwuchsart: [...f.aufwuchsart, opt.value] }))
+                            } else {
+                              setForm(f => ({ ...f, aufwuchsart: f.aufwuchsart.filter(t => t !== opt.value) }))
+                            }
+                          }}
+                          className="accent-emerald-500"
+                        />
+                        {opt.label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-zinc-400 mb-2">Arbeitsmethode</label>
+                  <div className="flex gap-4">
+                    {ARBEITSMETHODE_OPTIONS.map(opt => (
+                      <label key={opt.value} className="flex items-center gap-2 text-sm text-white cursor-pointer">
+                        <input
+                          type="radio"
+                          name="arbeitsmethode"
+                          value={opt.value}
+                          checked={form.arbeitsmethode === opt.value}
+                          onChange={e => setForm(f => ({ ...f, arbeitsmethode: e.target.value }))}
+                          className="accent-emerald-500"
+                        />
+                        {opt.label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                {field("Turnus", "turnus", "text", "z.B. 2x jährlich")}
+              </div>
+            )}
+
+            {form.typ === "kulturpflege" && (
+              <div className="border border-emerald-600/30 rounded-lg p-4 space-y-4">
+                <h3 className="text-sm font-medium text-emerald-500">Kulturpflege Details</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {field("Bestandstyp", "bestandstyp", "text", "z.B. Laubholz-Mischbestand")}
+                  {field("Pflegeart", "pflegeart", "text", "z.B. Läuterung, Freistellen")}
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs text-zinc-400 mb-1">Saison</label>

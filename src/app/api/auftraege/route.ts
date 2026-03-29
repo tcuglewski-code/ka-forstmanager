@@ -93,6 +93,12 @@ export async function POST(req: NextRequest) {
         bundesland: body.bundesland ?? null,
         waldbesitzer: body.waldbesitzer ?? null,
         waldbesitzerEmail: body.waldbesitzerEmail ?? null,
+        waldbesitzerTelefon: body.waldbesitzerTelefon ?? null,
+        // FM-02: GPS-Koordinaten
+        lat: body.lat != null && body.lat !== "" ? parseFloat(String(body.lat)) : null,
+        lng: body.lng != null && body.lng !== "" ? parseFloat(String(body.lng)) : null,
+        // wizardDaten für erweiterte Felder (FM-01, FM-03, FM-05, FM-06)
+        wizardDaten: body.wizardDaten ?? null,
         wpProjektId: body.wpProjektId ?? null,
         saisonId: body.saisonId ?? null,
         gruppeId: body.gruppeId ?? null,
