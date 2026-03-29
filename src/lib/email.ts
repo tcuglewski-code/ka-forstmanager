@@ -163,3 +163,11 @@ export function auftragStatusEmailHtml(daten: {
     </html>
   `
 }
+
+// ─── Legacy-Kompatibilitäts-Export ────────────────────────────────────────────
+// Alte Imports nutzen `emailService` — exportieren wir als Objekt
+export const emailService = {
+  sendEmail,
+  rechnungEmailHtml,
+  auftragStatusEmailHtml,
+}
