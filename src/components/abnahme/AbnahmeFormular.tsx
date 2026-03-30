@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react"
 import {
   CheckCircle, XCircle, AlertTriangle, Clock, MapPin, Plus, Trash2,
-  User, Mail, Phone, FileText, Camera, ChevronDown, ChevronUp, Search
+  User, Mail, Phone, FileText, Camera, ChevronDown, ChevronUp, Search, PenTool
 } from "lucide-react"
 import { toast } from "sonner"
+import { SignaturPad } from "./SignaturPad"
 
 // ─── Typen ────────────────────────────────────────────────────────────────────
 
@@ -106,6 +107,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
     maengelFrist: string
     gpsLat: number | null
     gpsLon: number | null
+    signaturUrl: string | null
   }>({
     datum: new Date().toISOString().slice(0, 10),
     foersterId: "",
@@ -118,6 +120,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
     maengelFrist: "",
     gpsLat: null,
     gpsLon: null,
+    signaturUrl: null,
   })
 
   const [existingStatus, setExistingStatus] = useState<string>("offen")
@@ -142,6 +145,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
           maengelFrist: a.maengelFrist?.slice(0, 10) ?? "",
           gpsLat: a.gpsLat ?? null,
           gpsLon: a.gpsLon ?? null,
+          signaturUrl: a.signaturUrl ?? null,
         })
         if ((a.haengelListe as Mangel[])?.length) setMaengelExpanded(true)
       })
@@ -230,6 +234,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
       maengelFrist: form.maengelFrist ? new Date(form.maengelFrist).toISOString() : null,
       gpsLat: form.gpsLat,
       gpsLon: form.gpsLon,
+      signaturUrl: form.signaturUrl,
     }
 
     try {
@@ -417,6 +422,22 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
           onChange={e => setForm(p => ({ ...p, abnahmeProtokoll: e.target.value }))}
           className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 resize-none"
         />
+      </div>
+
+      {/* Signatur-Pad */}
+      <div className="border border-[#2a2a2a] rounded-xl p-4 bg-[#0a0a0a]">
+        <div className="flex items-center gap-2 mb-3">
+          <PenTool className="w-4 h-4 text-emerald-400" />
+          <h4 className="text-sm font-medium text-white">Unterschrift</h4>
+        </div>
+        <SignaturPad
+          initialSignatur={form.signaturUrl}
+          onSignaturChange={(base64) => setForm(p => ({ ...p, signaturUrl: base64 }))}
+          disabled={existingStatus === "bestätigt"}
+        />
+        {existingStatus === "bestätigt" && form.signaturUrl && (
+          <p className="text-xs text-emerald-500 mt-2 text-center">✓ Signatur bereits erfasst</p>
+        )}
       </div>
 
       {/* Notizen */}
