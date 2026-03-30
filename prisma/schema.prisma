@@ -193,6 +193,26 @@ model AuftragLog {
   createdAt DateTime @default(now())
 }
 
+// AUFTRAG-TEMPLATES (Sprint Q031)
+// Vordefinierte Vorlagen für wiederkehrende Auftragstypen
+model AuftragTemplate {
+  id              String   @id @default(cuid())
+  name            String   @unique // z.B. "Standardpflanzung"
+  beschreibung    String?  // Kurzbeschreibung wann nutzen
+  typ             String   // pflanzung, kulturschutz, saatguternte, etc.
+  defaultTitel    String?  // Voreingestellter Titel
+  defaultBeschreibung String? // Voreingestellte Aufgabenbeschreibung
+  defaultFlaeche  Float?   // Typische Flächengröße
+  defaultBaumarten String? // Typische Baumarten
+  defaultZeitraum String?  // Typischer Zeitraum (z.B. "März-Mai")
+  defaultWizardDaten Json? // Typspezifische Voreinstellungen (pflanzverband, zauntyp, etc.)
+  icon            String?  // Lucide Icon Name für UI
+  sortOrder       Int      @default(0) // Sortierreihenfolge
+  aktiv           Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
 // GRUPPE
 model Gruppe {
   id                  String             @id @default(cuid())
