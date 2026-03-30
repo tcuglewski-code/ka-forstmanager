@@ -25,7 +25,7 @@ export function PraxisStatistik() {
     fetch('/api/foerderung/antragsverlauf')
       .then(r => r.json())
       .then(data => setStatistiken(data.statistik || []))
-      .catch(() => {})
+      .catch((err) => { console.error("PraxisStatistik Ladefehler:", err) })
       .finally(() => setLoading(false))
   }, [])
 

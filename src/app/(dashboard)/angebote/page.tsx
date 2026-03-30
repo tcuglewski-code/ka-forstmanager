@@ -123,7 +123,7 @@ export default function AngebotePage() {
       .then((d) => {
         if (d && typeof d === "object") setConfig(d)
       })
-      .catch(() => {})
+      .catch((err) => { console.error("Config Ladefehler:", err) })
   }, [ladeDaten])
 
   const berechneterPreis = kalkulierePreis(form, config)

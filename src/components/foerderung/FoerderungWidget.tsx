@@ -24,7 +24,7 @@ export function FoerderungWidget() {
       .then((data) => {
         setProgramme((data.data || []).slice(0, 3))
       })
-      .catch(() => {})
+      .catch((err) => { console.error("FoerderungWidget Ladefehler:", err) })
       .finally(() => setLoading(false))
   }, [])
 

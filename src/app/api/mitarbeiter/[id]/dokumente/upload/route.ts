@@ -35,7 +35,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   await fetch(`${ncBase}${ncFolder}`, {
     method: 'MKCOL',
     headers: { Authorization: `Basic ${auth64}` }
-  }).catch(() => {})
+  }).catch(() => { /* Ordner existiert bereits - kein Problem */ })
 
   // Datei hochladen
   const uploadRes = await fetch(`${ncBase}${ncPath}`, {

@@ -132,7 +132,7 @@ export default function TagesprotokollFormular({
     fetch('/api/mitarbeiter?rolle=gruppenführer')
       .then(r => r.json())
       .then((data: GruppenfuehrerOption[]) => setGruppenfuehrerListe(data))
-      .catch(() => {})
+      .catch((err) => { console.error("Gruppenführer Ladefehler:", err) })
   }, [isAdmin])
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -154,7 +154,7 @@ export default function TagesprotokollFormular({
           }))
         )
       })
-      .catch(() => {})
+      .catch((err) => { console.error("Gruppenmitglieder Ladefehler:", err) })
   }, [gruppeId])
 
   // ──────────────────────────────────────────────────────────────────────────

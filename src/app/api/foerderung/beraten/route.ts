@@ -172,7 +172,7 @@ export async function POST(req: NextRequest) {
            LIMIT 5`,
           [ids]
         );
-      } catch {}
+      } catch (err) { console.error("Kombinationen-Query Fehler:", err) }
     }
 
     // 3. Praxis-Tipps
@@ -187,7 +187,7 @@ export async function POST(req: NextRequest) {
            LIMIT 5`,
           [ids]
         );
-      } catch {}
+      } catch (err) { console.error("Praxis-Query Fehler:", err) }
     }
 
     // 4. Dokument-Chunks (RAG)
@@ -201,7 +201,7 @@ export async function POST(req: NextRequest) {
          LIMIT 10`,
         [ids]
       );
-    } catch {}
+    } catch (err) { console.error("DokChunks-Query Fehler:", err) }
 
     // 5. KI-Synthese via Anthropic (Haiku) oder Fallback
     const quellenAngaben: string[] = programme.map((p) => p.url as string).filter(Boolean);

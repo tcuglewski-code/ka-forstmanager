@@ -134,7 +134,7 @@ function DetailModal({
         const list = Array.isArray(data) ? data : data.data || []
         setAuftraege(list.map((a: any) => ({ id: a.id, titel: a.titel })))
       })
-      .catch(() => {})
+      .catch((err) => { console.error("Aufträge Ladefehler:", err) })
   }, [])
 
   async function handleSpeichern() {
