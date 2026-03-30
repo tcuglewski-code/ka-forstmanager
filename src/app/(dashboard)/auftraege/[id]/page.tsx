@@ -14,6 +14,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 import { TagesprotokollFull } from "@/components/tagesprotokoll/TagesprotokollDetail"
 import { AbnahmeStatus } from "@/components/abnahme/AbnahmeStatus"
 import { AuftragFoerderCheck } from "@/components/foerderung/AuftragFoerderCheck"
+import { FlaechenPolygon } from "@/components/karten/FlaechenPolygon"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -85,6 +86,7 @@ interface Auftrag {
   lat?: number | null
   lng?: number | null
   plusCode?: string | null
+  flaecheGeojson?: { type: "Polygon"; coordinates: number[][][] } | null
   protokolle?: { id: string; datum: string; gepflanzt?: number | null; witterung?: string | null; ersteller?: string | null; fotos?: string | null }[]
   abnahmen?: { id: string; datum: string; status: string; notizen?: string | null }[]
   rechnungen?: { id: string; nummer: string; betrag: number; status: string }[]
@@ -1015,6 +1017,18 @@ export default function AuftragDetailPage() {
               {w?.turnus && <Field label="Turnus" value={w.turnus} />}
               {w?.ziel && <Field label="Ziel" value={w.ziel} />}
             </Grid2>
+          </div>
+
+          {/* Flächen-Polygon Karte (Sprint Q017) */}
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+            <SectionHeading icon={<MapPin className="w-4 h-4" />} label="Flächenkarte" />
+            <FlaechenPolygon
+              auftragId={auftrag.id}
+              initialGeojson={auftrag.flaecheGeojson ?? null}
+              zentrum={auftrag.lat != null && auftrag.lng != null ? { lat: auftrag.lat, lng: auftrag.lng } : null}
+              bearbeitbar={true}
+              hoehe={350}
+            />
           </div>
 
           {/* Wizard-Details (typ-spezifisch) */}

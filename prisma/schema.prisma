@@ -165,6 +165,7 @@ model Auftrag {
   lat               Float?           // GPS-Koordinate Breitengrad (Sprint U)
   lng               Float?           // GPS-Koordinate Längengrad (Sprint U)
   plusCode          String?          // Google Plus Code für Forststandorte (Sprint U)
+  flaecheGeojson    Json?            // GeoJSON Polygon für Auftragsfläche (Sprint Q017)
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   saison            Saison?          @relation(fields: [saisonId], references: [id], onDelete: SetNull)
