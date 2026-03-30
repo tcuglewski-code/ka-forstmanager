@@ -7,6 +7,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import { SignaturPad } from "./SignaturPad"
+import { FotoUpload } from "../upload/FotoUpload"
 
 // ─── Typen ────────────────────────────────────────────────────────────────────
 
@@ -537,12 +538,23 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
         )}
       </div>
 
-      {/* Foto-Upload-Hinweis */}
-      <div className="flex items-center gap-3 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-        <Camera className="w-4 h-4 text-blue-400 flex-shrink-0" />
-        <p className="text-xs text-blue-300">
-          Fotos können über <strong>Nextcloud</strong> hochgeladen und dann hier verknüpft werden.
-          Pfad: <code className="text-blue-200">/Koch-Aufforstung/Projekte/</code>
+      {/* Foto-Upload */}
+      <div className="border border-[#2a2a2a] rounded-xl p-4 bg-[#0a0a0a]">
+        <div className="flex items-center gap-2 mb-3">
+          <Camera className="w-4 h-4 text-emerald-400" />
+          <h4 className="text-sm font-medium text-white">Fotos</h4>
+        </div>
+        <FotoUpload
+          folder={`/Koch-Aufforstung/Abnahmen/${auftragId}`}
+          multiple
+          onUpload={(file) => {
+            // Foto zu Form hinzufügen (optional für spätere Verknüpfung)
+            console.log("Foto hochgeladen:", file)
+          }}
+          buttonText="Fotos hochladen"
+        />
+        <p className="text-xs text-zinc-600 mt-2">
+          Fotos werden auf Nextcloud gespeichert.
         </p>
       </div>
 
