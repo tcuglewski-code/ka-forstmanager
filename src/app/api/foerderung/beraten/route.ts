@@ -218,10 +218,11 @@ export async function POST(req: NextRequest) {
         synthese = await genKISynthese(programme, frageClean, bundeslandClean, kombinationen, praxis);
         kiSynthese = true;
       } catch (err) {
-        console.error('KI-Synthese fehlgeschlagen, Fallback:', err);
+        const errMsg = err instanceof Error ? err.message : String(err);
+        console.error('KI-Synthese fehlgeschlagen, Fallback:', errMsg);
         // Fallback zu statischer Synthese
         const topProgramme = programme.slice(0, 3).map((p) => (p.name as string)).join(', ');
-        synthese = `${programme.length} passende Förderprogramm${programme.length === 1 ? '' : 'e'} gefunden${bundeslandClean ? ' für ' + bundeslandClean : ''}.\n\n**Empfohlene Programme:** ${topProgramme}${programme.length > 3 ? ` und ${programme.length - 3} weitere` : ''}.\n\n⚠️ Alle Angaben ohne Gewähr. Aktuelle Konditionen direkt bei der zuständigen Behörde prüfen.`;
+        synthese = `${programme.length} passende Förderprogramm${programme.length === 1 ? '' : 'e'} gefunden${bundeslandClean ? ' für ' + bundeslandClean : ''}.\n\n**Empfohlene Programme:** ${topProgramme}${programme.length > 3 ? ` und ${programme.length - 3} weitere` : ''}.\n\n⚠️ Alle Angaben ohne Gewähr. Aktuelle Konditionen direkt bei der zuständigen Behörde prüfen.\n\n[KI-Fehler: ${errMsg}]`;
       }
     } else {
       // Statischer Fallback ohne API-Key
