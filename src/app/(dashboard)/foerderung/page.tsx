@@ -16,7 +16,9 @@ import {
   CheckCircle,
   AlertCircle,
   Info,
+  Sparkles,
 } from "lucide-react"
+import { BeratungsErgebnis } from "@/components/foerderung/BeratungsErgebnis"
 
 // ─────────────── Types ───────────────
 
@@ -615,57 +617,33 @@ export default function FoerderungPage() {
           </div>
         )}
 
-        {/* Ergebnis */}
+        {/* Ergebnis mit Markdown-Rendering + PDF-Export */}
         {beratungsErgebnis && (
-          <div className="mt-5 space-y-4 border-t border-emerald-900/30 pt-5">
-            {/* KI-Synthese */}
-            {beratungsErgebnis.synthese && (
-              <div className="bg-[#0f0f0f] rounded-xl p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
-                  <span className="text-xs text-emerald-400 font-medium">
-                    {beratungsErgebnis.ki_synthese ? "KI-Analyse (Claude)" : "Automatische Analyse"}
-                  </span>
-                </div>
-                <p className="text-sm text-zinc-200 leading-relaxed whitespace-pre-wrap">{beratungsErgebnis.synthese}</p>
-              </div>
-            )}
-
-            {/* Top Programme */}
-            {Array.isArray(beratungsErgebnis.programme) && beratungsErgebnis.programme.length > 0 && (
-              <div>
-                <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider mb-2">
-                  {beratungsErgebnis.programme.length} passende Programme
-                </p>
-                <div className="grid gap-2">
-                  {(beratungsErgebnis.programme as Array<{id:number,name:string,bundesland:string,foerdersatz:string,antragsfrist:string,url:string}>).slice(0, 5).map((p) => (
-                    <div key={p.id} className="flex items-center justify-between bg-[#0f0f0f] rounded-lg px-3 py-2.5 border border-[#1e1e1e]">
-                      <div>
-                        <p className="text-sm text-white font-medium">{p.name || "Unbekanntes Programm"}</p>
-                        <p className="text-xs text-zinc-500">{p.bundesland} {p.foerdersatz ? `· ${p.foerdersatz}` : ""} {p.antragsfrist ? `· Frist: ${p.antragsfrist}` : ""}</p>
-                      </div>
-                      {p.url && (
-                        <a href={p.url} target="_blank" rel="noopener noreferrer"
-                          className="ml-3 p-1.5 text-zinc-500 hover:text-emerald-400 transition-colors flex-shrink-0">
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </a>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Kombinationen */}
-            {Array.isArray(beratungsErgebnis.kombinationen) && beratungsErgebnis.kombinationen.length > 0 && (
-              <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-3">
-                <p className="text-xs text-amber-400 font-medium mb-1">💡 Kombinierbar</p>
-                {(beratungsErgebnis.kombinationen as Array<{prog_a_name:string,prog_b_name:string,bedingung:string}>).map((k, i) => (
-                  <p key={i} className="text-xs text-zinc-300">{k.prog_a_name} + {k.prog_b_name}{k.bedingung ? ` — ${k.bedingung}` : ""}</p>
-                ))}
-              </div>
-            )}
-          </div>
+          <BeratungsErgebnis
+            ergebnis={beratungsErgebnis as {
+              synthese: string
+              programme: Array<{
+                id: number
+                name: string
+                bundesland: string
+                foerdersatz: string
+                antragsfrist: string
+                url: string
+                traeger?: string
+                foerdergegenstand?: string
+              }>
+              kombinationen: Array<{
+                prog_a_name: string
+                prog_b_name: string
+                bedingung: string
+              }>
+              ki_synthese: boolean
+            }}
+            frage={beratungsFrage}
+            bundesland={beratungsBundesland}
+            flaeche={beratungsFlaeche}
+            kalamitaet={beratungsKalamitaet}
+          />
         )}
       </div>
 
