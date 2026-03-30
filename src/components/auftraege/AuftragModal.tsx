@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { X, MapPin, Plus, Trash2 } from "lucide-react"
+import { X, MapPin, Plus, Trash2, FileText } from "lucide-react"
 
 interface Saison {
   id: string
@@ -10,6 +10,21 @@ interface Saison {
 interface Gruppe {
   id: string
   name: string
+}
+
+// Sprint Q031: Template Interface
+interface AuftragTemplate {
+  id: string
+  name: string
+  beschreibung?: string
+  typ: string
+  defaultTitel?: string
+  defaultBeschreibung?: string
+  defaultFlaeche?: number
+  defaultBaumarten?: string
+  defaultZeitraum?: string
+  defaultWizardDaten?: Record<string, unknown>
+  icon?: string
 }
 
 // Flächen-Typ für Multi-Flächen (FM-05)
@@ -158,6 +173,7 @@ export function AuftragModal({
 }) {
   const [saisons, setSaisons] = useState<Saison[]>([])
   const [gruppen, setGruppen] = useState<Gruppe[]>([])
+  const [templates, setTemplates] = useState<AuftragTemplate[]>([])
   const [loading, setLoading] = useState(false)
   const [geoLoading, setGeoLoading] = useState(false)
   
@@ -222,7 +238,40 @@ export function AuftragModal({
   useEffect(() => {
     fetch("/api/saisons").then(r => r.json()).then(setSaisons)
     fetch("/api/gruppen").then(r => r.json()).then(setGruppen)
+    // Sprint Q031: Templates laden
+    fetch("/api/auftraege/templates").then(r => r.json()).then(setTemplates)
   }, [])
+
+  // Sprint Q031: Template anwenden
+  const applyTemplate = (template: AuftragTemplate) => {
+    const wizardDaten = template.defaultWizardDaten ?? {}
+    setForm(prev => ({
+      ...prev,
+      titel: template.defaultTitel ?? prev.titel,
+      typ: template.typ,
+      beschreibung: template.defaultBeschreibung ?? prev.beschreibung,
+      flaeche_ha: template.defaultFlaeche?.toString() ?? prev.flaeche_ha,
+      baumarten: template.defaultBaumarten ?? prev.baumarten,
+      // WizardDaten-Felder übernehmen falls vorhanden
+      pflanzverband: (wizardDaten.pflanzverband as string) ?? prev.pflanzverband,
+      bezugsquelle: (wizardDaten.bezugsquelle as string) ?? prev.bezugsquelle,
+      zauntyp: (wizardDaten.zauntyp as string) ?? prev.zauntyp,
+      schutztyp: (wizardDaten.schutztyp as string[]) ?? prev.schutztyp,
+      schutzart: (wizardDaten.schutzart as string) ?? prev.schutzart,
+      robinienstab: (wizardDaten.robinienstab as string) ?? prev.robinienstab,
+      aufwuchsart: (wizardDaten.aufwuchsart as string[]) ?? prev.aufwuchsart,
+      arbeitsmethode: (wizardDaten.arbeitsmethode as string) ?? prev.arbeitsmethode,
+      turnus: (wizardDaten.turnus as string) ?? prev.turnus,
+      bestandstyp: (wizardDaten.bestandstyp as string) ?? prev.bestandstyp,
+    }))
+    // Fläche aktualisieren wenn Template eine default-Fläche hat
+    if (template.defaultFlaeche) {
+      setFlaechen(prev => [{
+        ...prev[0],
+        flaeche_ha: template.defaultFlaeche?.toString() ?? ""
+      }, ...prev.slice(1)])
+    }
+  }
 
   // FM-02: GPS-Koordinaten ermitteln
   const getGPSLocation = async () => {
@@ -417,6 +466,35 @@ export function AuftragModal({
 
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
           <div className="overflow-y-auto flex-1 p-6 space-y-4">
+            {/* Sprint Q031: Template-Auswahl (nur bei neuem Auftrag) */}
+            {!auftrag?.id && templates.length > 0 && (
+              <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <FileText className="w-4 h-4 text-emerald-400" />
+                  <span className="text-sm font-medium text-emerald-400">Aus Vorlage erstellen</span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {templates.map(t => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => applyTemplate(t)}
+                      className="flex flex-col items-start p-3 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg hover:border-emerald-500 hover:bg-emerald-500/5 transition-all text-left group"
+                    >
+                      <span className="text-sm font-medium text-white group-hover:text-emerald-400 transition-colors">
+                        {t.name}
+                      </span>
+                      {t.beschreibung && (
+                        <span className="text-xs text-zinc-500 mt-1 line-clamp-2">
+                          {t.beschreibung}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {field("Titel *", "titel", "text", "z.B. Frühjahrsaufforstung Revier Nord")}
             <div className="grid grid-cols-2 gap-4">
               {select("Typ *", "typ", TYPEN)}
