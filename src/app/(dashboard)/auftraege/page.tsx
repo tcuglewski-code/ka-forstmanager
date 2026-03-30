@@ -1,12 +1,13 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { RefreshCw, Filter, Eye, Plus, Sparkles, Download } from "lucide-react"
+import { RefreshCw, Filter, Eye, Plus, Sparkles, Download, List, BarChart3 } from "lucide-react"
 import { AuftragModal } from "@/components/auftraege/AuftragModal"
+import { GanttChart } from "@/components/auftraege/GanttChart"
 import Link from "next/link"
 import { toast } from "sonner"
 
-// X2: Saison-ID im Interface ergänzt
+// X2: Saison-ID im Interface ergänzt, Q048: Gruppen-ID für Gantt + Filter
 interface Auftrag {
   id: string
   titel: string
@@ -19,8 +20,9 @@ interface Auftrag {
   zeitraum?: string | null
   neuFlag?: boolean
   saison?: { id: string; name: string } | null
-  gruppe?: { name: string } | null
+  gruppe?: { id: string; name: string } | null
   startDatum?: string | null
+  endDatum?: string | null
   createdAt: string
   wpErstelltAm?: string | null
 }
@@ -116,6 +118,10 @@ export default function AuftraegePage() {
   const [gruppen, setGruppen] = useState<{ id: string; name: string }[]>([])
   // X4: Lokaler State für Bulk-Saisonzuweisung
   const [bulkSaisonId, setBulkSaisonId] = useState("")
+  // Q048: View-Mode (liste oder gantt)
+  const [viewMode, setViewMode] = useState<"liste" | "gantt">("liste")
+  // Q048: Filter nach Gruppenführer
+  const [filterGruppe, setFilterGruppe] = useState("")
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -178,7 +184,7 @@ export default function AuftraegePage() {
     return datumSort === "desc" ? db - da : da - db
   })
 
-  // X6: Saison-Filter in der Tabelle anwenden
+  // X6: Saison-Filter + Q048: Gruppen-Filter in der Tabelle anwenden
   const filtered = sortedAuftraege.filter((a) => {
     if (suche) {
       const s = suche.toLowerCase()
@@ -192,6 +198,10 @@ export default function AuftraegePage() {
     }
     if (filterSaison) {
       if (a.saison?.id !== filterSaison) return false
+    }
+    // Q048: Gruppen-Filter
+    if (filterGruppe) {
+      if (a.gruppe?.id !== filterGruppe) return false
     }
     return true
   })
@@ -289,6 +299,31 @@ export default function AuftraegePage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {/* Q048: View-Mode Toggle */}
+          <div className="flex items-center bg-[#1e1e1e] rounded-lg p-1">
+            <button
+              onClick={() => setViewMode("liste")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                viewMode === "liste"
+                  ? "bg-emerald-600 text-white"
+                  : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              <List className="w-4 h-4" />
+              Liste
+            </button>
+            <button
+              onClick={() => setViewMode("gantt")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                viewMode === "gantt"
+                  ? "bg-emerald-600 text-white"
+                  : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              <BarChart3 className="w-4 h-4" />
+              Gantt
+            </button>
+          </div>
           <button
             onClick={() => sync(false)}
             disabled={syncing}
@@ -373,6 +408,20 @@ export default function AuftraegePage() {
           {saisons.map((s) => (
             <option key={s.id} value={s.id}>
               {s.name}
+            </option>
+          ))}
+        </select>
+
+        {/* Q048: Gruppen-Filter Dropdown */}
+        <select
+          value={filterGruppe}
+          onChange={(e) => setFilterGruppe(e.target.value)}
+          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+        >
+          <option value="">Alle Gruppen</option>
+          {gruppen.map((g) => (
+            <option key={g.id} value={g.id}>
+              {g.name}
             </option>
           ))}
         </select>
@@ -570,140 +619,149 @@ export default function AuftraegePage() {
         </div>
       )}
 
-      {/* Tabelle */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-[#2a2a2a]">
-              <th className="px-4 py-3">
-                <input
-                  type="checkbox"
-                  checked={
-                    selected.length === filtered.length && filtered.length > 0
-                  }
-                  onChange={(e) =>
-                    setSelected(
-                      e.target.checked ? filtered.map((a) => a.id) : []
-                    )
-                  }
-                  className="rounded border-zinc-600"
-                />
-              </th>
-              <th className="text-left px-4 py-3 text-zinc-500 font-medium">Titel</th>
-              <th className="text-left px-4 py-3 text-zinc-500 font-medium">Waldbesitzer</th>
-              <th className="text-left px-4 py-3 text-zinc-500 font-medium">Leistung</th>
-              <th className="text-left px-4 py-3 text-zinc-500 font-medium">Fläche</th>
-              {/* X6: Saison-Spalte */}
-              <th className="text-left px-4 py-3 text-zinc-500 font-medium">Saison</th>
-              <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
-              <th className="text-left px-4 py-3 text-zinc-500 font-medium">
-                <button
-                  onClick={() =>
-                    setDatumSort((s) => (s === "desc" ? "asc" : "desc"))
-                  }
-                  className="flex items-center gap-1 hover:text-zinc-300 transition-colors"
-                >
-                  Datum {datumSort === "desc" ? "↓" : "↑"}
-                </button>
-              </th>
-              <th className="text-left px-4 py-3 text-zinc-500 font-medium" />
-            </tr>
-          </thead>
-          <tbody>
-            {loading || syncing ? (
-              <tr>
-                <td colSpan={9} className="text-center py-12 text-zinc-600">
-                  {syncing ? "Synchronisiere mit WordPress..." : "Laden..."}
-                </td>
+      {/* Q048: Conditional View - Liste oder Gantt */}
+      {viewMode === "liste" ? (
+        /* Tabelle */
+        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-[#2a2a2a]">
+                <th className="px-4 py-3">
+                  <input
+                    type="checkbox"
+                    checked={
+                      selected.length === filtered.length && filtered.length > 0
+                    }
+                    onChange={(e) =>
+                      setSelected(
+                        e.target.checked ? filtered.map((a) => a.id) : []
+                      )
+                    }
+                    className="rounded border-zinc-600"
+                  />
+                </th>
+                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Titel</th>
+                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Waldbesitzer</th>
+                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Leistung</th>
+                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Fläche</th>
+                {/* X6: Saison-Spalte */}
+                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Saison</th>
+                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
+                <th className="text-left px-4 py-3 text-zinc-500 font-medium">
+                  <button
+                    onClick={() =>
+                      setDatumSort((s) => (s === "desc" ? "asc" : "desc"))
+                    }
+                    className="flex items-center gap-1 hover:text-zinc-300 transition-colors"
+                  >
+                    Datum {datumSort === "desc" ? "↓" : "↑"}
+                  </button>
+                </th>
+                <th className="text-left px-4 py-3 text-zinc-500 font-medium" />
               </tr>
-            ) : filtered.length === 0 ? (
-              <tr>
-                <td colSpan={9} className="text-center py-12 text-zinc-600">
-                  Keine Aufträge gefunden
-                </td>
-              </tr>
-            ) : (
-              filtered.map((a) => (
-                <tr
-                  key={a.id}
-                  className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] cursor-pointer transition-colors"
-                  onClick={() => (window.location.href = `/auftraege/${a.id}`)}
-                >
-                  <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                    <input
-                      type="checkbox"
-                      checked={selected.includes(a.id)}
-                      onChange={(e) =>
-                        setSelected((prev) =>
-                          e.target.checked
-                            ? [...prev, a.id]
-                            : prev.filter((id) => id !== a.id)
-                        )
-                      }
-                      className="rounded border-zinc-600"
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-white font-medium leading-tight">
-                        {a.titel}
-                      </span>
-                      {a.neuFlag && (
-                        <span className="px-1.5 py-0.5 bg-emerald-500/30 text-emerald-300 rounded text-xs font-bold flex-shrink-0">
-                          NEU
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-zinc-400">
-                    {a.waldbesitzer ?? "–"}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-xs ${TYP_FARBEN[a.typ] ?? "bg-zinc-700/50 text-zinc-400"}`}
-                    >
-                      {typLabel(a.typ)}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-zinc-400">
-                    {a.flaeche_ha != null ? `${a.flaeche_ha} ha` : "–"}
-                  </td>
-                  {/* X6: Saison-Spalte in der Tabelle */}
-                  <td className="px-4 py-3 text-zinc-400 text-xs">
-                    {a.saison?.name ?? "–"}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-xs ${STATUS_FARBEN[a.status] ?? "bg-zinc-700 text-zinc-300"}`}
-                    >
-                      {STATUS_LABELS[a.status] ?? a.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-zinc-500">
-                    {new Date(a.wpErstelltAm ?? a.createdAt).toLocaleDateString(
-                      "de-DE",
-                      {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      }
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    <Link
-                      href={`/auftraege/${a.id}`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-zinc-600 hover:text-emerald-400 transition-colors"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </Link>
+            </thead>
+            <tbody>
+              {loading || syncing ? (
+                <tr>
+                  <td colSpan={9} className="text-center py-12 text-zinc-600">
+                    {syncing ? "Synchronisiere mit WordPress..." : "Laden..."}
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ) : filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="text-center py-12 text-zinc-600">
+                    Keine Aufträge gefunden
+                  </td>
+                </tr>
+              ) : (
+                filtered.map((a) => (
+                  <tr
+                    key={a.id}
+                    className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] cursor-pointer transition-colors"
+                    onClick={() => (window.location.href = `/auftraege/${a.id}`)}
+                  >
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                      <input
+                        type="checkbox"
+                        checked={selected.includes(a.id)}
+                        onChange={(e) =>
+                          setSelected((prev) =>
+                            e.target.checked
+                              ? [...prev, a.id]
+                              : prev.filter((id) => id !== a.id)
+                          )
+                        }
+                        className="rounded border-zinc-600"
+                      />
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-white font-medium leading-tight">
+                          {a.titel}
+                        </span>
+                        {a.neuFlag && (
+                          <span className="px-1.5 py-0.5 bg-emerald-500/30 text-emerald-300 rounded text-xs font-bold flex-shrink-0">
+                            NEU
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-zinc-400">
+                      {a.waldbesitzer ?? "–"}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-xs ${TYP_FARBEN[a.typ] ?? "bg-zinc-700/50 text-zinc-400"}`}
+                      >
+                        {typLabel(a.typ)}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-zinc-400">
+                      {a.flaeche_ha != null ? `${a.flaeche_ha} ha` : "–"}
+                    </td>
+                    {/* X6: Saison-Spalte in der Tabelle */}
+                    <td className="px-4 py-3 text-zinc-400 text-xs">
+                      {a.saison?.name ?? "–"}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-xs ${STATUS_FARBEN[a.status] ?? "bg-zinc-700 text-zinc-300"}`}
+                      >
+                        {STATUS_LABELS[a.status] ?? a.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-zinc-500">
+                      {new Date(a.wpErstelltAm ?? a.createdAt).toLocaleDateString(
+                        "de-DE",
+                        {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        }
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <Link
+                        href={`/auftraege/${a.id}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-zinc-600 hover:text-emerald-400 transition-colors"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        /* Q048: Gantt-Ansicht */
+        <GanttChart
+          auftraege={filtered}
+          onAuftragClick={(id) => (window.location.href = `/auftraege/${id}`)}
+        />
+      )}
 
       {modal.open && (
         <AuftragModal
