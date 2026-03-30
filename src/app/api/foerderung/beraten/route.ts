@@ -53,7 +53,7 @@ Erstelle eine strukturierte Förderberatung (max. 4 Absätze):
 Schreibe direkt und ohne Einleitung. Verwende Markdown (fett, Listen). Abschließend ein kurzer Haftungshinweis.`;
 
   const msg = await anthropic.messages.create({
-    model: 'claude-3-5-haiku-20241022',
+    model: 'claude-haiku-4-5',
     max_tokens: 600,
     system: systemPrompt,
     messages: [{ role: 'user', content: userPrompt }],
