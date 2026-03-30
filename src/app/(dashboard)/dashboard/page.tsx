@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { Users, Sprout, ClipboardList, TrendingUp, Package, AlertTriangle, Wrench, Clock, BookOpen, CheckSquare, DollarSign } from "lucide-react"
+import { Users, Sprout, ClipboardList, TrendingUp, Package, AlertTriangle, Wrench, Clock, BookOpen, CheckSquare, DollarSign, FileText, CalendarClock, UserCheck, Leaf } from "lucide-react"
 import Link from "next/link"
 import { FoerderungWidget } from "@/components/foerderung/FoerderungWidget"
 
@@ -8,6 +8,9 @@ async function getStats() {
   try {
     const heute = new Date()
     const in30Tagen = new Date(heute.getTime() + 30 * 24 * 60 * 60 * 1000)
+    const in7Tagen = new Date(heute.getTime() + 7 * 24 * 60 * 60 * 1000)
+    const heuteStart = new Date(heute.getFullYear(), heute.getMonth(), heute.getDate())
+    const heuteEnde = new Date(heuteStart.getTime() + 24 * 60 * 60 * 1000)
 
     const [
       aktiveMitarbeiter,
@@ -21,6 +24,10 @@ async function getStats() {
       offeneAbnahmen,
       stundenAusstehend,
       vorschuessOffen,
+      offeneFoerderantraege,
+      faelligeRechnungen7Tage,
+      aktiveMitarbeiterHeute,
+      saatgutLagerstand,
     ] = await Promise.all([
       prisma.mitarbeiter.count({ where: { status: "aktiv" } }),
       prisma.saison.count({ where: { status: "aktiv" } }),
@@ -44,6 +51,29 @@ async function getStats() {
       prisma.vorschuss.aggregate({
         where: { genehmigt: false },
         _sum: { betrag: true },
+      }),
+      // Q023: Offene Förderanträge (Angebote mit Status versendet)
+      prisma.angebot.count({
+        where: { status: "versendet" },
+      }),
+      // Q023: Fällige Rechnungen in nächsten 7 Tagen
+      prisma.rechnung.count({
+        where: {
+          faelligAm: { lte: in7Tagen, gte: heute },
+          status: { not: "bezahlt" },
+        },
+      }),
+      // Q023: Aktive Mitarbeiter heute (mit Stundeneintrag)
+      prisma.stundeneintrag.groupBy({
+        by: ["mitarbeiterId"],
+        where: {
+          datum: { gte: heuteStart, lt: heuteEnde },
+        },
+      }).then(r => r.length),
+      // Q023: Saatgut-Lagerstand (Summe Bestand für Kategorie saatgut)
+      prisma.lagerArtikel.aggregate({
+        where: { kategorie: "saatgut" },
+        _sum: { bestand: true },
       }),
     ])
 
@@ -101,6 +131,10 @@ async function getStats() {
       offeneAbnahmen,
       stundenAusstehend,
       vorschuessOffen: vorschuessOffen._sum.betrag ?? 0,
+      offeneFoerderantraege,
+      faelligeRechnungen7Tage,
+      aktiveMitarbeiterHeute,
+      saatgutLagerstand: saatgutLagerstand._sum?.bestand ?? 0,
       neuesteAuftraege,
       letzteProtokolle,
       letzteAbnahmen,
@@ -121,6 +155,10 @@ async function getStats() {
       offeneAbnahmen: 0,
       stundenAusstehend: 0,
       vorschuessOffen: 0,
+      offeneFoerderantraege: 0,
+      faelligeRechnungen7Tage: 0,
+      aktiveMitarbeiterHeute: 0,
+      saatgutLagerstand: 0,
       neuesteAuftraege: [],
       letzteProtokolle: [] as { id: string; datum: Date | string; ersteller: string | null; auftrag: { titel: string; id: string } | null }[],
       letzteAbnahmen: [] as { id: string; datum: Date | string; status: string; auftrag: { titel: string; id: string } | null }[],
@@ -215,7 +253,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* New Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <StatCard
           label="Offene Abnahmen"
           value={stats.offeneAbnahmen.toString()}
@@ -243,6 +281,37 @@ export default async function DashboardPage() {
           icon={<AlertTriangle className={`w-5 h-5 ${stats.ablaufendeQualifikationen > 0 ? "text-amber-400" : "text-emerald-400"}`} />}
           href="/qualifikationen"
           alert={stats.ablaufendeQualifikationen > 0}
+        />
+      </div>
+
+      {/* Q023: Neue KPI-Reihe */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <StatCard
+          label="Offene Förderanträge"
+          value={stats.offeneFoerderantraege.toString()}
+          icon={<FileText className={`w-5 h-5 ${stats.offeneFoerderantraege > 0 ? "text-blue-400" : "text-emerald-400"}`} />}
+          href="/angebote?status=versendet"
+          alert={stats.offeneFoerderantraege > 3}
+        />
+        <StatCard
+          label="Fällige Rechnungen (7T)"
+          value={stats.faelligeRechnungen7Tage.toString()}
+          icon={<CalendarClock className={`w-5 h-5 ${stats.faelligeRechnungen7Tage > 0 ? "text-amber-400" : "text-emerald-400"}`} />}
+          href="/rechnungen?faellig=7"
+          alert={stats.faelligeRechnungen7Tage > 0}
+        />
+        <StatCard
+          label="Aktiv heute"
+          value={stats.aktiveMitarbeiterHeute.toString()}
+          icon={<UserCheck className="w-5 h-5 text-emerald-400" />}
+          href="/stunden?datum=heute"
+        />
+        <StatCard
+          label="Saatgut Lager (kg)"
+          value={stats.saatgutLagerstand.toFixed(1)}
+          icon={<Leaf className={`w-5 h-5 ${stats.saatgutLagerstand < 10 ? "text-amber-400" : "text-emerald-400"}`} />}
+          href="/lager?kategorie=saatgut"
+          alert={stats.saatgutLagerstand < 10}
         />
       </div>
 
