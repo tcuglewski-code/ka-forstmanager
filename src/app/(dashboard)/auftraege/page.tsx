@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { RefreshCw, Filter, Eye, Plus, Sparkles } from "lucide-react"
+import { RefreshCw, Filter, Eye, Plus, Sparkles, Download } from "lucide-react"
 import { AuftragModal } from "@/components/auftraege/AuftragModal"
 import Link from "next/link"
 import { toast } from "sonner"
@@ -196,6 +196,62 @@ export default function AuftraegePage() {
     return true
   })
 
+  // CSV Export Funktion
+  const handleBulkExportCSV = () => {
+    const selectedAuftraege = auftraege.filter(a => selected.includes(a.id))
+    if (selectedAuftraege.length === 0) return
+    
+    // CSV Header
+    const headers = [
+      'ID',
+      'Titel',
+      'Waldbesitzer',
+      'Email',
+      'Typ',
+      'Status',
+      'Fläche (ha)',
+      'Bundesland',
+      'Saison',
+      'Gruppe',
+      'Erstellt am'
+    ]
+    
+    // CSV Rows
+    const rows = selectedAuftraege.map(a => [
+      a.id,
+      a.titel?.replace(/"/g, '""') || '',
+      a.waldbesitzer?.replace(/"/g, '""') || '',
+      a.waldbesitzerEmail || '',
+      typLabel(a.typ),
+      STATUS_LABELS[a.status] || a.status,
+      a.flaeche_ha != null ? String(a.flaeche_ha) : '',
+      a.bundesland || '',
+      a.saison?.name || '',
+      a.gruppe?.name || '',
+      new Date(a.wpErstelltAm || a.createdAt).toLocaleDateString('de-DE')
+    ])
+    
+    // Build CSV content with BOM for Excel compatibility
+    const bom = '\uFEFF'
+    const csvContent = bom + [
+      headers.map(h => `"${h}"`).join(';'),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(';'))
+    ].join('\n')
+    
+    // Download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `auftraege-export-${new Date().toISOString().split('T')[0]}.csv`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+    
+    toast.success(`${selectedAuftraege.length} Aufträge als CSV exportiert`)
+  }
+
   // X4: Bulk-Saisonzuweisung anwenden
   const handleBulkSaisonAnwenden = async () => {
     if (!bulkSaisonId || selected.length === 0) return
@@ -320,6 +376,54 @@ export default function AuftraegePage() {
             </option>
           ))}
         </select>
+
+        {/* Export alle (gefilterte) Aufträge */}
+        <button
+          onClick={() => {
+            if (filtered.length === 0) {
+              toast.error('Keine Aufträge zum Exportieren')
+              return
+            }
+            // CSV Header
+            const headers = [
+              'ID', 'Titel', 'Waldbesitzer', 'Email', 'Typ', 'Status',
+              'Fläche (ha)', 'Bundesland', 'Saison', 'Gruppe', 'Erstellt am'
+            ]
+            // CSV Rows
+            const rows = filtered.map(a => [
+              a.id,
+              a.titel?.replace(/"/g, '""') || '',
+              a.waldbesitzer?.replace(/"/g, '""') || '',
+              a.waldbesitzerEmail || '',
+              typLabel(a.typ),
+              STATUS_LABELS[a.status] || a.status,
+              a.flaeche_ha != null ? String(a.flaeche_ha) : '',
+              a.bundesland || '',
+              a.saison?.name || '',
+              a.gruppe?.name || '',
+              new Date(a.wpErstelltAm || a.createdAt).toLocaleDateString('de-DE')
+            ])
+            const bom = '\uFEFF'
+            const csvContent = bom + [
+              headers.map(h => `"${h}"`).join(';'),
+              ...rows.map(row => row.map(cell => `"${cell}"`).join(';'))
+            ].join('\n')
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url
+            link.download = `auftraege-alle-${new Date().toISOString().split('T')[0]}.csv`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            URL.revokeObjectURL(url)
+            toast.success(`${filtered.length} Aufträge als CSV exportiert`)
+          }}
+          className="flex items-center gap-2 px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-zinc-400 hover:text-zinc-200 hover:border-zinc-500 transition-colors ml-auto"
+        >
+          <Download className="w-4 h-4" />
+          Alle exportieren ({filtered.length})
+        </button>
       </div>
 
       {/* Bulk-Aktionsleiste */}
@@ -420,6 +524,15 @@ export default function AuftraegePage() {
             <option value="abgeschlossen">Abgeschlossen</option>
             <option value="storniert">Storniert</option>
           </select>
+
+          {/* CSV Export */}
+          <button
+            onClick={handleBulkExportCSV}
+            className="flex items-center gap-2 px-3 py-1.5 bg-blue-500/20 border border-blue-500/40 rounded-lg text-sm text-blue-400 hover:bg-blue-500/30 transition-colors"
+          >
+            <Download className="w-4 h-4" />
+            CSV Export
+          </button>
 
           {/* X3: Bulk-Löschen mit korrektem Error-Handling */}
           <button
