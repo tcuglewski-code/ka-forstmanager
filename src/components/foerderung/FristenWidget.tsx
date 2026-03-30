@@ -26,7 +26,7 @@ export function FristenWidget() {
     fetch('/api/foerderung/fristen')
       .then(r => r.json())
       .then(data => setProgramme(data.programme || []))
-      .catch(() => {})
+      .catch((err) => { console.error("FristenWidget Ladefehler:", err) })
       .finally(() => setLoading(false))
   }, [])
 

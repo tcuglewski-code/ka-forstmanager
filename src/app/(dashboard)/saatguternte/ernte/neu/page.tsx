@@ -60,7 +60,7 @@ export default function NeueErnteSeite() {
         const data = await res.json()
         setFlaechen(data.data ?? [])
       }
-    } catch {}
+    } catch (err) { console.error("Flächen-Laden Fehler:", err) }
   }, [])
 
   useEffect(() => {
@@ -92,7 +92,7 @@ export default function NeueErnteSeite() {
           }
         }
       }
-    } catch {}
+    } catch (err) { console.error("Profil-Laden/Erstellen Fehler:", err) }
   }
 
   const addSammler = () => {

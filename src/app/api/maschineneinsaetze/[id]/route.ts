@@ -30,7 +30,7 @@ export async function PATCH(
         where: { id: einsatz.fahrzeugId },
         data: { status: "verfuegbar" },
       })
-      .catch(() => {})
+      .catch((err) => { console.error("Fahrzeug-Status Reset Fehler:", err) })
   }
 
   return NextResponse.json(einsatz)

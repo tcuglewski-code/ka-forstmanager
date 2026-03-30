@@ -94,9 +94,17 @@ interface Auftrag {
 
 const STATUS_LIST = [
   { value: "anfrage", label: "Anfrage", color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
+  { value: "geplant", label: "Geplant", color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" },  // QA-01
+  { value: "aktiv", label: "Aktiv", color: "bg-lime-500/20 text-lime-400 border-lime-500/30" },  // QA-01
+  { value: "geprueft", label: "Geprüft", color: "bg-sky-500/20 text-sky-400 border-sky-500/30" },
   { value: "angebot", label: "Angebot", color: "bg-violet-500/20 text-violet-400 border-violet-500/30" },
+  { value: "bestaetigt", label: "Bestätigt", color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
+  { value: "angenommen", label: "Angenommen", color: "bg-green-500/20 text-green-400 border-green-500/30" },
   { value: "auftrag", label: "Auftrag", color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
+  { value: "in_ausfuehrung", label: "In Ausführung", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
   { value: "laufend", label: "Laufend", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
+  { value: "maengel_offen", label: "Mängel offen", color: "bg-red-500/20 text-red-400 border-red-500/30" },
+  { value: "abnahme", label: "Abnahme", color: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
   { value: "abgeschlossen", label: "Abgeschlossen", color: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30" },
 ]
 
@@ -683,7 +691,7 @@ export default function AuftragDetailPage() {
       fetch(`/api/auftraege/${auftrag.id}/wirtschaftlichkeit`)
         .then(r => r.json())
         .then(setWirtschaft)
-        .catch(() => {})
+        .catch((err) => { console.error("Wirtschaftlichkeit Ladefehler:", err) })
     }
   }, [auftrag?.id])
 
@@ -692,7 +700,7 @@ export default function AuftragDetailPage() {
       fetch(`/api/auftraege/${id}/log`)
         .then(r => r.json())
         .then(data => setAuftragLog(Array.isArray(data) ? data : []))
-        .catch(() => {})
+        .catch((err) => { console.error("AuftragLog Ladefehler:", err) })
     }
   }, [id])
 
@@ -702,13 +710,13 @@ export default function AuftragDetailPage() {
       fetch(`/api/tagesprotokoll?auftragId=${id}`)
         .then(r => r.json())
         .then(data => setTagesprotokolle(Array.isArray(data) ? data : []))
-        .catch(() => {})
+        .catch((err) => { console.error("Tagesprotokolle Ladefehler:", err) })
     }
   }, [id])
 
   // Lade System-Konfiguration für konfigurierbaren Preis pro ha (Sprint P)
   useEffect(() => {
-    fetch("/api/einstellungen/config").then(r => r.json()).then(setSysConfig).catch(() => {})
+    fetch("/api/einstellungen/config").then(r => r.json()).then(setSysConfig).catch((err) => { console.error("Config Ladefehler:", err) })
   }, [])
 
   async function handleSave() {

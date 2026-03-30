@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       where: { id: body.fahrzeugId },
       data: { status: "im_einsatz" },
     })
-    .catch(() => {})
+    .catch((err) => { console.error("Fahrzeug-Status Update Fehler:", err) })
 
   return NextResponse.json(einsatz, { status: 201 })
 }

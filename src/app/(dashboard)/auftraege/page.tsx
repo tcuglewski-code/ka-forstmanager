@@ -33,6 +33,8 @@ interface Saison {
 
 const STATUS_FARBEN: Record<string, string> = {
   anfrage: "bg-blue-500/20 text-blue-400",
+  geplant: "bg-cyan-500/20 text-cyan-400",  // QA-01: Neuer Status
+  aktiv: "bg-lime-500/20 text-lime-400",  // QA-01: Neuer Status
   geprueft: "bg-sky-500/20 text-sky-400",
   angebot: "bg-violet-500/20 text-violet-400",
   bestaetigt: "bg-amber-500/20 text-amber-400",
@@ -47,6 +49,8 @@ const STATUS_FARBEN: Record<string, string> = {
 
 const STATUS_LABELS: Record<string, string> = {
   anfrage: "Anfrage",
+  geplant: "Geplant",  // QA-01: Neuer Status
+  aktiv: "Aktiv",  // QA-01: Neuer Status
   geprueft: "Geprüft",
   angebot: "Angebot",
   bestaetigt: "Bestätigt",

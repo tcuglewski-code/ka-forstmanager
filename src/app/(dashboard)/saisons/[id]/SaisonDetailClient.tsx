@@ -220,10 +220,19 @@ export default function SaisonDetailClient({
   )
   const statusFarben: Record<string, string> = {
     anfrage: "bg-blue-500",
+    geplant: "bg-cyan-500",  // QA-01
+    aktiv: "bg-lime-500",  // QA-01
+    geprueft: "bg-sky-500",
+    angebot: "bg-violet-500",
     bestaetigt: "bg-amber-500",
+    angenommen: "bg-green-500",
     in_ausfuehrung: "bg-emerald-500",
     abgeschlossen: "bg-zinc-500",
     storniert: "bg-red-500",
+    laufend: "bg-emerald-500",
+    auftrag: "bg-amber-500",
+    maengel_offen: "bg-red-500",
+    abnahme: "bg-purple-500",
   }
 
   // ─── Mitarbeiter-Stunden berechnen ───────────────────────────────────────
