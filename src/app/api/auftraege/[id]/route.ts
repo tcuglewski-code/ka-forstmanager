@@ -42,7 +42,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       "titel", "typ", "status", "beschreibung", "standort", "bundesland",
       "waldbesitzer", "waldbesitzerEmail", "waldbesitzerTelefon",
       "baumarten", "zeitraum", "notizen", "neuFlag",
-      "saisonId", "gruppeId", "plusCode",
+      "saisonId", "gruppeId", "plusCode", "flaecheGeojson",
     ]
 
     for (const field of allowedFields) {
