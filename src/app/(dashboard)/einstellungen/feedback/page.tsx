@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { Bug, Lightbulb, HelpCircle, Clock, Filter, RefreshCw, Loader2 } from "lucide-react"
-import { PageHeader } from "@/components/ui/PageHeader"
 
 interface FeedbackEintrag {
   id: string
@@ -66,10 +65,21 @@ export default function FeedbackAdminPage() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      <PageHeader
-        title="Feedback-Übersicht"
-        description="Alle eingegangenen Feedbacks von Nutzern"
-      />
+      {/* Page Header */}
+      <div className="mb-8">
+        <h1
+          className="text-2xl font-bold mb-2"
+          style={{ color: "var(--color-on-surface)" }}
+        >
+          Feedback-Übersicht
+        </h1>
+        <p
+          className="text-sm"
+          style={{ color: "var(--color-on-surface-variant)" }}
+        >
+          Alle eingegangenen Feedbacks von Nutzern
+        </p>
+      </div>
 
       {/* Filter Bar */}
       <div
