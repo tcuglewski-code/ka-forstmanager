@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { 
   Receipt, ArrowLeft, Loader2, CheckCircle, Clock, 
-  FileText, ExternalLink, Printer, XCircle, AlertCircle 
+  FileText, ExternalLink, Printer, XCircle, AlertCircle,
+  Download, BadgeCheck
 } from "lucide-react"
 import ZipayoButton from "@/components/payments/ZipayoButton"
 
@@ -230,14 +231,35 @@ export default function RechnungDetailPage() {
 
           {/* Actions */}
           <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4 space-y-3">
-            <a
-              href={`/rechnungen/${rechnung.id}/drucken`}
-              target="_blank"
-              className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#222] border border-[#333] text-white rounded-lg hover:bg-[#2a2a2a] transition-colors"
-            >
-              <Printer className="w-4 h-4" />
-              Rechnung drucken / PDF
-            </a>
+            {/* ZUGFeRD E-Rechnung Download */}
+            <div className="relative">
+              <a
+                href={`/api/rechnungen/${rechnung.id}/pdf`}
+                download
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-lg hover:from-emerald-500 hover:to-emerald-600 transition-all font-medium"
+              >
+                <Download className="w-4 h-4" />
+                ZUGFeRD PDF herunterladen
+              </a>
+              <div className="flex items-center justify-center gap-1.5 mt-2">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs rounded-full">
+                  <BadgeCheck className="w-3 h-3" />
+                  ZUGFeRD 2.3
+                </span>
+                <span className="text-zinc-500 text-xs">E-Rechnung (ab 2025)</span>
+              </div>
+            </div>
+            
+            <div className="border-t border-[#2a2a2a] pt-3">
+              <a
+                href={`/rechnungen/${rechnung.id}/drucken`}
+                target="_blank"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#222] border border-[#333] text-white rounded-lg hover:bg-[#2a2a2a] transition-colors"
+              >
+                <Printer className="w-4 h-4" />
+                Druckansicht
+              </a>
+            </div>
             
             {rechnung.pdfUrl && (
               <a
@@ -247,7 +269,7 @@ export default function RechnungDetailPage() {
                 className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#222] border border-[#333] text-white rounded-lg hover:bg-[#2a2a2a] transition-colors"
               >
                 <FileText className="w-4 h-4" />
-                PDF herunterladen
+                Altes PDF
               </a>
             )}
           </div>
