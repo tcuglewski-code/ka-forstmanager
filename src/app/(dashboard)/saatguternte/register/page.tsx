@@ -3,9 +3,10 @@ export const revalidate = 0
 
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
-import { Leaf, Bot, Filter, X } from "lucide-react"
+import { Leaf, Bot, Filter, X, Download, AlertTriangle, CheckCircle, MapPin, AlertCircle, RefreshCw } from "lucide-react"
 import { RegisterTable } from "./RegisterTable"
 import { Prisma } from "@prisma/client"
+import { isCorruptedEntry } from "@/lib/register-parser"
 
 interface SearchParams {
   bundesland?: string
@@ -16,6 +17,8 @@ interface SearchParams {
   status?: string
   sonderherkunft?: string
   eigentumsart?: string
+  gps?: string
+  quality?: string
   page?: string
   sortBy?: string
   sortDir?: string
@@ -44,6 +47,8 @@ export default async function RegisterPage({
   if (params.status === "abgelaufen") where.zugelassen = false
   if (params.sonderherkunft === "true") where.sonderherkunft = true
   if (params.eigentumsart) where.eigentumsart = params.eigentumsart
+  if (params.gps === "mit_gps") where.latDez = { not: null }
+  if (params.gps === "ohne_gps") where.latDez = null
   if (params.search) {
     const s = params.search
     where.OR = [
@@ -125,7 +130,8 @@ export default async function RegisterPage({
     params.search ||
     params.status ||
     params.sonderherkunft ||
-    params.eigentumsart
+    params.eigentumsart ||
+    params.gps
   )
 
   // Serialisierung für Client Component
@@ -156,13 +162,32 @@ export default async function RegisterPage({
             Zugelassene Erntbestände aus staatlichen Registern
           </p>
         </div>
-        <Link
-          href="/saatguternte/crawler"
-          className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] hover:bg-[#333] text-zinc-300 rounded-lg text-sm font-medium transition-all"
-        >
-          <Bot className="w-4 h-4" />
-          Crawler verwalten
-        </Link>
+        <div className="flex items-center gap-2">
+          <a
+            href={`/api/saatguternte/register/export?${new URLSearchParams(params as Record<string, string>).toString()}`}
+            className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] hover:bg-[#333] text-zinc-300 rounded-lg text-sm font-medium transition-all"
+          >
+            <Download className="w-4 h-4" />
+            CSV Export
+          </a>
+          <Link
+            href="/saatguternte/crawler"
+            className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] hover:bg-[#333] text-zinc-300 rounded-lg text-sm font-medium transition-all"
+          >
+            <Bot className="w-4 h-4" />
+            Crawler verwalten
+          </Link>
+        </div>
+      </div>
+
+      {/* Datenqualitäts-Info */}
+      <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-center justify-between">
+        <div className="flex items-center gap-2 text-amber-400 text-sm">
+          <span>⚠️</span>
+          <span>Einige Einträge haben fehlerhafte Parsing-Daten. 
+          <a href="/saatguternte/register?status=fehlerhaft" className="underline ml-1">Details anzeigen</a></span>
+        </div>
+        <span className="text-xs text-zinc-500">Admin: POST /api/saatguternte/admin/re-parse</span>
       </div>
 
       {/* Filter-Bar */}
@@ -246,6 +271,15 @@ export default async function RegisterPage({
               {e.eigentumsart}
             </option>
           ))}
+        </select>
+        <select
+          name="gps"
+          defaultValue={params.gps ?? ""}
+          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+        >
+          <option value="">GPS: Alle</option>
+          <option value="mit_gps">Mit GPS-Koordinaten</option>
+          <option value="ohne_gps">Ohne GPS-Koordinaten</option>
         </select>
         <label className="flex items-center gap-2 px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-zinc-300 cursor-pointer hover:border-amber-500/50 transition-all select-none">
           <input
