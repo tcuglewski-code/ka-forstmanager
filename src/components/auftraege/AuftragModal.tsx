@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { X, MapPin, Plus, Trash2, FileText, AlertCircle } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { X, MapPin, Plus, Trash2, FileText, AlertCircle, Upload, Sparkles, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
 interface Saison {
@@ -181,6 +181,12 @@ export function AuftragModal({
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [apiError, setApiError] = useState<string | null>(null)
   
+  // KH-1: KI Dokument-Auswertung State
+  const [kiConsent, setKiConsent] = useState<boolean | null>(null)
+  const [kiAnalyzing, setKiAnalyzing] = useState(false)
+  const [kiEnabled, setKiEnabled] = useState(true) // Feature-Flag
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  
   // FM-05: Multi-Flächen State
   const [flaechen, setFlaechen] = useState<Flaeche[]>(() => {
     const wizardFlaechen = auftrag?.wizardDaten?.flaechen
@@ -244,7 +250,85 @@ export function AuftragModal({
     fetch("/api/gruppen").then(r => r.json()).then(setGruppen)
     // Sprint Q031: Templates laden
     fetch("/api/auftraege/templates").then(r => r.json()).then(setTemplates)
+    // KH-1: KI Consent-Status laden
+    fetch("/api/consent/status?type=KI_VERARBEITUNG")
+      .then(r => r.json())
+      .then(data => setKiConsent(data.granted === true))
+      .catch(() => setKiConsent(false))
   }, [])
+  
+  // KH-1: KI Dokument-Analyse Handler
+  const handleKiFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    // Reset Input
+    if (fileInputRef.current) fileInputRef.current.value = ""
+    
+    setKiAnalyzing(true)
+    
+    try {
+      const formData = new FormData()
+      formData.append("file", file)
+      
+      const res = await fetch("/api/ki/dokument-analyse", {
+        method: "POST",
+        body: formData,
+      })
+      
+      const data = await res.json()
+      
+      if (!res.ok) {
+        if (data.code === "CONSENT_REQUIRED") {
+          toast.error("KI-Einwilligung erforderlich. Bitte aktivieren Sie KI-Features in den Einstellungen.")
+          setKiConsent(false)
+        } else {
+          toast.error(data.error || "KI-Analyse fehlgeschlagen")
+        }
+        return
+      }
+      
+      // Extrahierte Daten in Form übernehmen
+      const extracted = data.data
+      
+      setForm(prev => ({
+        ...prev,
+        titel: extracted.titel || prev.titel,
+        typ: extracted.typ || prev.typ,
+        waldbesitzer: extracted.waldbesitzer || prev.waldbesitzer,
+        waldbesitzerEmail: extracted.waldbesitzerEmail || prev.waldbesitzerEmail,
+        waldbesitzerTelefon: extracted.waldbesitzerTelefon || prev.waldbesitzerTelefon,
+        bundesland: extracted.bundesland || prev.bundesland,
+        baumarten: extracted.baumarten || prev.baumarten,
+        pflanzverband: extracted.pflanzverband || prev.pflanzverband,
+        zauntyp: extracted.zauntyp || prev.zauntyp,
+        schutzart: extracted.schutzart || prev.schutzart,
+        treffpunkt: extracted.treffpunkt || prev.treffpunkt,
+      }))
+      
+      // Flächen übernehmen wenn vorhanden
+      if (extracted.flaechen && extracted.flaechen.length > 0) {
+        setFlaechen(extracted.flaechen.map((f: { flaeche_ha?: string; standort?: string; forstamt?: string; revier?: string; lat?: string; lng?: string }) => ({
+          id: generateId(),
+          flaeche_ha: f.flaeche_ha || "",
+          standort: f.standort || "",
+          forstamt: f.forstamt || "",
+          revier: f.revier || "",
+          lat: f.lat || "",
+          lng: f.lng || "",
+        })))
+      }
+      
+      const confidencePercent = Math.round((extracted.confidence || 0) * 100)
+      toast.success(`KI-Analyse abgeschlossen (${confidencePercent}% Konfidenz) — Bitte überprüfen Sie die Daten`)
+      
+    } catch (error) {
+      console.error("KI-Analyse Fehler:", error)
+      toast.error("KI-Analyse fehlgeschlagen")
+    } finally {
+      setKiAnalyzing(false)
+    }
+  }
 
   // Sprint Q031: Template anwenden
   const applyTemplate = (template: AuftragTemplate) => {
@@ -556,6 +640,58 @@ export function AuftragModal({
                     </button>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* KH-1: KI Dokument-Auswertung Upload */}
+            {!auftrag?.id && kiEnabled && (
+              <div className="bg-violet-500/5 border border-violet-500/20 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-violet-400" />
+                    <span className="text-sm font-medium text-violet-400">KI-Autofill aus Dokument</span>
+                  </div>
+                  {kiConsent === false && (
+                    <span className="text-xs text-zinc-500">Einwilligung erforderlich</span>
+                  )}
+                </div>
+                
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  onChange={handleKiFileUpload}
+                  className="hidden"
+                  disabled={!kiConsent || kiAnalyzing}
+                />
+                
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={!kiConsent || kiAnalyzing}
+                  className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed transition-all ${
+                    kiConsent && !kiAnalyzing
+                      ? "border-violet-500/30 hover:border-violet-500/60 hover:bg-violet-500/5 text-violet-400 cursor-pointer"
+                      : "border-zinc-700 text-zinc-600 cursor-not-allowed"
+                  }`}
+                  title={!kiConsent ? "KI-Einwilligung in den Einstellungen erforderlich" : undefined}
+                >
+                  {kiAnalyzing ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span className="text-sm">KI analysiert Dokument...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4" />
+                      <span className="text-sm">📎 Datei hochladen für Autofill</span>
+                    </>
+                  )}
+                </button>
+                
+                <p className="text-xs text-zinc-600 mt-2">
+                  Unterstützt: JPEG, PNG, GIF, WebP • Max. 10MB • Die KI extrahiert Auftragsdaten automatisch
+                </p>
               </div>
             )}
 

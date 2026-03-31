@@ -12,8 +12,10 @@ import {
   ChevronRight,
   Loader2,
   AlertTriangle,
+  Plus,
 } from "lucide-react"
 import { toast } from "sonner"
+import { QuickAddAuftragModal } from "@/components/auftraege/QuickAddAuftragModal"
 
 // ─── Typ-Definitionen ─────────────────────────────────────────────────────────
 
@@ -105,6 +107,7 @@ interface SaisonData {
 interface Props {
   saison: SaisonData
   saisonId: string
+  saisonName?: string // KJ-1: Für Quick Add Modal
   gesamtPflanzen: number
   gesamtStunden: number
   gesamtFlaeche: number
@@ -139,6 +142,7 @@ const auftragStatusLabel: Record<string, string> = {
 export default function SaisonDetailClient({
   saison,
   saisonId,
+  saisonName,
   gesamtPflanzen,
   gesamtStunden,
   gesamtFlaeche,
@@ -156,6 +160,9 @@ export default function SaisonDetailClient({
 
   // Aufgeklappte Auftrags-Zeilen
   const [expandedAuftrag, setExpandedAuftrag] = useState<string | null>(null)
+  
+  // KJ-1: Quick Add Modal State
+  const [showQuickAdd, setShowQuickAdd] = useState(false)
 
   // Manuelle Checklisten-Checks für Abschluss
   const [checkGeraete, setCheckGeraete] = useState(false)
@@ -442,6 +449,19 @@ export default function SaisonDetailClient({
       {/* ─── Tab 2: Aufträge ─────────────────────────────────────────────── */}
       {tab === "auftraege" && (
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+          {/* KJ-1: Quick Add Button */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-[#2a2a2a]">
+            <span className="text-sm font-medium text-zinc-400">
+              {saison.auftraege.length} Aufträge
+            </span>
+            <button
+              onClick={() => setShowQuickAdd(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/20 border border-emerald-600/30 text-emerald-400 text-xs font-medium hover:bg-emerald-600/30 transition-colors"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              Auftrag
+            </button>
+          </div>
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#2a2a2a]">
@@ -937,6 +957,19 @@ export default function SaisonDetailClient({
             </div>
           </div>
         </div>
+      )}
+
+      {/* KJ-1: Quick Add Modal */}
+      {showQuickAdd && (
+        <QuickAddAuftragModal
+          saisonId={saisonId}
+          saisonName={saisonName || "Saison"}
+          onClose={() => setShowQuickAdd(false)}
+          onCreated={() => {
+            setShowQuickAdd(false)
+            router.refresh()
+          }}
+        />
       )}
     </>
   )
