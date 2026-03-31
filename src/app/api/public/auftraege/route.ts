@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
         standort: body.standort?.trim() ?? null,
         baumarten: body.baumarten?.trim() ?? null,
         zeitraum: body.zeitraum?.trim() ?? null,
-        wizardDaten: body.wizardDaten ?? null,
+        wizardDaten: body.wizardDaten ? JSON.parse(JSON.stringify(body.wizardDaten)) : undefined,
         neuFlag: true, // Als "neu" markieren
       },
     })
