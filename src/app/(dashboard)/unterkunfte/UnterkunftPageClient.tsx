@@ -1,9 +1,9 @@
 "use client"
 
-// KH-2: Unterkunftsplanung Client-Komponente
+// KH-2 + KR-3: Unterkunftsplanung mit KI-Analyse
 
 import { useState, useEffect } from "react"
-import { Search, MapPin, Hotel, Loader2, AlertCircle } from "lucide-react"
+import { Search, MapPin, Hotel, Loader2, AlertCircle, Sparkles, Mail, Copy, Check, X } from "lucide-react"
 import dynamic from "next/dynamic"
 
 // Leaflet dynamisch laden (SSR-Problem vermeiden)
@@ -49,6 +49,20 @@ interface Unterkunft {
   osmUrl: string
 }
 
+// KR-1: KI-Empfehlung Interface
+interface KIEmpfehlung {
+  name: string
+  distanzKm: number
+  empfehlungsScore: number
+  begruendung: string
+  geeignetFuerPersonen: number
+  geschaetzteKosten: string
+  buchungsHinweis: string
+  lat: number
+  lng: number
+  typ: string
+}
+
 interface Props {
   auftraege: Auftrag[]
 }
@@ -59,17 +73,42 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
   const [unterkuenfte, setUnterkuenfte] = useState<Unterkunft[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  
+  // KI-Analyse State
+  const [kiLoading, setKiLoading] = useState(false)
+  const [kiEmpfehlungen, setKiEmpfehlungen] = useState<KIEmpfehlung[]>([])
+  const [kiError, setKiError] = useState<string | null>(null)
+  const [kiVerfuegbar, setKiVerfuegbar] = useState<boolean | null>(null)
+  
+  // E-Mail Modal State
+  const [emailModal, setEmailModal] = useState<{ open: boolean; unterkunft: KIEmpfehlung | null; emailText: string }>({
+    open: false,
+    unterkunft: null,
+    emailText: ""
+  })
+  const [emailLoading, setEmailLoading] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  // KI-Verfügbarkeit prüfen
+  useEffect(() => {
+    fetch("/api/ki/unterkunft-analyse")
+      .then(res => res.json())
+      .then(data => setKiVerfuegbar(data.verfuegbar ?? false))
+      .catch(() => setKiVerfuegbar(false))
+  }, [])
 
   // Unterkunft-Suche durchführen
   useEffect(() => {
     if (!selectedAuftrag?.lat || !selectedAuftrag?.lng) {
       setUnterkuenfte([])
+      setKiEmpfehlungen([])
       return
     }
 
     const searchUnterkunft = async () => {
       setLoading(true)
       setError(null)
+      setKiEmpfehlungen([])
       
       try {
         const res = await fetch(
@@ -93,6 +132,92 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
 
     searchUnterkunft()
   }, [selectedAuftrag, radius])
+
+  // KR-1: KI-Analyse starten
+  const starteKIAnalyse = async () => {
+    if (!selectedAuftrag || unterkuenfte.length === 0) return
+
+    setKiLoading(true)
+    setKiError(null)
+
+    try {
+      const res = await fetch("/api/ki/unterkunft-analyse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          auftragId: selectedAuftrag.id,
+          unterkuenfte: unterkuenfte.map(u => ({
+            name: u.name,
+            lat: u.lat,
+            lng: u.lng,
+            typ: u.typ,
+            adresse: u.adresse,
+            telefon: u.telefon,
+            website: u.website,
+            sterne: u.sterne
+          }))
+        })
+      })
+
+      const data = await res.json()
+      
+      if (!res.ok) {
+        throw new Error(data.error || data.grund || "KI-Analyse fehlgeschlagen")
+      }
+
+      setKiEmpfehlungen(data.empfehlungen)
+    } catch (err) {
+      console.error("KI-Analyse Fehler:", err)
+      setKiError(err instanceof Error ? err.message : "Unbekannter Fehler")
+    } finally {
+      setKiLoading(false)
+    }
+  }
+
+  // KR-2: E-Mail generieren
+  const generiereEmail = async (unterkunft: KIEmpfehlung) => {
+    if (!selectedAuftrag) return
+
+    setEmailLoading(true)
+    setEmailModal({ open: true, unterkunft, emailText: "" })
+
+    try {
+      const res = await fetch("/api/ki/unterkunft-analyse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          aktion: "generiereEmail",
+          unterkunft: { name: unterkunft.name, adresse: "" },
+          teamGroesse: unterkunft.geeignetFuerPersonen || 6,
+          startDatum: selectedAuftrag.startDatum 
+            ? new Date(selectedAuftrag.startDatum).toISOString().split("T")[0]
+            : new Date().toISOString().split("T")[0],
+          endDatum: selectedAuftrag.endDatum
+            ? new Date(selectedAuftrag.endDatum).toISOString().split("T")[0]
+            : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+          standort: selectedAuftrag.standort || "Unbekannt"
+        })
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+
+      setEmailModal(prev => ({ ...prev, emailText: data.emailText }))
+    } catch (err) {
+      setEmailModal(prev => ({ 
+        ...prev, 
+        emailText: `Fehler beim Generieren der E-Mail: ${err instanceof Error ? err.message : "Unbekannt"}` 
+      }))
+    } finally {
+      setEmailLoading(false)
+    }
+  }
+
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(emailModal.emailText)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   const statusLabels: Record<string, string> = {
     anfrage: "Anfrage",
@@ -157,10 +282,10 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
         )}
       </div>
 
-      {/* Radius-Einstellung + Suche */}
+      {/* Radius-Einstellung + KI-Analyse Button */}
       {selectedAuftrag && (
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-3">
               <label className="text-sm text-zinc-400">Suchradius:</label>
               <select
@@ -177,6 +302,27 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
             
             <div className="flex-1" />
             
+            {/* KR-3: KI-Analyse Button */}
+            <button
+              onClick={starteKIAnalyse}
+              disabled={kiLoading || unterkuenfte.length === 0 || kiVerfuegbar === false}
+              title={kiVerfuegbar === false ? "ANTHROPIC_API_KEY fehlt" : "KI analysiert Unterkünfte"}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                kiVerfuegbar === false
+                  ? "bg-zinc-700 text-zinc-500 cursor-not-allowed"
+                  : kiLoading
+                    ? "bg-[#C5A55A]/50 text-[#0f0f0f]"
+                    : "bg-[#C5A55A] text-[#0f0f0f] hover:bg-[#d4b86b]"
+              }`}
+            >
+              {kiLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Sparkles className="w-4 h-4" />
+              )}
+              {kiLoading ? "Analysiere..." : "KI-Analyse"}
+            </button>
+            
             <div className="flex items-center gap-2 text-sm text-zinc-400">
               <Hotel className="w-4 h-4" />
               {loading ? (
@@ -189,6 +335,71 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
               )}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* KI-Empfehlungen anzeigen */}
+      {kiEmpfehlungen.length > 0 && (
+        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+          <h3 className="text-sm font-medium text-white flex items-center gap-2 mb-4">
+            <Sparkles className="w-4 h-4 text-[#C5A55A]" />
+            KI-Empfehlungen
+          </h3>
+          <div className="space-y-3">
+            {kiEmpfehlungen.map((emp, idx) => (
+              <div 
+                key={idx}
+                className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-4"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <h4 className="text-sm font-medium text-white">{emp.name}</h4>
+                    <p className="text-xs text-zinc-500">{emp.distanzKm} km entfernt · {emp.typ}</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-[#C5A55A]">{emp.empfehlungsScore}</div>
+                    <div className="text-xs text-zinc-500">Score</div>
+                  </div>
+                </div>
+                
+                {/* Score-Balken */}
+                <div className="w-full h-2 bg-[#2a2a2a] rounded-full mb-3 overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-[#C5A55A] to-[#e8d5a3] rounded-full transition-all"
+                    style={{ width: `${emp.empfehlungsScore}%` }}
+                  />
+                </div>
+                
+                <p className="text-sm text-zinc-300 mb-3">{emp.begruendung}</p>
+                
+                <div className="flex items-center justify-between text-xs text-zinc-400">
+                  <div className="flex gap-4">
+                    <span>👥 {emp.geeignetFuerPersonen} Pers.</span>
+                    <span>💰 {emp.geschaetzteKosten}</span>
+                  </div>
+                  <button
+                    onClick={() => generiereEmail(emp)}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded text-zinc-300 transition-colors"
+                  >
+                    <Mail className="w-3 h-3" />
+                    Anfrage generieren
+                  </button>
+                </div>
+                
+                {emp.buchungsHinweis && (
+                  <p className="text-xs text-zinc-500 mt-2 italic">💡 {emp.buchungsHinweis}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* KI-Fehler */}
+      {kiError && (
+        <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+          <AlertCircle className="w-5 h-5 text-red-400" />
+          <p className="text-sm text-red-300">KI-Analyse: {kiError}</p>
         </div>
       )}
 
@@ -223,6 +434,54 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-8 text-center">
           <MapPin className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
           <p className="text-zinc-400">Wähle einen Auftrag aus um Unterkünfte in der Nähe zu suchen</p>
+        </div>
+      )}
+
+      {/* E-Mail Modal */}
+      {emailModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-2xl mx-4 max-h-[80vh] flex flex-col">
+            <div className="p-4 border-b border-[#2a2a2a] flex items-center justify-between">
+              <h3 className="text-lg font-medium text-white">
+                Anfrage an: {emailModal.unterkunft?.name}
+              </h3>
+              <button 
+                onClick={() => setEmailModal({ open: false, unterkunft: null, emailText: "" })}
+                className="p-1 hover:bg-[#2a2a2a] rounded"
+              >
+                <X className="w-5 h-5 text-zinc-400" />
+              </button>
+            </div>
+            
+            <div className="flex-1 p-4 overflow-y-auto">
+              {emailLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="w-6 h-6 text-[#C5A55A] animate-spin" />
+                </div>
+              ) : (
+                <pre className="whitespace-pre-wrap text-sm text-zinc-300 font-sans leading-relaxed">
+                  {emailModal.emailText}
+                </pre>
+              )}
+            </div>
+            
+            <div className="p-4 border-t border-[#2a2a2a] flex gap-3">
+              <button
+                onClick={copyToClipboard}
+                className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded-lg text-sm text-zinc-300 transition-colors"
+              >
+                {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+                {copied ? "Kopiert!" : "Kopieren"}
+              </button>
+              <a
+                href={`mailto:?subject=Unterkunftsanfrage Koch Aufforstung&body=${encodeURIComponent(emailModal.emailText)}`}
+                className="flex items-center gap-2 px-4 py-2 bg-[#C5A55A] hover:bg-[#d4b86b] rounded-lg text-sm font-medium text-[#0f0f0f] transition-colors"
+              >
+                <Mail className="w-4 h-4" />
+                In E-Mail-Programm öffnen
+              </a>
+            </div>
+          </div>
         </div>
       )}
     </div>

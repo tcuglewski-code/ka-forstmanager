@@ -164,7 +164,7 @@ export class WPSyncEngine {
 
       if (existing) {
         // Konflikt prüfen
-        const conflict = await this.resolveConflict(existing, wpData)
+        const conflict = this.resolveConflict(existing, wpData)
         if (conflict.useLocal) {
           // Lokale Version behalten
           await this.logSync("Auftrag", existing.id, "WP_TO_FM", true, "Lokale Version beibehalten (Konflikt)")
@@ -206,6 +206,89 @@ export class WPSyncEngine {
       const message = error instanceof Error ? error.message : "Unbekannter Fehler"
       await this.logSync("Auftrag", String(wpId), "WP_TO_FM", false, message)
       throw error
+    }
+  }
+
+  /**
+   * KT-1: Status-Rückkanal zu WordPress
+   * Fire-and-forget: WP über Status-Änderung informieren
+   */
+  async pushStatusToWP(auftrag: { 
+    wpProjektId: string | null
+    status: string
+    nummer: string | null 
+  }): Promise<void> {
+    // Nur wenn Auftrag aus WP kommt
+    if (!auftrag.wpProjektId) return
+
+    try {
+      const response = await fetch(
+        `${WP_BASE_URL}/koch/v1/anfrage/${auftrag.wpProjektId}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Authorization": this.authHeader,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            status: auftrag.status,
+            nummer: auftrag.nummer,
+            updatedAt: new Date().toISOString()
+          })
+        }
+      )
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.warn(`[WP-Sync] Status-Push fehlgeschlagen für ${auftrag.wpProjektId}: ${response.status} - ${errorText}`)
+      } else {
+        console.log(`[WP-Sync] Status "${auftrag.status}" an WP gepusht für Projekt ${auftrag.wpProjektId}`)
+      }
+    } catch (error) {
+      // Fire-and-forget: Fehler nur loggen, nicht werfen
+      console.error("[WP-Sync] pushStatusToWP Fehler:", error)
+    }
+  }
+
+  /**
+   * KV-2: Blog-Post in WordPress erstellen (als Draft)
+   */
+  async erstelleWPDraft(params: {
+    title: string
+    content: string
+    auftragStandort?: string | null
+    categoryId?: number
+  }): Promise<{ success: boolean; postId?: number; postUrl?: string; error?: string }> {
+    try {
+      const response = await fetch(`${WP_BASE_URL}/wp/v2/posts`, {
+        method: "POST",
+        headers: {
+          "Authorization": this.authHeader,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          title: params.title,
+          content: params.content,
+          status: "draft", // IMMER draft, Tomek published manuell
+          categories: params.categoryId ? [params.categoryId] : [],
+        })
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        return { success: false, error: `WP-Fehler: ${response.status} - ${errorText}` }
+      }
+
+      const postData = await response.json()
+      return {
+        success: true,
+        postId: postData.id,
+        postUrl: postData.link
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unbekannter Fehler"
+      console.error("[WP-Sync] erstelleWPDraft Fehler:", error)
+      return { success: false, error: message }
     }
   }
 

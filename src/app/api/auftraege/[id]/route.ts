@@ -5,6 +5,8 @@ import { auth } from "@/lib/auth"
 import { emailService } from "@/lib/email"
 // Telegram-Benachrichtigung bei Status-Änderung
 import { notifyAuftragStatusChange } from "@/lib/telegram"
+// KT-1: Bidirektionaler WP-Sync
+import { wpSyncEngine } from "@/lib/sync/wp-sync"
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -123,6 +125,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         body.status,
         auftragVorher.status ?? undefined
       ).catch((err) => console.error("[Telegram] notifyAuftragStatusChange fehlgeschlagen:", err))
+
+      // KT-1: Status-Rückkanal zu WordPress (fire-and-forget)
+      wpSyncEngine.pushStatusToWP({
+        wpProjektId: auftrag.wpProjektId ?? null,
+        status: body.status,
+        nummer: auftrag.nummer
+      }).catch((err) => console.error("[WP-Sync] pushStatusToWP fehlgeschlagen:", err))
     }
 
     return NextResponse.json(auftrag)

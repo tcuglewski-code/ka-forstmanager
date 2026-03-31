@@ -1,49 +1,46 @@
-// KK-1: Content-Workflow API
-// Verwaltet Kunden-Content für Blog/Bewertungen
+// KV-1 + KV-2: Content-Workflow API für Blog/Bewertungen
+// Einwilligung → Content → Freigabe → WP-Veröffentlichung
 
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { generiereAuftragsContent } from "@/lib/ki/content-generator"
-import { KI_ENABLED } from "@/lib/ki/dokument-auswertung"
+import { wpSyncEngine } from "@/lib/sync/wp-sync"
+import { emailService } from "@/lib/email"
 
-// GET — Content-Status für einen Auftrag abrufen
-export async function GET(req: NextRequest) {
-  try {
-    await auth()
-    
-    const { searchParams } = new URL(req.url)
-    const auftragId = searchParams.get("auftragId")
-
-    if (!auftragId) {
-      return NextResponse.json({ error: "auftragId erforderlich" }, { status: 400 })
-    }
-
-    const content = await prisma.kundenContent.findUnique({
-      where: { auftragId },
-    })
-
-    return NextResponse.json({
-      exists: !!content,
-      content,
-      kiEnabled: KI_ENABLED,
-    })
-  } catch (error) {
-    console.error("[Content GET] Fehler:", error)
-    return NextResponse.json({ error: "Abruf fehlgeschlagen" }, { status: 500 })
+// GET: KundenContent laden
+export async function GET(request: NextRequest) {
+  const session = await auth()
+  if (!session?.user) {
+    return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 })
   }
+
+  const auftragId = request.nextUrl.searchParams.get("auftragId")
+  
+  if (!auftragId) {
+    return NextResponse.json({ error: "auftragId fehlt" }, { status: 400 })
+  }
+
+  const content = await prisma.kundenContent.findUnique({
+    where: { auftragId }
+  })
+
+  return NextResponse.json({ content })
 }
 
-// POST — Neuen Content-Workflow starten
-export async function POST(req: NextRequest) {
-  try {
-    await auth()
-    
-    const body = await req.json()
-    const { auftragId, action } = body
+// POST: Content-Workflow Aktionen
+export async function POST(request: NextRequest) {
+  const session = await auth()
+  if (!session?.user) {
+    return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 })
+  }
 
-    if (!auftragId) {
-      return NextResponse.json({ error: "auftragId erforderlich" }, { status: 400 })
+  try {
+    const body = await request.json()
+    const { auftragId, aktion } = body
+
+    if (!auftragId || !aktion) {
+      return NextResponse.json({ error: "auftragId und aktion erforderlich" }, { status: 400 })
     }
 
     // Auftrag laden
@@ -51,94 +48,64 @@ export async function POST(req: NextRequest) {
       where: { id: auftragId },
       include: {
         protokolle: {
-          select: { gepflanzt: true, witterung: true, datum: true },
-        },
-      },
+          select: { gepflanztGesamt: true, datum: true, witterung: true }
+        }
+      }
     })
 
     if (!auftrag) {
       return NextResponse.json({ error: "Auftrag nicht gefunden" }, { status: 404 })
     }
 
-    // Action-basierte Logik
-    switch (action) {
-      case "start_einwilligung": {
-        // Neuen Content-Eintrag erstellen oder zurückgeben
-        const existing = await prisma.kundenContent.findUnique({
-          where: { auftragId },
-        })
+    // KundenContent erstellen falls nicht vorhanden
+    let content = await prisma.kundenContent.findUnique({
+      where: { auftragId }
+    })
 
-        if (existing) {
-          return NextResponse.json(existing)
+    if (!content) {
+      content = await prisma.kundenContent.create({
+        data: { auftragId }
+      })
+    }
+
+    switch (aktion) {
+      // Schritt 1: Einwilligung anfragen
+      case "einwilligung_anfragen": {
+        if (!auftrag.waldbesitzerEmail) {
+          return NextResponse.json({ 
+            error: "Keine E-Mail-Adresse des Waldbesitzers vorhanden" 
+          }, { status: 400 })
         }
 
-        const content = await prisma.kundenContent.create({
-          data: {
-            auftragId,
-            einwilligungStatus: "AUSSTEHEND",
-          },
+        // E-Mail senden
+        await emailService.einwilligungAnfrage({
+          empfaengerEmail: auftrag.waldbesitzerEmail,
+          waldbesitzerName: auftrag.waldbesitzer || "Sehr geehrte Damen und Herren",
+          auftragId,
+          auftragTitel: auftrag.titel
         })
 
-        return NextResponse.json(content, { status: 201 })
-      }
-
-      case "einwilligung_erteilen": {
-        const content = await prisma.kundenContent.upsert({
+        await prisma.kundenContent.update({
           where: { auftragId },
-          update: {
-            einwilligungStatus: "ERTEILT",
-            einwilligungDatum: new Date(),
-          },
-          create: {
-            auftragId,
-            einwilligungStatus: "ERTEILT",
-            einwilligungDatum: new Date(),
-          },
+          data: { einwilligungStatus: "ANGEFRAGT" }
         })
 
-        return NextResponse.json(content)
-      }
-
-      case "einwilligung_ablehnen": {
-        const content = await prisma.kundenContent.upsert({
-          where: { auftragId },
-          update: {
-            einwilligungStatus: "ABGELEHNT",
-            einwilligungDatum: new Date(),
-          },
-          create: {
-            auftragId,
-            einwilligungStatus: "ABGELEHNT",
-            einwilligungDatum: new Date(),
-          },
+        return NextResponse.json({ 
+          success: true, 
+          message: "Einwilligungsanfrage versendet" 
         })
-
-        return NextResponse.json(content)
       }
 
-      case "generiere_content": {
-        // KI aktiviert?
-        if (!KI_ENABLED) {
-          return NextResponse.json(
-            { error: "KI-Features deaktiviert" },
-            { status: 503 }
-          )
+      // Schritt 2: Content generieren (nach Einwilligung)
+      case "content_generieren": {
+        if (content.einwilligungStatus !== "ERTEILT") {
+          return NextResponse.json({ 
+            error: "Einwilligung noch nicht erteilt" 
+          }, { status: 400 })
         }
 
-        // Einwilligung prüfen
-        const existing = await prisma.kundenContent.findUnique({
-          where: { auftragId },
-        })
-
-        if (!existing || existing.einwilligungStatus !== "ERTEILT") {
-          return NextResponse.json(
-            { error: "Einwilligung erforderlich" },
-            { status: 403 }
-          )
-        }
-
-        // Content generieren
-        const generatedContent = await generiereAuftragsContent({
+        // KI-Content generieren
+        const contentText = await generiereAuftragsContent({
           auftragId: auftrag.id,
           typ: auftrag.typ,
           standort: auftrag.standort,
@@ -147,122 +114,120 @@ export async function POST(req: NextRequest) {
           baumarten: auftrag.baumarten,
           beschreibung: auftrag.beschreibung,
           wizardDaten: auftrag.wizardDaten as Record<string, unknown> | null,
-          protokolle: auftrag.protokolle,
+          protokolle: auftrag.protokolle.map(p => ({
+            gepflanzt: p.gepflanztGesamt,
+            datum: p.datum,
+            witterung: p.witterung
+          }))
         })
 
-        // Speichern
-        const content = await prisma.kundenContent.update({
+        await prisma.kundenContent.update({
           where: { auftragId },
-          data: {
-            contentVorschlag: generatedContent,
-          },
+          data: { contentVorschlag: contentText }
         })
 
-        return NextResponse.json(content)
+        return NextResponse.json({ 
+          success: true, 
+          content: contentText 
+        })
       }
 
-      case "tomek_freigabe": {
-        const content = await prisma.kundenContent.update({
+      // Schritt 3: Tomek-Freigabe
+      case "freigeben": {
+        const { contentFinal } = body
+
+        await prisma.kundenContent.update({
           where: { auftragId },
           data: {
+            contentFinal: contentFinal || content.contentVorschlag,
             tomekFreigabe: true,
-            tomekFreigabeDatum: new Date(),
-            contentFinal: body.contentFinal || undefined,
-          },
-        })
-
-        return NextResponse.json(content)
-      }
-
-      case "kunde_freigabe": {
-        const content = await prisma.kundenContent.update({
-          where: { auftragId },
-          data: {
-            kundeFreigabe: true,
-            kundeFreigabeDatum: new Date(),
-          },
-        })
-
-        return NextResponse.json(content)
-      }
-
-      case "veroeffentlichen": {
-        // Content laden
-        const content = await prisma.kundenContent.findUnique({
-          where: { auftragId },
-        })
-
-        if (!content?.tomekFreigabe) {
-          return NextResponse.json(
-            { error: "Tomek-Freigabe fehlt" },
-            { status: 403 }
-          )
-        }
-
-        // WP-Post erstellen (Draft)
-        const wpUser = process.env.WP_USER || "openclaw"
-        const wpPass = process.env.WP_PASSWORD || ""
-        const wpAuth = Buffer.from(`${wpUser}:${wpPass}`).toString("base64")
-
-        const titel = `Projekt: ${auftrag.typ} in ${auftrag.standort || auftrag.bundesland || "Deutschland"}`
-
-        const wpRes = await fetch(
-          "https://peru-otter-113714.hostingersite.com/wp-json/wp/v2/posts",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Basic ${wpAuth}`,
-            },
-            body: JSON.stringify({
-              title: titel,
-              content: content.contentFinal || content.contentVorschlag,
-              status: "draft", // Als Entwurf erstellen
-              categories: [1], // Standard-Kategorie
-            }),
+            tomekFreigabeDatum: new Date()
           }
-        )
+        })
 
-        if (!wpRes.ok) {
-          const err = await wpRes.text()
-          console.error("[Content WP] Fehler:", err)
-          return NextResponse.json(
-            { error: "WP-Veröffentlichung fehlgeschlagen" },
-            { status: 500 }
-          )
+        return NextResponse.json({ 
+          success: true, 
+          message: "Content freigegeben" 
+        })
+      }
+
+      // Schritt 4: In WordPress veröffentlichen
+      case "veroeffentlichen": {
+        const updatedContent = await prisma.kundenContent.findUnique({
+          where: { auftragId }
+        })
+
+        if (!updatedContent?.tomekFreigabe) {
+          return NextResponse.json({ 
+            error: "Content muss erst freigegeben werden" 
+          }, { status: 400 })
         }
 
-        const wpPost = await wpRes.json()
+        const contentToPublish = updatedContent.contentFinal || updatedContent.contentVorschlag
+        if (!contentToPublish) {
+          return NextResponse.json({ 
+            error: "Kein Content zum Veröffentlichen" 
+          }, { status: 400 })
+        }
 
-        // Status aktualisieren
-        const updated = await prisma.kundenContent.update({
+        // WP Draft erstellen
+        const result = await wpSyncEngine.erstelleWPDraft({
+          title: `Aufforstungsprojekt ${auftrag.standort || auftrag.nummer}`,
+          content: contentToPublish,
+          auftragStandort: auftrag.standort
+        })
+
+        if (!result.success) {
+          return NextResponse.json({ 
+            error: `WP-Veröffentlichung fehlgeschlagen: ${result.error}` 
+          }, { status: 500 })
+        }
+
+        await prisma.kundenContent.update({
           where: { auftragId },
           data: {
             veroeffentlicht: true,
-            wpPostId: String(wpPost.id),
-            wpPostUrl: wpPost.link,
-            veroeffentlichtAm: new Date(),
-          },
+            wpPostId: result.postId ? String(result.postId) : null,
+            wpPostUrl: result.postUrl,
+            veroeffentlichtAm: new Date()
+          }
         })
 
-        return NextResponse.json({
-          ...updated,
-          wpPost: {
-            id: wpPost.id,
-            link: wpPost.link,
-            status: wpPost.status,
-          },
+        return NextResponse.json({ 
+          success: true,
+          postId: result.postId,
+          postUrl: result.postUrl,
+          message: "Als Draft in WordPress erstellt" 
+        })
+      }
+
+      // Einwilligung manuell setzen (z.B. telefonisch erteilt)
+      case "einwilligung_setzen": {
+        const { status } = body // ERTEILT oder ABGELEHNT
+        
+        await prisma.kundenContent.update({
+          where: { auftragId },
+          data: {
+            einwilligungStatus: status,
+            einwilligungDatum: status === "ERTEILT" ? new Date() : null
+          }
+        })
+
+        return NextResponse.json({ 
+          success: true, 
+          message: `Einwilligung auf ${status} gesetzt` 
         })
       }
 
       default:
-        return NextResponse.json({ error: "Unbekannte Action" }, { status: 400 })
+        return NextResponse.json({ error: "Unbekannte Aktion" }, { status: 400 })
     }
+
   } catch (error) {
-    console.error("[Content POST] Fehler:", error)
-    return NextResponse.json(
-      { error: "Aktion fehlgeschlagen", details: error instanceof Error ? error.message : "Unbekannt" },
-      { status: 500 }
-    )
+    console.error("[Content API] Fehler:", error)
+    return NextResponse.json({ 
+      error: "Interner Fehler",
+      details: error instanceof Error ? error.message : "Unbekannt"
+    }, { status: 500 })
   }
 }
