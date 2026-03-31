@@ -5,6 +5,42 @@ import { isAdmin } from "@/lib/permissions"
 // Sprint FW (E5): Email bei Freigabe
 import { sendEmail, rechnungEmailHtml } from "@/lib/email"
 
+/**
+ * GET /api/rechnungen/[id]
+ * Einzelne Rechnung abrufen mit verknüpftem Auftrag
+ */
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth()
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  
+  try {
+    const { id } = await params
+    const rechnung = await prisma.rechnung.findUnique({
+      where: { id },
+      include: {
+        auftrag: {
+          select: {
+            id: true,
+            titel: true,
+            waldbesitzer: true,
+            waldbesitzerEmail: true,
+          },
+        },
+        positionen: true,
+      },
+    })
+    
+    if (!rechnung) {
+      return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 })
+    }
+    
+    return NextResponse.json(rechnung)
+  } catch (error) {
+    console.error("[RECHNUNG GET]", error)
+    return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 })
+  }
+}
+
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
