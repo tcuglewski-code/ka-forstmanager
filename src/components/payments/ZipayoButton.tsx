@@ -1,14 +1,15 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { CreditCard, X, CheckCircle, Loader2, XCircle, QrCode } from "lucide-react"
+import { CreditCard, X, CheckCircle, Loader2, XCircle, QrCode, Smartphone } from "lucide-react"
 
-interface SwiftTapButtonProps {
+interface ZipayoButtonProps {
   amount: number // in Euro (not cents!)
   description: string
   invoiceId?: string
   onPaymentSuccess?: (paymentId: string) => void
   onPaymentFailed?: () => void
+  variant?: "compact" | "full" // compact = kleiner Button, full = großer CTA
 }
 
 interface PaymentResponse {
@@ -26,27 +27,30 @@ interface PaymentStatus {
   paidAt: string | null
 }
 
-const SWIFTTAP_API_URL = "https://swifttap-app.vercel.app/api/v1"
+// Zipayo Platform API (ehemals SwiftTap)
+const ZIPAYO_API_URL = "https://swifttap-app.vercel.app/api/v1"
 
-export default function SwiftTapButton({
+export default function ZipayoButton({
   amount,
   description,
   invoiceId,
   onPaymentSuccess,
   onPaymentFailed,
-}: SwiftTapButtonProps) {
+  variant = "compact",
+}: ZipayoButtonProps) {
   const [modalOpen, setModalOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [payment, setPayment] = useState<PaymentResponse | null>(null)
   const [status, setStatus] = useState<"pending" | "succeeded" | "failed" | "expired">("pending")
   const [error, setError] = useState<string | null>(null)
 
-  const apiKey = process.env.NEXT_PUBLIC_SWIFTTAP_API_KEY
+  // Zipayo API Key (ehemals SwiftTap)
+  const apiKey = process.env.NEXT_PUBLIC_SWIFTTAP_API_KEY || process.env.NEXT_PUBLIC_ZIPAYO_API_KEY
 
   // Create payment request
   const createPayment = useCallback(async () => {
     if (!apiKey) {
-      setError("SwiftTap API-Key nicht konfiguriert")
+      setError("Zipayo API-Key nicht konfiguriert")
       return
     }
 
@@ -54,11 +58,11 @@ export default function SwiftTapButton({
     setError(null)
 
     try {
-      const res = await fetch(`${SWIFTTAP_API_URL}/payment-request`, {
+      const res = await fetch(`${ZIPAYO_API_URL}/payment-request`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-SwiftTap-Key": apiKey,
+          "X-SwiftTap-Key": apiKey, // Header bleibt für API-Kompatibilität
         },
         body: JSON.stringify({
           amount: Math.round(amount * 100), // Convert to cents
@@ -75,8 +79,9 @@ export default function SwiftTapButton({
       const data: PaymentResponse = await res.json()
       setPayment(data)
       setStatus("pending")
-    } catch (err: any) {
-      setError(err.message || "Verbindungsfehler")
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Verbindungsfehler"
+      setError(message)
     } finally {
       setLoading(false)
     }
@@ -88,7 +93,7 @@ export default function SwiftTapButton({
 
     const pollStatus = async () => {
       try {
-        const res = await fetch(`${SWIFTTAP_API_URL}/payment-status/${payment.paymentId}`, {
+        const res = await fetch(`${ZIPAYO_API_URL}/payment-status/${payment.paymentId}`, {
           headers: { "X-SwiftTap-Key": apiKey },
         })
 
@@ -147,15 +152,25 @@ export default function SwiftTapButton({
 
   return (
     <>
-      {/* SwiftTap Button */}
-      <button
-        onClick={openModal}
-        className="flex items-center gap-2 px-3 py-1.5 bg-[#00C9B1]/20 text-[#00C9B1] rounded-lg text-xs font-medium hover:bg-[#00C9B1]/30 transition-colors"
-        title="Mit SwiftTap bezahlen"
-      >
-        <CreditCard className="w-3.5 h-3.5" />
-        SwiftTap
-      </button>
+      {/* Zipayo Button */}
+      {variant === "compact" ? (
+        <button
+          onClick={openModal}
+          className="flex items-center gap-2 px-3 py-1.5 bg-[#6366f1]/20 text-[#818cf8] rounded-lg text-xs font-medium hover:bg-[#6366f1]/30 transition-colors"
+          title="Jetzt mit Zipayo bezahlen"
+        >
+          <Smartphone className="w-3.5 h-3.5" />
+          Zipayo
+        </button>
+      ) : (
+        <button
+          onClick={openModal}
+          className="flex items-center justify-center gap-3 w-full px-6 py-4 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white rounded-xl text-base font-semibold hover:from-[#5558e8] hover:to-[#7c4fe3] transition-all shadow-lg shadow-[#6366f1]/25"
+        >
+          <Smartphone className="w-5 h-5" />
+          Jetzt mit Zipayo bezahlen
+        </button>
+      )}
 
       {/* Payment Modal */}
       {modalOpen && (
@@ -164,10 +179,10 @@ export default function SwiftTapButton({
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-[#2a2a2a]">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-[#00C9B1] rounded-lg flex items-center justify-center">
-                  <CreditCard className="w-4 h-4 text-white" />
+                <div className="w-8 h-8 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] rounded-lg flex items-center justify-center">
+                  <Smartphone className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-semibold text-white">SwiftTap</span>
+                <span className="font-semibold text-white">Zipayo</span>
               </div>
               <button onClick={closeModal} className="text-zinc-400 hover:text-white">
                 <X className="w-5 h-5" />
@@ -178,7 +193,7 @@ export default function SwiftTapButton({
             <div className="p-6">
               {loading && (
                 <div className="flex flex-col items-center py-8">
-                  <Loader2 className="w-10 h-10 text-[#00C9B1] animate-spin mb-4" />
+                  <Loader2 className="w-10 h-10 text-[#818cf8] animate-spin mb-4" />
                   <p className="text-zinc-400">Zahlung wird erstellt...</p>
                 </div>
               )}
@@ -189,7 +204,7 @@ export default function SwiftTapButton({
                   <p className="text-red-400 text-center">{error}</p>
                   <button
                     onClick={createPayment}
-                    className="mt-4 px-4 py-2 bg-[#00C9B1] text-white rounded-lg text-sm font-medium hover:bg-[#00b3a0]"
+                    className="mt-4 px-4 py-2 bg-[#6366f1] text-white rounded-lg text-sm font-medium hover:bg-[#5558e8]"
                   >
                     Erneut versuchen
                   </button>
@@ -232,7 +247,7 @@ export default function SwiftTapButton({
                     href={payment.payUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-4 text-xs text-[#00C9B1] hover:underline"
+                    className="mt-4 text-xs text-[#818cf8] hover:underline"
                   >
                     Oder Link zum Bezahlen öffnen →
                   </a>
@@ -268,7 +283,7 @@ export default function SwiftTapButton({
                   </p>
                   <button
                     onClick={createPayment}
-                    className="mt-4 px-4 py-2 bg-[#00C9B1] text-white rounded-lg text-sm font-medium hover:bg-[#00b3a0]"
+                    className="mt-4 px-4 py-2 bg-[#6366f1] text-white rounded-lg text-sm font-medium hover:bg-[#5558e8]"
                   >
                     Erneut versuchen
                   </button>
@@ -286,7 +301,7 @@ export default function SwiftTapButton({
                   </p>
                   <button
                     onClick={createPayment}
-                    className="mt-4 px-4 py-2 bg-[#00C9B1] text-white rounded-lg text-sm font-medium hover:bg-[#00b3a0]"
+                    className="mt-4 px-4 py-2 bg-[#6366f1] text-white rounded-lg text-sm font-medium hover:bg-[#5558e8]"
                   >
                     Neue Zahlung erstellen
                   </button>
@@ -297,7 +312,7 @@ export default function SwiftTapButton({
             {/* Footer */}
             <div className="px-5 py-3 bg-[#111] border-t border-[#2a2a2a] text-center">
               <p className="text-xs text-zinc-600">
-                Powered by SwiftTap • Sichere Zahlung via Stripe
+                Powered by Zipayo • Sichere Zahlung via Stripe
               </p>
             </div>
           </div>
