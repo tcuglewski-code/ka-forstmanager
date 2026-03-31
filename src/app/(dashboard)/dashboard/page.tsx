@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { Users, Sprout, ClipboardList, TrendingUp, Package, AlertTriangle, Wrench, Clock, BookOpen, CheckSquare, DollarSign, FileText, CalendarClock, UserCheck, Leaf } from "lucide-react"
 import Link from "next/link"
 import { FoerderungWidget } from "@/components/foerderung/FoerderungWidget"
+import { StatCard, QuickLink, HoverLink, HoverActionCard } from "@/components/dashboard/InteractiveCards"
 
 async function getStats() {
   try {
@@ -434,8 +435,6 @@ export default async function DashboardPage() {
               href={action.href}
               className="flex flex-col gap-1 p-4 rounded-xl tonal-transition ambient-shadow-md group"
               style={{ backgroundColor: "var(--color-surface-container-low)" }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-surface-container)")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "var(--color-surface-container-low)")}
             >
               <span className="text-2xl">{action.icon}</span>
               <span
@@ -478,8 +477,6 @@ export default async function DashboardPage() {
                 href={`/auftraege/${a.id}`}
                 className="flex items-center justify-between px-4 py-3 tonal-transition"
                 style={i > 0 ? { borderTop: "1px solid var(--color-surface-container-high)" } : {}}
-                onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--color-surface-container)")}
-                onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
               >
                 <div>
                   <p
@@ -546,8 +543,6 @@ export default async function DashboardPage() {
                   href={item.href}
                   className="flex items-center gap-3 px-4 py-3 tonal-transition"
                   style={i > 0 ? { borderTop: "1px solid var(--color-surface-container-high)" } : {}}
-                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--color-surface-container)")}
-                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
                 >
                   <span className="text-lg">{item.icon}</span>
                   <div className="min-w-0">
@@ -625,8 +620,6 @@ export default async function DashboardPage() {
                   key={s.id}
                   href={`/schulungen/${s.id}`}
                   className="block rounded-lg p-2 -mx-2 tonal-transition"
-                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--color-surface-container)")}
-                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <span
@@ -681,61 +674,3 @@ export default async function DashboardPage() {
   )
 }
 
-function StatCard({ label, value, icon, href, alert }: { label: string; value: string; icon: React.ReactNode; href: string; alert?: boolean }) {
-  return (
-    <Link
-      href={href}
-      className="block rounded-xl p-5 tonal-transition ambient-shadow-md"
-      style={{
-        backgroundColor: alert ? "rgba(186,26,26,0.05)" : "var(--color-surface-container-low)",
-        outline: alert ? "1px solid rgba(186,26,26,0.2)" : "none",
-      }}
-      onMouseEnter={e => (e.currentTarget.style.backgroundColor = alert ? "rgba(186,26,26,0.08)" : "var(--color-surface-container)")}
-      onMouseLeave={e => (e.currentTarget.style.backgroundColor = alert ? "rgba(186,26,26,0.05)" : "var(--color-surface-container-low)")}
-    >
-      <div className="flex items-center justify-between mb-3">
-        <span
-          className="text-xs font-medium uppercase tracking-wide"
-          style={{ color: "var(--color-on-surface-variant)" }}
-        >
-          {label}
-        </span>
-        <div
-          className="w-9 h-9 rounded-xl flex items-center justify-center"
-          style={{ backgroundColor: alert ? "rgba(186,26,26,0.1)" : "var(--color-secondary-container)" }}
-        >
-          {icon}
-        </div>
-      </div>
-      <p
-        className="text-3xl font-bold"
-        style={{
-          fontFamily: "var(--font-mono)",
-          color: alert ? "var(--color-error)" : "var(--color-on-surface)",
-        }}
-      >
-        {value}
-      </p>
-    </Link>
-  )
-}
-
-function QuickLink({ href, label }: { href: string; label: string }) {
-  return (
-    <Link
-      href={href}
-      className="block px-3 py-2 rounded-lg text-sm tonal-transition"
-      style={{ color: "var(--color-on-surface-variant)" }}
-      onMouseEnter={e => {
-        ;(e.currentTarget as HTMLElement).style.backgroundColor = "var(--color-surface-container)"
-        ;(e.currentTarget as HTMLElement).style.color = "var(--color-primary)"
-      }}
-      onMouseLeave={e => {
-        ;(e.currentTarget as HTMLElement).style.backgroundColor = "transparent"
-        ;(e.currentTarget as HTMLElement).style.color = "var(--color-on-surface-variant)"
-      }}
-    >
-      {label}
-    </Link>
-  )
-}
