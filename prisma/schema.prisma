@@ -1167,3 +1167,13 @@ model TelegramRegistrierung {
   aktiv       Boolean  @default(true)
   createdAt   DateTime @default(now())
 }
+
+// FEEDBACK-SYSTEM (Sprint Feedback)
+model FeedbackEintrag {
+  id        String   @id @default(cuid())
+  typ       String   // bug | wunsch | frage
+  text      String
+  seite     String?
+  nutzer    String?
+  createdAt DateTime @default(now())
+}

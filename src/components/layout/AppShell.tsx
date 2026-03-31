@@ -5,6 +5,7 @@ import { Sidebar } from "./Sidebar"
 import { ForstManagerTour } from "@/components/tour/ForstManagerTour"
 import { QuickSearch } from "@/components/search/QuickSearch"
 import { KeyboardShortcuts } from "@/components/shortcuts/KeyboardShortcuts"
+import { FeedbackButton } from "@/components/feedback/FeedbackButton"
 import { Bell, User, Search } from "lucide-react"
 
 interface AppShellProps {
@@ -117,6 +118,7 @@ export function AppShell({ children, title }: AppShellProps) {
       <ForstManagerTour autoStart={true} />
       <QuickSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       <KeyboardShortcuts onOpenSearch={() => setSearchOpen(true)} />
+      <FeedbackButton />
     </div>
   )
 }
