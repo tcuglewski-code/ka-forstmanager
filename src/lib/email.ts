@@ -199,6 +199,93 @@ export async function auftragErstellt(daten: {
   })
 }
 
+// ─── KV-1: Einwilligungsanfrage für Blog-Content ──────────────────────────────
+export async function einwilligungAnfrage(daten: {
+  empfaengerEmail: string
+  waldbesitzerName: string
+  auftragId: string
+  auftragTitel: string
+}): Promise<void> {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { border-bottom: 2px solid #2C3A1C; padding-bottom: 20px; margin-bottom: 20px; }
+        .logo { font-size: 24px; font-weight: bold; color: #2C3A1C; }
+        .cta { display: inline-block; margin: 20px 0; padding: 12px 24px; background: #2C3A1C; color: white; text-decoration: none; border-radius: 4px; }
+        .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <div class="logo">Koch Aufforstung GmbH</div>
+        </div>
+        
+        <p>Guten Tag ${daten.waldbesitzerName},</p>
+        
+        <p>Ihr Aufforstungsprojekt <strong>"${daten.auftragTitel}"</strong> wurde erfolgreich abgeschlossen. 🌲</p>
+        
+        <p>Wir würden gerne einen kurzen Bericht über das Projekt auf unserer Website veröffentlichen, 
+        um unsere Arbeit zu dokumentieren und anderen Waldbesitzern zu zeigen, was möglich ist.</p>
+        
+        <p><strong>Wichtig:</strong> Der Bericht enthält keine persönlichen Daten wie Ihren Namen oder 
+        Ihre genaue Adresse — nur die Region, die verwendeten Baumarten und die durchgeführten Maßnahmen.</p>
+        
+        <p>Sind Sie damit einverstanden? Bitte antworten Sie kurz auf diese E-Mail mit 
+        <strong>"Ja, einverstanden"</strong> oder <strong>"Nein, danke"</strong>.</p>
+        
+        <p>Vielen Dank für Ihr Vertrauen in unsere Arbeit!</p>
+        
+        <p>Mit freundlichen Grüßen<br>
+        Ihr Team der Koch Aufforstung GmbH</p>
+        
+        <div class="footer">
+          <p>
+            Koch Aufforstung GmbH<br>
+            Diese E-Mail wurde automatisch generiert.<br>
+            Sie können direkt auf diese E-Mail antworten.
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
+  await sendEmail({
+    to: daten.empfaengerEmail,
+    subject: `Dürfen wir über Ihr Aufforstungsprojekt berichten? 🌲`,
+    html,
+  })
+}
+
+// ─── Auftrag Status Update (Sprint AG) ────────────────────────────────────────
+export async function auftragStatusUpdate(daten: {
+  auftragId: string
+  auftragNummer: string
+  auftragTitel: string
+  alterStatus: string
+  neuerStatus: string
+  waldbesitzerEmail?: string
+}): Promise<void> {
+  if (!daten.waldbesitzerEmail) return
+  
+  const html = auftragStatusEmailHtml({
+    auftragNummer: daten.auftragNummer,
+    auftragTitel: daten.auftragTitel,
+    neuerStatus: daten.neuerStatus,
+  })
+  
+  await sendEmail({
+    to: daten.waldbesitzerEmail,
+    subject: `Ihr Auftrag ${daten.auftragNummer}: Status-Update`,
+    html,
+  })
+}
+
 // ─── Legacy-Kompatibilitäts-Export ────────────────────────────────────────────
 // Alte Imports nutzen `emailService` — exportieren wir als Objekt
 export const emailService = {
@@ -206,4 +293,6 @@ export const emailService = {
   rechnungEmailHtml,
   auftragStatusEmailHtml,
   auftragErstellt,
+  einwilligungAnfrage,
+  auftragStatusUpdate,
 }
