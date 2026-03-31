@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { X, MapPin, Plus, Trash2, FileText, AlertCircle, Upload, Sparkles, Loader2 } from "lucide-react"
 import { toast } from "sonner"
+import { AddressAutofill } from "@/components/forms/AddressAutofill"
 
 interface Saison {
   id: string
@@ -216,6 +217,8 @@ export function AuftragModal({
     waldbesitzer: auftrag?.waldbesitzer ?? "",
     waldbesitzerEmail: auftrag?.waldbesitzerEmail ?? "",
     waldbesitzerTelefon: auftrag?.waldbesitzerTelefon ?? "",
+    waldbesitzerPlz: "",
+    waldbesitzerOrt: "",
     lat: auftrag?.lat?.toString() ?? "",
     lng: auftrag?.lng?.toString() ?? "",
     saisonId: auftrag?.saisonId ?? "",
@@ -845,6 +848,28 @@ export function AuftragModal({
               </div>
               {field("Waldbesitzer", "waldbesitzer", "text", "Name")}
             </div>
+            {/* KC-4: PLZ Autofill + Forstamt-Kontaktsuche */}
+            <AddressAutofill
+              plz={form.waldbesitzerPlz}
+              ort={form.waldbesitzerOrt}
+              onPlzChange={(plz) => setForm(f => ({ ...f, waldbesitzerPlz: plz }))}
+              onOrtChange={(ort) => {
+                setForm(f => ({ ...f, waldbesitzerOrt: ort }))
+                // Ort auch in standort übernehmen falls noch leer
+                if (!flaechen[0]?.standort) {
+                  setFlaechen(prev => prev.map((fl, i) => i === 0 ? { ...fl, standort: ort } : fl))
+                }
+              }}
+              showKontaktSuche={true}
+              kontaktSuche={form.waldbesitzer}
+              onKontaktSucheChange={(v) => setForm(f => ({ ...f, waldbesitzer: v }))}
+              onKontaktSelect={(kontakt) => setForm(f => ({
+                ...f,
+                waldbesitzer: kontakt.name,
+                waldbesitzerOrt: kontakt.ort ?? f.waldbesitzerOrt,
+                waldbesitzerPlz: kontakt.plz ?? f.waldbesitzerPlz,
+              }))}
+            />
             {/* FM-04: Waldbesitzer Kontakt */}
             <div className="grid grid-cols-2 gap-4">
               {field("E-Mail Waldbesitzer", "waldbesitzerEmail", "email", "waldbesitzer@example.de")}
