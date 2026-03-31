@@ -27,6 +27,34 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const body = await req.json()
     const menge = parseFloat(body.menge)
 
+    // KD-3: Mengenvalidierung - prüfe aktuellen Bestand vor Buchung
+    if (body.typ === "ausgang" || body.typ === "reserve" || body.typ === "zuweisung") {
+      const artikel = await prisma.lagerArtikel.findUnique({
+        where: { id: artikelId },
+        select: { bestand: true, mindestbestand: true, name: true },
+      })
+
+      if (!artikel) {
+        return NextResponse.json({ error: "Artikel nicht gefunden" }, { status: 404 })
+      }
+
+      // Prüfe ob genug Bestand vorhanden
+      if (artikel.bestand < menge) {
+        return NextResponse.json({
+          error: "Bestand nicht ausreichend",
+          message: `Artikel "${artikel.name}" hat nur ${artikel.bestand} Einheiten auf Lager. Angefordert: ${menge}`,
+          verfuegbar: artikel.bestand,
+          angefordert: menge,
+        }, { status: 400 })
+      }
+
+      // Warnung wenn unter Mindestbestand nach Buchung
+      const neuerBestand = artikel.bestand - menge
+      if (artikel.mindestbestand && neuerBestand < artikel.mindestbestand) {
+        console.warn(`[Lager] Artikel ${artikel.name} fällt unter Mindestbestand: ${neuerBestand} < ${artikel.mindestbestand}`)
+      }
+    }
+
     const bewegung = await prisma.lagerBewegung.create({
       data: {
         artikelId,

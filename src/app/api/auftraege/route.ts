@@ -3,6 +3,76 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 // Sprint AG: E-Mail-Benachrichtigung beim Erstellen eines Auftrags
 import { emailService } from "@/lib/email"
+import { z } from "zod"
+
+// KC-1: Zod Schema für Auftrags-Validierung
+const FlaecheSchema = z.object({
+  id: z.string().optional(),
+  flaeche_ha: z.string().optional(),
+  standort: z.string().optional(),
+  forstamt: z.string().optional(),
+  revier: z.string().optional(),
+  lat: z.string().optional(),
+  lng: z.string().optional(),
+})
+
+const AuftragCreateSchema = z.object({
+  titel: z.string().min(1, "Titel ist ein Pflichtfeld"),
+  typ: z.string().min(1, "Typ ist ein Pflichtfeld"),
+  waldbesitzer: z.string().min(1, "Waldbesitzer ist ein Pflichtfeld").nullable().optional()
+    .refine((val) => val && val.trim().length > 0, { message: "Waldbesitzer ist ein Pflichtfeld" }),
+  status: z.string().optional().default("anfrage"),
+  beschreibung: z.string().optional().nullable(),
+  flaeche_ha: z.union([z.string(), z.number()]).optional().nullable(),
+  standort: z.string().optional().nullable(),
+  bundesland: z.string().optional().nullable(),
+  waldbesitzerEmail: z.string().email().optional().nullable().or(z.literal("")),
+  waldbesitzerTelefon: z.string().optional().nullable(),
+  lat: z.union([z.string(), z.number()]).optional().nullable(),
+  lng: z.union([z.string(), z.number()]).optional().nullable(),
+  saisonId: z.string().optional().nullable(),
+  gruppeId: z.string().optional().nullable(),
+  startDatum: z.string().optional().nullable(),
+  endDatum: z.string().optional().nullable(),
+  wpProjektId: z.string().optional().nullable(),
+  wizardDaten: z.object({
+    flaechen: z.array(FlaecheSchema).optional().nullable(),
+    treffpunkt: z.string().optional().nullable(),
+    flaeche_forstamt: z.string().optional().nullable(),
+    flaeche_revier: z.string().optional().nullable(),
+    bezugsquelle: z.string().optional().nullable(),
+    lieferant: z.string().optional().nullable(),
+    baumarten: z.string().optional().nullable(),
+    pflanzverband: z.string().optional().nullable(),
+    zauntyp: z.string().optional().nullable(),
+    zaunlaenge: z.string().optional().nullable(),
+    schutztyp: z.array(z.string()).optional().nullable(),
+    schutzart: z.string().optional().nullable(),
+    anzahlHuellen: z.string().optional().nullable(),
+    robinienstab: z.string().optional().nullable(),
+    aufwuchsart: z.array(z.string()).optional().nullable(),
+    arbeitsmethode: z.string().optional().nullable(),
+    turnus: z.string().optional().nullable(),
+    bestandstyp: z.string().optional().nullable(),
+    pflegeart: z.string().optional().nullable(),
+  }).optional().nullable(),
+}).refine(
+  (data) => {
+    // KC-1: Mindestens eine Fläche mit flaeche_ha > 0 erforderlich
+    const flaechen = data.wizardDaten?.flaechen
+    if (flaechen && flaechen.length > 0) {
+      const hasValidFlaeche = flaechen.some(f => f.flaeche_ha && parseFloat(f.flaeche_ha) > 0)
+      if (hasValidFlaeche) return true
+    }
+    // Oder direkt flaeche_ha angegeben
+    if (data.flaeche_ha) {
+      const ha = typeof data.flaeche_ha === "string" ? parseFloat(data.flaeche_ha) : data.flaeche_ha
+      return ha > 0
+    }
+    return false
+  },
+  { message: "Mindestens eine Fläche mit gültiger Hektar-Angabe ist erforderlich", path: ["flaeche_ha"] }
+)
 
 export async function GET(req: NextRequest) {
   // ⚠️ GET ist auth-geschützt — Aufträge sind interne Dashboard-Daten
@@ -59,13 +129,21 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
 
-    // Pflichtfeld-Validierung (Sprint P)
-    if (!body.titel?.trim()) {
-      return NextResponse.json({ error: "titel ist ein Pflichtfeld" }, { status: 400 })
+    // KC-1: Zod-Validierung
+    const validation = AuftragCreateSchema.safeParse(body)
+    if (!validation.success) {
+      const errors = validation.error.errors.map(e => ({
+        field: e.path.join("."),
+        message: e.message
+      }))
+      return NextResponse.json({ 
+        error: "Validierungsfehler", 
+        details: errors,
+        message: errors.map(e => e.message).join(", ")
+      }, { status: 400 })
     }
-    if (!body.typ) {
-      return NextResponse.json({ error: "Pflichtfelder fehlen: typ" }, { status: 400 })
-    }
+
+    const validatedData = validation.data
 
     // Sprint Q: Auto-Auftragsnummer generieren falls nicht angegeben
     let auftragNummer = body.nummer?.trim() || null
@@ -81,29 +159,34 @@ export async function POST(req: NextRequest) {
       auftragNummer = `AU-${new Date().getFullYear()}-${String(lastNum + 1).padStart(4, "0")}`
     }
 
+    // KC-1: Verwende validierte Daten
+    const flaeche = validatedData.flaeche_ha 
+      ? (typeof validatedData.flaeche_ha === "string" ? parseFloat(validatedData.flaeche_ha) : validatedData.flaeche_ha)
+      : null
+
     const auftrag = await prisma.auftrag.create({
       data: {
         nummer: auftragNummer,
-        titel: body.titel,
-        typ: body.typ,
-        status: body.status ?? "anfrage",
-        beschreibung: body.beschreibung ?? null,
-        flaeche_ha: body.flaeche_ha ? parseFloat(body.flaeche_ha) : null,
-        standort: body.standort ?? null,
-        bundesland: body.bundesland ?? null,
-        waldbesitzer: body.waldbesitzer ?? null,
-        waldbesitzerEmail: body.waldbesitzerEmail ?? null,
-        waldbesitzerTelefon: body.waldbesitzerTelefon ?? null,
+        titel: validatedData.titel,
+        typ: validatedData.typ,
+        status: validatedData.status ?? "anfrage",
+        beschreibung: validatedData.beschreibung ?? null,
+        flaeche_ha: flaeche,
+        standort: validatedData.standort ?? null,
+        bundesland: validatedData.bundesland ?? null,
+        waldbesitzer: validatedData.waldbesitzer ?? null,
+        waldbesitzerEmail: validatedData.waldbesitzerEmail || null,
+        waldbesitzerTelefon: validatedData.waldbesitzerTelefon ?? null,
         // FM-02: GPS-Koordinaten
-        lat: body.lat != null && body.lat !== "" ? parseFloat(String(body.lat)) : null,
-        lng: body.lng != null && body.lng !== "" ? parseFloat(String(body.lng)) : null,
+        lat: validatedData.lat != null && validatedData.lat !== "" ? parseFloat(String(validatedData.lat)) : null,
+        lng: validatedData.lng != null && validatedData.lng !== "" ? parseFloat(String(validatedData.lng)) : null,
         // wizardDaten für erweiterte Felder (FM-01, FM-03, FM-05, FM-06)
-        wizardDaten: body.wizardDaten ?? null,
-        wpProjektId: body.wpProjektId ?? null,
-        saisonId: body.saisonId ?? null,
-        gruppeId: body.gruppeId ?? null,
-        startDatum: body.startDatum ? new Date(body.startDatum) : null,
-        endDatum: body.endDatum ? new Date(body.endDatum) : null,
+        wizardDaten: validatedData.wizardDaten ?? null,
+        wpProjektId: validatedData.wpProjektId ?? null,
+        saisonId: validatedData.saisonId ?? null,
+        gruppeId: validatedData.gruppeId ?? null,
+        startDatum: validatedData.startDatum ? new Date(validatedData.startDatum) : null,
+        endDatum: validatedData.endDatum ? new Date(validatedData.endDatum) : null,
       },
     })
     // Sprint AG: E-Mail-Benachrichtigung — Auftrag erstellt

@@ -1177,3 +1177,23 @@ model FeedbackEintrag {
   nutzer    String?
   createdAt DateTime @default(now())
 }
+
+// ============================================================
+// KG-1: DSGVO CONSENT SYSTEM
+// Verwaltet Einwilligungen für KI-Features
+// ============================================================
+
+model UserConsent {
+  id          String    @id @default(cuid())
+  userId      String
+  consentType String    // KI_VERARBEITUNG, FOTO_AUSWERTUNG, MARKETING
+  grantedAt   DateTime  @default(now())
+  revokedAt   DateTime?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, consentType])
+  @@index([userId])
+}

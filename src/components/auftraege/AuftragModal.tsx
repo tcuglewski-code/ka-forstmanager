@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { X, MapPin, Plus, Trash2, FileText } from "lucide-react"
+import { X, MapPin, Plus, Trash2, FileText, AlertCircle } from "lucide-react"
+import { toast } from "sonner"
 
 interface Saison {
   id: string
@@ -176,6 +177,9 @@ export function AuftragModal({
   const [templates, setTemplates] = useState<AuftragTemplate[]>([])
   const [loading, setLoading] = useState(false)
   const [geoLoading, setGeoLoading] = useState(false)
+  // KC-1: Validierungs-State
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [apiError, setApiError] = useState<string | null>(null)
   
   // FM-05: Multi-Flächen State
   const [flaechen, setFlaechen] = useState<Flaeche[]>(() => {
@@ -420,10 +424,70 @@ export function AuftragModal({
 
     const url = auftrag?.id ? `/api/auftraege/${auftrag.id}` : "/api/auftraege"
     const method = auftrag?.id ? "PATCH" : "POST"
-    await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
-    setLoading(false)
-    onSave()
+    
+    try {
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+      const data = await res.json()
+      
+      if (!res.ok) {
+        // KC-1: API-Validierungsfehler anzeigen
+        if (data.details && Array.isArray(data.details)) {
+          const newErrors: Record<string, string> = {}
+          data.details.forEach((err: { field: string; message: string }) => {
+            newErrors[err.field] = err.message
+          })
+          setErrors(newErrors)
+        }
+        setApiError(data.message || data.error || "Speichern fehlgeschlagen")
+        toast.error(data.message || data.error || "Speichern fehlgeschlagen")
+        setLoading(false)
+        return
+      }
+      
+      // KC-2: Erfolg — toast und Callback
+      toast.success(auftrag?.id ? "Auftrag aktualisiert" : "Auftrag erstellt")
+      setLoading(false)
+      setErrors({})
+      setApiError(null)
+      onSave()
+    } catch (error) {
+      console.error("Fehler beim Speichern:", error)
+      toast.error("Netzwerkfehler beim Speichern")
+      setLoading(false)
+    }
   }
+  
+  // KC-1: Validierungsfunktion
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {}
+    
+    if (!form.titel.trim()) {
+      newErrors.titel = "Titel ist erforderlich"
+    }
+    if (!form.typ) {
+      newErrors.typ = "Typ ist erforderlich"
+    }
+    if (!form.waldbesitzer?.trim()) {
+      newErrors.waldbesitzer = "Waldbesitzer ist erforderlich"
+    }
+    
+    // Prüfe ob mindestens eine Fläche mit ha > 0
+    const hasValidFlaeche = flaechen.some(f => f.flaeche_ha && parseFloat(f.flaeche_ha) > 0) || 
+      (form.flaeche_ha && parseFloat(form.flaeche_ha) > 0)
+    if (!hasValidFlaeche) {
+      newErrors.flaeche_ha = "Mindestens eine Fläche mit Hektar-Angabe ist erforderlich"
+    }
+    
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+  
+  // Prüfe ob Formular gültig ist für Button-Disable
+  const isFormValid = form.titel.trim() && 
+    form.typ && 
+    form.waldbesitzer?.trim() &&
+    (flaechen.some(f => f.flaeche_ha && parseFloat(f.flaeche_ha) > 0) || 
+     (form.flaeche_ha && parseFloat(form.flaeche_ha) > 0))
 
   const field = (label: string, key: keyof typeof form, type = "text", placeholder = "") => (
     <div>
@@ -881,6 +945,28 @@ export function AuftragModal({
             </div>
           </div>
 
+          {/* KC-1: Fehleranzeige */}
+          {apiError && (
+            <div className="mx-6 mb-0 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-red-400">{apiError}</div>
+            </div>
+          )}
+          
+          {/* KC-1: Fehlende Pflichtfelder Hinweis */}
+          {!isFormValid && !loading && (
+            <div className="mx-6 mb-0 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+              <div className="text-xs text-amber-400 space-y-1">
+                {!form.titel.trim() && <div>• Titel fehlt</div>}
+                {!form.waldbesitzer?.trim() && <div>• Waldbesitzer fehlt</div>}
+                {!(flaechen.some(f => f.flaeche_ha && parseFloat(f.flaeche_ha) > 0) || 
+                   (form.flaeche_ha && parseFloat(form.flaeche_ha) > 0)) && (
+                  <div>• Mindestens eine Fläche mit Hektar-Angabe fehlt</div>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="shrink-0 flex gap-3 p-6 border-t border-[#2a2a2a]">
             <button
               type="button"
@@ -891,8 +977,8 @@ export function AuftragModal({
             </button>
             <button
               type="submit"
-              disabled={loading || !form.titel || !form.typ}
-              className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition-all disabled:opacity-50"
+              disabled={loading || !isFormValid}
+              className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Speichern..." : "Speichern"}
             </button>
