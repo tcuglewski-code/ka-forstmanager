@@ -74,6 +74,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       data.wizardDaten = body.wizardDaten ?? null
     }
 
+    // KI-1: localUpdatedAt setzen für WP-Sync Merge-Strategie
+    // Prüfen ob Auftrag von WP kommt
+    const existingAuftrag = await prisma.auftrag.findUnique({
+      where: { id },
+      select: { wpProjektId: true },
+    })
+    
+    if (existingAuftrag?.wpProjektId) {
+      data.localUpdatedAt = new Date()
+      data.syncStatus = "local_changes"
+    }
+
     const auftrag = await prisma.auftrag.update({
       where: { id },
       data,

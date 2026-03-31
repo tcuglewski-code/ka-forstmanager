@@ -7,31 +7,31 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(cuid())
-  name        String
-  email       String   @unique
-  password    String
+  id                   String       @id @default(cuid())
+  name                 String
+  email                String       @unique
+  password             String
   // Rollen: ka_admin, ka_gruppenführer, ka_mitarbeiter, baumschule, kunde
-  role        String   @default("mitarbeiter")
-  avatar      String?
-  active      Boolean  @default(true)
+  role                 String       @default("mitarbeiter")
+  avatar               String?
+  active               Boolean      @default(true)
   // Sprint UX: Permissions & Benachrichtigungen
-  permissions String[] @default([])
-  lastLoginAt DateTime?
-  notifyMaengel Boolean @default(true)
-  notifyAuftraege Boolean @default(true)
-  notifyAbnahmen Boolean @default(false)
+  permissions          String[]     @default([])
+  lastLoginAt          DateTime?
+  notifyMaengel        Boolean      @default(true)
+  notifyAuftraege      Boolean      @default(true)
+  notifyAbnahmen       Boolean      @default(false)
   // Sprint Q015: 2FA TOTP
-  twoFactorSecret      String?     // Base32-encoded TOTP secret (encrypted)
-  twoFactorEnabled     Boolean     @default(false)
-  twoFactorBackupCodes String[]    @default([]) // Hashed backup codes
-  twoFactorVerifiedAt  DateTime?   // When 2FA was first verified
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  sessions    Session[]
-  mitarbeiter Mitarbeiter?
+  twoFactorSecret      String? // Base32-encoded TOTP secret (encrypted)
+  twoFactorEnabled     Boolean      @default(false)
+  twoFactorBackupCodes String[]     @default([]) // Hashed backup codes
+  twoFactorVerifiedAt  DateTime? // When 2FA was first verified
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  sessions             Session[]
+  mitarbeiter          Mitarbeiter?
   // Sprint AJ: Baumschul-Verknüpfung
-  baumschule  Baumschule?
+  baumschule           Baumschule?
 }
 
 model Session {
@@ -54,61 +54,61 @@ model MagicToken {
 }
 
 model Mitarbeiter {
-  id                String                     @id @default(cuid())
-  userId            String?                    @unique
-  vorname           String
-  nachname          String
-  email             String?
-  telefon           String?
-  mobil             String?
-  adresse           String?
-  plz               String?
-  ort               String?
-  geburtsdatum      DateTime?
-  eintrittsdatum    DateTime?
-  austrittsdatum    DateTime?
-  rolle             String                     @default("mitarbeiter")
-  qualifikationen   String?
-  fuehrerschein     String?
-  notfallkontakt    String?
-  notfalltelefon    String?
-  bankname          String?
-  iban              String?
-  stundenlohn       Float?
-  status            String                     @default("aktiv")
-  notizen           String?
-  vollkostenSatz    Float?                     // Überschreibt vollkosten_pro_stunde (Sprint Q)
-  maschinenbonusIndividuell Float?             // Überschreibt maschinenbonus_mitarbeiter (Sprint Q)
-  notfallName       String?                    // Notfallkontakt Name (Sprint U)
-  notfallTelefon    String?                    // Notfallkontakt Telefon (Sprint U)
-  notfallBeziehung  String?                    // Notfallkontakt Beziehung z.B. Partner, Mutter (Sprint U)
-  createdAt         DateTime                   @default(now())
-  updatedAt         DateTime                   @updatedAt
-  user              User?                      @relation(fields: [userId], references: [id])
-  gruppen           GruppeMitglied[]
-  saisonAnmeldungen SaisonAnmeldung[]
-  qualifikationenRel MitarbeiterQualifikation[]
-  schulungen        MitarbeiterSchulung[]
-  stundeneintraege  Stundeneintrag[]
-  lohneintraege     Lohneintrag[]
-  vorschuesse       Vorschuss[]
-  abwesenheiten     Abwesenheit[]
-  lagerBewegungen   LagerBewegung[]
-  lohnabrechnungen  Lohnabrechnung[]
-  dokumente         Dokument[]
+  id                        String                     @id @default(cuid())
+  userId                    String?                    @unique
+  vorname                   String
+  nachname                  String
+  email                     String?
+  telefon                   String?
+  mobil                     String?
+  adresse                   String?
+  plz                       String?
+  ort                       String?
+  geburtsdatum              DateTime?
+  eintrittsdatum            DateTime?
+  austrittsdatum            DateTime?
+  rolle                     String                     @default("mitarbeiter")
+  qualifikationen           String?
+  fuehrerschein             String?
+  notfallkontakt            String?
+  notfalltelefon            String?
+  bankname                  String?
+  iban                      String?
+  stundenlohn               Float?
+  status                    String                     @default("aktiv")
+  notizen                   String?
+  vollkostenSatz            Float? // Überschreibt vollkosten_pro_stunde (Sprint Q)
+  maschinenbonusIndividuell Float? // Überschreibt maschinenbonus_mitarbeiter (Sprint Q)
+  notfallName               String? // Notfallkontakt Name (Sprint U)
+  notfallTelefon            String? // Notfallkontakt Telefon (Sprint U)
+  notfallBeziehung          String? // Notfallkontakt Beziehung z.B. Partner, Mutter (Sprint U)
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
+  user                      User?                      @relation(fields: [userId], references: [id])
+  gruppen                   GruppeMitglied[]
+  saisonAnmeldungen         SaisonAnmeldung[]
+  qualifikationenRel        MitarbeiterQualifikation[]
+  schulungen                MitarbeiterSchulung[]
+  stundeneintraege          Stundeneintrag[]
+  lohneintraege             Lohneintrag[]
+  vorschuesse               Vorschuss[]
+  abwesenheiten             Abwesenheit[]
+  lagerBewegungen           LagerBewegung[]
+  lohnabrechnungen          Lohnabrechnung[]
+  dokumente                 Dokument[]
 }
 
 model Saison {
-  id           String            @id @default(cuid())
-  name         String
-  typ          String            @default("pflanzung")
-  status       String            @default("planung")
-  startDatum   DateTime?
-  endDatum     DateTime?
-  beschreibung String?
-  ziel         String?
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+  id               String            @id @default(cuid())
+  name             String
+  typ              String            @default("pflanzung")
+  status           String            @default("planung")
+  startDatum       DateTime?
+  endDatum         DateTime?
+  beschreibung     String?
+  ziel             String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
   anmeldungen      SaisonAnmeldung[]
   dokumente        Dokument[]
   gruppen          Gruppe[]
@@ -139,47 +139,51 @@ model ActivityLog {
 
 // AUFTRAG
 model Auftrag {
-  id                String           @id @default(cuid())
-  titel             String
-  typ               String
-  status            String           @default("anfrage")
-  beschreibung      String?
-  flaeche_ha        Float?
-  standort          String?
-  bundesland        String?
-  waldbesitzer      String?
-  waldbesitzerEmail String?
+  id                  String             @id @default(cuid())
+  titel               String
+  typ                 String
+  status              String             @default("anfrage")
+  beschreibung        String?
+  flaeche_ha          Float?
+  standort            String?
+  bundesland          String?
+  waldbesitzer        String?
+  waldbesitzerEmail   String?
   waldbesitzerTelefon String?
-  baumarten         String?
-  zeitraum          String?
-  notizen           String?
-  nummer            String?          @unique  // Auto-generiert: AU-YYYY-NNNN (Sprint Q)
-  neuFlag           Boolean          @default(false)
-  wpProjektId       String?          @unique
-  wizardDaten       Json?            // Kompletter ka_wizard_daten JSON aus WordPress
-  saisonId          String?
-  gruppeId          String?
-  startDatum        DateTime?
-  endDatum          DateTime?
-  wpErstelltAm      DateTime?        // Erstellungsdatum aus WP (ka_angelegt Unix-Timestamp)
-  lat               Float?           // GPS-Koordinate Breitengrad (Sprint U)
-  lng               Float?           // GPS-Koordinate Längengrad (Sprint U)
-  plusCode          String?          // Google Plus Code für Forststandorte (Sprint U)
-  flaecheGeojson    Json?            // GeoJSON Polygon für Auftragsfläche (Sprint Q017)
-  telegramChatId    String?          // Telegram Chat-ID für Kundenbenachrichtigung
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-  saison            Saison?          @relation(fields: [saisonId], references: [id], onDelete: SetNull)
-  gruppe            Gruppe?          @relation(fields: [gruppeId], references: [id], onDelete: SetNull)
-  abnahmen           Abnahme[]
-  dokumente          Dokument[]
-  protokolle         Tagesprotokoll[]
-  rechnungen         Rechnung[]
-  lagerBewegungen    LagerBewegung[]
-  maschineneinsaetze Maschineneinsatz[]
-  stundeneintraege   Stundeneintrag[]
-  logs               AuftragLog[]
-  angebote           Angebot[]
+  baumarten           String?
+  zeitraum            String?
+  notizen             String?
+  nummer              String?            @unique // Auto-generiert: AU-YYYY-NNNN (Sprint Q)
+  neuFlag             Boolean            @default(false)
+  wpProjektId         String?            @unique
+  wizardDaten         Json? // Kompletter ka_wizard_daten JSON aus WordPress
+  saisonId            String?
+  gruppeId            String?
+  startDatum          DateTime?
+  endDatum            DateTime?
+  wpErstelltAm        DateTime? // Erstellungsdatum aus WP (ka_angelegt Unix-Timestamp)
+  lat                 Float? // GPS-Koordinate Breitengrad (Sprint U)
+  lng                 Float? // GPS-Koordinate Längengrad (Sprint U)
+  plusCode            String? // Google Plus Code für Forststandorte (Sprint U)
+  flaecheGeojson      Json? // GeoJSON Polygon für Auftragsfläche (Sprint Q017)
+  telegramChatId      String? // Telegram Chat-ID für Kundenbenachrichtigung
+  // KI-1: WP-Sync Merge-Strategie
+  localUpdatedAt      DateTime? // Zeitstempel der letzten lokalen FM-Änderung
+  wpSyncedAt          DateTime? // Zeitstempel der letzten WP-Synchronisation
+  syncStatus          String?            @default("synced") // synced, local_changes, conflict
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  saison              Saison?            @relation(fields: [saisonId], references: [id], onDelete: SetNull)
+  gruppe              Gruppe?            @relation(fields: [gruppeId], references: [id], onDelete: SetNull)
+  abnahmen            Abnahme[]
+  dokumente           Dokument[]
+  protokolle          Tagesprotokoll[]
+  rechnungen          Rechnung[]
+  lagerBewegungen     LagerBewegung[]
+  maschineneinsaetze  Maschineneinsatz[]
+  stundeneintraege    Stundeneintrag[]
+  logs                AuftragLog[]
+  angebote            Angebot[]
 }
 
 // AUDIT-LOG FÜR AUFTRÄGE (Sprint S)
@@ -187,9 +191,9 @@ model AuftragLog {
   id        String   @id @default(cuid())
   auftragId String
   auftrag   Auftrag  @relation(fields: [auftragId], references: [id], onDelete: Cascade)
-  aktion    String   // status_geaendert, mitarbeiter_zugewiesen, rechnung_erstellt, etc.
-  von       String?  // alter Wert
-  nach      String?  // neuer Wert
+  aktion    String // status_geaendert, mitarbeiter_zugewiesen, rechnung_erstellt, etc.
+  von       String? // alter Wert
+  nach      String? // neuer Wert
   userId    String?
   createdAt DateTime @default(now())
 }
@@ -197,38 +201,38 @@ model AuftragLog {
 // AUFTRAG-TEMPLATES (Sprint Q031)
 // Vordefinierte Vorlagen für wiederkehrende Auftragstypen
 model AuftragTemplate {
-  id              String   @id @default(cuid())
-  name            String   @unique // z.B. "Standardpflanzung"
-  beschreibung    String?  // Kurzbeschreibung wann nutzen
-  typ             String   // pflanzung, kulturschutz, saatguternte, etc.
-  defaultTitel    String?  // Voreingestellter Titel
+  id                  String   @id @default(cuid())
+  name                String   @unique // z.B. "Standardpflanzung"
+  beschreibung        String? // Kurzbeschreibung wann nutzen
+  typ                 String // pflanzung, kulturschutz, saatguternte, etc.
+  defaultTitel        String? // Voreingestellter Titel
   defaultBeschreibung String? // Voreingestellte Aufgabenbeschreibung
-  defaultFlaeche  Float?   // Typische Flächengröße
-  defaultBaumarten String? // Typische Baumarten
-  defaultZeitraum String?  // Typischer Zeitraum (z.B. "März-Mai")
-  defaultWizardDaten Json? // Typspezifische Voreinstellungen (pflanzverband, zauntyp, etc.)
-  icon            String?  // Lucide Icon Name für UI
-  sortOrder       Int      @default(0) // Sortierreihenfolge
-  aktiv           Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  defaultFlaeche      Float? // Typische Flächengröße
+  defaultBaumarten    String? // Typische Baumarten
+  defaultZeitraum     String? // Typischer Zeitraum (z.B. "März-Mai")
+  defaultWizardDaten  Json? // Typspezifische Voreinstellungen (pflanzverband, zauntyp, etc.)
+  icon                String? // Lucide Icon Name für UI
+  sortOrder           Int      @default(0) // Sortierreihenfolge
+  aktiv               Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }
 
 // GRUPPE
 model Gruppe {
-  id                  String             @id @default(cuid())
-  name                String
-  saisonId            String?
-  gruppenfuehrerId    String?
-  status              String             @default("aktiv")
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @updatedAt
-  saison              Saison?            @relation(fields: [saisonId], references: [id], onDelete: SetNull)
-  auftraege           Auftrag[]
-  mitglieder          GruppeMitglied[]
-  maschineneinsaetze  Maschineneinsatz[]
+  id                 String             @id @default(cuid())
+  name               String
+  saisonId           String?
+  gruppenfuehrerId   String?
+  status             String             @default("aktiv")
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  saison             Saison?            @relation(fields: [saisonId], references: [id], onDelete: SetNull)
+  auftraege          Auftrag[]
+  mitglieder         GruppeMitglied[]
+  maschineneinsaetze Maschineneinsatz[]
   // Sprint AO: Wochenplanung
-  wochenplaene        Wochenplan[]
+  wochenplaene       Wochenplan[]
 }
 
 model GruppeMitglied {
@@ -258,20 +262,60 @@ model SaisonAnmeldung {
 
 // LAGER (Sprint FS erweitert)
 model LagerArtikel {
-  id             String          @id @default(cuid())
+  id             String              @id @default(cuid())
   name           String
-  kategorie      String          @default("material")
-  einheit        String          @default("Stück")
-  bestand        Float           @default(0)
-  mindestbestand Float           @default(0)
+  kategorie      String              @default("material")
+  einheit        String              @default("Stück")
+  bestand        Float               @default(0)
+  mindestbestand Float               @default(0)
   lagerort       String?
   artikelnummer  String?
   // Sprint FS (C4-C6): Einkaufs- und Verkaufspreise
   einkaufspreis  Float?
   verkaufspreis  Float?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  // KL-2: Lieferanten-Relation
+  lieferantId    String?
+  lieferant      Lieferant?          @relation(fields: [lieferantId], references: [id], onDelete: SetNull)
+  lieferzeit     Int? // Lieferzeit in Tagen
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
   bewegungen     LagerBewegung[]
+  reservierungen LagerReservierung[]
+}
+
+// KL-1: Lager-Reservierungslogik
+model LagerReservierung {
+  id           String       @id @default(cuid())
+  artikelId    String
+  artikel      LagerArtikel @relation(fields: [artikelId], references: [id], onDelete: Cascade)
+  auftragId    String
+  menge        Float
+  status       String       @default("RESERVIERT") // RESERVIERT, VERBRAUCHT, ZURUECK
+  verbrauchtAm DateTime?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([auftragId])
+  @@index([artikelId])
+}
+
+// KL-2: Lieferanten-Stammdaten
+model Lieferant {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  email     String?
+  telefon   String?
+  website   String?
+  adresse   String?
+  plz       String?
+  ort       String?
+  land      String?  @default("Deutschland")
+  notizen   String?
+  aktiv     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  artikel LagerArtikel[]
 }
 
 model LagerBewegung {
@@ -300,8 +344,8 @@ model Fahrzeug {
   tuvDatum          DateTime?
   naechsteWartung   DateTime?
   notizen           String?
-  stundenBonus      Float?             @default(0)  // Extra €/h bei Maschineneinsatz (Sprint K6)
-  bonusBeschreibung String?            // z.B. "Schwermaschinenzuschlag"
+  stundenBonus      Float?             @default(0) // Extra €/h bei Maschineneinsatz (Sprint K6)
+  bonusBeschreibung String? // z.B. "Schwermaschinenzuschlag"
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   einsaetze         Maschineneinsatz[]
@@ -356,8 +400,8 @@ model Vorschuss {
   grund                String?
   genehmigt            Boolean     @default(false)
   zurueckgezahlt       Boolean     @default(false)
-  individualBonus      Float?      @default(0)   // Extra-Bonus für diese Abrechnung (Sprint K7)
-  individualBonusGrund String?                   // Begründung (z.B. "Schichtleitung", "Erschwernis")
+  individualBonus      Float?      @default(0) // Extra-Bonus für diese Abrechnung (Sprint K7)
+  individualBonusGrund String? // Begründung (z.B. "Schichtleitung", "Erschwernis")
   createdAt            DateTime    @default(now())
   mitarbeiter          Mitarbeiter @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
 }
@@ -372,8 +416,8 @@ model Stundeneintrag {
   typ               String      @default("arbeit")
   notiz             String?
   genehmigt         Boolean     @default(false)
-  stundenlohn       Float?      // Stundenlohn zum Zeitpunkt der Erfassung
-  maschinenzuschlag Float?      // Maschinenbonus (Sprint K1+)
+  stundenlohn       Float? // Stundenlohn zum Zeitpunkt der Erfassung
+  maschinenzuschlag Float? // Maschinenbonus (Sprint K1+)
   createdAt         DateTime    @default(now())
   mitarbeiter       Mitarbeiter @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
   auftrag           Auftrag?    @relation(fields: [auftragId], references: [id], onDelete: SetNull)
@@ -440,176 +484,176 @@ model MitarbeiterSchulung {
 
 // DOKUMENTE
 model Dokument {
-  id             String   @id @default(cuid())
+  id             String       @id @default(cuid())
   name           String
-  typ            String   @default("sonstiges")
+  typ            String       @default("sonstiges")
   url            String?
   nextcloudPath  String?
   auftragId      String?
   saisonId       String?
   hochgeladenVon String?
-  createdAt      DateTime @default(now())
+  createdAt      DateTime     @default(now())
   // Mitarbeiter-Dokumente (Sprint BQ)
   mitarbeiterId  String?
   mitarbeiter    Mitarbeiter? @relation(fields: [mitarbeiterId], references: [id])
-  kategorie      String?   // "a1", "sicherheitsunterweisung", "versicherung", "lohnsteuer", "vertrag", "fuehrerschein", "sonstiges"
-  jahr           Int?      // Jahrgang des Dokuments (z.B. 2026)
+  kategorie      String? // "a1", "sicherheitsunterweisung", "versicherung", "lohnsteuer", "vertrag", "fuehrerschein", "sonstiges"
+  jahr           Int? // Jahrgang des Dokuments (z.B. 2026)
   ablaufDatum    DateTime? // für Dokumente die ablaufen (A1, Führerschein etc.)
-  vertraulich    Boolean   @default(false) // nur Admin sichtbar
-  groesse        Int?      // Dateigröße in Bytes
-  mimeType       String?   // z.B. "application/pdf"
+  vertraulich    Boolean      @default(false) // nur Admin sichtbar
+  groesse        Int? // Dateigröße in Bytes
+  mimeType       String? // z.B. "application/pdf"
   beschreibung   String?
-  auftrag        Auftrag? @relation(fields: [auftragId], references: [id], onDelete: SetNull)
-  saison         Saison?  @relation(fields: [saisonId], references: [id], onDelete: SetNull)
+  auftrag        Auftrag?     @relation(fields: [auftragId], references: [id], onDelete: SetNull)
+  saison         Saison?      @relation(fields: [saisonId], references: [id], onDelete: SetNull)
 }
 
 // ABNAHMEN
 model Abnahme {
-  id              String    @id @default(cuid())
-  auftragId       String
-  auftrag         Auftrag   @relation(fields: [auftragId], references: [id], onDelete: Cascade)
-  datum           DateTime  @default(now())
+  id        String   @id @default(cuid())
+  auftragId String
+  auftrag   Auftrag  @relation(fields: [auftragId], references: [id], onDelete: Cascade)
+  datum     DateTime @default(now())
 
   // Förster
   foersterId      String?
-  foersterName    String?   // Name des Försters (Freitext oder aus Kontakt)
+  foersterName    String? // Name des Försters (Freitext oder aus Kontakt)
   foersterEmail   String?
   foersterTelefon String?
 
   // Status-Workflow
-  status          String    @default("offen")  // offen|bestätigt|abgelehnt|mängel
+  status String @default("offen") // offen|bestätigt|abgelehnt|mängel
 
   // Abnahme-Details
-  notizen         String?
-  abnahmeProtokoll String?  // Detailliertes Abnahmeprotokoll
+  notizen          String?
+  abnahmeProtokoll String? // Detailliertes Abnahmeprotokoll
 
   // Mängel
-  haengelListe    Json?     // Array: [{beschreibung, priorität, erledigtAm}]
-  maengelFrist    DateTime? // Bis wann müssen Mängel behoben sein
+  haengelListe Json? // Array: [{beschreibung, priorität, erledigtAm}]
+  maengelFrist DateTime? // Bis wann müssen Mängel behoben sein
 
   // GPS Standort der Abnahme
-  gpsLat          Float?
-  gpsLon          Float?
+  gpsLat Float?
+  gpsLon Float?
 
   // Dokumentation
-  fotos           Json?     // Array: [{url, nextcloudPath, caption}]
-  signaturUrl     String?   // Unterschrift Förster (Base64 oder URL)
-  pdfUrl          String?   // Generiertes Abnahme-Protokoll PDF
+  fotos       Json? // Array: [{url, nextcloudPath, caption}]
+  signaturUrl String? // Unterschrift Förster (Base64 oder URL)
+  pdfUrl      String? // Generiertes Abnahme-Protokoll PDF
 
   // Auftrag-Freigabe
-  rechnungFreigegeben Boolean @default(false)
-  freigegebenAm   DateTime?
-  freigegebenVon  String?   // userId
+  rechnungFreigegeben Boolean   @default(false)
+  freigegebenAm       DateTime?
+  freigegebenVon      String? // userId
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 // TAGESPROTOKOLL
 model Tagesprotokoll {
-  id                    String    @id @default(cuid())
-  auftragId             String
-  auftrag               Auftrag   @relation(fields: [auftragId], references: [id], onDelete: Cascade)
-  gruppeId              String?
-  datum                 DateTime
-  ersteller             String    @default("")
-  erstellerId           String?
+  id          String   @id @default(cuid())
+  auftragId   String
+  auftrag     Auftrag  @relation(fields: [auftragId], references: [id], onDelete: Cascade)
+  gruppeId    String?
+  datum       DateTime
+  ersteller   String   @default("")
+  erstellerId String?
 
   // ── Arbeitszeit (Sprint BP) ───────────────────────────────────
-  arbeitsbeginn         String?
-  arbeitsende           String?
-  pauseMinuten          Int?      @default(0)
+  arbeitsbeginn String?
+  arbeitsende   String?
+  pauseMinuten  Int?    @default(0)
 
   // ── Fläche & Leistung ─────────────────────────────────────────
-  flaecheBearbeitetHa   Float?
-  abschnitt             String?
+  flaecheBearbeitetHa Float?
+  abschnitt           String?
 
   // ── Pflanzung Details ─────────────────────────────────────────
-  gepflanztGesamt       Int?
-  gepflanzt             Int?
-  pflanzDetails         Json?
-  pflanzverband         String?
-  pflanztiefe           String?
+  gepflanztGesamt Int?
+  gepflanzt       Int?
+  pflanzDetails   Json?
+  pflanzverband   String?
+  pflanztiefe     String?
 
   // ── Boden & Standort ──────────────────────────────────────────
-  bodenVorbereitung     String?
-  bodenbeschaffenheit   String?
-  hangneigung           String?
+  bodenVorbereitung   String?
+  bodenbeschaffenheit String?
+  hangneigung         String?
 
   // ── Witterung ─────────────────────────────────────────────────
-  witterung             String?
-  temperaturMin         Int?
-  temperaturMax         Int?
-  wind                  String?
-  frost                 Boolean?  @default(false)
+  witterung     String?
+  temperaturMin Int?
+  temperaturMax Int?
+  wind          String?
+  frost         Boolean? @default(false)
 
   // ── GPS ───────────────────────────────────────────────────────
-  gpsStartLat           Float?
-  gpsStartLon           Float?
-  gpsEndLat             Float?
-  gpsEndLon             Float?
-  gpsTrack              Json?
+  gpsStartLat Float?
+  gpsStartLon Float?
+  gpsEndLat   Float?
+  gpsEndLon   Float?
+  gpsTrack    Json?
 
   // ── Team ──────────────────────────────────────────────────────
-  mitarbeiterAnzahl     Int?
-  mitarbeiterListe      Json?
+  mitarbeiterAnzahl Int?
+  mitarbeiterListe  Json?
 
   // ── Material & Maschinen ──────────────────────────────────────
-  materialVerbraucht    Json?
-  maschinenEinsatz      Json?
+  materialVerbraucht Json?
+  maschinenEinsatz   Json?
 
   // ── Qualitätskontrolle ────────────────────────────────────────
-  ausfaelleAnzahl       Int?      @default(0)
-  ausfaelleGrund        String?
-  nachpflanzungNoetig   Boolean?  @default(false)
-  qualitaetsBewertung   Int?
+  ausfaelleAnzahl     Int?     @default(0)
+  ausfaelleGrund      String?
+  nachpflanzungNoetig Boolean? @default(false)
+  qualitaetsBewertung Int?
 
   // ── Protokoll & Notizen ───────────────────────────────────────
-  bericht               String    @default("")
-  besonderheiten        String?
-  naechsteSchritte      String?
-  waldbesitzerAnwesend  Boolean?  @default(false)
-  waldbesitzerNotiz     String?
+  bericht              String   @default("")
+  besonderheiten       String?
+  naechsteSchritte     String?
+  waldbesitzerAnwesend Boolean? @default(false)
+  waldbesitzerNotiz    String?
 
   // ── Dokumentation ─────────────────────────────────────────────
-  fotos                 Json?
-  unterschriftGf        String?
+  fotos          Json?
+  unterschriftGf String?
 
   // ── Legacy-Felder (Abwärtskompatibilität) ─────────────────────
-  kommentar             String?
-  forstamt              String?
-  revier                String?
-  revierleiter          String?
-  abteilung             String?
-  waldbesitzerName      String?
-  zeitBeginn            DateTime?
-  zeitEnde              DateTime?
-  pausezeit             Int?
-  std_einschlag         Float?
-  std_handpflanzung     Float?
-  stk_pflanzung         Int?
-  std_zum_bohrer        Float?
-  std_mit_bohrer        Float?
-  stk_pflanzung_mit_bohrer Int?
-  std_freischneider     Float?
-  std_motorsaege        Float?
-  std_wuchshuellen      Float?
-  stk_wuchshuellen      Int?
+  kommentar                 String?
+  forstamt                  String?
+  revier                    String?
+  revierleiter              String?
+  abteilung                 String?
+  waldbesitzerName          String?
+  zeitBeginn                DateTime?
+  zeitEnde                  DateTime?
+  pausezeit                 Int?
+  std_einschlag             Float?
+  std_handpflanzung         Float?
+  stk_pflanzung             Int?
+  std_zum_bohrer            Float?
+  std_mit_bohrer            Float?
+  stk_pflanzung_mit_bohrer  Int?
+  std_freischneider         Float?
+  std_motorsaege            Float?
+  std_wuchshuellen          Float?
+  stk_wuchshuellen          Int?
   std_netze_staebe_spiralen Float?
   stk_netze_staebe_spiralen Int?
-  std_zaunbau           Float?
-  stk_drahtverbinder    Int?
-  lfm_zaunbau           Float?
-  std_nachbesserung     Float?
-  stk_nachbesserung     Int?
-  std_sonstige_arbeiten Float?
+  std_zaunbau               Float?
+  stk_drahtverbinder        Int?
+  lfm_zaunbau               Float?
+  std_nachbesserung         Float?
+  stk_nachbesserung         Int?
+  std_sonstige_arbeiten     Float?
 
   // ── Status ────────────────────────────────────────────────────
-  status                String    @default("entwurf")
-  eingereichtAm         DateTime?
+  status        String    @default("entwurf")
+  eingereichtAm DateTime?
 
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 // KONTAKTE
@@ -639,7 +683,7 @@ model Maschineneinsatz {
   vonDatum    DateTime
   bisDatum    DateTime?
   zweck       String?
-  stundensatz Float?    // Maschinenkosten pro Stunde (optional)
+  stundensatz Float? // Maschinenkosten pro Stunde (optional)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -657,8 +701,8 @@ model Rechnung {
   pdfUrl            String?
   notizen           String?
   // Sprint BQ: Erweiterte Felder
-  rabatt            Float?             @default(0)   // Rabatt in Prozent (0-100)
-  rabattBetrag      Float?             @default(0)   // Absoluter Rabattbetrag
+  rabatt            Float?             @default(0) // Rabatt in Prozent (0-100)
+  rabattBetrag      Float?             @default(0) // Absoluter Rabattbetrag
   rabattGrund       String?
   nettoBetrag       Float?
   bruttoBetrag      Float?
@@ -676,33 +720,33 @@ model RechnungPosition {
   rechnung        Rechnung @relation(fields: [rechnungId], references: [id], onDelete: Cascade)
   beschreibung    String
   menge           Float
-  einheit         String   // "Stk", "ha", "Std", "lfm", "pauschal"
+  einheit         String // "Stk", "ha", "Std", "lfm", "pauschal"
   preisProEinheit Float
   gesamt          Float
-  protokollId     String?  // Welches Protokoll hat diese Position erzeugt
+  protokollId     String? // Welches Protokoll hat diese Position erzeugt
   typ             String   @default("leistung") // leistung|material|fahrt
   createdAt       DateTime @default(now())
 }
 
 // LOHNABRECHNUNG (Sprint R)
 model Lohnabrechnung {
-  id            String      @id @default(cuid())
-  mitarbeiterId String
-  mitarbeiter   Mitarbeiter @relation(fields: [mitarbeiterId], references: [id])
-  saisonId      String?
-  saison        Saison?     @relation(fields: [saisonId], references: [id])
-  zeitraumVon   DateTime
-  zeitraumBis   DateTime
-  stunden       Float
-  bruttoLohn    Float
-  gesamtLohn    Float
-  maschinenBonus Float      @default(0)
-  vorschuesse   Float       @default(0)
-  auszahlung    Float
-  status        String      @default("erstellt")
-  notizen       String?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id             String      @id @default(cuid())
+  mitarbeiterId  String
+  mitarbeiter    Mitarbeiter @relation(fields: [mitarbeiterId], references: [id])
+  saisonId       String?
+  saison         Saison?     @relation(fields: [saisonId], references: [id])
+  zeitraumVon    DateTime
+  zeitraumBis    DateTime
+  stunden        Float
+  bruttoLohn     Float
+  gesamtLohn     Float
+  maschinenBonus Float       @default(0)
+  vorschuesse    Float       @default(0)
+  auszahlung     Float
+  status         String      @default("erstellt")
+  notizen        String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
 }
 
 // ============================================================
@@ -712,53 +756,53 @@ model Lohnabrechnung {
 // ============================================================
 
 model Wochenplan {
-  id              String              @id @default(cuid())
-  kalenderwoche   Int                 // KW-Nummer (1-53)
-  jahr            Int                 // Jahr
-  gruppeId        String?             // Zugewiesene Gruppe
-  gruppe          Gruppe?             @relation(fields: [gruppeId], references: [id])
-  erstelltVon     String?             // User-ID des Erstellers
-  dienstleistung  String?             // Haupt-Dienstleistungstyp: pflanzung|flaechenvorbereitung|kulturpflege|kulturschutz|saatguternte|sonstiges
-  gruppenleiter   String?             // Name des Gruppenführers für Unterschrift
-  status          String              @default("entwurf") // entwurf, freigegeben, abgeschlossen
-  notizen         String?
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
-  positionen      WochenplanPosition[]
+  id             String               @id @default(cuid())
+  kalenderwoche  Int // KW-Nummer (1-53)
+  jahr           Int // Jahr
+  gruppeId       String? // Zugewiesene Gruppe
+  gruppe         Gruppe?              @relation(fields: [gruppeId], references: [id])
+  erstelltVon    String? // User-ID des Erstellers
+  dienstleistung String? // Haupt-Dienstleistungstyp: pflanzung|flaechenvorbereitung|kulturpflege|kulturschutz|saatguternte|sonstiges
+  gruppenleiter  String? // Name des Gruppenführers für Unterschrift
+  status         String               @default("entwurf") // entwurf, freigegeben, abgeschlossen
+  notizen        String?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  positionen     WochenplanPosition[]
 
   @@unique([kalenderwoche, jahr, gruppeId])
 }
 
 model WochenplanPosition {
-  id                  String    @id @default(cuid())
-  wochenplanId        String
-  wochenplan          Wochenplan @relation(fields: [wochenplanId], references: [id], onDelete: Cascade)
-  dienstleistungstyp  String    // pflanzung, flaechenvorbereitung, kulturpflege, kulturschutz, saatguternte, sonstiges
-  tag                 Int?      // Wochentag: 1=Mo, 2=Di, 3=Mi, 4=Do, 5=Fr
-  datum               DateTime?
-  auftragId           String?   // Optionale Verknüpfung mit Auftrag
-  aufgabe             String?   // Aufgabenbeschreibung für die Position
-  einheit             String?   // Einheit: kg, Stück, ha
-  erledigt            Boolean   @default(false)
-  status              String    @default("geplant") // geplant, in_arbeit, abgeschlossen
-  notizen             String?
+  id                 String     @id @default(cuid())
+  wochenplanId       String
+  wochenplan         Wochenplan @relation(fields: [wochenplanId], references: [id], onDelete: Cascade)
+  dienstleistungstyp String // pflanzung, flaechenvorbereitung, kulturpflege, kulturschutz, saatguternte, sonstiges
+  tag                Int? // Wochentag: 1=Mo, 2=Di, 3=Mi, 4=Do, 5=Fr
+  datum              DateTime?
+  auftragId          String? // Optionale Verknüpfung mit Auftrag
+  aufgabe            String? // Aufgabenbeschreibung für die Position
+  einheit            String? // Einheit: kg, Stück, ha
+  erledigt           Boolean    @default(false)
+  status             String     @default("geplant") // geplant, in_arbeit, abgeschlossen
+  notizen            String?
 
   // ── Gemeinsame Felder ──────────────────────────────────────
-  flaeche             String?   // Flächen-Bezeichnung / Waldstück
-  gpsPosition         String?   // GPS-Koordinate als "lat,lon" String (alias gpsKoordinaten)
-  treffpunkt          String?   // Treffpunkt-Beschreibung oder GPS
+  flaeche     String? // Flächen-Bezeichnung / Waldstück
+  gpsPosition String? // GPS-Koordinate als "lat,lon" String (alias gpsKoordinaten)
+  treffpunkt  String? // Treffpunkt-Beschreibung oder GPS
 
   // ── Pflanzung-spezifisch ───────────────────────────────────
-  baumart             String?
-  stueckzahl          Int?
+  baumart    String?
+  stueckzahl Int?
 
   // ── Saatguternte-spezifisch ────────────────────────────────
-  herkunftscode       String?   // Herkunftscode z.B. "06 NRW-818-07"
-  zielkg              Float?    // Ziel in Kilogramm (alias zielMenge)
-  gesammelteKg        Float?    @default(0)
+  herkunftscode String? // Herkunftscode z.B. "06 NRW-818-07"
+  zielkg        Float? // Ziel in Kilogramm (alias zielMenge)
+  gesammelteKg  Float?  @default(0)
 
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // SYSTEM-KONFIGURATION (Sprint P)
@@ -769,32 +813,77 @@ model SystemConfig {
   updatedAt DateTime @updatedAt
 }
 
+// KJ-2: Pflanzverband-Konfiguration (dynamisch aus DB statt hard-coded)
+model PflanzverbandConfig {
+  id          String   @id @default(cuid())
+  name        String   @unique // z.B. "Quincunx 1,0×0,75m"
+  abstandX    Float // Abstand in Reihe (m)
+  abstandY    Float // Abstand zwischen Reihen (m)
+  muster      String   @default("GLEICH") // QUINCUNX, GLEICH, ALTERNIEREND
+  svgPreview  String? // SVG-Code für Vorschau
+  stueckProHa Int? // Berechnete Stückzahl pro Hektar
+  aktiv       Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// KK-1: Kunden-Content für Blog/Bewertungen
+// Workflow: Auftragsabschluss → Einwilligung anfragen → Content generieren → Freigabe → Veröffentlichung
+model KundenContent {
+  id        String @id @default(cuid())
+  auftragId String @unique
+
+  // Einwilligungs-Status
+  einwilligungStatus String    @default("AUSSTEHEND") // AUSSTEHEND, ERTEILT, ABGELEHNT
+  einwilligungDatum  DateTime?
+
+  // Content
+  contentVorschlag String? // KI-generierter Markdown-Text
+  contentFinal     String? // Nach Bearbeitung finaler Text
+
+  // Freigaben
+  tomekFreigabe      Boolean   @default(false)
+  tomekFreigabeDatum DateTime?
+  kundeFreigabe      Boolean   @default(false)
+  kundeFreigabeDatum DateTime?
+
+  // Veröffentlichung
+  veroeffentlicht   Boolean   @default(false)
+  wpPostId          String? // WordPress Post-ID nach Veröffentlichung
+  wpPostUrl         String? // URL des veröffentlichten Posts
+  veroeffentlichtAm DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 // ANGEBOTE (Sprint T + FQ)
 model Angebot {
-  id                String    @id @default(cuid())
-  nummer            String?   @unique
-  auftragId         String?
-  auftrag           Auftrag?  @relation(fields: [auftragId], references: [id])
-  waldbesitzerName  String?
-  waldbesitzerEmail String?
-  flaeche_ha        Float?
-  baumanzahl        Int?
-  preisProBaum      Float?
-  stundenSchaetzung Float?
-  gesamtpreis       Float?
-  beschreibung      String?
-  status            String    @default("entwurf") // entwurf, versendet, angenommen, abgelehnt
-  gueltigBis        DateTime?
-  notizen           String?
+  id                  String    @id @default(cuid())
+  nummer              String?   @unique
+  auftragId           String?
+  auftrag             Auftrag?  @relation(fields: [auftragId], references: [id])
+  waldbesitzerName    String?
+  waldbesitzerEmail   String?
+  flaeche_ha          Float?
+  baumanzahl          Int?
+  preisProBaum        Float?
+  stundenSchaetzung   Float?
+  gesamtpreis         Float?
+  beschreibung        String?
+  status              String    @default("entwurf") // entwurf, versendet, angenommen, abgelehnt
+  gueltigBis          DateTime?
+  notizen             String?
   // Sprint FQ (B5): Ersteller für Berechtigungsprüfung
-  createdById       String?
+  createdById         String?
   // Sprint FQ (B6): Kundenbudget als optionales Feld
-  budgetKunde       Float?
+  budgetKunde         Float?
   // Sprint FQ (B1): Kalkulations-Transparenz
-  kalkulationsModus String?   // "flaeche" | "stueck" | "stunden"
+  kalkulationsModus   String? // "flaeche" | "stueck" | "stunden"
   kalkulationsDetails String? // JSON mit Berechnungsdetails
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 }
 
 // ============================================================
@@ -906,16 +995,16 @@ model FlaechenProfil {
 }
 
 model Ernte {
-  id            String    @id @default(cuid())
+  id            String   @id @default(cuid())
   profilId      String
   saison        Int
   datum         DateTime
   baumart       String
   mengeKgGesamt Float?
   notizen       String?
-  exportiert    Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  exportiert    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   profil     FlaechenProfil  @relation(fields: [profilId], references: [id])
   positionen ErntePosition[]
@@ -935,22 +1024,22 @@ model ErntePosition {
 }
 
 model WetterSnapshot {
-  id              String   @id @default(cuid())
-  flaecheId       String
-  datum           DateTime
-  jahr            Int?
-  tempMinAvgC     Float?
-  tempMaxAvgC     Float?
-  tempMinC        Float?
-  tempMaxC        Float?
-  niederschlagMm  Float?
-  frosttage       Int?
-  hitzetage       Int?
-  regentage       Int?
-  monatlichDaten  Json?
-  datenQuelle     String   @default("open-meteo")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String   @id @default(cuid())
+  flaecheId      String
+  datum          DateTime
+  jahr           Int?
+  tempMinAvgC    Float?
+  tempMaxAvgC    Float?
+  tempMinC       Float?
+  tempMaxC       Float?
+  niederschlagMm Float?
+  frosttage      Int?
+  hitzetage      Int?
+  regentage      Int?
+  monatlichDaten Json?
+  datenQuelle    String   @default("open-meteo")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   flaeche RegisterFlaeche @relation(fields: [flaecheId], references: [id], onDelete: Cascade)
 
@@ -963,7 +1052,7 @@ model MediaZuordnung {
   flaecheId     String?
   nextcloudPath String
   dateiname     String
-  typ           String    // bild, video
+  typ           String // bild, video
   datum         DateTime?
   mission       String?
   vorschauUrl   String?
@@ -975,13 +1064,13 @@ model MediaZuordnung {
 // ===== SAATGUTERNTE — Erweitertes System (Sprint AC) =====
 
 model ErntePerson {
-  id            String    @id @default(cuid())
-  name          String    @unique
+  id            String   @id @default(cuid())
+  name          String   @unique
   nationalitaet String?
-  stundenlohn   Float     @default(12.5)
-  aktiv         Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  stundenlohn   Float    @default(12.5)
+  aktiv         Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   arbeitszeitEintraege    SammlerArbeitszeit[]
   ernteLeistungen         ErnteLeistung[]
@@ -989,20 +1078,20 @@ model ErntePerson {
 }
 
 model ErnteSaison {
-  id              String    @id @default(cuid())
-  jahr            Int       @unique
-  gruppenFuehrer  String?
-  notizen         String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id             String   @id @default(cuid())
+  jahr           Int      @unique
+  gruppenFuehrer String?
+  notizen        String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  einsaetze       ErnteEinsatz[]
-  anfragen        Ernteanfrage[]
-  gruppen         ErnteGruppe[]
+  einsaetze ErnteEinsatz[]
+  anfragen  Ernteanfrage[]
+  gruppen   ErnteGruppe[]
 }
 
 model ErnteEinsatz {
-  id              String    @id @default(cuid())
+  id              String   @id @default(cuid())
   saisonId        String
   gruppeId        String?
   datum           DateTime
@@ -1019,38 +1108,38 @@ model ErnteEinsatz {
   notizen         String?
   // Sprint AH: GPS-Track als JSON-Array [{lat, lon, timestamp}]
   gpsTrack        Json?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  saison          ErnteSaison      @relation(fields: [saisonId], references: [id])
-  gruppe          ErnteGruppe?     @relation(fields: [gruppeId], references: [id])
-  flaeche         RegisterFlaeche? @relation(fields: [flaecheId], references: [id])
-  leistungen      ErnteLeistung[]
-  sammlerZeiten   SammlerArbeitszeit[]
+  saison        ErnteSaison          @relation(fields: [saisonId], references: [id])
+  gruppe        ErnteGruppe?         @relation(fields: [gruppeId], references: [id])
+  flaeche       RegisterFlaeche?     @relation(fields: [flaecheId], references: [id])
+  leistungen    ErnteLeistung[]
+  sammlerZeiten SammlerArbeitszeit[]
 }
 
 // ===== SPRINT AD: Baumschulen · Ernteanfragen · Gruppen =====
 
 model Baumschule {
-  id              String   @id @default(cuid())
-  name            String   @unique
-  ort             String?
-  bundesland      String?
-  ansprechpartner String?
-  email           String?
-  telefon         String?
-  notizen         String?
-  aktiv           Boolean  @default(true)
+  id               String    @id @default(cuid())
+  name             String    @unique
+  ort              String?
+  bundesland       String?
+  ansprechpartner  String?
+  email            String?
+  telefon          String?
+  notizen          String?
+  aktiv            Boolean   @default(true)
   // Sprint AJ: Baumschul-Authentifizierung
-  loginToken      String?  @unique // Login-Link-Token (einmalig, zeitlich begrenzt)
-  loginTokenExpiry DateTime?       // Ablaufzeit des Login-Tokens
-  userId          String?  @unique // Verknüpfter User-Account (Rolle: baumschule)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  loginToken       String?   @unique // Login-Link-Token (einmalig, zeitlich begrenzt)
+  loginTokenExpiry DateTime? // Ablaufzeit des Login-Tokens
+  userId           String?   @unique // Verknüpfter User-Account (Rolle: baumschule)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
-  anfragen        Ernteanfrage[]
-  preislisten     BaumschulPreisliste[]
-  user            User?    @relation(fields: [userId], references: [id])
+  anfragen    Ernteanfrage[]
+  preislisten BaumschulPreisliste[]
+  user        User?                 @relation(fields: [userId], references: [id])
 }
 
 // Sprint AI: Preislistenverwaltung für Baumschulen
@@ -1058,10 +1147,10 @@ model BaumschulPreisliste {
   id           String     @id @default(cuid())
   baumschuleId String
   baumschule   Baumschule @relation(fields: [baumschuleId], references: [id], onDelete: Cascade)
-  baumart      String     // z.B. "Eiche", "Buche", "Fichte"
-  preis        Float      // Preis in Euro
+  baumart      String // z.B. "Eiche", "Buche", "Fichte"
+  preis        Float // Preis in Euro
   einheit      String     @default("kg") // kg, Stück, Bündel
-  saison       String?    // z.B. "2025", "2025/2026"
+  saison       String? // z.B. "2025", "2025/2026"
   aktiv        Boolean    @default(true)
   notizen      String?
   createdAt    DateTime   @default(now())
@@ -1082,14 +1171,14 @@ model Ernteanfrage {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
-  herkunftCode       String?   // z.B. "06", "07", "818 07"
-  herkunftName       String?   // z.B. "Nordrhein-Westfalen Tiefland" (optional)
-  sonderherkunft     Boolean   @default(false)
-  sonderherkunftCode String?   // Code der DKV-Sonderherkunft, z.B. "DKV-818-001"
-  sonderherkunftName String?   // Name der Sonderherkunft
+  herkunftCode       String? // z.B. "06", "07", "818 07"
+  herkunftName       String? // z.B. "Nordrhein-Westfalen Tiefland" (optional)
+  sonderherkunft     Boolean @default(false)
+  sonderherkunftCode String? // Code der DKV-Sonderherkunft, z.B. "DKV-818-001"
+  sonderherkunftName String? // Name der Sonderherkunft
 
-  baumschule   Baumschule   @relation(fields: [baumschuleId], references: [id])
-  saison       ErnteSaison? @relation(fields: [saisonId], references: [id])
+  baumschule Baumschule   @relation(fields: [baumschuleId], references: [id])
+  saison     ErnteSaison? @relation(fields: [saisonId], references: [id])
 }
 
 model ErnteGruppe {
@@ -1102,9 +1191,9 @@ model ErnteGruppe {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
-  saison             ErnteSaison          @relation(fields: [saisonId], references: [id])
-  mitglieder         ErnteGruppeMitglied[]
-  einsaetze          ErnteEinsatz[]
+  saison     ErnteSaison           @relation(fields: [saisonId], references: [id])
+  mitglieder ErnteGruppeMitglied[]
+  einsaetze  ErnteEinsatz[]
 }
 
 model ErnteGruppeMitglied {
@@ -1114,28 +1203,28 @@ model ErnteGruppeMitglied {
   rolle     String   @default("sammler")
   createdAt DateTime @default(now())
 
-  gruppe    ErnteGruppe @relation(fields: [gruppeId], references: [id])
-  person    ErntePerson @relation(fields: [personId], references: [id])
+  gruppe ErnteGruppe @relation(fields: [gruppeId], references: [id])
+  person ErntePerson @relation(fields: [personId], references: [id])
 
   @@unique([gruppeId, personId])
 }
 
 model ErnteLeistung {
-  id          String      @id @default(cuid())
+  id          String   @id @default(cuid())
   einsatzId   String
   personId    String
   gesammeltKg Float
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  einsatz     ErnteEinsatz  @relation(fields: [einsatzId], references: [id])
-  person      ErntePerson   @relation(fields: [personId], references: [id])
+  einsatz ErnteEinsatz @relation(fields: [einsatzId], references: [id])
+  person  ErntePerson  @relation(fields: [personId], references: [id])
 
   @@unique([einsatzId, personId])
 }
 
 model SammlerArbeitszeit {
-  id            String      @id @default(cuid())
+  id            String    @id @default(cuid())
   personId      String
   einsatzId     String?
   datum         DateTime
@@ -1145,11 +1234,11 @@ model SammlerArbeitszeit {
   stunden       Float?
   kommentar     String?
   stundenlohn   Float?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  person        ErntePerson   @relation(fields: [personId], references: [id])
-  einsatz       ErnteEinsatz? @relation(fields: [einsatzId], references: [id])
+  person  ErntePerson   @relation(fields: [personId], references: [id])
+  einsatz ErnteEinsatz? @relation(fields: [einsatzId], references: [id])
 
   @@unique([personId, datum])
 }
@@ -1160,18 +1249,18 @@ model SammlerArbeitszeit {
 // ============================================================
 
 model TelegramRegistrierung {
-  id          String   @id @default(cuid())
-  chatId      String   @unique
+  id           String   @id @default(cuid())
+  chatId       String   @unique
   waldbesitzer String
-  auftragId   String?
-  aktiv       Boolean  @default(true)
-  createdAt   DateTime @default(now())
+  auftragId    String?
+  aktiv        Boolean  @default(true)
+  createdAt    DateTime @default(now())
 }
 
 // FEEDBACK-SYSTEM (Sprint Feedback)
 model FeedbackEintrag {
   id        String   @id @default(cuid())
-  typ       String   // bug | wunsch | frage
+  typ       String // bug | wunsch | frage
   text      String
   seite     String?
   nutzer    String?
@@ -1186,7 +1275,7 @@ model FeedbackEintrag {
 model UserConsent {
   id          String    @id @default(cuid())
   userId      String
-  consentType String    // KI_VERARBEITUNG, FOTO_AUSWERTUNG, MARKETING
+  consentType String // KI_VERARBEITUNG, FOTO_AUSWERTUNG, MARKETING
   grantedAt   DateTime  @default(now())
   revokedAt   DateTime?
   ipAddress   String?

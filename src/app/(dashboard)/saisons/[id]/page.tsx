@@ -126,6 +126,7 @@ export default async function SaisonDetailPage({
       <SaisonDetailClient
         saison={saison}
         saisonId={id}
+        saisonName={saison.name}
         gesamtPflanzen={gesamtPflanzen}
         gesamtStunden={gesamtStunden}
         gesamtFlaeche={gesamtFlaeche}
