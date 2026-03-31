@@ -277,10 +277,14 @@ model LagerArtikel {
   lieferantId    String?
   lieferant      Lieferant?          @relation(fields: [lieferantId], references: [id], onDelete: SetNull)
   lieferzeit     Int? // Lieferzeit in Tagen
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
-  bewegungen     LagerBewegung[]
-  reservierungen LagerReservierung[]
+  // KN-1: Lieferanten-spezifische Felder
+  lieferantPreis         Decimal? // Einkaufspreis beim Lieferanten
+  lieferantBestellnummer String?  // Artikelnummer beim Lieferanten
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  bewegungen          LagerBewegung[]
+  reservierungen      LagerReservierung[]
+  bestellPositionen   BestellPosition[]
 }
 
 // KL-1: Lager-Reservierungslogik
@@ -315,7 +319,45 @@ model Lieferant {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  artikel LagerArtikel[]
+  artikel      LagerArtikel[]
+  bestellungen Bestellung[]
+}
+
+// KO-1: Bestellungen bei Lieferanten
+model Bestellung {
+  id           String            @id @default(cuid())
+  lieferantId  String
+  lieferant    Lieferant         @relation(fields: [lieferantId], references: [id])
+  status       String            @default("ENTWURF") // ENTWURF/BESTELLT/GELIEFERT
+  bestelldatum DateTime          @default(now())
+  gesamtbetrag Decimal           @default(0)
+  notizen      String?
+  positionen   BestellPosition[]
+  createdAt    DateTime          @default(now())
+}
+
+model BestellPosition {
+  id           String       @id @default(cuid())
+  bestellungId String
+  bestellung   Bestellung   @relation(fields: [bestellungId], references: [id], onDelete: Cascade)
+  artikelId    String
+  artikel      LagerArtikel @relation(fields: [artikelId], references: [id])
+  menge        Decimal
+  einzelpreis  Decimal
+}
+
+// KQ-2: SyncLog für WP-Synchronisation
+model SyncLog {
+  id         String   @id @default(cuid())
+  entityType String   // Auftrag, Kunde, etc.
+  entityId   String
+  direction  String   // WP_TO_FM / FM_TO_WP
+  status     String   // OK / ERROR / CONFLICT
+  error      String?
+  timestamp  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([timestamp])
 }
 
 model LagerBewegung {

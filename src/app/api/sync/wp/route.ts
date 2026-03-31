@@ -1,223 +1,92 @@
-// KI-1: WP-Sync Merge-Strategie
-// POST /api/sync/wp — Synchronisiert Aufträge zwischen WordPress und ForstManager
-// Strategie: Last-Write-Wins via Timestamp-Vergleich
-
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { wpSyncEngine } from "@/lib/sync/wp-sync"
 
-interface WPAuftrag {
-  wpProjektId: string
-  titel: string
-  typ: string
-  status: string
-  waldbesitzer?: string
-  waldbesitzerEmail?: string
-  waldbesitzerTelefon?: string
-  standort?: string
-  bundesland?: string
-  flaeche_ha?: number
-  wizardDaten?: Record<string, unknown>
-  wpUpdatedAt: string // ISO Date String
-}
-
-interface SyncResult {
-  wpProjektId: string
-  action: "created" | "updated_from_wp" | "kept_local" | "conflict" | "skipped"
-  auftragId?: string
-  reason?: string
-}
-
-export async function POST(req: NextRequest) {
+// GET: Sync-Status abrufen
+export async function GET() {
   try {
-    await auth()
-    
-    const body = await req.json()
-    const wpAuftraege: WPAuftrag[] = body.auftraege || []
-    
-    if (!Array.isArray(wpAuftraege)) {
-      return NextResponse.json({ error: "auftraege Array erforderlich" }, { status: 400 })
-    }
-
-    const results: SyncResult[] = []
-
-    for (const wpAuftrag of wpAuftraege) {
-      if (!wpAuftrag.wpProjektId) {
-        results.push({
-          wpProjektId: wpAuftrag.wpProjektId || "unknown",
-          action: "skipped",
-          reason: "Keine wpProjektId",
-        })
-        continue
+    // Aufträge mit ausstehenden lokalen Änderungen
+    const pendingSync = await prisma.auftrag.count({
+      where: {
+        wpProjektId: { not: null },
+        syncStatus: "local_changes"
       }
-
-      // Bestehenden Auftrag in FM suchen
-      const existing = await prisma.auftrag.findUnique({
-        where: { wpProjektId: wpAuftrag.wpProjektId },
-        select: {
-          id: true,
-          localUpdatedAt: true,
-          wpSyncedAt: true,
-          syncStatus: true,
-        },
+    })
+    
+    // Letzte Sync-Logs
+    const recentLogs = await prisma.syncLog.findMany({
+      take: 5,
+      orderBy: { timestamp: "desc" }
+    })
+    
+    // Fehlerquote der letzten 24h
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    
+    const [total, errors] = await Promise.all([
+      prisma.syncLog.count({
+        where: { timestamp: { gte: yesterday } }
+      }),
+      prisma.syncLog.count({
+        where: { 
+          timestamp: { gte: yesterday },
+          status: "ERROR"
+        }
       })
-
-      const wpUpdatedAt = new Date(wpAuftrag.wpUpdatedAt)
-
-      if (!existing) {
-        // Neuer Auftrag — aus WP erstellen
-        const created = await prisma.auftrag.create({
-          data: {
-            titel: wpAuftrag.titel,
-            typ: wpAuftrag.typ || "pflanzung",
-            status: wpAuftrag.status || "anfrage",
-            waldbesitzer: wpAuftrag.waldbesitzer,
-            waldbesitzerEmail: wpAuftrag.waldbesitzerEmail,
-            waldbesitzerTelefon: wpAuftrag.waldbesitzerTelefon,
-            standort: wpAuftrag.standort,
-            bundesland: wpAuftrag.bundesland,
-            flaeche_ha: wpAuftrag.flaeche_ha,
-            wizardDaten: wpAuftrag.wizardDaten || null,
-            wpProjektId: wpAuftrag.wpProjektId,
-            wpErstelltAm: wpUpdatedAt,
-            wpSyncedAt: new Date(),
-            syncStatus: "synced",
-          },
-        })
-
-        results.push({
-          wpProjektId: wpAuftrag.wpProjektId,
-          action: "created",
-          auftragId: created.id,
-        })
-        continue
-      }
-
-      // Bestehender Auftrag — Merge-Strategie anwenden
-      const localUpdatedAt = existing.localUpdatedAt || new Date(0)
-
-      // Last-Write-Wins Vergleich
-      if (wpUpdatedAt > localUpdatedAt) {
-        // WP ist neuer — FM überschreiben
-        await prisma.auftrag.update({
-          where: { id: existing.id },
-          data: {
-            titel: wpAuftrag.titel,
-            typ: wpAuftrag.typ,
-            status: wpAuftrag.status,
-            waldbesitzer: wpAuftrag.waldbesitzer,
-            waldbesitzerEmail: wpAuftrag.waldbesitzerEmail,
-            waldbesitzerTelefon: wpAuftrag.waldbesitzerTelefon,
-            standort: wpAuftrag.standort,
-            bundesland: wpAuftrag.bundesland,
-            flaeche_ha: wpAuftrag.flaeche_ha,
-            wizardDaten: wpAuftrag.wizardDaten || null,
-            wpSyncedAt: new Date(),
-            syncStatus: "synced",
-          },
-        })
-
-        results.push({
-          wpProjektId: wpAuftrag.wpProjektId,
-          action: "updated_from_wp",
-          auftragId: existing.id,
-        })
-      } else if (localUpdatedAt > wpUpdatedAt) {
-        // FM ist neuer — lokale Änderungen behalten, markieren für Push zu WP
-        await prisma.auftrag.update({
-          where: { id: existing.id },
-          data: {
-            wpSyncedAt: new Date(),
-            syncStatus: "local_changes",
-          },
-        })
-
-        results.push({
-          wpProjektId: wpAuftrag.wpProjektId,
-          action: "kept_local",
-          auftragId: existing.id,
-          reason: "Lokale Änderungen sind neuer",
-        })
-      } else {
-        // Gleicher Timestamp — als synchronisiert markieren
-        await prisma.auftrag.update({
-          where: { id: existing.id },
-          data: {
-            wpSyncedAt: new Date(),
-            syncStatus: "synced",
-          },
-        })
-
-        results.push({
-          wpProjektId: wpAuftrag.wpProjektId,
-          action: "skipped",
-          auftragId: existing.id,
-          reason: "Bereits synchronisiert",
-        })
-      }
-    }
-
-    // Statistiken
-    const stats = {
-      total: results.length,
-      created: results.filter(r => r.action === "created").length,
-      updated_from_wp: results.filter(r => r.action === "updated_from_wp").length,
-      kept_local: results.filter(r => r.action === "kept_local").length,
-      skipped: results.filter(r => r.action === "skipped").length,
-    }
-
+    ])
+    
     return NextResponse.json({
-      success: true,
-      stats,
-      results,
+      pendingSync,
+      errorRate: total > 0 ? (errors / total * 100).toFixed(1) : "0",
+      recentLogs,
+      lastSync: recentLogs[0]?.timestamp || null
     })
   } catch (error) {
-    console.error("[WP-Sync] Fehler:", error)
-    return NextResponse.json(
-      { error: "Sync fehlgeschlagen", details: error instanceof Error ? error.message : "Unbekannt" },
-      { status: 500 }
-    )
+    console.error("Fehler beim Status-Abruf:", error)
+    return NextResponse.json({ error: "Fehler" }, { status: 500 })
   }
 }
 
-// GET — Aufträge mit lokalem Änderungen abrufen (für Push zu WP)
-export async function GET(req: NextRequest) {
+// POST: Sync auslösen
+export async function POST(req: NextRequest) {
   try {
-    await auth()
+    const body = await req.json()
+    const { action, auftragId } = body
     
-    const { searchParams } = new URL(req.url)
-    const status = searchParams.get("status") || "local_changes"
-
-    const auftraege = await prisma.auftrag.findMany({
-      where: {
-        wpProjektId: { not: null },
-        syncStatus: status,
-      },
-      select: {
-        id: true,
-        wpProjektId: true,
-        titel: true,
-        typ: true,
-        status: true,
-        waldbesitzer: true,
-        waldbesitzerEmail: true,
-        waldbesitzerTelefon: true,
-        standort: true,
-        bundesland: true,
-        flaeche_ha: true,
-        wizardDaten: true,
-        localUpdatedAt: true,
-        wpSyncedAt: true,
-        syncStatus: true,
-      },
-    })
-
-    return NextResponse.json({
-      count: auftraege.length,
-      auftraege,
-    })
+    if (action === "sync_all") {
+      // Alle Aufträge synchronisieren
+      const results = await wpSyncEngine.syncAlle()
+      
+      const successful = results.filter(r => r.success).length
+      const failed = results.filter(r => !r.success).length
+      
+      return NextResponse.json({
+        synced: successful,
+        failed,
+        results
+      })
+    }
+    
+    if (action === "sync_one" && auftragId) {
+      // Einzelnen Auftrag synchronisieren
+      const result = await wpSyncEngine.syncAuftrag(auftragId)
+      
+      return NextResponse.json(result)
+    }
+    
+    if (action === "pull" && body.wpId) {
+      // Von WordPress holen
+      await wpSyncEngine.pullFromWP(body.wpId)
+      
+      return NextResponse.json({ success: true })
+    }
+    
+    return NextResponse.json({ error: "Ungültige Aktion" }, { status: 400 })
   } catch (error) {
-    console.error("[WP-Sync GET] Fehler:", error)
-    return NextResponse.json({ error: "Abruf fehlgeschlagen" }, { status: 500 })
+    console.error("Sync-Fehler:", error)
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Unbekannter Fehler" },
+      { status: 500 }
+    )
   }
 }

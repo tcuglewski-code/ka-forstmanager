@@ -1,93 +1,93 @@
-// KL-2: Einzelner Lieferant API
-// GET /api/lager/lieferanten/[id] — Lieferant abrufen
-// PATCH /api/lager/lieferanten/[id] — Lieferant aktualisieren
-// DELETE /api/lager/lieferanten/[id] — Lieferant löschen
-
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
-// GET — Einzelnen Lieferanten abrufen
+// GET: Einzelnen Lieferanten abrufen
 export async function GET(
-  _: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
+  
   try {
-    await auth()
-    
-    const { id } = await params
-
     const lieferant = await prisma.lieferant.findUnique({
       where: { id },
       include: {
-        artikel: {
-          select: { id: true, name: true, artikelnummer: true },
-        },
-      },
+        _count: {
+          select: { artikel: true }
+        }
+      }
     })
-
+    
     if (!lieferant) {
       return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 })
     }
-
+    
     return NextResponse.json(lieferant)
   } catch (error) {
-    console.error("[Lieferant GET] Fehler:", error)
-    return NextResponse.json({ error: "Abruf fehlgeschlagen" }, { status: 500 })
+    console.error("Fehler:", error)
+    return NextResponse.json({ error: "Fehler beim Laden" }, { status: 500 })
   }
 }
 
-// PATCH — Lieferant aktualisieren
+// PATCH: Lieferant aktualisieren
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
+  
   try {
-    await auth()
-    
-    const { id } = await params
     const body = await req.json()
-
-    const lieferant = await prisma.lieferant.update({
+    const { name, email, telefon, website, adresse, plz, ort, land, notizen, aktiv } = body
+    
+    const updated = await prisma.lieferant.update({
       where: { id },
       data: {
-        name: body.name !== undefined ? body.name : undefined,
-        email: body.email !== undefined ? body.email : undefined,
-        telefon: body.telefon !== undefined ? body.telefon : undefined,
-        website: body.website !== undefined ? body.website : undefined,
-        adresse: body.adresse !== undefined ? body.adresse : undefined,
-        plz: body.plz !== undefined ? body.plz : undefined,
-        ort: body.ort !== undefined ? body.ort : undefined,
-        land: body.land !== undefined ? body.land : undefined,
-        notizen: body.notizen !== undefined ? body.notizen : undefined,
-        aktiv: body.aktiv !== undefined ? body.aktiv : undefined,
-      },
+        ...(name !== undefined && { name }),
+        ...(email !== undefined && { email }),
+        ...(telefon !== undefined && { telefon }),
+        ...(website !== undefined && { website }),
+        ...(adresse !== undefined && { adresse }),
+        ...(plz !== undefined && { plz }),
+        ...(ort !== undefined && { ort }),
+        ...(land !== undefined && { land }),
+        ...(notizen !== undefined && { notizen }),
+        ...(aktiv !== undefined && { aktiv })
+      }
     })
-
-    return NextResponse.json(lieferant)
+    
+    return NextResponse.json(updated)
   } catch (error) {
-    console.error("[Lieferant PATCH] Fehler:", error)
-    return NextResponse.json({ error: "Update fehlgeschlagen" }, { status: 500 })
+    console.error("Fehler:", error)
+    return NextResponse.json({ error: "Fehler beim Aktualisieren" }, { status: 500 })
   }
 }
 
-// DELETE — Lieferant löschen
+// DELETE: Lieferant löschen
 export async function DELETE(
-  _: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
+  
   try {
-    await auth()
-    
-    const { id } = await params
-
-    await prisma.lieferant.delete({
-      where: { id },
+    // Prüfen ob noch Artikel zugeordnet
+    const artikelCount = await prisma.lagerArtikel.count({
+      where: { lieferantId: id }
     })
-
-    return NextResponse.json({ ok: true })
+    
+    if (artikelCount > 0) {
+      return NextResponse.json(
+        { error: `Kann nicht gelöscht werden: ${artikelCount} Artikel zugeordnet` },
+        { status: 400 }
+      )
+    }
+    
+    await prisma.lieferant.delete({ where: { id } })
+    
+    return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("[Lieferant DELETE] Fehler:", error)
-    return NextResponse.json({ error: "Löschen fehlgeschlagen" }, { status: 500 })
+    console.error("Fehler:", error)
+    return NextResponse.json({ error: "Fehler beim Löschen" }, { status: 500 })
   }
 }

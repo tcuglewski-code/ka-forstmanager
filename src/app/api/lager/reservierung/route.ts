@@ -1,26 +1,13 @@
-// KL-1: Lager Reservierungslogik API
-// POST /api/lager/reservierung — Artikel für Auftrag reservieren
-// GET /api/lager/reservierung — Reservierungen auflisten
-
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
-// GET — Reservierungen auflisten
+// GET: Liste aller Reservierungen, optional gefiltert nach auftragId
 export async function GET(req: NextRequest) {
   try {
-    await auth()
+    const auftragId = req.nextUrl.searchParams.get("auftragId")
     
-    const { searchParams } = new URL(req.url)
-    const auftragId = searchParams.get("auftragId")
-    const artikelId = searchParams.get("artikelId")
-    const status = searchParams.get("status")
-
-    const where: Record<string, string> = {}
-    if (auftragId) where.auftragId = auftragId
-    if (artikelId) where.artikelId = artikelId
-    if (status) where.status = status
-
+    const where = auftragId ? { auftragId } : {}
+    
     const reservierungen = await prisma.lagerReservierung.findMany({
       where,
       include: {
@@ -30,87 +17,77 @@ export async function GET(req: NextRequest) {
             name: true,
             einheit: true,
             bestand: true,
-          },
-        },
+            mindestbestand: true,
+          }
+        }
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: "desc" }
     })
-
+    
     return NextResponse.json(reservierungen)
   } catch (error) {
-    console.error("[Reservierung GET] Fehler:", error)
-    return NextResponse.json({ error: "Abruf fehlgeschlagen" }, { status: 500 })
+    console.error("Fehler beim Laden der Reservierungen:", error)
+    return NextResponse.json({ error: "Fehler beim Laden" }, { status: 500 })
   }
 }
 
-// POST — Neue Reservierung erstellen
+// POST: Neue Reservierung erstellen
 export async function POST(req: NextRequest) {
   try {
-    await auth()
-    
     const body = await req.json()
     const { artikelId, auftragId, menge } = body
-
+    
     if (!artikelId || !auftragId || !menge) {
       return NextResponse.json(
-        { error: "artikelId, auftragId und menge erforderlich" },
+        { error: "artikelId, auftragId und menge sind erforderlich" },
         { status: 400 }
       )
     }
-
-    // Artikel laden und Bestand prüfen
+    
+    // Prüfe ob Artikel existiert und genügend Bestand hat
     const artikel = await prisma.lagerArtikel.findUnique({
-      where: { id: artikelId },
-      include: {
-        reservierungen: {
-          where: { status: "RESERVIERT" },
-        },
-      },
+      where: { id: artikelId }
     })
-
+    
     if (!artikel) {
       return NextResponse.json({ error: "Artikel nicht gefunden" }, { status: 404 })
     }
-
-    // Bereits reservierte Menge berechnen
-    const reservierteMenge = artikel.reservierungen.reduce(
-      (sum, r) => sum + r.menge,
-      0
-    )
-
-    // Verfügbare Menge prüfen
-    const verfuegbar = artikel.bestand - reservierteMenge
-    if (menge > verfuegbar) {
+    
+    if (artikel.bestand < menge) {
       return NextResponse.json(
-        {
-          error: "Nicht genug Bestand",
-          bestand: artikel.bestand,
-          reserviert: reservierteMenge,
-          verfuegbar,
-          angefragt: menge,
-        },
+        { error: `Nicht genügend Bestand (verfügbar: ${artikel.bestand})` },
         { status: 400 }
       )
     }
-
-    // Reservierung erstellen
-    const reservierung = await prisma.lagerReservierung.create({
-      data: {
-        artikelId,
-        auftragId,
-        menge: parseFloat(String(menge)),
-        status: "RESERVIERT",
-      },
-      include: {
-        artikel: {
-          select: { name: true, einheit: true },
-        },
-      },
-    })
-
+    
+    // Reservierung erstellen und Bestand reduzieren
+    const [reservierung] = await prisma.$transaction([
+      prisma.lagerReservierung.create({
+        data: {
+          artikelId,
+          auftragId,
+          menge: parseFloat(menge),
+          status: "RESERVIERT"
+        }
+      }),
+      prisma.lagerArtikel.update({
+        where: { id: artikelId },
+        data: { bestand: { decrement: parseFloat(menge) } }
+      }),
+      prisma.lagerBewegung.create({
+        data: {
+          artikelId,
+          auftragId,
+          typ: "reserve",
+          menge: parseFloat(menge),
+          notiz: `Reservierung für Auftrag`
+        }
+      })
+    ])
+    
     return NextResponse.json(reservierung, { status: 201 })
   } catch (error) {
-    console.error("[Reservierung POST] Fehler:", error)
-    return NextResponse.json({ error: "Erstellen fehlgeschlagen" }, { status: 500 })
+    console.error("Fehler beim Erstellen der Reservierung:", error)
+    return NextResponse.json({ error: "Fehler beim Erstellen" }, { status: 500 })
   }
 }
