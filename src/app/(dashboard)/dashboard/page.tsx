@@ -179,12 +179,12 @@ const STATUS_LABELS: Record<string, string> = {
 }
 
 const STATUS_FARBEN: Record<string, string> = {
-  anfrage: "bg-blue-500/20 text-blue-400",
-  geprueft: "bg-sky-500/20 text-sky-400",
-  angebot: "bg-violet-500/20 text-violet-400",
-  bestaetigt: "bg-amber-500/20 text-amber-400",
-  in_ausfuehrung: "bg-emerald-500/20 text-emerald-400",
-  abgeschlossen: "bg-zinc-500/20 text-zinc-400",
+  anfrage: "bg-[#dedad0] text-[#4b6457]",
+  geprueft: "bg-[#cde9d9] text-[#026c47]",
+  angebot: "bg-[#e6e2d8] text-[#3f4942]",
+  bestaetigt: "bg-[#f2eee3] text-[#865300]",
+  in_ausfuehrung: "bg-[#cde9d9] text-[#026c47]",
+  abgeschlossen: "bg-[#e6e2d8] text-[#6f7a72]",
 }
 
 const SCHULUNG_TYP: Record<string, string> = {
@@ -208,35 +208,79 @@ export default async function DashboardPage() {
     <div className="max-w-6xl mx-auto">
       {/* Greeting */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">
+        <h1
+          className="text-3xl font-extrabold tracking-tight"
+          style={{ fontFamily: "var(--font-display)", color: "var(--color-on-surface)" }}
+        >
           Guten Tag, {session?.user?.name?.split(" ")[0] ?? "Admin"} 👋
         </h1>
-        <p className="text-zinc-500 mt-1">{heute}</p>
+        <p className="mt-1 text-sm" style={{ color: "var(--color-on-surface-variant)" }}>{heute}</p>
+      </div>
+
+      {/* KI-Insight Karte (immer sichtbar als Demo) */}
+      <div
+        className="ai-insight-card rounded-xl p-5 mb-6 ambient-shadow"
+        style={{ borderLeft: "4px solid var(--color-tertiary)" }}
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <p
+              className="text-xs font-semibold tracking-widest mb-1"
+              style={{ color: "var(--color-tertiary)", fontFamily: "var(--font-display)" }}
+            >
+              ✨ KI-OPTIMIERUNGSVORSCHLAG
+            </p>
+            <p
+              className="text-base font-bold mb-1"
+              style={{ fontFamily: "var(--font-display)", color: "var(--color-on-surface)" }}
+            >
+              Betriebsübersicht analysiert
+            </p>
+            <p className="text-sm" style={{ color: "var(--color-on-surface-variant)" }}>
+              Alle offenen Aufträge, Stunden und Lagerbestände sind auf dem aktuellen Stand.
+            </p>
+          </div>
+          <span
+            className="text-xs font-semibold px-2 py-1 rounded-full flex-shrink-0"
+            style={{ backgroundColor: "rgba(134,83,0,0.1)", color: "var(--color-tertiary)" }}
+          >
+            INFO
+          </span>
+        </div>
       </div>
 
       {/* Warnungen */}
       {(stats.ablaufendeQualifikationen > 0 || stats.faelligeWartungen > 0 || stats.lagerUnterMindest > 0) && (
         <div className="mb-6 space-y-2">
           {stats.ablaufendeQualifikationen > 0 && (
-            <div className="flex items-center gap-3 bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-3">
-              <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
-              <p className="text-sm text-amber-400">
+            <div
+              className="flex items-center gap-3 rounded-xl px-4 py-3"
+              style={{ backgroundColor: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.2)" }}
+            >
+              <AlertTriangle className="w-4 h-4 flex-shrink-0" style={{ color: "#d97706" }} />
+              <p className="text-sm" style={{ color: "#d97706" }}>
                 {stats.ablaufendeQualifikationen} Qualifikation{stats.ablaufendeQualifikationen > 1 ? "en" : ""} läuft in den nächsten 30 Tagen ab
               </p>
             </div>
           )}
           {stats.faelligeWartungen > 0 && (
-            <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3">
-              <Wrench className="w-4 h-4 text-red-400 flex-shrink-0" />
-              <p className="text-sm text-red-400">
+            <div
+              className="flex items-center gap-3 rounded-xl px-4 py-3"
+              style={{ backgroundColor: "rgba(186,26,26,0.08)", border: "1px solid rgba(186,26,26,0.2)" }}
+            >
+              <Wrench className="w-4 h-4 flex-shrink-0" style={{ color: "var(--color-error)" }} />
+              <p className="text-sm" style={{ color: "var(--color-error)" }}>
                 {stats.faelligeWartungen} fällige Wartung{stats.faelligeWartungen > 1 ? "en" : ""} ausstehend
               </p>
             </div>
           )}
           {stats.lagerUnterMindest > 0 && (
-            <div className="flex items-center gap-3 bg-orange-500/10 border border-orange-500/20 rounded-lg px-4 py-3">
-              <Package className="w-4 h-4 text-orange-400 flex-shrink-0" />
-              <p className="text-sm text-orange-400">
+            <div
+              className="flex items-center gap-3 rounded-xl px-4 py-3"
+              style={{ backgroundColor: "rgba(234,88,12,0.08)", border: "1px solid rgba(234,88,12,0.2)" }}
+            >
+              <Package className="w-4 h-4 flex-shrink-0" style={{ color: "#ea580c" }} />
+              <p className="text-sm" style={{ color: "#ea580c" }}>
                 {stats.lagerUnterMindest} Lagerartikel unter Mindestbestand
               </p>
             </div>
@@ -317,23 +361,67 @@ export default async function DashboardPage() {
 
       {/* Wirtschaftlichkeits-Widget */}
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
-          <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">Gesamtstunden</p>
-          <p className="text-2xl font-bold text-white">{(stats.stundenGesamt._sum?.stunden ?? 0).toFixed(0)}h</p>
+        <div
+          className="rounded-xl p-5 ambient-shadow-md"
+          style={{ backgroundColor: "var(--color-surface-container-low)" }}
+        >
+          <p
+            className="text-xs font-semibold uppercase tracking-wider mb-2"
+            style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
+          >
+            Gesamtstunden
+          </p>
+          <p
+            className="text-3xl font-bold"
+            style={{ fontFamily: "var(--font-mono)", color: "var(--color-on-surface)" }}
+          >
+            {(stats.stundenGesamt._sum?.stunden ?? 0).toFixed(0)}h
+          </p>
         </div>
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
-          <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">Gesamtumsatz</p>
-          <p className="text-2xl font-bold text-emerald-400">{((stats.rechnungenGesamt._sum?.betrag ?? 0)).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p>
+        <div
+          className="rounded-xl p-5 ambient-shadow-md"
+          style={{ backgroundColor: "var(--color-surface-container-low)" }}
+        >
+          <p
+            className="text-xs font-semibold uppercase tracking-wider mb-2"
+            style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
+          >
+            Gesamtumsatz
+          </p>
+          <p
+            className="text-3xl font-bold"
+            style={{ fontFamily: "var(--font-mono)", color: "var(--color-primary)" }}
+          >
+            {((stats.rechnungenGesamt._sum?.betrag ?? 0)).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+          </p>
         </div>
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
-          <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">Geschätzter Lohn</p>
-          <p className="text-2xl font-bold text-amber-400">{(stats.geschaetzterLohn ?? 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p>
+        <div
+          className="rounded-xl p-5 ambient-shadow-md"
+          style={{ backgroundColor: "var(--color-surface-container-low)" }}
+        >
+          <p
+            className="text-xs font-semibold uppercase tracking-wider mb-2"
+            style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
+          >
+            Geschätzter Lohn
+          </p>
+          <p
+            className="text-3xl font-bold"
+            style={{ fontFamily: "var(--font-mono)", color: "var(--color-tertiary)" }}
+          >
+            {(stats.geschaetzterLohn ?? 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+          </p>
         </div>
       </div>
 
       {/* Quick Actions */}
       <div className="mt-8">
-        <h2 className="text-sm font-semibold text-zinc-400 mb-3 uppercase tracking-wider">Schnellzugriff</h2>
+        <h2
+          className="text-xs font-semibold mb-3 uppercase tracking-widest"
+          style={{ color: "var(--color-outline)", fontFamily: "var(--font-display)" }}
+        >
+          Schnellzugriff
+        </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { label: "WP-Sync", href: "/auftraege", icon: "🔄", desc: "Aufträge synchronisieren" },
@@ -341,11 +429,22 @@ export default async function DashboardPage() {
             { label: "Neue Saison", href: "/saisons", icon: "🌱", desc: "Saison starten" },
             { label: "Wissensbank", href: "/wissensbank", icon: "📚", desc: "Förderinfo & Betriebe" },
           ].map(action => (
-            <Link key={action.label} href={action.href}
-              className="flex flex-col gap-1 p-4 bg-[#161616] border border-[#2a2a2a] rounded-xl hover:border-emerald-500/30 hover:bg-[#1a1a1a] transition-all group">
+            <Link
+              key={action.label}
+              href={action.href}
+              className="flex flex-col gap-1 p-4 rounded-xl tonal-transition ambient-shadow-md group"
+              style={{ backgroundColor: "var(--color-surface-container-low)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-surface-container)")}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "var(--color-surface-container-low)")}
+            >
               <span className="text-2xl">{action.icon}</span>
-              <span className="text-sm font-medium text-white group-hover:text-emerald-400 transition-colors">{action.label}</span>
-              <span className="text-xs text-zinc-500">{action.desc}</span>
+              <span
+                className="text-sm font-semibold mt-1"
+                style={{ color: "var(--color-on-surface)", fontFamily: "var(--font-display)" }}
+              >
+                {action.label}
+              </span>
+              <span className="text-xs" style={{ color: "var(--color-on-surface-variant)" }}>{action.desc}</span>
             </Link>
           ))}
         </div>
@@ -355,22 +454,53 @@ export default async function DashboardPage() {
       {stats.neuesteAuftraege.length > 0 && (
         <div className="mt-6">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">Neueste Aufträge</h2>
-            <Link href="/auftraege" className="text-xs text-emerald-500 hover:text-emerald-400">Alle anzeigen →</Link>
+            <h2
+              className="text-xs font-semibold uppercase tracking-widest"
+              style={{ color: "var(--color-outline)", fontFamily: "var(--font-display)" }}
+            >
+              Neueste Aufträge
+            </h2>
+            <Link
+              href="/auftraege"
+              className="text-xs font-medium"
+              style={{ color: "var(--color-primary)" }}
+            >
+              Alle anzeigen →
+            </Link>
           </div>
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+          <div
+            className="rounded-xl overflow-hidden ambient-shadow-md"
+            style={{ backgroundColor: "var(--color-surface-container-low)" }}
+          >
             {stats.neuesteAuftraege.map((a, i) => (
-              <Link key={a.id} href={`/auftraege/${a.id}`}
-                className={`flex items-center justify-between px-4 py-3 hover:bg-[#1e1e1e] transition-colors ${i > 0 ? "border-t border-[#2a2a2a]" : ""}`}>
+              <Link
+                key={a.id}
+                href={`/auftraege/${a.id}`}
+                className="flex items-center justify-between px-4 py-3 tonal-transition"
+                style={i > 0 ? { borderTop: "1px solid var(--color-surface-container-high)" } : {}}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--color-surface-container)")}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
+              >
                 <div>
-                  <p className="text-sm text-white font-medium truncate max-w-xs">{a.titel}</p>
-                  <p className="text-xs text-zinc-500">{a.waldbesitzer || "—"} · {a.bundesland || "—"}</p>
+                  <p
+                    className="text-sm font-medium truncate max-w-xs"
+                    style={{ color: "var(--color-on-surface)" }}
+                  >
+                    {a.titel}
+                  </p>
+                  <p className="text-xs mt-0.5" style={{ color: "var(--color-on-surface-variant)" }}>
+                    {a.waldbesitzer || "—"} · {a.bundesland || "—"}
+                  </p>
                 </div>
-                <span className={`text-xs px-2 py-0.5 rounded-full border ${
-                  a.status === "abgeschlossen" ? "bg-zinc-500/20 text-zinc-400 border-zinc-500/30" :
-                  a.status === "laufend" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" :
-                  "bg-blue-500/20 text-blue-400 border-blue-500/30"
-                }`}>{a.status}</span>
+                <span
+                  className={`text-xs px-2 py-0.5 rounded-full ${
+                    a.status === "abgeschlossen" ? "bg-[#e6e2d8] text-[#3f4942]" :
+                    a.status === "laufend" ? "bg-[#cde9d9] text-[#026c47]" :
+                    "bg-[#dedad0] text-[#4b6457]"
+                  }`}
+                >
+                  {a.status}
+                </span>
               </Link>
             ))}
           </div>
@@ -380,8 +510,16 @@ export default async function DashboardPage() {
       {/* Letzte Aktivitäten */}
       {(stats.letzteProtokolle.length > 0 || stats.letzteAbnahmen.length > 0) && (
         <div className="mt-6">
-          <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-3">Letzte Aktivitäten</h2>
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+          <h2
+            className="text-xs font-semibold uppercase tracking-widest mb-3"
+            style={{ color: "var(--color-outline)", fontFamily: "var(--font-display)" }}
+          >
+            Letzte Aktivitäten
+          </h2>
+          <div
+            className="rounded-xl overflow-hidden ambient-shadow-md"
+            style={{ backgroundColor: "var(--color-surface-container-low)" }}
+          >
             {[
               ...stats.letzteProtokolle.map(p => ({
                 type: "protokoll" as const,
@@ -403,12 +541,18 @@ export default async function DashboardPage() {
               .sort((a, b) => b.ts.getTime() - a.ts.getTime())
               .slice(0, 6)
               .map((item, i) => (
-                <Link key={i} href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 hover:bg-[#1e1e1e] transition-colors ${i > 0 ? "border-t border-[#2a2a2a]" : ""}`}>
+                <Link
+                  key={i}
+                  href={item.href}
+                  className="flex items-center gap-3 px-4 py-3 tonal-transition"
+                  style={i > 0 ? { borderTop: "1px solid var(--color-surface-container-high)" } : {}}
+                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--color-surface-container)")}
+                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
+                >
                   <span className="text-lg">{item.icon}</span>
                   <div className="min-w-0">
-                    <p className="text-sm text-white truncate">{item.text}</p>
-                    <p className="text-xs text-zinc-500">{item.sub}</p>
+                    <p className="text-sm truncate" style={{ color: "var(--color-on-surface)" }}>{item.text}</p>
+                    <p className="text-xs" style={{ color: "var(--color-on-surface-variant)" }}>{item.sub}</p>
                   </div>
                 </Link>
               ))}
@@ -418,21 +562,40 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
         {/* Auftrags-Status */}
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+        <div
+          className="rounded-xl p-6 ambient-shadow-md"
+          style={{ backgroundColor: "var(--color-surface-container-low)" }}
+        >
           <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
-            <h2 className="font-semibold text-white">Auftrags-Status</h2>
+            <TrendingUp className="w-4 h-4" style={{ color: "var(--color-primary)" }} />
+            <h2
+              className="font-semibold"
+              style={{ color: "var(--color-on-surface)", fontFamily: "var(--font-display)" }}
+            >
+              Auftrags-Status
+            </h2>
           </div>
           {stats.auftragStatusVerteilung.length === 0 ? (
-            <p className="text-zinc-600 text-sm">Keine Aufträge</p>
+            <p className="text-sm" style={{ color: "var(--color-outline)" }}>Keine Aufträge</p>
           ) : (
             <div className="space-y-2">
               {stats.auftragStatusVerteilung.map((s) => (
                 <div key={s.status} className="flex items-center justify-between">
-                  <span className={`px-2 py-0.5 rounded-full text-xs ${STATUS_FARBEN[s.status] ?? "bg-zinc-700 text-zinc-300"}`}>
+                  <span
+                    className="px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    style={{
+                      backgroundColor: "var(--color-secondary-container)",
+                      color: "var(--color-on-secondary-container)",
+                    }}
+                  >
                     {STATUS_LABELS[s.status] ?? s.status}
                   </span>
-                  <span className="text-sm text-zinc-400 font-medium">{s._count}</span>
+                  <span
+                    className="text-sm font-bold"
+                    style={{ fontFamily: "var(--font-mono)", color: "var(--color-on-surface)" }}
+                  >
+                    {s._count}
+                  </span>
                 </div>
               ))}
             </div>
@@ -440,25 +603,45 @@ export default async function DashboardPage() {
         </div>
 
         {/* Nächste Schulungen */}
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+        <div
+          className="rounded-xl p-6 ambient-shadow-md"
+          style={{ backgroundColor: "var(--color-surface-container-low)" }}
+        >
           <div className="flex items-center gap-2 mb-4">
-            <BookOpen className="w-4 h-4 text-emerald-400" />
-            <h2 className="font-semibold text-white">Nächste Schulungen</h2>
+            <BookOpen className="w-4 h-4" style={{ color: "var(--color-primary)" }} />
+            <h2
+              className="font-semibold"
+              style={{ color: "var(--color-on-surface)", fontFamily: "var(--font-display)" }}
+            >
+              Nächste Schulungen
+            </h2>
           </div>
           {stats.naechsteSchulungen.length === 0 ? (
-            <p className="text-zinc-600 text-sm">Keine Schulungen geplant</p>
+            <p className="text-sm" style={{ color: "var(--color-outline)" }}>Keine Schulungen geplant</p>
           ) : (
             <div className="space-y-3">
               {stats.naechsteSchulungen.map((s) => (
-                <Link key={s.id} href={`/schulungen/${s.id}`} className="block hover:bg-[#1e1e1e] rounded-lg p-2 -mx-2 transition-all">
+                <Link
+                  key={s.id}
+                  href={`/schulungen/${s.id}`}
+                  className="block rounded-lg p-2 -mx-2 tonal-transition"
+                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--color-surface-container)")}
+                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
+                >
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${SCHULUNG_TYP[s.typ] ?? "bg-zinc-700 text-zinc-400"}`}>
+                    <span
+                      className="px-2 py-0.5 rounded-full text-xs"
+                      style={{
+                        backgroundColor: "var(--color-surface-container-high)",
+                        color: "var(--color-on-surface-variant)",
+                      }}
+                    >
                       {s.typ}
                     </span>
                   </div>
-                  <p className="text-sm text-white">{s.titel}</p>
+                  <p className="text-sm" style={{ color: "var(--color-on-surface)" }}>{s.titel}</p>
                   {s.datum && (
-                    <p className="text-xs text-zinc-500 mt-0.5">
+                    <p className="text-xs mt-0.5" style={{ color: "var(--color-on-surface-variant)" }}>
                       {new Date(s.datum).toLocaleDateString("de-DE")}
                     </p>
                   )}
@@ -472,8 +655,16 @@ export default async function DashboardPage() {
         <FoerderungWidget />
 
         {/* Schnellzugriff */}
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
-          <h2 className="font-semibold text-white mb-4">Schnellzugriff</h2>
+        <div
+          className="rounded-xl p-6 ambient-shadow-md"
+          style={{ backgroundColor: "var(--color-surface-container-low)" }}
+        >
+          <h2
+            className="font-semibold mb-4"
+            style={{ color: "var(--color-on-surface)", fontFamily: "var(--font-display)" }}
+          >
+            Schnellzugriff
+          </h2>
           <div className="space-y-1.5">
             <QuickLink href="/auftraege" label="→ Aufträge" />
             <QuickLink href="/gruppen" label="→ Gruppen" />
@@ -492,19 +683,58 @@ export default async function DashboardPage() {
 
 function StatCard({ label, value, icon, href, alert }: { label: string; value: string; icon: React.ReactNode; href: string; alert?: boolean }) {
   return (
-    <Link href={href} className={`block bg-[#161616] border rounded-xl p-5 hover:border-zinc-500 transition-all ${alert ? "border-red-500/30" : "border-[#2a2a2a]"}`}>
+    <Link
+      href={href}
+      className="block rounded-xl p-5 tonal-transition ambient-shadow-md"
+      style={{
+        backgroundColor: alert ? "rgba(186,26,26,0.05)" : "var(--color-surface-container-low)",
+        outline: alert ? "1px solid rgba(186,26,26,0.2)" : "none",
+      }}
+      onMouseEnter={e => (e.currentTarget.style.backgroundColor = alert ? "rgba(186,26,26,0.08)" : "var(--color-surface-container)")}
+      onMouseLeave={e => (e.currentTarget.style.backgroundColor = alert ? "rgba(186,26,26,0.05)" : "var(--color-surface-container-low)")}
+    >
       <div className="flex items-center justify-between mb-3">
-        <span className="text-sm text-zinc-400">{label}</span>
-        <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${alert ? "bg-red-500/10" : "bg-[#2C3A1C]/40"}`}>{icon}</div>
+        <span
+          className="text-xs font-medium uppercase tracking-wide"
+          style={{ color: "var(--color-on-surface-variant)" }}
+        >
+          {label}
+        </span>
+        <div
+          className="w-9 h-9 rounded-xl flex items-center justify-center"
+          style={{ backgroundColor: alert ? "rgba(186,26,26,0.1)" : "var(--color-secondary-container)" }}
+        >
+          {icon}
+        </div>
       </div>
-      <p className="text-2xl font-bold text-white">{value}</p>
+      <p
+        className="text-3xl font-bold"
+        style={{
+          fontFamily: "var(--font-mono)",
+          color: alert ? "var(--color-error)" : "var(--color-on-surface)",
+        }}
+      >
+        {value}
+      </p>
     </Link>
   )
 }
 
 function QuickLink({ href, label }: { href: string; label: string }) {
   return (
-    <Link href={href} className="block px-3 py-2 rounded-lg text-sm text-zinc-400 hover:bg-[#1e1e1e] hover:text-white transition-all">
+    <Link
+      href={href}
+      className="block px-3 py-2 rounded-lg text-sm tonal-transition"
+      style={{ color: "var(--color-on-surface-variant)" }}
+      onMouseEnter={e => {
+        ;(e.currentTarget as HTMLElement).style.backgroundColor = "var(--color-surface-container)"
+        ;(e.currentTarget as HTMLElement).style.color = "var(--color-primary)"
+      }}
+      onMouseLeave={e => {
+        ;(e.currentTarget as HTMLElement).style.backgroundColor = "transparent"
+        ;(e.currentTarget as HTMLElement).style.color = "var(--color-on-surface-variant)"
+      }}
+    >
       {label}
     </Link>
   )
