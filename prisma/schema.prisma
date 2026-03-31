@@ -166,6 +166,7 @@ model Auftrag {
   lng               Float?           // GPS-Koordinate Längengrad (Sprint U)
   plusCode          String?          // Google Plus Code für Forststandorte (Sprint U)
   flaecheGeojson    Json?            // GeoJSON Polygon für Auftragsfläche (Sprint Q017)
+  telegramChatId    String?          // Telegram Chat-ID für Kundenbenachrichtigung
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   saison            Saison?          @relation(fields: [saisonId], references: [id], onDelete: SetNull)
@@ -1151,4 +1152,18 @@ model SammlerArbeitszeit {
   einsatz       ErnteEinsatz? @relation(fields: [einsatzId], references: [id])
 
   @@unique([personId, datum])
+}
+
+// ============================================================
+// TELEGRAM BENACHRICHTIGUNGEN (Sprint — Telegram Bot)
+// Waldbesitzer erhalten Status-Updates via Telegram
+// ============================================================
+
+model TelegramRegistrierung {
+  id          String   @id @default(cuid())
+  chatId      String   @unique
+  waldbesitzer String
+  auftragId   String?
+  aktiv       Boolean  @default(true)
+  createdAt   DateTime @default(now())
 }
