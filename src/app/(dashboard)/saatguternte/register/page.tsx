@@ -49,6 +49,43 @@ export default async function RegisterPage({
   if (params.eigentumsart) where.eigentumsart = params.eigentumsart
   if (params.gps === "mit_gps") where.latDez = { not: null }
   if (params.gps === "ohne_gps") where.latDez = null
+  
+  // Qualitäts-Filter: Ermittle fehlerhafte IDs, um sie zu filtern
+  // Fehlerhafte Einträge haben sehr lange baumart-Felder (>100 Zeichen)
+  // oder registerNr ohne Zahlen
+  if (params.quality) {
+    const allForQualityFilter = await prisma.registerFlaeche.findMany({
+      select: { id: true, registerNr: true, baumart: true, latDez: true, lonDez: true, flaecheHa: true },
+    })
+    
+    const corruptedIds: string[] = []
+    const completeIds: string[] = []
+    const incompleteIds: string[] = []
+    
+    for (const entry of allForQualityFilter) {
+      const isCorrupted = isCorruptedEntry(entry.baumart, entry.registerNr)
+      if (isCorrupted) {
+        corruptedIds.push(entry.id)
+      } else {
+        const hasGps = entry.latDez != null && entry.lonDez != null
+        const hasFlaeche = entry.flaecheHa != null
+        if (hasGps && hasFlaeche) {
+          completeIds.push(entry.id)
+        } else {
+          incompleteIds.push(entry.id)
+        }
+      }
+    }
+    
+    if (params.quality === "fehlerhaft") {
+      where.id = { in: corruptedIds }
+    } else if (params.quality === "vollstaendig") {
+      where.id = { in: completeIds }
+    } else if (params.quality === "unvollstaendig") {
+      where.id = { in: incompleteIds }
+    }
+  }
+  
   if (params.search) {
     const s = params.search
     where.OR = [
@@ -122,6 +159,49 @@ export default async function RegisterPage({
   // Gesamtanzahl aller Flächen
   const gesamtanzahl = await prisma.registerFlaeche.count()
 
+  // Qualitäts-Statistiken berechnen
+  const allEntriesForQuality = await prisma.registerFlaeche.findMany({
+    select: {
+      id: true,
+      registerNr: true,
+      baumart: true,
+      latDez: true,
+      lonDez: true,
+      flaecheHa: true,
+    },
+  })
+  
+  let corruptedCount = 0
+  let withGpsCount = 0
+  let withFlaecheCount = 0
+  let completeCount = 0
+  
+  for (const entry of allEntriesForQuality) {
+    const isCorrupted = isCorruptedEntry(entry.baumart, entry.registerNr)
+    if (isCorrupted) {
+      corruptedCount++
+    } else {
+      const hasGps = entry.latDez != null && entry.lonDez != null
+      const hasFlaeche = entry.flaecheHa != null
+      if (hasGps) withGpsCount++
+      if (hasFlaeche) withFlaecheCount++
+      if (hasGps && hasFlaeche) completeCount++
+    }
+  }
+  
+  const qualityStats = {
+    total: gesamtanzahl,
+    corrupted: corruptedCount,
+    withGps: withGpsCount,
+    withFlaeche: withFlaecheCount,
+    complete: completeCount,
+    qualityScore: gesamtanzahl > 0 ? Math.round(
+      ((gesamtanzahl - corruptedCount) / gesamtanzahl) * 30 +
+      (withGpsCount / gesamtanzahl) * 40 +
+      (withFlaecheCount / gesamtanzahl) * 30
+    ) : 0,
+  }
+
   const hasFilter = !!(
     params.bundesland ||
     params.baumart ||
@@ -131,7 +211,8 @@ export default async function RegisterPage({
     params.status ||
     params.sonderherkunft ||
     params.eigentumsart ||
-    params.gps
+    params.gps ||
+    params.quality
   )
 
   // Serialisierung für Client Component
@@ -180,15 +261,72 @@ export default async function RegisterPage({
         </div>
       </div>
 
-      {/* Datenqualitäts-Info */}
-      <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-center justify-between">
-        <div className="flex items-center gap-2 text-amber-400 text-sm">
-          <span>⚠️</span>
-          <span>Einige Einträge haben fehlerhafte Parsing-Daten. 
-          <a href="/saatguternte/register?status=fehlerhaft" className="underline ml-1">Details anzeigen</a></span>
+      {/* Datenqualitäts-Übersicht */}
+      <div className="mb-4 grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div className="p-3 bg-[#1e1e1e] rounded-lg border border-[#2a2a2a]">
+          <div className="text-xs text-zinc-500 mb-1">Qualitäts-Score</div>
+          <div className={`text-xl font-bold ${qualityStats.qualityScore >= 70 ? 'text-emerald-400' : qualityStats.qualityScore >= 40 ? 'text-amber-400' : 'text-red-400'}`}>
+            {qualityStats.qualityScore}%
+          </div>
         </div>
-        <span className="text-xs text-zinc-500">Admin: POST /api/saatguternte/admin/re-parse</span>
+        <div className="p-3 bg-[#1e1e1e] rounded-lg border border-[#2a2a2a]">
+          <div className="text-xs text-zinc-500 mb-1 flex items-center gap-1">
+            <MapPin className="w-3 h-3" /> Mit GPS
+          </div>
+          <div className="text-xl font-bold text-blue-400">
+            {qualityStats.withGps.toLocaleString("de-DE")}
+          </div>
+          <div className="text-xs text-zinc-600">{Math.round(qualityStats.withGps / qualityStats.total * 100)}%</div>
+        </div>
+        <div className="p-3 bg-[#1e1e1e] rounded-lg border border-[#2a2a2a]">
+          <div className="text-xs text-zinc-500 mb-1 flex items-center gap-1">
+            <CheckCircle className="w-3 h-3" /> Vollständig
+          </div>
+          <div className="text-xl font-bold text-emerald-400">
+            {qualityStats.complete.toLocaleString("de-DE")}
+          </div>
+          <div className="text-xs text-zinc-600">{Math.round(qualityStats.complete / qualityStats.total * 100)}%</div>
+        </div>
+        <div className="p-3 bg-[#1e1e1e] rounded-lg border border-[#2a2a2a]">
+          <div className="text-xs text-zinc-500 mb-1 flex items-center gap-1">
+            <AlertTriangle className="w-3 h-3" /> Fehlerhaft
+          </div>
+          <div className="text-xl font-bold text-red-400">
+            {qualityStats.corrupted.toLocaleString("de-DE")}
+          </div>
+          <div className="text-xs text-zinc-600">{Math.round(qualityStats.corrupted / qualityStats.total * 100)}%</div>
+        </div>
+        <div className="p-3 bg-[#1e1e1e] rounded-lg border border-[#2a2a2a] flex flex-col justify-between">
+          <div className="text-xs text-zinc-500 mb-1 flex items-center gap-1">
+            <RefreshCw className="w-3 h-3" /> Admin
+          </div>
+          {qualityStats.corrupted > 0 ? (
+            <a 
+              href="/api/saatguternte/admin/re-parse" 
+              target="_blank"
+              className="text-xs text-amber-400 hover:text-amber-300 underline"
+            >
+              Re-Parse starten
+            </a>
+          ) : (
+            <span className="text-xs text-emerald-400">Alles OK ✓</span>
+          )}
+        </div>
       </div>
+      
+      {/* Warnung bei fehlerhaften Daten */}
+      {qualityStats.corrupted > 0 && (
+        <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-center justify-between">
+          <div className="flex items-center gap-2 text-amber-400 text-sm">
+            <AlertCircle className="w-4 h-4" />
+            <span>
+              <strong>{qualityStats.corrupted}</strong> Einträge haben fehlerhafte Parsing-Daten (zusammengefügte Zeilen). 
+              <Link href="/saatguternte/register?quality=fehlerhaft" className="underline ml-1">Nur fehlerhafte anzeigen</Link>
+            </span>
+          </div>
+          <span className="text-xs text-zinc-500 hidden md:block">GET /api/saatguternte/admin/re-parse für Analyse</span>
+        </div>
+      )}
 
       {/* Filter-Bar */}
       <form method="GET" className="flex gap-3 mb-4 flex-wrap items-center">
@@ -278,8 +416,18 @@ export default async function RegisterPage({
           className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
         >
           <option value="">GPS: Alle</option>
-          <option value="mit_gps">Mit GPS-Koordinaten</option>
-          <option value="ohne_gps">Ohne GPS-Koordinaten</option>
+          <option value="mit_gps">📍 Mit GPS</option>
+          <option value="ohne_gps">❌ Ohne GPS</option>
+        </select>
+        <select
+          name="quality"
+          defaultValue={params.quality ?? ""}
+          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+        >
+          <option value="">Datenqualität: Alle</option>
+          <option value="vollstaendig">✓ Vollständig (GPS + Fläche)</option>
+          <option value="fehlerhaft">⚠️ Fehlerhaft (Parser-Bug)</option>
+          <option value="unvollstaendig">○ Unvollständig</option>
         </select>
         <label className="flex items-center gap-2 px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-zinc-300 cursor-pointer hover:border-amber-500/50 transition-all select-none">
           <input
@@ -289,7 +437,7 @@ export default async function RegisterPage({
             defaultChecked={params.sonderherkunft === "true"}
             className="accent-amber-500"
           />
-          ⭐ Nur Sonderherkünfte
+          ⭐ Sonderherkünfte
         </label>
         <button
           type="submit"
