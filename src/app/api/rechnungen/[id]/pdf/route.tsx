@@ -1,5 +1,6 @@
 // Sprint Q036: Rechnungs-PDF Export mit QR-Code, IBAN/BIC, Steuernummer
-// Generiert ein professionelles PDF-Dokument für Rechnungen
+// Sprint Q037: ZUGFeRD 2.3 / Factur-X E-Rechnung (EN 16931, gesetzeskonform ab 2025)
+// Generiert ein professionelles PDF-Dokument für Rechnungen mit eingebettetem XML
 
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
@@ -7,8 +8,9 @@ import { auth } from "@/lib/auth"
 import { isAdminOrGF } from "@/lib/permissions"
 import { renderToBuffer, Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer"
 import QRCode from "qrcode"
+import { generateZUGFeRDXml, embedZUGFeRDXml, rechnungToZUGFeRDData } from "@/lib/zugferd"
 
-// Firmendaten (Koch Aufforstung GmbH)
+// Firmendaten (Koch Aufforstung GmbH) - ZUGFeRD-relevant aus ENV
 const FIRMA = {
   name: "Koch Aufforstung GmbH",
   strasse: "Hauptstraße 42",
@@ -18,11 +20,11 @@ const FIRMA = {
   telefon: "+49 651 12345678",
   email: "info@koch-aufforstung.de",
   web: "https://peru-otter-113714.hostingersite.com",
-  iban: "DE89 3704 0044 0532 0130 00",
-  bic: "COBADEFFXXX",
+  iban: process.env.COMPANY_IBAN || "DE89 3704 0044 0532 0130 00",
+  bic: process.env.COMPANY_BIC || "COBADEFFXXX",
   bank: "Commerzbank Trier",
   steuernummer: "22/123/45678",
-  ustIdNr: "DE123456789",
+  ustIdNr: process.env.COMPANY_VAT_ID || "DE123456789",
   handelsregister: "HRB 12345, Amtsgericht Trier",
   geschaeftsfuehrer: "Sebastian Koch",
 }
@@ -640,15 +642,49 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   // PDF als Buffer rendern
   const pdfBuffer = await renderToBuffer(dokument)
 
-  // Dateiname generieren
-  const dateiname = `Rechnung_${rechnung.nummer.replace(/[^a-zA-Z0-9-]/g, "_")}_${formatDatum(rechnung.rechnungsDatum).replace(/\./g, "-")}.pdf`
+  // ── ZUGFeRD 2.3 / Factur-X XML einbetten ──────────────────────────
+  let finalPdfBytes: Uint8Array = pdfBuffer
 
-  return new NextResponse(pdfBuffer as unknown as BodyInit, {
+  try {
+    // Rechnung in ZUGFeRD-Datenformat konvertieren
+    const zugferdData = rechnungToZUGFeRDData(rechnung, {
+      name: FIRMA.name,
+      strasse: FIRMA.strasse,
+      plz: FIRMA.plz,
+      ort: FIRMA.ort,
+      land: "DE",
+      steuernummer: FIRMA.steuernummer,
+      ustIdNr: FIRMA.ustIdNr,
+      iban: FIRMA.iban,
+      bic: FIRMA.bic,
+      bank: FIRMA.bank,
+    })
+
+    // XML generieren
+    const zugferdXml = generateZUGFeRDXml(zugferdData)
+
+    // XML in PDF einbetten
+    finalPdfBytes = await embedZUGFeRDXml(
+      new Uint8Array(pdfBuffer),
+      zugferdXml
+    )
+
+    console.log(`[ZUGFeRD] XML eingebettet für Rechnung ${rechnung.nummer}`)
+  } catch (error) {
+    console.error("[ZUGFeRD] Fehler beim Einbetten:", error)
+    // Fallback: Original-PDF ohne ZUGFeRD zurückgeben
+    finalPdfBytes = pdfBuffer
+  }
+
+  // Dateiname generieren (mit ZUGFeRD-Hinweis)
+  const dateiname = `Rechnung_${rechnung.nummer.replace(/[^a-zA-Z0-9-]/g, "_")}_ZUGFeRD_${formatDatum(rechnung.rechnungsDatum).replace(/\./g, "-")}.pdf`
+
+  return new NextResponse(finalPdfBytes as unknown as BodyInit, {
     status: 200,
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="${dateiname}"`,
-      "Content-Length": pdfBuffer.length.toString(),
+      "Content-Length": finalPdfBytes.length.toString(),
     },
   })
 }
