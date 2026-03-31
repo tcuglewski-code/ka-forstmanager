@@ -1,0 +1,241 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { Package, Check, Undo2, AlertCircle, Loader2 } from "lucide-react"
+import { toast } from "sonner"
+import { BestandsAmpel } from "./BestandsAmpel"
+
+interface LagerReservierung {
+  id: string
+  menge: number
+  status: "RESERVIERT" | "VERBRAUCHT" | "ZURUECK"
+  verbrauchtAm: string | null
+  createdAt: string
+  artikel: {
+    id: string
+    name: string
+    einheit: string
+    bestand: number
+    mindestbestand: number
+  }
+}
+
+interface MaterialTabProps {
+  auftragId: string
+}
+
+export function MaterialTab({ auftragId }: MaterialTabProps) {
+  const [reservierungen, setReservierungen] = useState<LagerReservierung[]>([])
+  const [loading, setLoading] = useState(true)
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
+
+  const loadReservierungen = async () => {
+    try {
+      const res = await fetch(`/api/lager/reservierung?auftragId=${auftragId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setReservierungen(Array.isArray(data) ? data : [])
+      }
+    } catch (error) {
+      console.error("Fehler beim Laden der Reservierungen:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadReservierungen()
+  }, [auftragId])
+
+  const handleVerbrauchen = async (reservierungId: string) => {
+    setActionLoading(reservierungId)
+    try {
+      const res = await fetch(`/api/lager/reservierung/${reservierungId}/verbrauchen`, {
+        method: "PATCH"
+      })
+      if (res.ok) {
+        toast.success("Verbrauch bestätigt")
+        loadReservierungen()
+      } else {
+        toast.error("Fehler beim Bestätigen")
+      }
+    } catch {
+      toast.error("Fehler beim Bestätigen")
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleZurueckgeben = async (reservierungId: string) => {
+    setActionLoading(reservierungId)
+    try {
+      const res = await fetch(`/api/lager/reservierung/${reservierungId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "ZURUECK" })
+      })
+      if (res.ok) {
+        toast.success("Material zurückgegeben")
+        loadReservierungen()
+      } else {
+        toast.error("Fehler bei Rückgabe")
+      }
+    } catch {
+      toast.error("Fehler bei Rückgabe")
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const statusBadge = (status: LagerReservierung["status"]) => {
+    switch (status) {
+      case "RESERVIERT":
+        return (
+          <span className="px-2 py-0.5 rounded text-xs bg-blue-500/20 text-blue-400 flex items-center gap-1">
+            <Package className="w-3 h-3" />
+            Reserviert
+          </span>
+        )
+      case "VERBRAUCHT":
+        return (
+          <span className="px-2 py-0.5 rounded text-xs bg-emerald-500/20 text-emerald-400 flex items-center gap-1">
+            <Check className="w-3 h-3" />
+            Verbraucht
+          </span>
+        )
+      case "ZURUECK":
+        return (
+          <span className="px-2 py-0.5 rounded text-xs bg-amber-500/20 text-amber-400 flex items-center gap-1">
+            <Undo2 className="w-3 h-3" />
+            Zurückgegeben
+          </span>
+        )
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="w-5 h-5 text-zinc-500 animate-spin" />
+      </div>
+    )
+  }
+
+  if (reservierungen.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <Package className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
+        <p className="text-zinc-500 text-sm">Keine Materialreservierungen für diesen Auftrag</p>
+        <p className="text-zinc-600 text-xs mt-1">
+          Reservierungen können über das Lager erstellt werden
+        </p>
+      </div>
+    )
+  }
+
+  const reserviert = reservierungen.filter(r => r.status === "RESERVIERT")
+  const verbraucht = reservierungen.filter(r => r.status === "VERBRAUCHT")
+  const zurueck = reservierungen.filter(r => r.status === "ZURUECK")
+
+  return (
+    <div className="space-y-4">
+      {/* Zusammenfassung */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="bg-[#1e1e1e] rounded-lg p-3 text-center">
+          <p className="text-lg font-semibold text-blue-400">{reserviert.length}</p>
+          <p className="text-xs text-zinc-500">Reserviert</p>
+        </div>
+        <div className="bg-[#1e1e1e] rounded-lg p-3 text-center">
+          <p className="text-lg font-semibold text-emerald-400">{verbraucht.length}</p>
+          <p className="text-xs text-zinc-500">Verbraucht</p>
+        </div>
+        <div className="bg-[#1e1e1e] rounded-lg p-3 text-center">
+          <p className="text-lg font-semibold text-amber-400">{zurueck.length}</p>
+          <p className="text-xs text-zinc-500">Zurückgegeben</p>
+        </div>
+      </div>
+
+      {/* Reservierungsliste */}
+      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-[#2a2a2a]">
+              <th className="text-left px-4 py-3 text-zinc-500 font-medium">Artikel</th>
+              <th className="text-right px-4 py-3 text-zinc-500 font-medium">Menge</th>
+              <th className="text-center px-4 py-3 text-zinc-500 font-medium">Status</th>
+              <th className="text-right px-4 py-3 text-zinc-500 font-medium">Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reservierungen.map(r => (
+              <tr key={r.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors">
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <BestandsAmpel 
+                      bestand={r.artikel.bestand} 
+                      mindestbestand={r.artikel.mindestbestand} 
+                    />
+                    <span className="text-white">{r.artikel.name}</span>
+                  </div>
+                </td>
+                <td className="px-4 py-3 text-right text-white">
+                  {r.menge} {r.artikel.einheit}
+                </td>
+                <td className="px-4 py-3 text-center">
+                  {statusBadge(r.status)}
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2 justify-end">
+                    {r.status === "RESERVIERT" && (
+                      <>
+                        <button
+                          onClick={() => handleVerbrauchen(r.id)}
+                          disabled={actionLoading === r.id}
+                          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 disabled:opacity-50 transition-colors"
+                        >
+                          {actionLoading === r.id ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <Check className="w-3 h-3" />
+                          )}
+                          Verbraucht
+                        </button>
+                        <button
+                          onClick={() => handleZurueckgeben(r.id)}
+                          disabled={actionLoading === r.id}
+                          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 disabled:opacity-50 transition-colors"
+                        >
+                          {actionLoading === r.id ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <Undo2 className="w-3 h-3" />
+                          )}
+                          Zurück
+                        </button>
+                      </>
+                    )}
+                    {r.status === "VERBRAUCHT" && r.verbrauchtAm && (
+                      <span className="text-xs text-zinc-500">
+                        {new Date(r.verbrauchtAm).toLocaleDateString("de-DE")}
+                      </span>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Hinweis wenn Artikel unter Mindestbestand */}
+      {reservierungen.some(r => r.artikel.bestand <= r.artikel.mindestbestand) && (
+        <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <span>Einige reservierte Artikel sind unter Mindestbestand. Bitte Nachbestellung prüfen.</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default MaterialTab
