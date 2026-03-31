@@ -1,6 +1,28 @@
 import type { Metadata } from "next"
+import { Manrope, Inter, Barlow_Condensed } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "sonner"
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
+  variable: "--font-manrope",
+  display: "swap",
+})
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-inter",
+  display: "swap",
+})
+
+const barlowCondensed = Barlow_Condensed({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-barlow",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
   title: "ForstManager — Koch Aufforstung GmbH",
@@ -13,16 +35,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="de">
-      <head>
-        {/* Google Fonts — The Digital Foreman Typography */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="de" className={`${manrope.variable} ${inter.variable} ${barlowCondensed.variable}`}>
       <body
         className="antialiased"
         style={{
