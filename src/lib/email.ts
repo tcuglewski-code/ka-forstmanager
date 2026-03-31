@@ -164,10 +164,46 @@ export function auftragStatusEmailHtml(daten: {
   `
 }
 
+// ─── auftragErstellt ──────────────────────────────────────────────────────────
+export async function auftragErstellt(daten: {
+  auftragId: string
+  auftragNummer: string
+  auftragTitel: string
+  waldbesitzerName?: string
+  waldbesitzerEmail?: string
+  flaeche_ha?: number | null
+  standort?: string | null
+}): Promise<void> {
+  if (!daten.waldbesitzerEmail) return
+  const html = `
+    <!DOCTYPE html><html><head><meta charset="utf-8">
+    <style>body{font-family:Arial,sans-serif;color:#333}
+    .logo{font-size:22px;font-weight:bold;color:#2C3A1C}
+    .box{background:#f8f9f4;border-left:4px solid #2C3A1C;padding:16px;margin:16px 0}
+    </style></head><body>
+    <div style="max-width:600px;margin:0 auto;padding:24px">
+    <div class="logo">Koch Aufforstung GmbH</div>
+    <h2>Auftrag ${daten.auftragNummer} erstellt</h2>
+    <div class="box">
+      <strong>${daten.auftragTitel}</strong><br>
+      ${daten.standort ? `Standort: ${daten.standort}<br>` : ''}
+      ${daten.flaeche_ha ? `Fläche: ${daten.flaeche_ha} ha<br>` : ''}
+    </div>
+    <p>Ihr Auftrag wurde erfasst. Wir melden uns bei Ihnen.</p>
+    <p>Mit freundlichen Grüßen<br>Koch Aufforstung GmbH</p>
+    </div></body></html>`
+  await sendEmail({
+    to: daten.waldbesitzerEmail,
+    subject: `Auftrag ${daten.auftragNummer} bestätigt`,
+    html,
+  })
+}
+
 // ─── Legacy-Kompatibilitäts-Export ────────────────────────────────────────────
 // Alte Imports nutzen `emailService` — exportieren wir als Objekt
 export const emailService = {
   sendEmail,
   rechnungEmailHtml,
   auftragStatusEmailHtml,
+  auftragErstellt,
 }
