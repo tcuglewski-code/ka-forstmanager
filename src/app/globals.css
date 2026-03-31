@@ -50,9 +50,9 @@
   --sidebar-text-muted: rgba(255, 255, 255, 0.45);
 
   /* Typography */
-  --font-display: "Manrope", sans-serif;
-  --font-body: "Inter", sans-serif;
-  --font-mono: "Barlow Condensed", sans-serif;
+  --font-display: var(--font-manrope), "Manrope", sans-serif;
+  --font-body: var(--font-inter), "Inter", sans-serif;
+  --font-mono: var(--font-barlow), "Barlow Condensed", sans-serif;
 
   /* Legacy aliases (kept for compatibility) */
   --background: #fdf9ef;
