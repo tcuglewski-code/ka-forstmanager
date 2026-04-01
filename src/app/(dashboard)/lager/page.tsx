@@ -304,19 +304,25 @@ function LagerPageInner() {
     try {
       const [artikelRes, reservRes, bestellRes, lieferantenRes] = await Promise.all([
         fetch("/api/lager"),
-        fetch("/api/lager/reservierung"),
-        fetch("/api/lager/bestellungen"),
-        fetch("/api/lager/lieferanten")
+        fetch("/api/lager/reservierung").catch(() => null),
+        fetch("/api/lager/bestellungen").catch(() => null),
+        fetch("/api/lager/lieferanten").catch(() => null),
       ])
-      
-      setArtikel(await artikelRes.json().catch(() => []))
-      setReservierungen(await reservRes.json().catch(() => []))
-      setBestellungen(await bestellRes.json().catch(() => []))
-      setLieferanten(await lieferantenRes.json().catch(() => []))
-    } catch (error) {
-      console.error(error)
+
+      if (!artikelRes.ok) throw new Error(`HTTP ${artikelRes.status}`)
+      const artikelData = await artikelRes.json()
+      setArtikel(Array.isArray(artikelData) ? artikelData : [])
+
+      setReservierungen(reservRes?.ok ? await reservRes.json().catch(() => []) : [])
+      setBestellungen(bestellRes?.ok ? await bestellRes.json().catch(() => []) : [])
+      setLieferanten(lieferantenRes?.ok ? await lieferantenRes.json().catch(() => []) : [])
+    } catch (err) {
+      console.error("[Lager] load error:", err)
+      toast.error("Lager konnte nicht geladen werden")
+      setArtikel([])
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }, [])
 
   useEffect(() => { load() }, [load])
