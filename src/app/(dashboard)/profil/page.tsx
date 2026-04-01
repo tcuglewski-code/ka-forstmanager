@@ -23,9 +23,48 @@ import {
   AlertTriangle,
   ShieldCheck,
   ShieldOff,
+  Phone,
+  MapPin,
+  Heart,
+  Clock,
+  Calendar,
+  TrendingUp,
+  TrendingDown,
+  Minus,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { resetAndStartTour } from "@/components/tour/ForstManagerTour"
+
+interface MitarbeiterData {
+  id: string
+  vorname: string
+  nachname: string
+  telefon?: string
+  mobil?: string
+  adresse?: string
+  plz?: string
+  ort?: string
+  geburtsdatum?: string
+  eintrittsdatum?: string
+  stundenlohn?: number
+  notfallName?: string
+  notfallTelefon?: string
+  notfallBeziehung?: string
+}
+
+interface ArbeitszeitkontoData {
+  monat: string
+  sollStunden: number
+  istStunden: number
+  differenz: number
+}
+
+interface UrlaubstageData {
+  jahr: number
+  anspruch: number
+  genommen: number
+  rest: number
+}
 
 interface ProfileData {
   id: string
@@ -40,6 +79,9 @@ interface ProfileData {
   createdAt: string
   twoFactorEnabled: boolean
   twoFactorVerifiedAt?: string
+  mitarbeiter?: MitarbeiterData
+  arbeitszeitkonto?: ArbeitszeitkontoData
+  urlaubstage?: UrlaubstageData
 }
 
 export default function ProfilPage() {
@@ -55,6 +97,18 @@ export default function ProfilPage() {
   const [notifyMaengel, setNotifyMaengel] = useState(true)
   const [notifyAuftraege, setNotifyAuftraege] = useState(true)
   const [notifyAbnahmen, setNotifyAbnahmen] = useState(false)
+  
+  // Sprint Q044: Kontaktdaten States
+  const [telefon, setTelefon] = useState("")
+  const [mobil, setMobil] = useState("")
+  const [adresse, setAdresse] = useState("")
+  const [plz, setPlz] = useState("")
+  const [ort, setOrt] = useState("")
+  
+  // Sprint Q044: Notfallkontakt States
+  const [notfallName, setNotfallName] = useState("")
+  const [notfallTelefon, setNotfallTelefon] = useState("")
+  const [notfallBeziehung, setNotfallBeziehung] = useState("")
 
   // Password States
   const [showPasswordForm, setShowPasswordForm] = useState(false)
@@ -95,6 +149,17 @@ export default function ProfilPage() {
           setNotifyAuftraege(data.notifyAuftraege ?? true)
           setNotifyAbnahmen(data.notifyAbnahmen ?? false)
           setTwoFactorEnabled(data.twoFactorEnabled ?? false)
+          // Sprint Q044: Mitarbeiter-Daten
+          if (data.mitarbeiter) {
+            setTelefon(data.mitarbeiter.telefon || "")
+            setMobil(data.mitarbeiter.mobil || "")
+            setAdresse(data.mitarbeiter.adresse || "")
+            setPlz(data.mitarbeiter.plz || "")
+            setOrt(data.mitarbeiter.ort || "")
+            setNotfallName(data.mitarbeiter.notfallName || "")
+            setNotfallTelefon(data.mitarbeiter.notfallTelefon || "")
+            setNotfallBeziehung(data.mitarbeiter.notfallBeziehung || "")
+          }
         }
       } catch (err) {
         console.error("Failed to load profile:", err)
@@ -119,6 +184,16 @@ export default function ProfilPage() {
           notifyMaengel,
           notifyAuftraege,
           notifyAbnahmen,
+          // Sprint Q044: Kontaktdaten
+          telefon,
+          mobil,
+          adresse,
+          plz,
+          ort,
+          // Sprint Q044: Notfallkontakt
+          notfallName,
+          notfallTelefon,
+          notfallBeziehung,
         }),
       })
       if (res.ok) {
@@ -411,6 +486,241 @@ export default function ProfilPage() {
           </div>
         </div>
       </section>
+
+      {/* Kontaktdaten (nur wenn Mitarbeiter-Datensatz existiert) */}
+      {profile?.mitarbeiter && (
+        <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <Phone className="w-5 h-5 text-emerald-400" />
+            Kontaktdaten
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-zinc-400 mb-1">Telefon (Festnetz)</label>
+              <input
+                type="tel"
+                value={telefon}
+                onChange={(e) => setTelefon(e.target.value)}
+                placeholder="+49 123 456789"
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-zinc-400 mb-1">Mobil</label>
+              <input
+                type="tel"
+                value={mobil}
+                onChange={(e) => setMobil(e.target.value)}
+                placeholder="+49 170 1234567"
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm text-zinc-400 mb-1">Adresse</label>
+              <input
+                type="text"
+                value={adresse}
+                onChange={(e) => setAdresse(e.target.value)}
+                placeholder="Straße und Hausnummer"
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-zinc-400 mb-1">PLZ</label>
+              <input
+                type="text"
+                value={plz}
+                onChange={(e) => setPlz(e.target.value)}
+                placeholder="12345"
+                maxLength={5}
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-zinc-400 mb-1">Ort</label>
+              <input
+                type="text"
+                value={ort}
+                onChange={(e) => setOrt(e.target.value)}
+                placeholder="Musterstadt"
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Notfallkontakt (nur wenn Mitarbeiter-Datensatz existiert) */}
+      {profile?.mitarbeiter && (
+        <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <Heart className="w-5 h-5 text-red-400" />
+            Notfallkontakt
+          </h2>
+          <p className="text-sm text-zinc-500 mb-4">
+            Diese Person wird im Notfall kontaktiert. Bitte halten Sie die Daten aktuell.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm text-zinc-400 mb-1">Name</label>
+              <input
+                type="text"
+                value={notfallName}
+                onChange={(e) => setNotfallName(e.target.value)}
+                placeholder="Max Mustermann"
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-zinc-400 mb-1">Telefon</label>
+              <input
+                type="tel"
+                value={notfallTelefon}
+                onChange={(e) => setNotfallTelefon(e.target.value)}
+                placeholder="+49 170 1234567"
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-zinc-400 mb-1">Beziehung</label>
+              <select
+                value={notfallBeziehung}
+                onChange={(e) => setNotfallBeziehung(e.target.value)}
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              >
+                <option value="">Bitte wählen</option>
+                <option value="partner">Partner/in</option>
+                <option value="ehepartner">Ehepartner/in</option>
+                <option value="eltern">Eltern</option>
+                <option value="kind">Kind</option>
+                <option value="geschwister">Geschwister</option>
+                <option value="freund">Freund/in</option>
+                <option value="sonstige">Sonstige</option>
+              </select>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Arbeitszeitkonto (nur wenn Daten vorhanden) */}
+      {profile?.arbeitszeitkonto && (
+        <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <Clock className="w-5 h-5 text-emerald-400" />
+            Arbeitszeitkonto — {profile.arbeitszeitkonto.monat}
+          </h2>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div className="bg-[#0f0f0f] rounded-lg p-4 text-center">
+              <p className="text-sm text-zinc-500 mb-1">Soll-Stunden</p>
+              <p className="text-2xl font-bold text-white">
+                {profile.arbeitszeitkonto.sollStunden}h
+              </p>
+            </div>
+            <div className="bg-[#0f0f0f] rounded-lg p-4 text-center">
+              <p className="text-sm text-zinc-500 mb-1">Ist-Stunden</p>
+              <p className="text-2xl font-bold text-emerald-400">
+                {profile.arbeitszeitkonto.istStunden.toFixed(1)}h
+              </p>
+            </div>
+            <div className="bg-[#0f0f0f] rounded-lg p-4 text-center">
+              <p className="text-sm text-zinc-500 mb-1">Differenz</p>
+              <div className="flex items-center justify-center gap-1">
+                {profile.arbeitszeitkonto.differenz > 0 ? (
+                  <TrendingUp className="w-5 h-5 text-emerald-400" />
+                ) : profile.arbeitszeitkonto.differenz < 0 ? (
+                  <TrendingDown className="w-5 h-5 text-red-400" />
+                ) : (
+                  <Minus className="w-5 h-5 text-zinc-400" />
+                )}
+                <p className={cn(
+                  "text-2xl font-bold",
+                  profile.arbeitszeitkonto.differenz > 0 
+                    ? "text-emerald-400" 
+                    : profile.arbeitszeitkonto.differenz < 0 
+                      ? "text-red-400" 
+                      : "text-zinc-400"
+                )}>
+                  {profile.arbeitszeitkonto.differenz > 0 ? "+" : ""}
+                  {profile.arbeitszeitkonto.differenz.toFixed(1)}h
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Fortschrittsbalken */}
+          <div className="mt-4">
+            <div className="flex justify-between text-xs text-zinc-500 mb-1">
+              <span>Erfüllt</span>
+              <span>
+                {Math.min(100, Math.round((profile.arbeitszeitkonto.istStunden / profile.arbeitszeitkonto.sollStunden) * 100))}%
+              </span>
+            </div>
+            <div className="h-2 bg-[#0f0f0f] rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-emerald-500 rounded-full transition-all"
+                style={{ 
+                  width: `${Math.min(100, (profile.arbeitszeitkonto.istStunden / profile.arbeitszeitkonto.sollStunden) * 100)}%` 
+                }}
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Urlaubstage (nur wenn Daten vorhanden) */}
+      {profile?.urlaubstage && (
+        <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-emerald-400" />
+            Urlaubstage {profile.urlaubstage.jahr}
+          </h2>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div className="bg-[#0f0f0f] rounded-lg p-4 text-center">
+              <p className="text-sm text-zinc-500 mb-1">Anspruch</p>
+              <p className="text-2xl font-bold text-white">
+                {profile.urlaubstage.anspruch} Tage
+              </p>
+            </div>
+            <div className="bg-[#0f0f0f] rounded-lg p-4 text-center">
+              <p className="text-sm text-zinc-500 mb-1">Genommen</p>
+              <p className="text-2xl font-bold text-yellow-400">
+                {profile.urlaubstage.genommen} Tage
+              </p>
+            </div>
+            <div className="bg-[#0f0f0f] rounded-lg p-4 text-center">
+              <p className="text-sm text-zinc-500 mb-1">Restanspruch</p>
+              <p className={cn(
+                "text-2xl font-bold",
+                profile.urlaubstage.rest > 0 ? "text-emerald-400" : "text-red-400"
+              )}>
+                {profile.urlaubstage.rest} Tage
+              </p>
+            </div>
+          </div>
+
+          {/* Fortschrittsbalken */}
+          <div className="mt-4">
+            <div className="flex justify-between text-xs text-zinc-500 mb-1">
+              <span>Urlaubsnutzung</span>
+              <span>
+                {Math.round((profile.urlaubstage.genommen / profile.urlaubstage.anspruch) * 100)}%
+              </span>
+            </div>
+            <div className="h-2 bg-[#0f0f0f] rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-yellow-500 rounded-full transition-all"
+                style={{ 
+                  width: `${(profile.urlaubstage.genommen / profile.urlaubstage.anspruch) * 100}%` 
+                }}
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Passwort ändern */}
       <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
