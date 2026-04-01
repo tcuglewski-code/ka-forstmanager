@@ -756,10 +756,11 @@ export default function AuftraegePage() {
           </table>
         </div>
       ) : (
-        /* Q048: Gantt-Ansicht */
+        /* Q048: Gantt-Ansicht mit Drag&Drop (KZ) */
         <GanttChart
           auftraege={filtered}
           onAuftragClick={(id) => (window.location.href = `/auftraege/${id}`)}
+          onAuftragUpdate={load}
         />
       )}
 
