@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import { useRouter } from "next/navigation"
+import Fuse from "fuse.js"
 import {
   Search,
   ClipboardList,
@@ -23,14 +24,30 @@ interface SearchResult {
   href: string
 }
 
+interface GroupedResults {
+  auftraege: SearchResult[]
+  mitarbeiter: SearchResult[]
+  rechnungen: SearchResult[]
+}
+
 interface QuickSearchProps {
   isOpen: boolean
   onClose: () => void
 }
 
+// Fuse.js Optionen für Fuzzy-Matching
+const fuseOptions: Fuse.IFuseOptions<SearchResult> = {
+  keys: ["title", "subtitle"],
+  threshold: 0.4, // 0 = exakt, 1 = alles matcht
+  distance: 100,
+  includeScore: true,
+  minMatchCharLength: 2,
+  ignoreLocation: true,
+}
+
 export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
   const [query, setQuery] = useState("")
-  const [results, setResults] = useState<SearchResult[]>([])
+  const [rawResults, setRawResults] = useState<SearchResult[]>([])
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -40,16 +57,47 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
   useEffect(() => {
     if (isOpen) {
       setQuery("")
-      setResults([])
+      setRawResults([])
       setSelectedIndex(0)
       setTimeout(() => inputRef.current?.focus(), 100)
     }
   }, [isOpen])
 
-  // Debounced Search
+  // Fuzzy-Matching mit Fuse.js auf Client-Seite
+  const { groupedResults, flatResults } = useMemo(() => {
+    if (!rawResults.length || !query.trim()) {
+      return {
+        groupedResults: { auftraege: [], mitarbeiter: [], rechnungen: [] },
+        flatResults: [],
+      }
+    }
+
+    // Fuse.js für Fuzzy-Matching
+    const fuse = new Fuse(rawResults, fuseOptions)
+    const fuzzyResults = fuse.search(query)
+    
+    // Falls Fuzzy keine Ergebnisse liefert, alle rawResults zurückgeben
+    const matchedResults = fuzzyResults.length > 0
+      ? fuzzyResults.map((r) => r.item)
+      : rawResults
+
+    // Gruppieren nach Typ
+    const grouped: GroupedResults = {
+      auftraege: matchedResults.filter((r) => r.type === "auftrag"),
+      mitarbeiter: matchedResults.filter((r) => r.type === "mitarbeiter"),
+      rechnungen: matchedResults.filter((r) => r.type === "rechnung"),
+    }
+
+    // Flache Liste für Navigation (Reihenfolge: Aufträge, Mitarbeiter, Rechnungen)
+    const flat = [...grouped.auftraege, ...grouped.mitarbeiter, ...grouped.rechnungen]
+
+    return { groupedResults: grouped, flatResults: flat }
+  }, [rawResults, query])
+
+  // Debounced Search (API-Calls)
   useEffect(() => {
     if (!query.trim()) {
-      setResults([])
+      setRawResults([])
       return
     }
 
@@ -60,19 +108,19 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
 
         // Parallel API calls
         const [auftraegeRes, mitarbeiterRes, rechnungenRes] = await Promise.allSettled([
-          fetch(`/api/auftraege?search=${encodeURIComponent(query)}&limit=5`),
-          fetch(`/api/mitarbeiter?search=${encodeURIComponent(query)}&limit=5`),
-          fetch(`/api/rechnungen?search=${encodeURIComponent(query)}&limit=5`),
+          fetch(`/api/auftraege?search=${encodeURIComponent(query)}&limit=10`),
+          fetch(`/api/mitarbeiter?search=${encodeURIComponent(query)}&limit=10`),
+          fetch(`/api/rechnungen?search=${encodeURIComponent(query)}&limit=10`),
         ])
 
         if (auftraegeRes.status === "fulfilled" && auftraegeRes.value.ok) {
           const data = await auftraegeRes.value.json()
           const auftraege = Array.isArray(data) ? data : data.auftraege ?? []
-          auftraege.slice(0, 5).forEach((a: { id: string; titel?: string; nummer?: string; waldbesitzer?: string }) => {
+          auftraege.forEach((a: { id: string; titel?: string; nummer?: string; waldbesitzer?: string; kunde?: { name?: string } }) => {
             searchResults.push({
               id: a.id,
               title: a.titel || a.nummer || "Auftrag",
-              subtitle: a.waldbesitzer,
+              subtitle: a.waldbesitzer || a.kunde?.name,
               type: "auftrag",
               href: `/auftraege/${a.id}`,
             })
@@ -82,11 +130,11 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
         if (mitarbeiterRes.status === "fulfilled" && mitarbeiterRes.value.ok) {
           const data = await mitarbeiterRes.value.json()
           const mitarbeiter = Array.isArray(data) ? data : data.mitarbeiter ?? []
-          mitarbeiter.slice(0, 5).forEach((m: { id: string; vorname?: string; nachname?: string; rolle?: string }) => {
+          mitarbeiter.forEach((m: { id: string; vorname?: string; nachname?: string; rolle?: string; email?: string }) => {
             searchResults.push({
               id: m.id,
               title: `${m.vorname ?? ""} ${m.nachname ?? ""}`.trim() || "Mitarbeiter",
-              subtitle: m.rolle,
+              subtitle: m.rolle || m.email,
               type: "mitarbeiter",
               href: `/mitarbeiter/${m.id}`,
             })
@@ -96,25 +144,27 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
         if (rechnungenRes.status === "fulfilled" && rechnungenRes.value.ok) {
           const data = await rechnungenRes.value.json()
           const rechnungen = Array.isArray(data) ? data : data.rechnungen ?? []
-          rechnungen.slice(0, 5).forEach((r: { id: string; nummer?: string; betrag?: number; status?: string }) => {
+          rechnungen.forEach((r: { id: string; nummer?: string; betrag?: number; status?: string; kunde?: { name?: string } }) => {
             searchResults.push({
               id: r.id,
               title: r.nummer || "Rechnung",
-              subtitle: r.betrag ? `${r.betrag.toFixed(2)} € · ${r.status}` : r.status,
+              subtitle: r.kunde?.name 
+                ? `${r.kunde.name}${r.betrag ? ` · ${r.betrag.toFixed(2)} €` : ""}`
+                : r.betrag ? `${r.betrag.toFixed(2)} € · ${r.status}` : r.status,
               type: "rechnung",
               href: `/rechnungen/${r.id}`,
             })
           })
         }
 
-        setResults(searchResults)
+        setRawResults(searchResults)
         setSelectedIndex(0)
       } catch (err) {
         console.error("Search error:", err)
       } finally {
         setIsLoading(false)
       }
-    }, 300)
+    }, 250)
 
     return () => clearTimeout(timer)
   }, [query])
@@ -124,20 +174,20 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
     (e: React.KeyboardEvent) => {
       if (e.key === "ArrowDown") {
         e.preventDefault()
-        setSelectedIndex((i) => Math.min(i + 1, results.length - 1))
+        setSelectedIndex((i) => Math.min(i + 1, flatResults.length - 1))
       } else if (e.key === "ArrowUp") {
         e.preventDefault()
         setSelectedIndex((i) => Math.max(i - 1, 0))
-      } else if (e.key === "Enter" && results[selectedIndex]) {
+      } else if (e.key === "Enter" && flatResults[selectedIndex]) {
         e.preventDefault()
-        router.push(results[selectedIndex].href)
+        router.push(flatResults[selectedIndex].href)
         onClose()
       } else if (e.key === "Escape") {
         e.preventDefault()
         onClose()
       }
     },
-    [results, selectedIndex, router, onClose]
+    [flatResults, selectedIndex, router, onClose]
   )
 
   const getIcon = (type: SearchResult["type"]) => {
@@ -154,15 +204,90 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
   const getTypeLabel = (type: SearchResult["type"]) => {
     switch (type) {
       case "auftrag":
-        return "Auftrag"
+        return "Aufträge"
       case "mitarbeiter":
         return "Mitarbeiter"
       case "rechnung":
-        return "Rechnung"
+        return "Rechnungen"
     }
   }
 
+  const getTypeIcon = (type: SearchResult["type"]) => {
+    switch (type) {
+      case "auftrag":
+        return <ClipboardList className="w-3.5 h-3.5" />
+      case "mitarbeiter":
+        return <Users className="w-3.5 h-3.5" />
+      case "rechnung":
+        return <Receipt className="w-3.5 h-3.5" />
+    }
+  }
+
+  // Render eine Gruppe von Ergebnissen
+  const renderGroup = (
+    type: SearchResult["type"],
+    items: SearchResult[],
+    startIndex: number
+  ) => {
+    if (items.length === 0) return null
+
+    return (
+      <div key={type} className="py-1">
+        {/* Gruppen-Header */}
+        <div className="flex items-center gap-2 px-4 py-1.5 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+          {getTypeIcon(type)}
+          <span>{getTypeLabel(type)}</span>
+          <span className="text-zinc-600">({items.length})</span>
+        </div>
+        {/* Ergebnisse */}
+        {items.map((result, idx) => {
+          const globalIndex = startIndex + idx
+          return (
+            <button
+              key={`${result.type}-${result.id}`}
+              onClick={() => {
+                router.push(result.href)
+                onClose()
+              }}
+              onMouseEnter={() => setSelectedIndex(globalIndex)}
+              className={cn(
+                "w-full flex items-center gap-3 px-4 py-2 text-left transition-colors",
+                globalIndex === selectedIndex
+                  ? "bg-[#2C3A1C] text-white"
+                  : "text-zinc-400 hover:bg-[#222]"
+              )}
+            >
+              <div
+                className={cn(
+                  "w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0",
+                  globalIndex === selectedIndex
+                    ? "bg-emerald-500/20 text-emerald-400"
+                    : "bg-[#2a2a2a] text-zinc-500"
+                )}
+              >
+                {getIcon(result.type)}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">{result.title}</p>
+                {result.subtitle && (
+                  <p className="text-xs text-zinc-500 truncate">{result.subtitle}</p>
+                )}
+              </div>
+            </button>
+          )
+        })}
+      </div>
+    )
+  }
+
   if (!isOpen) return null
+
+  // Berechne Start-Indizes für jede Gruppe
+  const auftraegeStartIndex = 0
+  const mitarbeiterStartIndex = groupedResults.auftraege.length
+  const rechnungenStartIndex = mitarbeiterStartIndex + groupedResults.mitarbeiter.length
+
+  const hasResults = flatResults.length > 0
 
   return (
     <>
@@ -173,11 +298,11 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
       />
 
       {/* Modal */}
-      <div className="fixed inset-x-0 top-[15%] mx-auto max-w-xl z-50 px-4">
+      <div className="fixed inset-x-0 top-[12%] mx-auto max-w-xl z-50 px-4">
         <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl shadow-2xl overflow-hidden">
           {/* Search Input */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-[#2a2a2a]">
-            <Search className="w-5 h-5 text-zinc-500" />
+            <Search className="w-5 h-5 text-zinc-500 flex-shrink-0" />
             <input
               ref={inputRef}
               type="text"
@@ -190,63 +315,49 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
             {query && (
               <button
                 onClick={() => setQuery("")}
-                className="p-1 text-zinc-500 hover:text-white"
+                className="p-1 text-zinc-500 hover:text-white flex-shrink-0"
               >
                 <X className="w-4 h-4" />
               </button>
             )}
           </div>
 
+          {/* Fuzzy-Matching Hinweis */}
+          {query.length >= 2 && hasResults && (
+            <div className="px-4 py-1.5 text-[10px] text-zinc-600 border-b border-[#2a2a2a] flex items-center gap-1">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500/50"></span>
+              Fuzzy-Suche aktiv · Tippfehler werden ignoriert
+            </div>
+          )}
+
           {/* Results */}
-          <div className="max-h-80 overflow-y-auto">
+          <div className="max-h-[400px] overflow-y-auto">
             {isLoading ? (
-              <div className="px-4 py-8 text-center text-zinc-500 text-sm">
-                Suche läuft...
+              <div className="px-4 py-8 text-center">
+                <div className="inline-flex items-center gap-2 text-zinc-500 text-sm">
+                  <div className="w-4 h-4 border-2 border-zinc-600 border-t-emerald-500 rounded-full animate-spin" />
+                  Suche läuft...
+                </div>
               </div>
-            ) : query && results.length === 0 ? (
+            ) : query && !hasResults ? (
               <div className="px-4 py-8 text-center text-zinc-500 text-sm">
-                Keine Ergebnisse für &ldquo;{query}&rdquo;
+                <p>Keine Ergebnisse für &ldquo;{query}&rdquo;</p>
+                <p className="text-xs text-zinc-600 mt-1">
+                  Versuche eine andere Schreibweise
+                </p>
               </div>
-            ) : results.length > 0 ? (
-              <div className="py-2">
-                {results.map((result, index) => (
-                  <button
-                    key={`${result.type}-${result.id}`}
-                    onClick={() => {
-                      router.push(result.href)
-                      onClose()
-                    }}
-                    onMouseEnter={() => setSelectedIndex(index)}
-                    className={cn(
-                      "w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors",
-                      index === selectedIndex
-                        ? "bg-[#2C3A1C] text-white"
-                        : "text-zinc-400 hover:bg-[#222]"
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        "w-8 h-8 rounded-lg flex items-center justify-center",
-                        index === selectedIndex
-                          ? "bg-emerald-500/20 text-emerald-400"
-                          : "bg-[#2a2a2a] text-zinc-500"
-                      )}
-                    >
-                      {getIcon(result.type)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{result.title}</p>
-                      {result.subtitle && (
-                        <p className="text-xs text-zinc-500 truncate">{result.subtitle}</p>
-                      )}
-                    </div>
-                    <span className="text-xs text-zinc-600">{getTypeLabel(result.type)}</span>
-                  </button>
-                ))}
+            ) : hasResults ? (
+              <div className="divide-y divide-[#2a2a2a]">
+                {renderGroup("auftrag", groupedResults.auftraege, auftraegeStartIndex)}
+                {renderGroup("mitarbeiter", groupedResults.mitarbeiter, mitarbeiterStartIndex)}
+                {renderGroup("rechnung", groupedResults.rechnungen, rechnungenStartIndex)}
               </div>
             ) : (
               <div className="px-4 py-6 text-center text-zinc-600 text-sm">
-                Tippen Sie, um zu suchen
+                <p>Tippen Sie, um zu suchen</p>
+                <p className="text-xs mt-1.5 text-zinc-700">
+                  Mind. 2 Zeichen · Tippfehler-tolerant
+                </p>
               </div>
             )}
           </div>
@@ -302,8 +413,6 @@ export function QuickSearchProvider({ children }: { children: React.ReactNode })
 
 // Trigger-Button für Sidebar
 export function QuickSearchTrigger() {
-  const [, setIsOpen] = useState(false)
-
   const openSearch = () => {
     // Dispatch custom event das vom Provider gehört wird
     const event = new KeyboardEvent("keydown", {
