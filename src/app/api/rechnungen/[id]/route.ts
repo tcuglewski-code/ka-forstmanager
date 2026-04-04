@@ -5,9 +5,65 @@ import { isAdmin } from "@/lib/permissions"
 // Sprint FW (E5): Email bei Freigabe
 import { sendEmail, rechnungEmailHtml } from "@/lib/email"
 
+// Sprint GB-01: GoBD-Compliance-Konstanten
+const GOBD_LOCK_HOURS = 24 // Rechnungen werden nach 24h automatisch gesperrt
+const LOCK_ERROR = { 
+  error: "GoBD: Diese Rechnung ist gesperrt und kann nicht mehr geändert werden",
+  code: "GOBD_LOCKED" 
+}
+
+/**
+ * Sprint GB-01: Prüft ob eine Rechnung GoBD-gesperrt ist
+ * Eine Rechnung ist gesperrt wenn:
+ * - lockedAt gesetzt ist ODER
+ * - createdAt älter als GOBD_LOCK_HOURS ist
+ */
+function isRechnungLocked(rechnung: { lockedAt: Date | null; createdAt: Date }): boolean {
+  if (rechnung.lockedAt) return true
+  
+  const lockThreshold = new Date()
+  lockThreshold.setHours(lockThreshold.getHours() - GOBD_LOCK_HOURS)
+  
+  return rechnung.createdAt < lockThreshold
+}
+
+/**
+ * Sprint GB-01: Erstellt einen Audit-Log-Eintrag
+ */
+async function createAuditLog(
+  rechnungId: string,
+  action: string,
+  userId: string | null,
+  userName: string | null,
+  field?: string,
+  oldValue?: any,
+  newValue?: any,
+  req?: NextRequest
+) {
+  try {
+    await prisma.rechnungAuditLog.create({
+      data: {
+        rechnungId,
+        action,
+        field,
+        oldValue: oldValue !== undefined ? JSON.stringify(oldValue) : null,
+        newValue: newValue !== undefined ? JSON.stringify(newValue) : null,
+        userId,
+        userName,
+        ip: req?.headers.get('x-forwarded-for') || req?.headers.get('x-real-ip') || null,
+        userAgent: req?.headers.get('user-agent') || null,
+      },
+    })
+  } catch (error) {
+    console.error("[AUDIT LOG ERROR]", error)
+    // Audit-Log-Fehler sollten den Hauptvorgang nicht blockieren
+  }
+}
+
 /**
  * GET /api/rechnungen/[id]
  * Einzelne Rechnung abrufen mit verknüpftem Auftrag
+ * Sprint GB-01: Enthält jetzt auch Lock-Status
  */
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -34,7 +90,18 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 })
     }
     
-    return NextResponse.json(rechnung)
+    // Sprint GB-01: Lock-Status berechnen und mitsenden
+    const isLocked = isRechnungLocked(rechnung)
+    
+    return NextResponse.json({
+      ...rechnung,
+      isLocked,
+      lockInfo: isLocked ? {
+        lockedAt: rechnung.lockedAt || rechnung.createdAt,
+        lockedBy: rechnung.lockedBy || 'SYSTEM',
+        lockReason: rechnung.lockReason || 'GoBD-Compliance: Automatische Sperrung nach 24h',
+      } : null,
+    })
   } catch (error) {
     console.error("[RECHNUNG GET]", error)
     return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 })
@@ -45,8 +112,40 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!isAdmin(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  
   try {
     const { id } = await params
+    
+    // Sprint GB-01: Prüfe GoBD-Lock
+    const rechnung = await prisma.rechnung.findUnique({ where: { id } })
+    if (!rechnung) {
+      return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 })
+    }
+    
+    if (isRechnungLocked(rechnung)) {
+      // Audit-Log für versuchte Löschung
+      await createAuditLog(
+        id,
+        'DELETE_ATTEMPT_BLOCKED',
+        session.user?.id || null,
+        session.user?.name || null,
+        undefined, undefined, undefined, req
+      )
+      return NextResponse.json(LOCK_ERROR, { status: 423 }) // 423 Locked
+    }
+    
+    // Audit-Log vor Löschung
+    await createAuditLog(
+      id,
+      'DELETE',
+      session.user?.id || null,
+      session.user?.name || null,
+      undefined,
+      rechnung,
+      null,
+      req
+    )
+    
     await prisma.rechnung.delete({ where: { id } })
     return NextResponse.json({ ok: true })
   } catch (error: any) {
@@ -60,16 +159,53 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!isAdmin(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  
   const { id } = await params
   const body = await req.json()
+  
+  // Sprint GB-01: Prüfe GoBD-Lock
+  const aktuelleRechnung = await prisma.rechnung.findUnique({ where: { id } })
+  if (!aktuelleRechnung) {
+    return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 })
+  }
+  
+  if (isRechnungLocked(aktuelleRechnung)) {
+    await createAuditLog(
+      id,
+      'UPDATE_ATTEMPT_BLOCKED',
+      session.user?.id || null,
+      session.user?.name || null,
+      undefined, undefined, undefined, req
+    )
+    return NextResponse.json(LOCK_ERROR, { status: 423 })
+  }
+  
+  const updateData: Record<string, any> = {}
+  const changes: Array<{ field: string; old: any; new: any }> = []
+  
+  if (body.status !== undefined && body.status !== aktuelleRechnung.status) {
+    changes.push({ field: 'status', old: aktuelleRechnung.status, new: body.status })
+    updateData.status = body.status
+  }
+  if (body.notizen !== undefined && body.notizen !== aktuelleRechnung.notizen) {
+    changes.push({ field: 'notizen', old: aktuelleRechnung.notizen, new: body.notizen })
+    updateData.notizen = body.notizen
+  }
+  if (body.pdfUrl !== undefined && body.pdfUrl !== aktuelleRechnung.pdfUrl) {
+    changes.push({ field: 'pdfUrl', old: aktuelleRechnung.pdfUrl, new: body.pdfUrl })
+    updateData.pdfUrl = body.pdfUrl
+  }
+  if (body.faelligAm !== undefined) {
+    const newDate = new Date(body.faelligAm)
+    if (aktuelleRechnung.faelligAm?.getTime() !== newDate.getTime()) {
+      changes.push({ field: 'faelligAm', old: aktuelleRechnung.faelligAm, new: newDate })
+      updateData.faelligAm = newDate
+    }
+  }
+  
   const rechnung = await prisma.rechnung.update({
     where: { id },
-    data: {
-      ...(body.status && { status: body.status }),
-      ...(body.notizen !== undefined && { notizen: body.notizen }),
-      ...(body.pdfUrl !== undefined && { pdfUrl: body.pdfUrl }),
-      ...(body.faelligAm && { faelligAm: new Date(body.faelligAm) }),
-    },
+    data: updateData,
     include: {
       auftrag: {
         select: {
@@ -81,6 +217,20 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       },
     },
   })
+
+  // Sprint GB-01: Audit-Log für alle Änderungen
+  for (const change of changes) {
+    await createAuditLog(
+      id,
+      'UPDATE',
+      session.user?.id || null,
+      session.user?.name || null,
+      change.field,
+      change.old,
+      change.new,
+      req
+    )
+  }
 
   // Sprint FW (E5): Email bei Freigabe senden
   if (body.status === "freigegeben" && rechnung.auftrag?.waldbesitzerEmail) {
@@ -99,7 +249,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }).catch(err => console.error("[Rechnung Email Fehler]", err))
   }
 
-  return NextResponse.json(rechnung)
+  return NextResponse.json({
+    ...rechnung,
+    isLocked: isRechnungLocked(rechnung),
+  })
 }
 
 /**
@@ -113,8 +266,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
  * - notizen
  * - status (entwurf → versendet → bezahlt → storniert)
  *
- * Berechnet nettoBetrag und bruttoBetrag automatisch neu aus
- * den vorhandenen Positionen nach Anwendung des Rabatts.
+ * Sprint GB-01: GoBD-Lock-Check + Audit-Logging
  */
 export async function PUT(
   req: NextRequest,
@@ -135,6 +287,18 @@ export async function PUT(
 
   if (!aktuelleRechnung) {
     return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 })
+  }
+
+  // Sprint GB-01: GoBD-Lock-Check
+  if (isRechnungLocked(aktuelleRechnung)) {
+    await createAuditLog(
+      id,
+      'UPDATE_ATTEMPT_BLOCKED',
+      session.user?.id || null,
+      session.user?.name || null,
+      undefined, undefined, undefined, req
+    )
+    return NextResponse.json(LOCK_ERROR, { status: 423 })
   }
 
   // Stornierte Rechnung kann nicht mehr bearbeitet werden
@@ -180,12 +344,54 @@ export async function PUT(
     mwst,
   }
 
-  if (body.rabattGrund !== undefined) updateData.rabattGrund = body.rabattGrund
-  if (body.zahlungsBedingung !== undefined) updateData.zahlungsBedingung = body.zahlungsBedingung
-  if (body.notizen !== undefined) updateData.notizen = body.notizen
-  if (body.status !== undefined) updateData.status = body.status
-  if (body.faelligAm !== undefined) updateData.faelligAm = new Date(body.faelligAm)
-  if (body.pdfUrl !== undefined) updateData.pdfUrl = body.pdfUrl
+  // Änderungen für Audit-Log sammeln
+  const changes: Array<{ field: string; old: any; new: any }> = []
+  
+  if (body.rabattGrund !== undefined) {
+    if (body.rabattGrund !== aktuelleRechnung.rabattGrund) {
+      changes.push({ field: 'rabattGrund', old: aktuelleRechnung.rabattGrund, new: body.rabattGrund })
+    }
+    updateData.rabattGrund = body.rabattGrund
+  }
+  if (body.zahlungsBedingung !== undefined) {
+    if (body.zahlungsBedingung !== aktuelleRechnung.zahlungsBedingung) {
+      changes.push({ field: 'zahlungsBedingung', old: aktuelleRechnung.zahlungsBedingung, new: body.zahlungsBedingung })
+    }
+    updateData.zahlungsBedingung = body.zahlungsBedingung
+  }
+  if (body.notizen !== undefined) {
+    if (body.notizen !== aktuelleRechnung.notizen) {
+      changes.push({ field: 'notizen', old: aktuelleRechnung.notizen, new: body.notizen })
+    }
+    updateData.notizen = body.notizen
+  }
+  if (body.status !== undefined) {
+    if (body.status !== aktuelleRechnung.status) {
+      changes.push({ field: 'status', old: aktuelleRechnung.status, new: body.status })
+    }
+    updateData.status = body.status
+  }
+  if (body.faelligAm !== undefined) {
+    const newDate = new Date(body.faelligAm)
+    if (aktuelleRechnung.faelligAm?.getTime() !== newDate.getTime()) {
+      changes.push({ field: 'faelligAm', old: aktuelleRechnung.faelligAm, new: newDate })
+    }
+    updateData.faelligAm = newDate
+  }
+  if (body.pdfUrl !== undefined) {
+    if (body.pdfUrl !== aktuelleRechnung.pdfUrl) {
+      changes.push({ field: 'pdfUrl', old: aktuelleRechnung.pdfUrl, new: body.pdfUrl })
+    }
+    updateData.pdfUrl = body.pdfUrl
+  }
+  
+  // Numerische Änderungen tracken
+  if (rabatt !== aktuelleRechnung.rabatt) {
+    changes.push({ field: 'rabatt', old: aktuelleRechnung.rabatt, new: rabatt })
+  }
+  if (rabattBetrag !== aktuelleRechnung.rabattBetrag) {
+    changes.push({ field: 'rabattBetrag', old: aktuelleRechnung.rabattBetrag, new: rabattBetrag })
+  }
 
   const rechnung = await prisma.rechnung.update({
     where: { id },
@@ -196,5 +402,22 @@ export async function PUT(
     },
   })
 
-  return NextResponse.json(rechnung)
+  // Sprint GB-01: Audit-Log für alle Änderungen
+  for (const change of changes) {
+    await createAuditLog(
+      id,
+      'UPDATE',
+      session.user?.id || null,
+      session.user?.name || null,
+      change.field,
+      change.old,
+      change.new,
+      req
+    )
+  }
+
+  return NextResponse.json({
+    ...rechnung,
+    isLocked: isRechnungLocked(rechnung),
+  })
 }

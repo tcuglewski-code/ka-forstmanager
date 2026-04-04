@@ -3,6 +3,21 @@ import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import { isAdmin, isAdminOrGF } from "@/lib/permissions"
 
+// Sprint GB-01: GoBD-Compliance-Konstanten
+const GOBD_LOCK_HOURS = 24 // Rechnungen werden nach 24h automatisch gesperrt
+
+/**
+ * Sprint GB-01: Prüft ob eine Rechnung GoBD-gesperrt ist
+ */
+function isRechnungLocked(rechnung: { lockedAt: Date | null; createdAt: Date }): boolean {
+  if (rechnung.lockedAt) return true
+  
+  const lockThreshold = new Date()
+  lockThreshold.setHours(lockThreshold.getHours() - GOBD_LOCK_HOURS)
+  
+  return rechnung.createdAt < lockThreshold
+}
+
 export async function GET(req: NextRequest) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -30,7 +45,22 @@ export async function GET(req: NextRequest) {
     orderBy: { createdAt: "desc" },
     take: limit,
   })
-  return NextResponse.json(data)
+  
+  // Sprint GB-01: Lock-Status für jede Rechnung berechnen
+  const dataWithLockStatus = data.map(rechnung => {
+    const isLocked = isRechnungLocked(rechnung)
+    return {
+      ...rechnung,
+      isLocked,
+      lockInfo: isLocked ? {
+        lockedAt: rechnung.lockedAt || rechnung.createdAt,
+        lockedBy: rechnung.lockedBy || 'SYSTEM',
+        lockReason: rechnung.lockReason || 'GoBD-Compliance: Automatische Sperrung nach 24h',
+      } : null,
+    }
+  })
+  
+  return NextResponse.json(dataWithLockStatus)
 }
 
 export async function POST(req: NextRequest) {
@@ -70,5 +100,32 @@ export async function POST(req: NextRequest) {
     },
     include: { auftrag: { select: { id: true, titel: true } } },
   })
-  return NextResponse.json(rechnung, { status: 201 })
+  
+  // Sprint GB-01: Audit-Log für Erstellung
+  try {
+    await prisma.rechnungAuditLog.create({
+      data: {
+        rechnungId: rechnung.id,
+        action: 'CREATE',
+        userId: session.user?.id || null,
+        userName: session.user?.name || null,
+        newValue: JSON.stringify({
+          nummer: rechnung.nummer,
+          betrag: rechnung.betrag,
+          auftragId: rechnung.auftragId,
+        }),
+        ip: req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || null,
+        userAgent: req.headers.get('user-agent') || null,
+      },
+    })
+  } catch (error) {
+    console.error("[AUDIT LOG ERROR]", error)
+    // Audit-Log-Fehler blockieren nicht die Erstellung
+  }
+  
+  return NextResponse.json({
+    ...rechnung,
+    isLocked: false,
+    lockInfo: null,
+  }, { status: 201 })
 }
