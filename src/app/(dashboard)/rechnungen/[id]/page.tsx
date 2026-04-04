@@ -9,6 +9,7 @@ import {
 } from "lucide-react"
 import ZipayoButton from "@/components/payments/ZipayoButton"
 import AuditLogSection from "@/components/rechnung/AuditLogSection"
+import VersionsSection from "@/components/rechnung/VersionsSection"
 
 interface Rechnung {
   id: string
@@ -323,8 +324,13 @@ export default function RechnungDetailPage() {
         </div>
       </div>
 
-      {/* Sprint GB-02: Audit-Log Section - GoBD-Compliance */}
+      {/* Sprint GB-03: Versions-Section - GoBD-Compliance */}
       <div className="mt-8">
+        <VersionsSection rechnungId={rechnung.id} />
+      </div>
+
+      {/* Sprint GB-02: Audit-Log Section - GoBD-Compliance */}
+      <div className="mt-6">
         <AuditLogSection rechnungId={rechnung.id} />
       </div>
     </div>

@@ -764,6 +764,7 @@ model Rechnung {
   auftrag           Auftrag?           @relation(fields: [auftragId], references: [id], onDelete: SetNull)
   positionen        RechnungPosition[]
   auditLog          RechnungAuditLog[]
+  versionen         RechnungVersion[]
 }
 
 // RECHNUNGS-AUDIT-LOG (Sprint GB-01: GoBD-Compliance)
@@ -782,6 +783,41 @@ model RechnungAuditLog {
   userAgent   String?  // Browser/Client
   createdAt   DateTime @default(now())
   
+  @@index([rechnungId])
+  @@index([createdAt])
+}
+
+// RECHNUNGS-VERSIONIERUNG (Sprint GB-03: GoBD-Compliance)
+// Speichert vollständige Snapshots vor jeder Änderung (solange nicht gelockt)
+model RechnungVersion {
+  id                String   @id @default(cuid())
+  rechnungId        String
+  rechnung          Rechnung @relation(fields: [rechnungId], references: [id], onDelete: Cascade)
+  versionNummer     Int      // Sequentielle Versionsnummer (1, 2, 3, ...)
+  // Snapshot aller relevanten Felder zum Zeitpunkt der Version
+  nummer            String
+  betrag            Float
+  mwst              Float
+  status            String
+  rechnungsDatum    DateTime
+  faelligAm         DateTime?
+  pdfUrl            String?
+  notizen           String?
+  rabatt            Float?
+  rabattBetrag      Float?
+  rabattGrund       String?
+  nettoBetrag       Float?
+  bruttoBetrag      Float?
+  zahlungsBedingung String?
+  // Positionen als JSON-Snapshot
+  positionenSnapshot Json?    // Array aller RechnungPosition zum Zeitpunkt
+  // Meta-Daten
+  erstelltVon       String?   // userId der Änderung
+  erstelltVonName   String?   // Name des Users (für Archiv)
+  aenderungsgrund   String?   // Optionaler Kommentar zur Änderung
+  createdAt         DateTime  @default(now())
+  
+  @@unique([rechnungId, versionNummer])
   @@index([rechnungId])
   @@index([createdAt])
 }
