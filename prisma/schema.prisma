@@ -15,6 +15,7 @@ model User {
   role                 String       @default("mitarbeiter")
   avatar               String?
   active               Boolean      @default(true)
+  deletedAt            DateTime?    // Soft-Delete Timestamp (DSGVO Retention)
   // Sprint UX: Permissions & Benachrichtigungen
   permissions          String[]     @default([])
   lastLoginAt          DateTime?
@@ -77,6 +78,7 @@ model Mitarbeiter {
   stundenlohn               Float?
   status                    String                     @default("aktiv")
   notizen                   String?
+  deletedAt                 DateTime?                  // Soft-Delete Timestamp (DSGVO Retention)
   vollkostenSatz            Float? // Überschreibt vollkosten_pro_stunde (Sprint Q)
   maschinenbonusIndividuell Float? // Überschreibt maschinenbonus_mitarbeiter (Sprint Q)
   notfallName               String? // Notfallkontakt Name (Sprint U)
@@ -171,6 +173,7 @@ model Auftrag {
   localUpdatedAt      DateTime? // Zeitstempel der letzten lokalen FM-Änderung
   wpSyncedAt          DateTime? // Zeitstempel der letzten WP-Synchronisation
   syncStatus          String?            @default("synced") // synced, local_changes, conflict
+  deletedAt           DateTime?          // Soft-Delete Timestamp (DSGVO Retention)
   createdAt           DateTime           @default(now())
   updatedAt           DateTime           @updatedAt
   saison              Saison?            @relation(fields: [saisonId], references: [id], onDelete: SetNull)
@@ -280,6 +283,7 @@ model LagerArtikel {
   // KN-1: Lieferanten-spezifische Felder
   lieferantPreis         Decimal? // Einkaufspreis beim Lieferanten
   lieferantBestellnummer String?  // Artikelnummer beim Lieferanten
+  deletedAt           DateTime?           // Soft-Delete Timestamp (DSGVO Retention)
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
   bewegungen          LagerBewegung[]
@@ -534,6 +538,7 @@ model Dokument {
   auftragId      String?
   saisonId       String?
   hochgeladenVon String?
+  deletedAt      DateTime?    // Soft-Delete Timestamp (DSGVO Retention)
   createdAt      DateTime     @default(now())
   // Mitarbeiter-Dokumente (Sprint BQ)
   mitarbeiterId  String?
@@ -700,17 +705,18 @@ model Tagesprotokoll {
 
 // KONTAKTE
 model Kontakt {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
-  typ       String   @default("sonstig")
+  typ       String    @default("sonstig")
   telefon   String?
   email     String?
   forstamt  String?
   revier    String?
   adresse   String?
   notizen   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  deletedAt DateTime? // Soft-Delete Timestamp (DSGVO Retention)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 // MASCHINENEINSATZ (Sprint K2)
@@ -1352,4 +1358,24 @@ model UserConsent {
 
   @@unique([userId, consentType])
   @@index([userId])
+}
+
+// ============================================================
+// DSGVO RETENTION: Lösch-Log für Hard-Delete Dokumentation
+// Protokolliert alle unwiederbringlichen Löschungen (Art. 17 DSGVO)
+// ============================================================
+
+model DeletionLog {
+  id            String   @id @default(cuid())
+  entityType    String   // User, Mitarbeiter, Auftrag, Dokument, etc.
+  entityId      String   // Original-ID des gelöschten Datensatzes
+  entitySummary String?  // Anonymisierte Zusammenfassung (z.B. "Mitarbeiter #123")
+  deletedBy     String?  // userId oder "SYSTEM_CRON"
+  reason        String   @default("RETENTION_POLICY") // RETENTION_POLICY, GDPR_REQUEST, MANUAL
+  retentionDays Int?     // Nach wie vielen Tagen Soft-Delete erfolgte Hard-Delete
+  metadata      Json?    // Zusätzliche Metadaten (ohne personenbezogene Daten!)
+  createdAt     DateTime @default(now())
+
+  @@index([entityType])
+  @@index([createdAt])
 }
