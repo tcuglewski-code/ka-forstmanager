@@ -551,6 +551,24 @@ export function Sidebar() {
           >
             Koch Aufforstung GmbH
           </p>
+          <div className="text-[10px] px-3 mt-1 flex gap-2" style={{ color: "rgba(255,255,255,0.2)" }}>
+            <a 
+              href="https://peru-otter-113714.hostingersite.com/datenschutz/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:opacity-60 transition-opacity underline"
+            >
+              Datenschutz
+            </a>
+            <a 
+              href="https://peru-otter-113714.hostingersite.com/impressum/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:opacity-60 transition-opacity underline"
+            >
+              Impressum
+            </a>
+          </div>
         </div>
       </aside>
     </>

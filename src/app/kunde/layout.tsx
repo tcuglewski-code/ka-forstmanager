@@ -59,6 +59,24 @@ export default async function KundeLayout({
                 koch-aufforstung.de
               </Link>
             </p>
+            <p className="mt-2 flex justify-center gap-3">
+              <a 
+                href="https://peru-otter-113714.hostingersite.com/datenschutz/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-[#2C3A1C] underline transition-colors"
+              >
+                Datenschutz
+              </a>
+              <a 
+                href="https://peru-otter-113714.hostingersite.com/impressum/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-[#2C3A1C] underline transition-colors"
+              >
+                Impressum
+              </a>
+            </p>
           </div>
         </footer>
       </div>

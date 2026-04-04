@@ -271,6 +271,25 @@ export default function LoginPage() {
         <p className="text-center text-xs text-zinc-600 mt-6">
           © 2026 Koch Aufforstung GmbH — ForstManager v1.0
         </p>
+        <p className="text-center text-xs text-zinc-600 mt-2">
+          <a 
+            href="https://peru-otter-113714.hostingersite.com/datenschutz/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hover:text-zinc-400 underline transition-colors"
+          >
+            Datenschutzerklärung
+          </a>
+          {" · "}
+          <a 
+            href="https://peru-otter-113714.hostingersite.com/impressum/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hover:text-zinc-400 underline transition-colors"
+          >
+            Impressum
+          </a>
+        </p>
       </div>
     </div>
   )
