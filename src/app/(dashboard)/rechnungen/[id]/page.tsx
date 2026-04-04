@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation"
 import { 
   Receipt, ArrowLeft, Loader2, CheckCircle, Clock, 
   FileText, ExternalLink, Printer, XCircle, AlertCircle,
-  Download, BadgeCheck
+  Download, BadgeCheck, Lock, History
 } from "lucide-react"
 import ZipayoButton from "@/components/payments/ZipayoButton"
 
@@ -24,6 +24,13 @@ interface Rechnung {
     titel: string
     waldbesitzer?: string
     waldbesitzerEmail?: string
+  } | null
+  // Sprint GB-01: GoBD Lock-Status
+  isLocked?: boolean
+  lockInfo?: {
+    lockedAt: string
+    lockedBy: string
+    lockReason: string
   } | null
 }
 
@@ -102,6 +109,8 @@ export default function RechnungDetailPage() {
   const bruttoBetrag = rechnung.betrag * (1 + (rechnung.mwst || 19) / 100)
   const mwstBetrag = rechnung.betrag * ((rechnung.mwst || 19) / 100)
   const istOffen = rechnung.status === "offen" || rechnung.status === "freigegeben"
+  // Sprint GB-01: GoBD Lock-Check
+  const isLocked = rechnung.isLocked || false
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -150,6 +159,33 @@ export default function RechnungDetailPage() {
               )}
             </div>
           </div>
+
+          {/* Sprint GB-01: GoBD Lock-Hinweis */}
+          {isLocked && (
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
+              <div className="flex items-start gap-3">
+                <Lock className="w-5 h-5 text-amber-400 mt-0.5" />
+                <div>
+                  <h4 className="text-amber-400 font-semibold">GoBD-gesperrt</h4>
+                  <p className="text-zinc-400 text-sm mt-1">
+                    Diese Rechnung ist {rechnung.lockInfo?.lockReason || "nach den GoBD-Richtlinien"} gesperrt 
+                    und kann nicht mehr bearbeitet werden. Die Sperrung erfolgte am{" "}
+                    {rechnung.lockInfo?.lockedAt 
+                      ? new Date(rechnung.lockInfo.lockedAt).toLocaleDateString("de-DE") 
+                      : new Date(rechnung.rechnungsDatum).toLocaleDateString("de-DE")
+                    }.
+                  </p>
+                  <a 
+                    href={`/api/rechnungen/${rechnung.id}/audit`}
+                    target="_blank"
+                    className="text-amber-400 hover:text-amber-300 text-sm mt-2 inline-flex items-center gap-1"
+                  >
+                    <History className="w-3 h-3" /> Änderungsprotokoll anzeigen
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Betrag Card */}
           <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
@@ -203,8 +239,8 @@ export default function RechnungDetailPage() {
 
         {/* Right: Actions */}
         <div className="space-y-4">
-          {/* Zipayo Payment */}
-          {istOffen && (
+          {/* Zipayo Payment - Sprint GB-01: nur bei nicht-gesperrten Rechnungen */}
+          {istOffen && !isLocked && (
             <div className="bg-gradient-to-br from-[#1a1a2e] to-[#161616] border border-[#6366f1]/30 rounded-xl p-6">
               <h3 className="text-white font-semibold mb-2">Online bezahlen</h3>
               <p className="text-zinc-400 text-sm mb-4">
@@ -217,6 +253,20 @@ export default function RechnungDetailPage() {
                 onPaymentSuccess={handlePaymentSuccess}
                 variant="full"
               />
+            </div>
+          )}
+          
+          {/* Sprint GB-01: Hinweis bei gesperrten offenen Rechnungen */}
+          {istOffen && isLocked && (
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <Lock className="w-5 h-5 text-amber-400" />
+                <h3 className="text-amber-400 font-semibold">Gesperrt</h3>
+              </div>
+              <p className="text-zinc-400 text-sm">
+                Diese Rechnung ist GoBD-gesperrt. Status-Änderungen sind nicht mehr möglich.
+                Kontaktieren Sie den Administrator für Korrekturen.
+              </p>
             </div>
           )}
 

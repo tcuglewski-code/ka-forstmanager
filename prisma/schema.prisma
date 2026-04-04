@@ -749,10 +749,35 @@ model Rechnung {
   nettoBetrag       Float?
   bruttoBetrag      Float?
   zahlungsBedingung String?            @default("30 Tage netto")
+  // Sprint GB-01: GoBD-Compliance - Unveränderlichkeits-Lock
+  lockedAt          DateTime?          // Wenn gesetzt: Rechnung ist gesperrt (GoBD-konform, keine Änderungen mehr möglich)
+  lockedBy          String?            // User-ID oder 'SYSTEM' für automatische Sperrung
+  lockReason        String?            @default("GoBD-Compliance") // Grund der Sperrung
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   auftrag           Auftrag?           @relation(fields: [auftragId], references: [id], onDelete: SetNull)
   positionen        RechnungPosition[]
+  auditLog          RechnungAuditLog[]
+}
+
+// RECHNUNGS-AUDIT-LOG (Sprint GB-01: GoBD-Compliance)
+// Protokolliert alle Änderungen an Rechnungen für Revisionssicherheit
+model RechnungAuditLog {
+  id          String   @id @default(cuid())
+  rechnungId  String
+  rechnung    Rechnung @relation(fields: [rechnungId], references: [id], onDelete: Cascade)
+  action      String   // 'CREATE', 'UPDATE', 'LOCK', 'UNLOCK_ATTEMPT'
+  field       String?  // Welches Feld geändert wurde
+  oldValue    String?  // Alter Wert (JSON-serialisiert)
+  newValue    String?  // Neuer Wert (JSON-serialisiert)
+  userId      String?  // Wer hat die Änderung gemacht
+  userName    String?  // Name des Users (für Archiv)
+  ip          String?  // IP-Adresse
+  userAgent   String?  // Browser/Client
+  createdAt   DateTime @default(now())
+  
+  @@index([rechnungId])
+  @@index([createdAt])
 }
 
 // RECHNUNGS-POSITIONEN (Sprint BQ)

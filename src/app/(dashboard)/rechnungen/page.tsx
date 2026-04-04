@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Receipt, Plus, Loader2, CheckCircle, ExternalLink, Printer } from "lucide-react"
+import { Receipt, Plus, Loader2, CheckCircle, ExternalLink, Printer, Lock } from "lucide-react"
 import ZipayoButton from "@/components/payments/ZipayoButton"
 
 interface Rechnung {
@@ -15,6 +15,13 @@ interface Rechnung {
   pdfUrl?: string | null
   notizen?: string | null
   auftrag?: { id: string; titel: string } | null
+  // Sprint GB-01: GoBD Lock-Status
+  isLocked?: boolean
+  lockInfo?: {
+    lockedAt: string
+    lockedBy: string
+    lockReason: string
+  } | null
 }
 
 interface Auftrag { id: string; titel: string }
@@ -213,9 +220,17 @@ export default function RechnungenPage() {
               ) : gefilterteRechnungen.map((r) => (
                 <tr key={r.id} className="hover:bg-[#1c1c1c]">
                   <td className="px-6 py-4 text-sm font-mono">
-                    <a href={`/rechnungen/${r.id}`} className="text-white hover:text-emerald-400 transition-colors">
-                      {r.nummer}
-                    </a>
+                    <div className="flex items-center gap-2">
+                      <a href={`/rechnungen/${r.id}`} className="text-white hover:text-emerald-400 transition-colors">
+                        {r.nummer}
+                      </a>
+                      {/* Sprint GB-01: GoBD Lock-Icon */}
+                      {r.isLocked && (
+                        <span title={r.lockInfo?.lockReason || "GoBD-gesperrt: Keine Änderungen möglich"}>
+                          <Lock className="w-3 h-3 text-amber-500" />
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-zinc-400">
                     {r.auftrag ? (
@@ -246,25 +261,36 @@ export default function RechnungenPage() {
                         className="text-xs text-zinc-400 hover:text-white flex items-center gap-1">
                         <Printer className="w-3 h-3" /> Drucken
                       </a>
-                      {/* Zipayo Integration für offene/freigegebene Rechnungen */}
-                      {(r.status === "offen" || r.status === "freigegeben") && (
-                        <ZipayoButton
-                          amount={r.betrag}
-                          description={`Rechnung ${r.nummer}`}
-                          invoiceId={r.id}
-                          onPaymentSuccess={() => patch(r.id, { status: "bezahlt" })}
-                          variant="compact"
-                        />
+                      {/* Sprint GB-01: Buttons nur bei nicht-gesperrten Rechnungen */}
+                      {!r.isLocked && (
+                        <>
+                          {/* Zipayo Integration für offene/freigegebene Rechnungen */}
+                          {(r.status === "offen" || r.status === "freigegeben") && (
+                            <ZipayoButton
+                              amount={r.betrag}
+                              description={`Rechnung ${r.nummer}`}
+                              invoiceId={r.id}
+                              onPaymentSuccess={() => patch(r.id, { status: "bezahlt" })}
+                              variant="compact"
+                            />
+                          )}
+                          {r.status === "offen" && (
+                            <button onClick={() => patch(r.id, { status: "freigegeben" })} className="px-2 py-1 bg-amber-500/20 text-amber-400 rounded text-xs hover:bg-amber-500/30">
+                              Freigeben
+                            </button>
+                          )}
+                          {(r.status === "offen" || r.status === "freigegeben") && (
+                            <button onClick={() => patch(r.id, { status: "bezahlt" })} className="flex items-center gap-1 px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded text-xs hover:bg-emerald-500/30">
+                              <CheckCircle className="w-3 h-3" /> Bezahlt
+                            </button>
+                          )}
+                        </>
                       )}
-                      {r.status === "offen" && (
-                        <button onClick={() => patch(r.id, { status: "freigegeben" })} className="px-2 py-1 bg-amber-500/20 text-amber-400 rounded text-xs hover:bg-amber-500/30">
-                          Freigeben
-                        </button>
-                      )}
-                      {(r.status === "offen" || r.status === "freigegeben") && (
-                        <button onClick={() => patch(r.id, { status: "bezahlt" })} className="flex items-center gap-1 px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded text-xs hover:bg-emerald-500/30">
-                          <CheckCircle className="w-3 h-3" /> Bezahlt
-                        </button>
+                      {/* Sprint GB-01: Lock-Hinweis bei gesperrten Rechnungen */}
+                      {r.isLocked && (
+                        <span className="text-xs text-amber-500 flex items-center gap-1" title="GoBD: Änderungen nicht mehr möglich">
+                          <Lock className="w-3 h-3" /> Gesperrt
+                        </span>
                       )}
                     </div>
                   </td>
