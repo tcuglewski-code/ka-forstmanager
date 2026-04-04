@@ -39,6 +39,10 @@
     {
       "path": "/api/cron/churn-archive",
       "schedule": "30 2 * * *"
+    },
+    {
+      "path": "/api/cron/churn-notify",
+      "schedule": "0 9 * * *"
     }
   ]
 }

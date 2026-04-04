@@ -140,6 +140,7 @@ model Tenant {
   logo         String?
   primaryColor String   @default("#2C3A1C")
   domain       String?
+  contactEmail String?  // Admin/Ansprechpartner E-Mail für Benachrichtigungen
   // Churn-Management (Sprint OA IMPL-CHURN-01)
   status           TenantStatus @default(active)
   contractEndDate  DateTime?    // Vertragsende (bei Kündigung gesetzt)
@@ -148,6 +149,9 @@ model Tenant {
   cancelledAt      DateTime?    // Wann wurde die Kündigung eingereicht
   cancelledBy      String?      // User-ID der kündigenden Person
   cancellationNote String?      // Kündigungsgrund (optional)
+  // Churn-Notification Tracking (Sprint OD)
+  lastChurnNotifyAt DateTime?   // Letztes Datum einer Churn-Benachrichtigung
+  lastChurnNotifyDays Int?      // Tage bis Sperre bei letzter Benachrichtigung
   createdAt    DateTime @default(now())
 }
 
