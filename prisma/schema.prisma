@@ -1723,3 +1723,43 @@ model PdAccessLog {
   @@index([createdAt])
   @@index([ip])
 }
+
+// ============================================================
+// TENANT DATENEXPORT (Sprint OE IMPL-CHURN-05)
+// DSGVO Art. 20 Datenportabilität
+// Download-Link gültig für 7 Tage
+// ============================================================
+
+enum ExportStatus {
+  pending      // Export wurde angefordert
+  processing   // ZIP wird generiert
+  completed    // Fertig, Download verfügbar
+  expired      // 7 Tage abgelaufen
+  failed       // Fehler bei der Generierung
+}
+
+model ExportRequest {
+  id          String       @id @default(cuid())
+  tenantId    String       // Tenant dessen Daten exportiert werden
+  requestedBy String       // User-ID der anfordernden Person
+  token       String       @unique @default(cuid()) // Sicherer Download-Token
+  status      ExportStatus @default(pending)
+  // Statistiken
+  fileSize    Int?         // Dateigröße in Bytes
+  recordCount Json?        // Anzahl Records pro Typ {auftraege: 50, protokolle: 200, ...}
+  // Zeitstempel
+  createdAt   DateTime     @default(now())
+  startedAt   DateTime?    // Wann begann die Verarbeitung
+  completedAt DateTime?    // Wann wurde der Export fertiggestellt
+  expiresAt   DateTime     // Download-Link Ablaufdatum (createdAt + 7 Tage)
+  downloadedAt DateTime?   // Wann wurde der Download abgerufen
+  // Fehlerbehandlung
+  errorMessage String?     // Fehlermeldung bei status=failed
+  // Inhalt (als JSON referenziert für Sicherheit)
+  exportedTypes String[]   @default([]) // ["auftraege", "protokolle", "rechnungen", ...]
+  
+  @@index([tenantId])
+  @@index([token])
+  @@index([status])
+  @@index([expiresAt])
+}
