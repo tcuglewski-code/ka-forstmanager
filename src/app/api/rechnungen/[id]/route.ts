@@ -28,6 +28,77 @@ function isRechnungLocked(rechnung: { lockedAt: Date | null; createdAt: Date }):
 }
 
 /**
+ * Sprint GB-03: Erstellt eine Versions-Snapshot vor Änderung
+ * Speichert den kompletten Zustand der Rechnung inkl. Positionen
+ */
+async function createVersionSnapshot(
+  rechnung: any,
+  userId: string | null,
+  userName: string | null,
+  aenderungsgrund?: string
+) {
+  try {
+    // Höchste bestehende Versionsnummer ermitteln
+    const lastVersion = await prisma.rechnungVersion.findFirst({
+      where: { rechnungId: rechnung.id },
+      orderBy: { versionNummer: 'desc' },
+    })
+    
+    const nextVersion = (lastVersion?.versionNummer ?? 0) + 1
+    
+    // Positionen laden falls nicht im Objekt enthalten
+    let positionen = rechnung.positionen
+    if (!positionen) {
+      const rechnungMitPositionen = await prisma.rechnung.findUnique({
+        where: { id: rechnung.id },
+        include: { positionen: true },
+      })
+      positionen = rechnungMitPositionen?.positionen ?? []
+    }
+    
+    await prisma.rechnungVersion.create({
+      data: {
+        rechnungId: rechnung.id,
+        versionNummer: nextVersion,
+        nummer: rechnung.nummer,
+        betrag: rechnung.betrag,
+        mwst: rechnung.mwst,
+        status: rechnung.status,
+        rechnungsDatum: rechnung.rechnungsDatum,
+        faelligAm: rechnung.faelligAm,
+        pdfUrl: rechnung.pdfUrl,
+        notizen: rechnung.notizen,
+        rabatt: rechnung.rabatt,
+        rabattBetrag: rechnung.rabattBetrag,
+        rabattGrund: rechnung.rabattGrund,
+        nettoBetrag: rechnung.nettoBetrag,
+        bruttoBetrag: rechnung.bruttoBetrag,
+        zahlungsBedingung: rechnung.zahlungsBedingung,
+        positionenSnapshot: positionen.map((p: any) => ({
+          id: p.id,
+          beschreibung: p.beschreibung,
+          menge: p.menge,
+          einheit: p.einheit,
+          preisProEinheit: p.preisProEinheit,
+          gesamt: p.gesamt,
+          typ: p.typ,
+        })),
+        erstelltVon: userId,
+        erstelltVonName: userName,
+        aenderungsgrund,
+      },
+    })
+    
+    console.log(`[VERSION] Rechnung ${rechnung.nummer} - Version ${nextVersion} erstellt`)
+    return nextVersion
+  } catch (error) {
+    console.error("[VERSION SNAPSHOT ERROR]", error)
+    // Version-Fehler sollten den Hauptvorgang nicht blockieren
+    return null
+  }
+}
+
+/**
  * Sprint GB-01: Erstellt einen Audit-Log-Eintrag
  */
 async function createAuditLog(
@@ -180,6 +251,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json(LOCK_ERROR, { status: 423 })
   }
   
+  // Sprint GB-03: Version-Snapshot VOR der Änderung erstellen
+  await createVersionSnapshot(
+    aktuelleRechnung,
+    session.user?.id || null,
+    session.user?.name || null,
+    body.aenderungsgrund
+  )
+  
   const updateData: Record<string, any> = {}
   const changes: Array<{ field: string; old: any; new: any }> = []
   
@@ -300,6 +379,14 @@ export async function PUT(
     )
     return NextResponse.json(LOCK_ERROR, { status: 423 })
   }
+
+  // Sprint GB-03: Version-Snapshot VOR der Änderung erstellen
+  await createVersionSnapshot(
+    aktuelleRechnung,
+    session.user?.id || null,
+    session.user?.name || null,
+    body.aenderungsgrund
+  )
 
   // Stornierte Rechnung kann nicht mehr bearbeitet werden
   if (aktuelleRechnung.status === 'storniert' && body.status !== 'storniert') {
