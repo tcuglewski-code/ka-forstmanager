@@ -15,7 +15,7 @@ model User {
   role                 String       @default("mitarbeiter")
   avatar               String?
   active               Boolean      @default(true)
-  deletedAt            DateTime?    // Soft-Delete Timestamp (DSGVO Retention)
+  deletedAt            DateTime? // Soft-Delete Timestamp (DSGVO Retention)
   // Sprint UX: Permissions & Benachrichtigungen
   permissions          String[]     @default([])
   lastLoginAt          DateTime?
@@ -78,7 +78,7 @@ model Mitarbeiter {
   stundenlohn               Float?
   status                    String                     @default("aktiv")
   notizen                   String?
-  deletedAt                 DateTime?                  // Soft-Delete Timestamp (DSGVO Retention)
+  deletedAt                 DateTime? // Soft-Delete Timestamp (DSGVO Retention)
   vollkostenSatz            Float? // Überschreibt vollkosten_pro_stunde (Sprint Q)
   maschinenbonusIndividuell Float? // Überschreibt maschinenbonus_mitarbeiter (Sprint Q)
   notfallName               String? // Notfallkontakt Name (Sprint U)
@@ -173,7 +173,7 @@ model Auftrag {
   localUpdatedAt      DateTime? // Zeitstempel der letzten lokalen FM-Änderung
   wpSyncedAt          DateTime? // Zeitstempel der letzten WP-Synchronisation
   syncStatus          String?            @default("synced") // synced, local_changes, conflict
-  deletedAt           DateTime?          // Soft-Delete Timestamp (DSGVO Retention)
+  deletedAt           DateTime? // Soft-Delete Timestamp (DSGVO Retention)
   createdAt           DateTime           @default(now())
   updatedAt           DateTime           @updatedAt
   saison              Saison?            @relation(fields: [saisonId], references: [id], onDelete: SetNull)
@@ -265,30 +265,30 @@ model SaisonAnmeldung {
 
 // LAGER (Sprint FS erweitert)
 model LagerArtikel {
-  id             String              @id @default(cuid())
-  name           String
-  kategorie      String              @default("material")
-  einheit        String              @default("Stück")
-  bestand        Float               @default(0)
-  mindestbestand Float               @default(0)
-  lagerort       String?
-  artikelnummer  String?
+  id                     String              @id @default(cuid())
+  name                   String
+  kategorie              String              @default("material")
+  einheit                String              @default("Stück")
+  bestand                Float               @default(0)
+  mindestbestand         Float               @default(0)
+  lagerort               String?
+  artikelnummer          String?
   // Sprint FS (C4-C6): Einkaufs- und Verkaufspreise
-  einkaufspreis  Float?
-  verkaufspreis  Float?
+  einkaufspreis          Float?
+  verkaufspreis          Float?
   // KL-2: Lieferanten-Relation
-  lieferantId    String?
-  lieferant      Lieferant?          @relation(fields: [lieferantId], references: [id], onDelete: SetNull)
-  lieferzeit     Int? // Lieferzeit in Tagen
+  lieferantId            String?
+  lieferant              Lieferant?          @relation(fields: [lieferantId], references: [id], onDelete: SetNull)
+  lieferzeit             Int? // Lieferzeit in Tagen
   // KN-1: Lieferanten-spezifische Felder
   lieferantPreis         Decimal? // Einkaufspreis beim Lieferanten
-  lieferantBestellnummer String?  // Artikelnummer beim Lieferanten
-  deletedAt           DateTime?           // Soft-Delete Timestamp (DSGVO Retention)
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
-  bewegungen          LagerBewegung[]
-  reservierungen      LagerReservierung[]
-  bestellPositionen   BestellPosition[]
+  lieferantBestellnummer String? // Artikelnummer beim Lieferanten
+  deletedAt              DateTime? // Soft-Delete Timestamp (DSGVO Retention)
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+  bewegungen             LagerBewegung[]
+  reservierungen         LagerReservierung[]
+  bestellPositionen      BestellPosition[]
 }
 
 // KL-1: Lager-Reservierungslogik
@@ -353,10 +353,10 @@ model BestellPosition {
 // KQ-2: SyncLog für WP-Synchronisation
 model SyncLog {
   id         String   @id @default(cuid())
-  entityType String   // Auftrag, Kunde, etc.
+  entityType String // Auftrag, Kunde, etc.
   entityId   String
-  direction  String   // WP_TO_FM / FM_TO_WP
-  status     String   // OK / ERROR / CONFLICT
+  direction  String // WP_TO_FM / FM_TO_WP
+  status     String // OK / ERROR / CONFLICT
   error      String?
   timestamp  DateTime @default(now())
 
@@ -538,7 +538,7 @@ model Dokument {
   auftragId      String?
   saisonId       String?
   hochgeladenVon String?
-  deletedAt      DateTime?    // Soft-Delete Timestamp (DSGVO Retention)
+  deletedAt      DateTime? // Soft-Delete Timestamp (DSGVO Retention)
   createdAt      DateTime     @default(now())
   // Mitarbeiter-Dokumente (Sprint BQ)
   mitarbeiterId  String?
@@ -756,8 +756,8 @@ model Rechnung {
   bruttoBetrag      Float?
   zahlungsBedingung String?            @default("30 Tage netto")
   // Sprint GB-01: GoBD-Compliance - Unveränderlichkeits-Lock
-  lockedAt          DateTime?          // Wenn gesetzt: Rechnung ist gesperrt (GoBD-konform, keine Änderungen mehr möglich)
-  lockedBy          String?            // User-ID oder 'SYSTEM' für automatische Sperrung
+  lockedAt          DateTime? // Wenn gesetzt: Rechnung ist gesperrt (GoBD-konform, keine Änderungen mehr möglich)
+  lockedBy          String? // User-ID oder 'SYSTEM' für automatische Sperrung
   lockReason        String?            @default("GoBD-Compliance") // Grund der Sperrung
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
@@ -770,19 +770,19 @@ model Rechnung {
 // RECHNUNGS-AUDIT-LOG (Sprint GB-01: GoBD-Compliance)
 // Protokolliert alle Änderungen an Rechnungen für Revisionssicherheit
 model RechnungAuditLog {
-  id          String   @id @default(cuid())
-  rechnungId  String
-  rechnung    Rechnung @relation(fields: [rechnungId], references: [id], onDelete: Cascade)
-  action      String   // 'CREATE', 'UPDATE', 'LOCK', 'UNLOCK_ATTEMPT'
-  field       String?  // Welches Feld geändert wurde
-  oldValue    String?  // Alter Wert (JSON-serialisiert)
-  newValue    String?  // Neuer Wert (JSON-serialisiert)
-  userId      String?  // Wer hat die Änderung gemacht
-  userName    String?  // Name des Users (für Archiv)
-  ip          String?  // IP-Adresse
-  userAgent   String?  // Browser/Client
-  createdAt   DateTime @default(now())
-  
+  id         String   @id @default(cuid())
+  rechnungId String
+  rechnung   Rechnung @relation(fields: [rechnungId], references: [id], onDelete: Cascade)
+  action     String // 'CREATE', 'UPDATE', 'LOCK', 'UNLOCK_ATTEMPT'
+  field      String? // Welches Feld geändert wurde
+  oldValue   String? // Alter Wert (JSON-serialisiert)
+  newValue   String? // Neuer Wert (JSON-serialisiert)
+  userId     String? // Wer hat die Änderung gemacht
+  userName   String? // Name des Users (für Archiv)
+  ip         String? // IP-Adresse
+  userAgent  String? // Browser/Client
+  createdAt  DateTime @default(now())
+
   @@index([rechnungId])
   @@index([createdAt])
 }
@@ -790,33 +790,33 @@ model RechnungAuditLog {
 // RECHNUNGS-VERSIONIERUNG (Sprint GB-03: GoBD-Compliance)
 // Speichert vollständige Snapshots vor jeder Änderung (solange nicht gelockt)
 model RechnungVersion {
-  id                String   @id @default(cuid())
-  rechnungId        String
-  rechnung          Rechnung @relation(fields: [rechnungId], references: [id], onDelete: Cascade)
-  versionNummer     Int      // Sequentielle Versionsnummer (1, 2, 3, ...)
+  id                 String    @id @default(cuid())
+  rechnungId         String
+  rechnung           Rechnung  @relation(fields: [rechnungId], references: [id], onDelete: Cascade)
+  versionNummer      Int // Sequentielle Versionsnummer (1, 2, 3, ...)
   // Snapshot aller relevanten Felder zum Zeitpunkt der Version
-  nummer            String
-  betrag            Float
-  mwst              Float
-  status            String
-  rechnungsDatum    DateTime
-  faelligAm         DateTime?
-  pdfUrl            String?
-  notizen           String?
-  rabatt            Float?
-  rabattBetrag      Float?
-  rabattGrund       String?
-  nettoBetrag       Float?
-  bruttoBetrag      Float?
-  zahlungsBedingung String?
+  nummer             String
+  betrag             Float
+  mwst               Float
+  status             String
+  rechnungsDatum     DateTime
+  faelligAm          DateTime?
+  pdfUrl             String?
+  notizen            String?
+  rabatt             Float?
+  rabattBetrag       Float?
+  rabattGrund        String?
+  nettoBetrag        Float?
+  bruttoBetrag       Float?
+  zahlungsBedingung  String?
   // Positionen als JSON-Snapshot
-  positionenSnapshot Json?    // Array aller RechnungPosition zum Zeitpunkt
+  positionenSnapshot Json? // Array aller RechnungPosition zum Zeitpunkt
   // Meta-Daten
-  erstelltVon       String?   // userId der Änderung
-  erstelltVonName   String?   // Name des Users (für Archiv)
-  aenderungsgrund   String?   // Optionaler Kommentar zur Änderung
-  createdAt         DateTime  @default(now())
-  
+  erstelltVon        String? // userId der Änderung
+  erstelltVonName    String? // Name des Users (für Archiv)
+  aenderungsgrund    String? // Optionaler Kommentar zur Änderung
+  createdAt          DateTime  @default(now())
+
   @@unique([rechnungId, versionNummer])
   @@index([rechnungId])
   @@index([createdAt])
@@ -1403,15 +1403,160 @@ model UserConsent {
 
 model DeletionLog {
   id            String   @id @default(cuid())
-  entityType    String   // User, Mitarbeiter, Auftrag, Dokument, etc.
-  entityId      String   // Original-ID des gelöschten Datensatzes
-  entitySummary String?  // Anonymisierte Zusammenfassung (z.B. "Mitarbeiter #123")
-  deletedBy     String?  // userId oder "SYSTEM_CRON"
+  entityType    String // User, Mitarbeiter, Auftrag, Dokument, etc.
+  entityId      String // Original-ID des gelöschten Datensatzes
+  entitySummary String? // Anonymisierte Zusammenfassung (z.B. "Mitarbeiter #123")
+  deletedBy     String? // userId oder "SYSTEM_CRON"
   reason        String   @default("RETENTION_POLICY") // RETENTION_POLICY, GDPR_REQUEST, MANUAL
-  retentionDays Int?     // Nach wie vielen Tagen Soft-Delete erfolgte Hard-Delete
-  metadata      Json?    // Zusätzliche Metadaten (ohne personenbezogene Daten!)
+  retentionDays Int? // Nach wie vielen Tagen Soft-Delete erfolgte Hard-Delete
+  metadata      Json? // Zusätzliche Metadaten (ohne personenbezogene Daten!)
   createdAt     DateTime @default(now())
 
   @@index([entityType])
   @@index([createdAt])
+}
+
+// ============================================================
+// COLD STORAGE ARCHIVIERUNG (IMPL-RP-05)
+// Für Daten >3 Jahre: aus aktiven Tabellen ins Archiv verschieben
+// Reduziert aktive DB-Last, erfüllt GoBD-Aufbewahrungspflichten
+// ============================================================
+
+// Archivierte Aufträge (abgeschlossene Aufträge >3 Jahre alt)
+model ArchivedAuftrag {
+  id                String   @id // Original-ID beibehalten
+  originalCreatedAt DateTime // Ursprüngliches Erstellungsdatum
+  archivedAt        DateTime @default(now())
+  archiveReason     String   @default("COLD_STORAGE_3Y")
+
+  // Snapshot aller relevanten Auftragsdaten
+  titel               String
+  typ                 String
+  status              String
+  beschreibung        String?
+  flaeche_ha          Float?
+  standort            String?
+  bundesland          String?
+  waldbesitzer        String?
+  waldbesitzerEmail   String?
+  waldbesitzerTelefon String?
+  baumarten           String?
+  zeitraum            String?
+  notizen             String?
+  nummer              String?
+  startDatum          DateTime?
+  endDatum            DateTime?
+  lat                 Float?
+  lng                 Float?
+
+  // Vollständige Metadaten als JSON-Snapshot
+  fullSnapshot Json // Kompletter Auftrag mit allen Relationen
+
+  @@index([originalCreatedAt])
+  @@index([archivedAt])
+}
+
+// Archivierte Tagesprotokolle (>3 Jahre alt)
+model ArchivedTagesprotokoll {
+  id                String   @id // Original-ID beibehalten
+  auftragId         String // Referenz zum (ggf. archivierten) Auftrag
+  originalCreatedAt DateTime // Ursprüngliches Erstellungsdatum
+  archivedAt        DateTime @default(now())
+  archiveReason     String   @default("COLD_STORAGE_3Y")
+
+  // Wichtige Felder für schnelle Suche
+  datum     DateTime
+  ersteller String?
+  gruppeId  String?
+  status    String
+
+  // Vollständiger Snapshot
+  fullSnapshot Json // Komplettes Protokoll mit allen Details
+
+  @@index([auftragId])
+  @@index([datum])
+  @@index([archivedAt])
+}
+
+// Archivierte Rechnungen (GoBD: 10 Jahre Aufbewahrung, ab Jahr 4 im Archiv)
+model ArchivedRechnung {
+  id                String   @id // Original-ID beibehalten
+  originalCreatedAt DateTime // Ursprüngliches Erstellungsdatum
+  archivedAt        DateTime @default(now())
+  archiveReason     String   @default("COLD_STORAGE_3Y")
+
+  // Pflichtfelder für GoBD-Compliance (schneller Zugriff)
+  nummer         String
+  auftragId      String?
+  betrag         Float
+  bruttoBetrag   Float?
+  mwst           Float
+  status         String
+  rechnungsDatum DateTime
+
+  // Vollständiger GoBD-konformer Snapshot
+  fullSnapshot Json // Komplette Rechnung mit Positionen + AuditLog
+
+  @@index([nummer])
+  @@index([rechnungsDatum])
+  @@index([archivedAt])
+}
+
+// Archivierte Dokumente (>3 Jahre alt, Dateien bleiben in Nextcloud)
+model ArchivedDokument {
+  id                String   @id // Original-ID beibehalten
+  originalCreatedAt DateTime // Ursprüngliches Erstellungsdatum
+  archivedAt        DateTime @default(now())
+  archiveReason     String   @default("COLD_STORAGE_3Y")
+
+  // Wichtige Referenzen
+  name          String
+  typ           String
+  nextcloudPath String? // Pfad bleibt für Zugriff erhalten
+  auftragId     String?
+  mitarbeiterId String?
+
+  // Vollständiger Snapshot
+  fullSnapshot Json
+
+  @@index([auftragId])
+  @@index([archivedAt])
+}
+
+// Archivierte Stunden- und Lohneinträge (>3 Jahre, nach Steuer-Aufbewahrungspflicht)
+model ArchivedLohndaten {
+  id                String   @id @default(cuid())
+  entityType        String // Stundeneintrag, Lohneintrag, Lohnabrechnung
+  entityId          String // Original-ID
+  mitarbeiterId     String
+  originalCreatedAt DateTime
+  archivedAt        DateTime @default(now())
+  archiveReason     String   @default("COLD_STORAGE_3Y")
+
+  // Schnellzugriff-Felder
+  zeitraum String? // z.B. "2022-Q1" oder "2022-03"
+  betrag   Float? // Bruttolohn oder Stundensumme
+
+  // Vollständiger Snapshot
+  fullSnapshot Json
+
+  @@index([mitarbeiterId])
+  @@index([zeitraum])
+  @@index([archivedAt])
+}
+
+// Archivierungs-Log: Dokumentiert jeden Archivierungsvorgang
+model ArchiveLog {
+  id          String    @id @default(cuid())
+  runId       String // Eindeutige ID pro Cron-Lauf
+  entityType  String // ArchivedAuftrag, ArchivedRechnung, etc.
+  entityCount Int // Anzahl archivierter Datensätze
+  cutoffDate  DateTime // Stichtag (createdAt < cutoffDate)
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  status      String    @default("RUNNING") // RUNNING, SUCCESS, FAILED
+  error       String?
+
+  @@index([runId])
+  @@index([startedAt])
 }
