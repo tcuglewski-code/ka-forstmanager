@@ -1,13 +1,31 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { verifyToken } from "@/lib/auth"
 
 // ============================================================
-// WatermelonDB Sync — PULL Endpunkt (Sprint AP)
+// WatermelonDB Sync — PULL Endpunkt (Sprint AP + SC-04 Fix)
 // Liefert geänderte Datensätze seit lastPulledAt
 // App ruft diesen Endpunkt beim Offline-Sync auf
 // ============================================================
 
-export async function GET(req: Request) {
+// App Sync Secret für Mobile App Auth (zusätzlich zu User-Auth)
+const APP_SYNC_SECRET = process.env.APP_SYNC_SECRET
+
+export async function GET(req: NextRequest) {
+  // ─── SC-04: Auth-Check (Session oder Bearer Token) ─────────────────────
+  const user = await verifyToken(req)
+  
+  // Fallback: App-spezifisches Sync-Secret für Mobile App
+  const syncSecret = req.headers.get("x-sync-secret")
+  const hasValidSyncSecret = APP_SYNC_SECRET && syncSecret === APP_SYNC_SECRET
+  
+  if (!user && !hasValidSyncSecret) {
+    return NextResponse.json(
+      { error: "Unauthorized. Session, Bearer Token, or x-sync-secret required." },
+      { status: 401 }
+    )
+  }
+
   const url = new URL(req.url)
   const lastPulledAt = parseInt(url.searchParams.get("lastPulledAt") ?? "0")
   const sinceDate = new Date(lastPulledAt)
