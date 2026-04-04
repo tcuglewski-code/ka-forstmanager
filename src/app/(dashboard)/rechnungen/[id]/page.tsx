@@ -8,6 +8,7 @@ import {
   Download, BadgeCheck, Lock, History
 } from "lucide-react"
 import ZipayoButton from "@/components/payments/ZipayoButton"
+import AuditLogSection from "@/components/rechnung/AuditLogSection"
 
 interface Rechnung {
   id: string
@@ -175,13 +176,9 @@ export default function RechnungDetailPage() {
                       : new Date(rechnung.rechnungsDatum).toLocaleDateString("de-DE")
                     }.
                   </p>
-                  <a 
-                    href={`/api/rechnungen/${rechnung.id}/audit`}
-                    target="_blank"
-                    className="text-amber-400 hover:text-amber-300 text-sm mt-2 inline-flex items-center gap-1"
-                  >
-                    <History className="w-3 h-3" /> Änderungsprotokoll anzeigen
-                  </a>
+                  <p className="text-amber-400/80 text-sm mt-2 inline-flex items-center gap-1">
+                    <History className="w-3 h-3" /> Siehe Änderungsprotokoll unten
+                  </p>
                 </div>
               </div>
             </div>
@@ -324,6 +321,11 @@ export default function RechnungDetailPage() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Sprint GB-02: Audit-Log Section - GoBD-Compliance */}
+      <div className="mt-8">
+        <AuditLogSection rechnungId={rechnung.id} />
       </div>
     </div>
   )
