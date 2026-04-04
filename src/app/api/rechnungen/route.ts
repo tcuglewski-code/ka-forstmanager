@@ -26,9 +26,15 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const search = searchParams.get("search")
   const limit = Math.min(parseInt(searchParams.get("limit") ?? "100"), 200)
+  const includeRestricted = searchParams.get("includeRestricted") === "true"
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = {}
+
+  // Sprint JY: GDPR-eingeschränkte Rechnungen standardmäßig ausblenden (außer Admin mit Flag)
+  if (!includeRestricted || !isAdmin(session)) {
+    where.gdprRestricted = false
+  }
 
   // Sprint UX: Schnellsuche
   if (search) {
@@ -47,6 +53,7 @@ export async function GET(req: NextRequest) {
   })
   
   // Sprint GB-01: Lock-Status für jede Rechnung berechnen
+  // Sprint JY: GDPR-Restriction-Status hinzufügen
   const dataWithLockStatus = data.map(rechnung => {
     const isLocked = isRechnungLocked(rechnung)
     return {
@@ -56,6 +63,13 @@ export async function GET(req: NextRequest) {
         lockedAt: rechnung.lockedAt || rechnung.createdAt,
         lockedBy: rechnung.lockedBy || 'SYSTEM',
         lockReason: rechnung.lockReason || 'GoBD-Compliance: Automatische Sperrung nach 24h',
+      } : null,
+      // Sprint JY: GDPR-Info (nur für Admin sichtbar)
+      gdprInfo: rechnung.gdprRestricted && isAdmin(session) ? {
+        restrictedAt: rechnung.gdprRestrictedAt,
+        restrictedBy: rechnung.gdprRestrictedBy,
+        requestId: rechnung.gdprRequestId,
+        note: 'DSGVO Art. 18: Einschränkung der Verarbeitung (GoBD-Konflikt)',
       } : null,
     }
   })

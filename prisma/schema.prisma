@@ -759,12 +759,18 @@ model Rechnung {
   lockedAt          DateTime? // Wenn gesetzt: Rechnung ist gesperrt (GoBD-konform, keine Änderungen mehr möglich)
   lockedBy          String? // User-ID oder 'SYSTEM' für automatische Sperrung
   lockReason        String?            @default("GoBD-Compliance") // Grund der Sperrung
+  // Sprint JY: DSGVO Art. 18 - Einschränkung der Verarbeitung (statt Löschung wegen GoBD)
+  gdprRestricted    Boolean            @default(false) // true = Zugriff eingeschränkt (DSGVO-Löschantrag bei GoBD-pflichtigen Daten)
+  gdprRestrictedAt  DateTime? // Wann wurde die Einschränkung aktiviert
+  gdprRestrictedBy  String? // User-ID oder 'SYSTEM'
+  gdprRequestId     String? // Verweis auf GdprRequest
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   auftrag           Auftrag?           @relation(fields: [auftragId], references: [id], onDelete: SetNull)
   positionen        RechnungPosition[]
   auditLog          RechnungAuditLog[]
   versionen         RechnungVersion[]
+  gdprRequest       GdprRequest?       @relation(fields: [gdprRequestId], references: [id])
 }
 
 // RECHNUNGS-AUDIT-LOG (Sprint GB-01: GoBD-Compliance)
@@ -1559,4 +1565,68 @@ model ArchiveLog {
 
   @@index([runId])
   @@index([startedAt])
+}
+
+// ============================================================
+// DSGVO ART. 18: EINSCHRÄNKUNG DER VERARBEITUNG (Sprint JY)
+// Statt Löschung bei GoBD-pflichtigen Daten → Zugriffssperre
+// ============================================================
+
+model GdprRequest {
+  id                 String     @id @default(cuid())
+  // Antragsteller-Informationen
+  requesterName      String // Name des Betroffenen
+  requesterEmail     String // E-Mail für Kommunikation
+  requesterType      String     @default("KUNDE") // KUNDE, MITARBEITER, EXTERN
+  // Antragsdetails
+  requestType        String // LOESCHUNG, AUSKUNFT, EINSCHRAENKUNG, BERICHTIGUNG, WIDERSPRUCH
+  requestReason      String? // Begründung des Antragstellers
+  // Betroffene Daten
+  affectedEntities   Json? // Array: [{entityType: "Rechnung", entityIds: ["abc", "def"]}]
+  // Status-Workflow
+  status             String     @default("EINGEGANGEN") // EINGEGANGEN, IN_PRUEFUNG, UMGESETZT, ABGELEHNT, ARCHIVIERT
+  statusHistory      Json? // Array: [{status, changedAt, changedBy, reason}]
+  // Bearbeitung
+  assignedTo         String? // User-ID des zuständigen Admins
+  internalNotes      String? // Interne Bearbeitungsnotizen
+  // Entscheidung
+  decision           String? // STATTGEGEBEN, TEILWEISE, ABGELEHNT
+  decisionReason     String? // Begründung der Entscheidung (Pflicht bei Ablehnung)
+  decisionAt         DateTime?
+  decisionBy         String? // User-ID
+  // DSGVO-Compliance: GoBD-Konflikt-Handling
+  gobdConflict       Boolean    @default(false) // true wenn Löschung wegen GoBD nicht möglich
+  restrictionApplied Boolean    @default(false) // true wenn Einschränkung statt Löschung angewandt
+  // SLA: 30 Tage Bearbeitungsfrist (DSGVO Art. 12 Abs. 3)
+  receivedAt         DateTime   @default(now())
+  dueAt              DateTime? // Frist (receivedAt + 30 Tage, +60 bei Komplexität)
+  completedAt        DateTime?
+  // Dokumentation
+  correspondenceLog  Json? // Array: [{date, direction, subject, content}]
+  // Relations
+  rechnungen         Rechnung[]
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  @@index([status])
+  @@index([requesterEmail])
+  @@index([receivedAt])
+  @@index([dueAt])
+}
+
+// Audit-Log für DSGVO-Anfragen (separate Tabelle für Revisionssicherheit)
+model GdprRequestAuditLog {
+  id              String   @id @default(cuid())
+  requestId       String
+  action          String // CREATED, STATUS_CHANGED, RESTRICTION_APPLIED, DECISION_MADE, etc.
+  field           String?
+  oldValue        String?
+  newValue        String?
+  performedBy     String? // User-ID
+  performedByName String? // Name für Archiv
+  ipAddress       String?
+  createdAt       DateTime @default(now())
+
+  @@index([requestId])
+  @@index([createdAt])
 }
