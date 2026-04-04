@@ -786,6 +786,9 @@ model Rechnung {
   lockedAt          DateTime? // Wenn gesetzt: Rechnung ist gesperrt (GoBD-konform, keine Änderungen mehr möglich)
   lockedBy          String? // User-ID oder 'SYSTEM' für automatische Sperrung
   lockReason        String?            @default("GoBD-Compliance") // Grund der Sperrung
+  // Sprint GB-04: GoBD 10-Jahres-Retention - Soft-Delete
+  deletedAt         DateTime? // Soft-Delete Zeitstempel (GoBD: physische Löschung erst nach 10 Jahren)
+  deletedBy         String? // User-ID oder 'SYSTEM_CRON' bei automatischer Löschung
   // Sprint JY: DSGVO Art. 18 - Einschränkung der Verarbeitung (statt Löschung wegen GoBD)
   gdprRestricted    Boolean            @default(false) // true = Zugriff eingeschränkt (DSGVO-Löschantrag bei GoBD-pflichtigen Daten)
   gdprRestrictedAt  DateTime? // Wann wurde die Einschränkung aktiviert
@@ -798,6 +801,8 @@ model Rechnung {
   auditLog          RechnungAuditLog[]
   versionen         RechnungVersion[]
   gdprRequest       GdprRequest?       @relation(fields: [gdprRequestId], references: [id])
+
+  @@index([deletedAt]) // Index für effiziente Filterung aktiver Rechnungen
 }
 
 // RECHNUNGS-AUDIT-LOG (Sprint GB-01: GoBD-Compliance)

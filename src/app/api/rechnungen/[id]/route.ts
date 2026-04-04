@@ -135,6 +135,7 @@ async function createAuditLog(
  * GET /api/rechnungen/[id]
  * Einzelne Rechnung abrufen mit verknüpftem Auftrag
  * Sprint GB-01: Enthält jetzt auch Lock-Status
+ * Sprint GB-04: Soft-deleted Rechnungen werden mit Flag markiert
  */
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -161,16 +162,25 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 })
     }
     
+    // Sprint GB-04: Soft-deleted Rechnungen anzeigen mit Flag (für Admin-Archiv-Ansicht)
+    const isDeleted = !!rechnung.deletedAt
+    
     // Sprint GB-01: Lock-Status berechnen und mitsenden
     const isLocked = isRechnungLocked(rechnung)
     
     return NextResponse.json({
       ...rechnung,
       isLocked,
+      isDeleted, // Sprint GB-04
       lockInfo: isLocked ? {
         lockedAt: rechnung.lockedAt || rechnung.createdAt,
         lockedBy: rechnung.lockedBy || 'SYSTEM',
         lockReason: rechnung.lockReason || 'GoBD-Compliance: Automatische Sperrung nach 24h',
+      } : null,
+      deleteInfo: isDeleted ? {
+        deletedAt: rechnung.deletedAt,
+        deletedBy: rechnung.deletedBy,
+        retentionUntil: new Date(new Date(rechnung.deletedAt!).setFullYear(new Date(rechnung.deletedAt!).getFullYear() + 10)),
       } : null,
     })
   } catch (error) {
@@ -179,6 +189,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 }
 
+/**
+ * DELETE /api/rechnungen/[id]
+ * 
+ * Sprint GB-04: GoBD 10-Jahres-Retention
+ * - Hard-Delete ist NIEMALS erlaubt (GoBD-Compliance)
+ * - DELETE setzt nur deletedAt (Soft-Delete)
+ * - Physische Löschung erst nach 10 Jahren via Cron-Job
+ * - Bereits gelöschte Rechnungen können nicht erneut gelöscht werden
+ */
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -187,14 +206,23 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   try {
     const { id } = await params
     
-    // Sprint GB-01: Prüfe GoBD-Lock
+    // Rechnung laden
     const rechnung = await prisma.rechnung.findUnique({ where: { id } })
     if (!rechnung) {
       return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 })
     }
     
+    // Sprint GB-04: Bereits gelöschte Rechnungen können nicht erneut gelöscht werden
+    if (rechnung.deletedAt) {
+      return NextResponse.json({ 
+        error: "Diese Rechnung wurde bereits gelöscht", 
+        deletedAt: rechnung.deletedAt,
+        code: "ALREADY_DELETED" 
+      }, { status: 410 }) // 410 Gone
+    }
+    
+    // Sprint GB-01: GoBD-gesperrte Rechnungen können nicht gelöscht werden
     if (isRechnungLocked(rechnung)) {
-      // Audit-Log für versuchte Löschung
       await createAuditLog(
         id,
         'DELETE_ATTEMPT_BLOCKED',
@@ -205,20 +233,35 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       return NextResponse.json(LOCK_ERROR, { status: 423 }) // 423 Locked
     }
     
-    // Audit-Log vor Löschung
+    // Sprint GB-04: Soft-Delete statt Hard-Delete
+    // Physische Löschung erfolgt erst nach 10 Jahren via Cron
+    const deletedRechnung = await prisma.rechnung.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+        deletedBy: session.user?.id || 'UNKNOWN',
+      },
+    })
+    
+    // Audit-Log für Soft-Delete
     await createAuditLog(
       id,
-      'DELETE',
+      'SOFT_DELETE',
       session.user?.id || null,
       session.user?.name || null,
-      undefined,
-      rechnung,
+      'deletedAt',
       null,
+      deletedRechnung.deletedAt,
       req
     )
     
-    await prisma.rechnung.delete({ where: { id } })
-    return NextResponse.json({ ok: true })
+    console.log(`[RECHNUNG SOFT-DELETE] Rechnung ${rechnung.nummer} soft-deleted by ${session.user?.name}`)
+    
+    return NextResponse.json({ 
+      ok: true, 
+      message: "Rechnung wurde gelöscht (Soft-Delete). Physische Löschung erfolgt nach 10 Jahren gemäß GoBD.",
+      deletedAt: deletedRechnung.deletedAt,
+    })
   } catch (error: any) {
     if (error?.code === 'P2025') return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 })
     console.error("[RECHNUNG DELETE]", error)

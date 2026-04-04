@@ -27,9 +27,15 @@ export async function GET(req: NextRequest) {
   const search = searchParams.get("search")
   const limit = Math.min(parseInt(searchParams.get("limit") ?? "100"), 200)
   const includeRestricted = searchParams.get("includeRestricted") === "true"
+  const includeDeleted = searchParams.get("includeDeleted") === "true" // Sprint GB-04
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = {}
+
+  // Sprint GB-04: Soft-deleted Rechnungen standardmäßig ausblenden (außer Admin mit Flag)
+  if (!includeDeleted || !isAdmin(session)) {
+    where.deletedAt = null
+  }
 
   // Sprint JY: GDPR-eingeschränkte Rechnungen standardmäßig ausblenden (außer Admin mit Flag)
   if (!includeRestricted || !isAdmin(session)) {
@@ -53,16 +59,25 @@ export async function GET(req: NextRequest) {
   })
   
   // Sprint GB-01: Lock-Status für jede Rechnung berechnen
+  // Sprint GB-04: Soft-Delete-Status hinzufügen
   // Sprint JY: GDPR-Restriction-Status hinzufügen
-  const dataWithLockStatus = data.map(rechnung => {
+  const dataWithStatus = data.map(rechnung => {
     const isLocked = isRechnungLocked(rechnung)
+    const isDeleted = !!rechnung.deletedAt // Sprint GB-04
     return {
       ...rechnung,
       isLocked,
+      isDeleted, // Sprint GB-04
       lockInfo: isLocked ? {
         lockedAt: rechnung.lockedAt || rechnung.createdAt,
         lockedBy: rechnung.lockedBy || 'SYSTEM',
         lockReason: rechnung.lockReason || 'GoBD-Compliance: Automatische Sperrung nach 24h',
+      } : null,
+      // Sprint GB-04: Delete-Info (nur für Admin sichtbar wenn includeDeleted=true)
+      deleteInfo: isDeleted && isAdmin(session) ? {
+        deletedAt: rechnung.deletedAt,
+        deletedBy: rechnung.deletedBy,
+        retentionUntil: new Date(new Date(rechnung.deletedAt!).setFullYear(new Date(rechnung.deletedAt!).getFullYear() + 10)),
       } : null,
       // Sprint JY: GDPR-Info (nur für Admin sichtbar)
       gdprInfo: rechnung.gdprRestricted && isAdmin(session) ? {
@@ -74,7 +89,7 @@ export async function GET(req: NextRequest) {
     }
   })
   
-  return NextResponse.json(dataWithLockStatus)
+  return NextResponse.json(dataWithStatus)
 }
 
 export async function POST(req: NextRequest) {
