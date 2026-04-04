@@ -82,7 +82,7 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
     setResult(null)
 
     try {
-      const res = await fetch("/api/foerderung/beraten", {
+      const res = await fetch("/api/betriebs-assistent/beraten", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

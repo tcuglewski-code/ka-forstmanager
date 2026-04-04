@@ -83,8 +83,8 @@ function typLabel(typ: string): string {
     pflanzung: "Pflanzung",
     flaechenvorbereitung: "Flächenvorb.",
     flachenvorbereitung: "Flächenvorb.",
-    foerderberatung: "Förderberatung",
-    foerdermittelberatung: "Förderberatung",
+    foerderberatung: "Betriebs-Assistent",
+    foerdermittelberatung: "Betriebs-Assistent",
     zaunbau: "Zaunbau",
     kulturschutz: "Kulturschutz",
     kulturpflege: "Kulturpflege",
@@ -392,7 +392,7 @@ export default function AuftraegePage() {
           <option value="">Alle Typen</option>
           <option value="pflanzung">Pflanzung</option>
           <option value="flaechenvorbereitung">Flächenvorbereitung</option>
-          <option value="foerderberatung">Förderberatung</option>
+          <option value="foerderberatung">Betriebs-Assistent</option>
           <option value="zaunbau">Zaunbau</option>
           <option value="kulturschutz">Kulturschutz</option>
           <option value="kulturpflege">Kulturpflege</option>

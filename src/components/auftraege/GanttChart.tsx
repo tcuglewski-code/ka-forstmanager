@@ -53,7 +53,7 @@ const STATUS_FARBEN: Record<string, string> = {
 const TYP_LABELS: Record<string, string> = {
   pflanzung: "Pflanzung",
   flaechenvorbereitung: "Flächenvorb.",
-  foerderberatung: "Förderberatung",
+  foerderberatung: "Betriebs-Assistent",
   zaunbau: "Zaunbau",
   kulturschutz: "Kulturschutz",
   kulturpflege: "Kulturpflege",
