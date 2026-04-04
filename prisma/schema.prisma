@@ -120,6 +120,19 @@ model Saison {
   lohnabrechnungen Lohnabrechnung[]
 }
 
+// ============================================================
+// TENANT CHURN STATUS (Sprint OA IMPL-CHURN-01)
+// Verwaltet Vertragslebenszyklen: aktiv → gekündigt → grace_period → archiviert
+// ============================================================
+
+enum TenantStatus {
+  active         // Aktiver Vertrag, voller Zugriff
+  cancelled      // Kündigung eingereicht, noch aktiv bis contractEndDate
+  grace_period   // Vertrag ausgelaufen, 30 Tage Lesezugriff + Export
+  archived       // Nach Grace Period: Steuerrelevante Daten archiviert, GPS gelöscht
+  deleted        // Vollständig gelöscht (nur bei Nicht-Kunden ohne Daten)
+}
+
 model Tenant {
   id           String   @id @default(cuid())
   name         String
@@ -127,6 +140,14 @@ model Tenant {
   logo         String?
   primaryColor String   @default("#2C3A1C")
   domain       String?
+  // Churn-Management (Sprint OA IMPL-CHURN-01)
+  status           TenantStatus @default(active)
+  contractEndDate  DateTime?    // Vertragsende (bei Kündigung gesetzt)
+  graceEndDate     DateTime?    // Ende der Grace Period (contractEndDate + 30 Tage)
+  archivedAt       DateTime?    // Wann wurde der Tenant archiviert
+  cancelledAt      DateTime?    // Wann wurde die Kündigung eingereicht
+  cancelledBy      String?      // User-ID der kündigenden Person
+  cancellationNote String?      // Kündigungsgrund (optional)
   createdAt    DateTime @default(now())
 }
 
