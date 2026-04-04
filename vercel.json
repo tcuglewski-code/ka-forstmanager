@@ -7,6 +7,14 @@
     {
       "path": "/api/cron/wetter-update",
       "schedule": "0 3 * * 1"
+    },
+    {
+      "path": "/api/cron/cleanup-gps-raw",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/cleanup-gps-protokoll",
+      "schedule": "0 4 * * 0"
     }
   ]
 }
