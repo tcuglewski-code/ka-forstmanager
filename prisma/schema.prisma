@@ -33,6 +33,8 @@ model User {
   mitarbeiter          Mitarbeiter?
   // Sprint AJ: Baumschul-Verknüpfung
   baumschule           Baumschule?
+  // Sprint KB: Vertragsversionierung (AGB-Akzeptanz)
+  agreements           UserAgreement[]
 }
 
 model Session {
@@ -1629,4 +1631,41 @@ model GdprRequestAuditLog {
 
   @@index([requestId])
   @@index([createdAt])
+}
+
+// ============================================================
+// VERTRAGSVERSIONIERUNG: AGB-AKZEPTANZ (Sprint KB CV-02/03)
+// Immutable Log: Speichert jede AGB-Akzeptanz revisionssicher
+// DSGVO Art. 7: Nachweis der Einwilligung
+// ============================================================
+
+model UserAgreement {
+  id              String   @id @default(cuid())
+  userId          String // Verknüpfung zum User
+  // Vertragsdetails
+  agreementType   String // AGB, DATENSCHUTZ, KI_ANNEX, NEWSLETTER, etc.
+  agreementVersion String // Versionsstring z.B. "1.0.0", "2024-03-15"
+  // Akzeptanz-Zeitpunkt
+  acceptedAt      DateTime @default(now())
+  // Forensische Daten (DSGVO Art. 7 Nachweis)
+  ipAddress       String? // IP-Adresse des Nutzers
+  userAgent       String? // Browser/Client User-Agent
+  deviceInfo      String? // Zusätzliche Geräteinformationen (optional)
+  // Kontext
+  acceptedVia     String   @default("WEB") // WEB, APP, API
+  sessionId       String? // Session-ID zum Zeitpunkt der Akzeptanz
+  // Referenz zum Vertragstext (Snapshot-URL oder Hash)
+  documentHash    String? // SHA-256 Hash des akzeptierten Dokuments
+  documentUrl     String? // URL zum archivierten Vertragstext
+
+  // Relation zum User
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // IMMUTABLE: Diese Tabelle hat kein updatedAt - Einträge werden nie geändert!
+  // Widerruf = neuer Eintrag in separater Tabelle oder agreementType "WIDERRUF_*"
+
+  @@index([userId])
+  @@index([agreementType])
+  @@index([acceptedAt])
+  @@index([agreementVersion])
 }
