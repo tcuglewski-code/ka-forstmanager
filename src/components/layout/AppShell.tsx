@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Sidebar } from "./Sidebar"
+import { GracePeriodBanner } from "./GracePeriodBanner"
 import { ForstManagerTour } from "@/components/tour/ForstManagerTour"
 import { QuickSearch } from "@/components/search/QuickSearch"
 import { KeyboardShortcuts } from "@/components/shortcuts/KeyboardShortcuts"
@@ -104,6 +105,9 @@ export function AppShell({ children, title }: AppShellProps) {
             </button>
           </div>
         </header>
+
+        {/* Grace Period Banner (Sprint OG: IMPL-CHURN-07) */}
+        <GracePeriodBanner />
 
         {/* Main Content */}
         <main

@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { AppShell } from "@/components/layout/AppShell"
 import { SessionProvider } from "@/components/providers/SessionProvider"
+import { ReadonlyModeProvider } from "@/components/providers/ReadonlyModeProvider"
 
 export default async function DashboardLayout({
   children,
@@ -13,7 +14,9 @@ export default async function DashboardLayout({
 
   return (
     <SessionProvider>
-      <AppShell>{children}</AppShell>
+      <ReadonlyModeProvider>
+        <AppShell>{children}</AppShell>
+      </ReadonlyModeProvider>
     </SessionProvider>
   )
 }
