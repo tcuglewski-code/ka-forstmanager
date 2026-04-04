@@ -176,28 +176,32 @@ export default function LoginPage() {
               // Schritt 1: Email & Passwort
               <>
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+                  <label htmlFor="login-email" className="block text-sm font-medium text-zinc-400 mb-1.5">
                     E-Mail-Adresse
                   </label>
                   <input
+                    id="login-email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    autoComplete="email"
                     placeholder="name@koch-aufforstung.de"
                     className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+                  <label htmlFor="login-password" className="block text-sm font-medium text-zinc-400 mb-1.5">
                     Passwort
                   </label>
                   <input
+                    id="login-password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    autoComplete="current-password"
                     placeholder="••••••••"
                     className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
                   />
@@ -207,15 +211,18 @@ export default function LoginPage() {
               // Schritt 2: 2FA Token
               <>
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+                  <label htmlFor="login-2fa-token" className="block text-sm font-medium text-zinc-400 mb-1.5">
                     {useBackupCode ? "Backup-Code" : "Authentifizierungscode"}
                   </label>
                   <input
+                    id="login-2fa-token"
                     type="text"
                     value={totpToken}
                     onChange={(e) => setTotpToken(e.target.value.replace(/\s/g, ''))}
                     required
                     autoFocus
+                    autoComplete="one-time-code"
+                    inputMode="numeric"
                     placeholder={useBackupCode ? "XXXX-XXXX" : "000000"}
                     maxLength={useBackupCode ? 9 : 6}
                     className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white text-center text-2xl font-mono tracking-widest placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
