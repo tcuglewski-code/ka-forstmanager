@@ -1,10 +1,110 @@
 /**
- * Next.js Middleware (Sprint DA-29)
- * Protokolliert automatisch alle Zugriffe auf personenbezogene Daten
+ * Next.js Middleware (Sprint DA-29 + SC-02)
+ * - Protokolliert alle Zugriffe auf personenbezogene Daten
+ * - Rate-Limiting für API-Routen (60 req/min) und Auth-Routen (5 req/min)
  */
 
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+
+// ============================================
+// Rate Limiting (SC-02)
+// ============================================
+
+// Einfaches In-Memory Rate-Limiting für Edge Runtime
+// (Upstash wird in API-Routen verwendet, hier nur als Fallback)
+const ipRequests = new Map<string, { count: number; resetTime: number }>()
+
+// Konfiguration
+const RATE_LIMITS = {
+  api: { maxRequests: 60, windowMs: 60000 },      // 60 req/min
+  auth: { maxRequests: 5, windowMs: 60000 },      // 5 req/min
+  sensitive: { maxRequests: 3, windowMs: 60000 }, // 3 req/min
+}
+
+// Auth-Pfade (strenger Rate-Limit)
+const AUTH_PATHS = [
+  '/api/auth/signin',
+  '/api/auth/signout',
+  '/api/auth/callback',
+  '/api/auth/session',
+  '/api/auth/csrf',
+  '/api/auth/providers',
+  '/api/auth/2fa',
+]
+
+// Sensitive Pfade (sehr streng)
+const SENSITIVE_PATHS = [
+  '/api/auth/2fa/setup',
+  '/api/auth/2fa/disable',
+  '/api/users/password',
+  '/api/gdpr/export',
+  '/api/gdpr/delete',
+]
+
+function getRateLimitType(pathname: string): 'api' | 'auth' | 'sensitive' {
+  if (SENSITIVE_PATHS.some(p => pathname.startsWith(p))) return 'sensitive'
+  if (AUTH_PATHS.some(p => pathname.startsWith(p))) return 'auth'
+  return 'api'
+}
+
+function getClientIP(request: NextRequest): string {
+  const forwarded = request.headers.get('x-forwarded-for')
+  const realIp = request.headers.get('x-real-ip')
+  if (forwarded) return forwarded.split(',')[0].trim()
+  if (realIp) return realIp
+  return 'unknown'
+}
+
+function checkRateLimit(ip: string, type: 'api' | 'auth' | 'sensitive'): { 
+  allowed: boolean; 
+  remaining: number; 
+  resetIn: number 
+} {
+  const now = Date.now()
+  const config = RATE_LIMITS[type]
+  const key = `${type}:${ip}`
+  
+  const current = ipRequests.get(key)
+  
+  // Fenster abgelaufen → Reset
+  if (!current || now > current.resetTime) {
+    ipRequests.set(key, { count: 1, resetTime: now + config.windowMs })
+    return { allowed: true, remaining: config.maxRequests - 1, resetIn: config.windowMs }
+  }
+  
+  // Unter Limit → Increment
+  if (current.count < config.maxRequests) {
+    current.count++
+    return { 
+      allowed: true, 
+      remaining: config.maxRequests - current.count, 
+      resetIn: current.resetTime - now 
+    }
+  }
+  
+  // Über Limit → Blocked
+  return { 
+    allowed: false, 
+    remaining: 0, 
+    resetIn: current.resetTime - now 
+  }
+}
+
+// Cleanup alte Einträge (Memory-Leak verhindern)
+setInterval(() => {
+  const now = Date.now()
+  for (const [key, value] of ipRequests.entries()) {
+    if (now > value.resetTime + 60000) {
+      ipRequests.delete(key)
+    }
+  }
+}, 60000)
+
+
+// ============================================
+// PD Access Logging (DA-29)
+// ============================================
 
 // PD-relevante API-Pfade (personenbezogene Daten)
 const PD_PATHS = [
@@ -34,11 +134,7 @@ const EXCLUDED_PATHS = [
 ]
 
 function shouldLogPdAccess(pathname: string): boolean {
-  // Ausnahmen prüfen
-  if (EXCLUDED_PATHS.some(p => pathname.startsWith(p))) {
-    return false
-  }
-  // PD-Pfade prüfen
+  if (EXCLUDED_PATHS.some(p => pathname.startsWith(p))) return false
   return PD_PATHS.some(p => pathname.startsWith(p))
 }
 
@@ -68,28 +164,57 @@ function getActionFromMethod(method: string): string {
   }
 }
 
+
+// ============================================
+// Main Middleware
+// ============================================
+
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
+  const ip = getClientIP(request)
 
-  // Nur PD-relevante Pfade loggen
-  if (shouldLogPdAccess(pathname)) {
-    // Async logging ohne await - non-blocking
-    const logData = {
-      resource: getResourceFromPath(pathname),
-      action: getActionFromMethod(request.method),
-      endpoint: pathname,
-      method: request.method,
-      ip: request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-          request.headers.get('x-real-ip') ||
-          'unknown',
-      userAgent: request.headers.get('user-agent') || null,
-      timestamp: new Date().toISOString(),
+  // 1. Rate Limiting prüfen (nur für API-Routen)
+  if (pathname.startsWith('/api/')) {
+    const rateLimitType = getRateLimitType(pathname)
+    const rateLimit = checkRateLimit(ip, rateLimitType)
+    
+    // Rate-Limit Headers immer setzen
+    const response = rateLimit.allowed 
+      ? NextResponse.next()
+      : NextResponse.json(
+          { 
+            error: 'Too Many Requests', 
+            message: `Rate limit exceeded. Try again in ${Math.ceil(rateLimit.resetIn / 1000)} seconds.`,
+            retryAfter: Math.ceil(rateLimit.resetIn / 1000)
+          },
+          { status: 429 }
+        )
+    
+    response.headers.set('X-RateLimit-Limit', String(RATE_LIMITS[rateLimitType].maxRequests))
+    response.headers.set('X-RateLimit-Remaining', String(rateLimit.remaining))
+    response.headers.set('X-RateLimit-Reset', String(Math.ceil(rateLimit.resetIn / 1000)))
+    
+    if (!rateLimit.allowed) {
+      response.headers.set('Retry-After', String(Math.ceil(rateLimit.resetIn / 1000)))
+      return response
     }
 
-    // Log via API-Route (async, non-blocking)
-    // Wird im Route-Handler selbst geloggt, hier nur für Edge-Cases
-    // Die eigentliche Protokollierung erfolgt in den API-Routen
-    request.headers.set('x-pd-log', JSON.stringify(logData))
+    // 2. PD Access Logging (nur bei erlaubten Requests)
+    if (shouldLogPdAccess(pathname)) {
+      const logData = {
+        resource: getResourceFromPath(pathname),
+        action: getActionFromMethod(request.method),
+        endpoint: pathname,
+        method: request.method,
+        ip,
+        userAgent: request.headers.get('user-agent') || null,
+        timestamp: new Date().toISOString(),
+      }
+      // Log-Daten via Header an Route-Handler weitergeben
+      response.headers.set('x-pd-log', JSON.stringify(logData))
+    }
+
+    return response
   }
 
   return NextResponse.next()
