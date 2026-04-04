@@ -3,6 +3,43 @@ import Credentials from "next-auth/providers/credentials"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { authConfig } from "./auth.config"
+import { NextRequest } from "next/server"
+
+/**
+ * Verify token from Authorization header or session
+ * Returns user object or null
+ */
+export async function verifyToken(req: NextRequest) {
+  // Try Bearer token first
+  const authHeader = req.headers.get("authorization")
+  if (authHeader?.startsWith("Bearer ")) {
+    const token = authHeader.substring(7)
+    // For API tokens, look up in database
+    const apiToken = await prisma.apiToken?.findUnique?.({
+      where: { token },
+      include: { user: true }
+    }).catch(() => null)
+    
+    if (apiToken?.user && apiToken.expiresAt > new Date()) {
+      return apiToken.user
+    }
+  }
+  
+  // Fall back to session auth
+  const session = await auth()
+  if (session?.user) {
+    return session.user
+  }
+  
+  return null
+}
+
+/**
+ * Check if user has admin role
+ */
+export function isAdmin(user: { role?: string } | null): boolean {
+  return user?.role === "admin"
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
