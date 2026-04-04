@@ -172,7 +172,7 @@ function BeratungsPDF({ ergebnis, frage, bundesland, flaeche, kalamitaet }: Bera
       <Page size="A4" style={pdfStyles.page}>
         {/* Header */}
         <View style={pdfStyles.header}>
-          <Text style={pdfStyles.title}>KI-Förderberatung</Text>
+          <Text style={pdfStyles.title}>Betriebs-Assistent</Text>
           <Text style={pdfStyles.subtitle}>Erstellt am {datum} · ForstManager by Koch Aufforstung</Text>
         </View>
 

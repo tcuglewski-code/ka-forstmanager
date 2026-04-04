@@ -450,7 +450,7 @@ export default function FoerderungPage() {
     setBeratungsErgebnis(null)
     setBeratungsFehler(null)
     try {
-      const res = await fetch("/api/foerderung/beraten", {
+      const res = await fetch("/api/betriebs-assistent/beraten", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -544,7 +544,7 @@ export default function FoerderungPage() {
             <TreePine className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
-            <h2 className="text-white font-semibold text-base">KI-Förderberater</h2>
+            <h2 className="text-white font-semibold text-base">Betriebs-Assistent</h2>
             <p className="text-zinc-400 text-xs">Stellen Sie eine Frage zu Fördermöglichkeiten — KI durchsucht 255 Programme</p>
           </div>
         </div>

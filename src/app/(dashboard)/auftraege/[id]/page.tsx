@@ -114,8 +114,8 @@ const TYP_LABEL: Record<string, string> = {
   pflanzung: "Pflanzung",
   flaechenvorbereitung: "Flächenvorbereitung",
   flachenvorbereitung: "Flächenvorbereitung",
-  foerderberatung: "Förderberatung",
-  foerdermittelberatung: "Förderberatung",
+  foerderberatung: "Betriebs-Assistent",
+  foerdermittelberatung: "Betriebs-Assistent",
   zaunbau: "Zaunbau",
   kulturschutz: "Kulturschutz",
   kulturpflege: "Kulturpflege",
@@ -501,7 +501,7 @@ function WizardKulturpflege({ w }: { w: WizardDaten }) {
       {(w.foerderberatung || w.foerderprogramme) && (
         <div className="pt-3 border-t border-[#2a2a2a]">
           <Grid2>
-            <Field label="Förderberatung" value={w.foerderberatung} />
+            <Field label="Betriebs-Assistent" value={w.foerderberatung} />
             {w.foerderprogramme && <Field label="Förderprogramm" value={w.foerderprogramme} className="text-emerald-400" />}
           </Grid2>
         </div>
