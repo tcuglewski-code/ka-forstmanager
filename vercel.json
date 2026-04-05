@@ -64,6 +64,10 @@
     {
       "path": "/api/cron/cleanup-gps-data",
       "schedule": "30 4 * * *"
+    },
+    {
+      "path": "/api/cron/cleanup-customers",
+      "schedule": "0 3 * * *"
     }
   ]
 }
