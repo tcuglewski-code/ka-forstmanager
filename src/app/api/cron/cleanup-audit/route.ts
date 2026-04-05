@@ -91,21 +91,20 @@ export async function GET(req: NextRequest) {
       errors.push(`RechnungAuditLog: ${e instanceof Error ? e.message : "Unknown error"}`)
     }
 
-    // 4. AiAuditLog bereinigen (wenn Modell existiert)
-    // TODO: Aktivieren sobald AiAuditLog-Modell in schema.prisma hinzugefügt wird
-    // try {
-    //   const aiAuditResult = await prisma.aiAuditLog.deleteMany({
-    //     where: {
-    //       createdAt: { lt: cutoffDate }
-    //     }
-    //   })
-    //   results.push({
-    //     table: "AiAuditLog",
-    //     deletedCount: aiAuditResult.count
-    //   })
-    // } catch (e) {
-    //   errors.push(`AiAuditLog: ${e instanceof Error ? e.message : "Unknown error"}`)
-    // }
+    // 4. AiAuditLog bereinigen
+    try {
+      const aiAuditResult = await prisma.aiAuditLog.deleteMany({
+        where: {
+          createdAt: { lt: cutoffDate }
+        }
+      })
+      results.push({
+        table: "AiAuditLog",
+        deletedCount: aiAuditResult.count
+      })
+    } catch (e) {
+      errors.push(`AiAuditLog: ${e instanceof Error ? e.message : "Unknown error"}`)
+    }
 
     // Ergebnisse zusammenfassen
     const totalDeleted = results.reduce((sum, r) => sum + r.deletedCount, 0)

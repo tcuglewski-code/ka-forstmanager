@@ -2265,3 +2265,24 @@ model AiUsageLimit {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 }
+
+model RetentionConfig {
+  id            String   @id @default(cuid())
+  dataType      String   @unique // z.B. "gps_logs", "temp_files", "audit_logs", "pd_access_logs"
+  retentionDays Int
+  description   String?
+  updatedAt     DateTime @updatedAt
+}
+
+model AiAuditLog {
+  id         String   @id @default(cuid())
+  promptHash String // SHA-256 des Prompts, KEIN Klartext
+  timestamp  DateTime @default(now())
+  userId     String?
+  model      String
+  tokenCount Int?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([timestamp])
+}
