@@ -2254,3 +2254,14 @@ model KpiEvent {
   @@index([userId])
   @@index([createdAt])
 }
+
+model AiUsageLimit {
+  id                 String   @id @default(cuid())
+  tenantId           String   @unique
+  tier               String   @default("basis")
+  monthlyLimit       Int      @default(500)
+  currentUsage       Int      @default(0)
+  billingPeriodStart DateTime @default(now())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
