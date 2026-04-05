@@ -52,6 +52,10 @@
     {
       "path": "/api/cron/dunning-enforce",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/deadman-check",
+      "schedule": "*/5 * * * *"
     }
   ]
 }

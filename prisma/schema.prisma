@@ -2006,6 +2006,7 @@ enum AlertStatus {
   acknowledged // Von Koordinator gesehen
   resolved    // Aufgelöst (MA OK)
   escalated   // An weitere Stellen eskaliert
+  kritisch    // Dead Man's Switch Stufe 3: Notruf erwägen
 }
 
 model AlleinarbeitSession {
@@ -2085,6 +2086,19 @@ model AlleinarbeitAlert {
   resolvedAt             DateTime?
   resolvedBy             String?               // Name/ID des Auflösenden
   resolutionNotes        String?
+  
+  // ── Dead Man's Switch (Sprint JO SOS-09+10) ─────────────────
+  eskalationsStufe           String?           // stufe_1 | stufe_2 | stufe_3
+  stufe1At                   DateTime?         // Koordinatoren benachrichtigt
+  stufe2At                   DateTime?         // Notfall-Kontakt benachrichtigt
+  stufe3At                   DateTime?         // GF + Notruf-Hinweis
+  notfallKontaktBenachrichtigt Boolean         @default(false)
+  notfallKontaktName         String?           // Name des kontaktierten Notfallkontakts
+  notfallKontaktTelefon      String?           // Telefon des Notfallkontakts
+  notfallKontaktFehlt        Boolean           @default(false) // MA hat keinen Notfallkontakt
+  gfBenachrichtigt           Boolean           @default(false) // Geschäftsführung informiert
+  notrufHinweisAngezeigt     Boolean           @default(false) // 112-Hinweis aktiviert
+  
   // Audit
   createdAt              DateTime              @default(now())
   updatedAt              DateTime              @updatedAt
@@ -2096,4 +2110,5 @@ model AlleinarbeitAlert {
   @@index([mitarbeiterId])
   @@index([status])
   @@index([createdAt])
+  @@index([eskalationsStufe])
 }
