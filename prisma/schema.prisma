@@ -1959,3 +1959,129 @@ model SOSEvent {
   @@index([ausgeloestAt])
   @@index([aktiverEinsatzId])
 }
+
+// ============================================================
+// ALLEINARBEITSSCHUTZ (Sprint JN SOS-07+08)
+// Alleinarbeits-Sessions + Check-In System
+// ============================================================
+
+enum AlleinarbeitStatus {
+  active
+  paused
+  ended
+}
+
+enum CheckInType {
+  manual          // Mitarbeiter hat aktiv gedrückt
+  auto_prompt     // System hat gefragt, MA hat bestätigt
+  timeout_response // MA hat nach Warnung reagiert
+}
+
+enum CheckInStatus {
+  ok       // Check-In erfolgreich
+  missed   // Keine Antwort innerhalb Timeout
+  pending  // Warte auf Antwort
+}
+
+enum AlertType {
+  missed_checkin   // Check-In verpasst
+  no_response      // Keine Reaktion nach mehrfacher Aufforderung
+  manual_alert     // Manuell ausgelöst
+}
+
+enum AlertStatus {
+  active      // Alarm aktiv
+  acknowledged // Von Koordinator gesehen
+  resolved    // Aufgelöst (MA OK)
+  escalated   // An weitere Stellen eskaliert
+}
+
+model AlleinarbeitSession {
+  id                String             @id @default(cuid())
+  sessionId         String             @unique // Client-generierte ID (AA-timestamp-userId)
+  mitarbeiterId     Int
+  mitarbeiterName   String
+  // Einsatz-Kontext (optional)
+  einsatzId         Int?
+  einsatzName       String?
+  // Check-In Konfiguration
+  checkIntervalMin  Int                @default(45) // Intervall in Minuten
+  // Zeitstempel
+  startedAt         DateTime           @default(now())
+  endedAt           DateTime?
+  lastCheckIn       DateTime?          // Timestamp des letzten Check-Ins
+  nextCheckDue      DateTime?          // Wann nächstes Check-In fällig
+  lastAlertAt       DateTime?          // Wann letzter Alert gesendet wurde
+  // Status
+  status            AlleinarbeitStatus @default(active)
+  needsReview       Boolean            @default(false) // Für Dashboard-Hervorhebung
+  // GPS (letzte bekannte Position)
+  latitude          Float?
+  longitude         Float?
+  // Audit
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  // Relations
+  checkIns          CheckIn[]
+  alerts            AlleinarbeitAlert[]
+
+  @@index([mitarbeiterId])
+  @@index([status])
+  @@index([startedAt])
+  @@index([nextCheckDue])
+}
+
+model CheckIn {
+  id                     String                @id @default(cuid())
+  checkInId              String                @unique // Client-generierte ID (CHK-timestamp-userId)
+  alleinarbeitSessionId  String
+  mitarbeiterId          Int
+  // Check-In Details
+  type                   CheckInType           @default(manual)
+  latitude               Float?
+  longitude              Float?
+  responseTimeSec        Int?                  // Wie schnell geantwortet wurde
+  wasPrompted            Boolean               @default(false)
+  status                 CheckInStatus         @default(ok)
+  // Audit
+  createdAt              DateTime              @default(now())
+
+  // Relations
+  alleinarbeitSession    AlleinarbeitSession   @relation(fields: [alleinarbeitSessionId], references: [id])
+
+  @@index([alleinarbeitSessionId])
+  @@index([mitarbeiterId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model AlleinarbeitAlert {
+  id                     String                @id @default(cuid())
+  alleinarbeitSessionId  String
+  mitarbeiterId          Int
+  mitarbeiterName        String
+  // Alert Details
+  alertType              AlertType
+  latitude               Float?
+  longitude              Float?
+  googleMapsLink         String?
+  einsatzName            String?
+  // Status
+  status                 AlertStatus           @default(active)
+  // Resolution
+  resolvedAt             DateTime?
+  resolvedBy             String?               // Name/ID des Auflösenden
+  resolutionNotes        String?
+  // Audit
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+
+  // Relations
+  alleinarbeitSession    AlleinarbeitSession   @relation(fields: [alleinarbeitSessionId], references: [id])
+
+  @@index([alleinarbeitSessionId])
+  @@index([mitarbeiterId])
+  @@index([status])
+  @@index([createdAt])
+}
