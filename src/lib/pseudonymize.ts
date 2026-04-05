@@ -37,8 +37,8 @@ export function pseudonymizePrompt(text: string): PseudonymResult {
 
   // 1. IBAN
   result = result.replace(IBAN_RE, (match) => {
-    const placeholder = `[IBAN_REDACTED]`;
-    map.set(placeholder + (counter.iban > 0 ? `_${counter.iban}` : ''), match);
+    const placeholder = `[IBAN_${counter.iban + 1}]`;
+    map.set(placeholder, match);
     counter.iban++;
     return placeholder;
   });
@@ -70,6 +70,15 @@ export function pseudonymizePrompt(text: string): PseudonymResult {
     'Baden Württemberg', 'Mecklenburg Vorpommern',
     'Nordrhein Westfalen', 'Rheinland Pfalz', 'Sachsen Anhalt',
     'Schleswig Holstein',
+    // Behörden / Institutionen
+    'Deutsche Bundesstiftung', 'Thünen Institut', 'Julius Kühn',
+    'Fachagentur Nachwachsende', 'Bayerische Staatsforsten',
+    'Hessen Forst', 'Sachsenforst Dresden', 'Landesbetrieb Wald',
+    // Bekannte Ortsnamen (Forstkontext)
+    'Schwarzwald Nord', 'Schwarzwald Süd', 'Bayerischer Wald',
+    'Thüringer Wald', 'Frankenwald Nord', 'Spessart Süd',
+    'Harz Nord', 'Odenwald Süd', 'Eifel Nord', 'Hunsrück Süd',
+    'Sauerland Nord', 'Taunus Süd', 'Westerwald Nord',
   ]);
 
   result = result.replace(NAME_RE, (match) => {
@@ -77,7 +86,7 @@ export function pseudonymizePrompt(text: string): PseudonymResult {
     if (match.includes('[')) return match;
     // Auf Ausschluss-Liste?
     if (NICHT_NAMEN.has(match)) return match;
-    const placeholder = `[NAME_${counter.name + 1}]`;
+    const placeholder = `[PERSON_${counter.name + 1}]`;
     map.set(placeholder, match);
     counter.name++;
     return placeholder;

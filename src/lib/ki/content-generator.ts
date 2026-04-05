@@ -4,6 +4,7 @@
 
 import Anthropic from "@anthropic-ai/sdk"
 import { KI_ENABLED } from "./dokument-auswertung"
+import { pseudonymizePrompt } from "@/lib/pseudonymize"
 
 export interface ContentGeneratorInput {
   auftragId: string
@@ -96,6 +97,9 @@ ${input.beschreibung ? `Zusatzinfo: ${input.beschreibung}` : ""}
 
   const client = new Anthropic({ apiKey })
 
+  // DSGVO Art. 25: Pseudonymisierung vor Übermittlung an externe KI-API
+  const { text: pseudonymizedDetails } = pseudonymizePrompt(projektDetails)
+
   try {
     const response = await client.messages.create({
       model: "claude-3-haiku-20240307", // Schnell + günstig für Content
@@ -104,7 +108,7 @@ ${input.beschreibung ? `Zusatzinfo: ${input.beschreibung}` : ""}
       messages: [
         {
           role: "user",
-          content: `Bitte erstelle einen Blog-Post für folgendes Projekt:\n\n${projektDetails}`,
+          content: `Bitte erstelle einen Blog-Post für folgendes Projekt:\n\n${pseudonymizedDetails}`,
         },
       ],
     })

@@ -2,6 +2,7 @@
 // Nutzt Claude claude-haiku-4-5 für schnelle, günstige Analyse
 
 import Anthropic from "@anthropic-ai/sdk"
+import { pseudonymizePrompt } from "@/lib/pseudonymize"
 
 // Feature-Flag prüfen
 const KI_ENABLED = process.env.KI_ENABLED === "true" || process.env.NODE_ENV === "development"
@@ -133,12 +134,15 @@ Analysiere und ranke die Unterkünfte nach Eignung für das Forstarbeiter-Team.`
 
   const client = new Anthropic({ apiKey })
 
+  // DSGVO Art. 25: Pseudonymisierung vor Übermittlung an externe KI-API
+  const { text: pseudonymizedPrompt } = pseudonymizePrompt(userPrompt)
+
   try {
     const response = await client.messages.create({
       model: "claude-3-5-haiku-20241022", // claude-haiku-4-5 - schnell + günstig
       max_tokens: 2048,
       system: ANALYSE_SYSTEM_PROMPT,
-      messages: [{ role: "user", content: userPrompt }]
+      messages: [{ role: "user", content: pseudonymizedPrompt }]
     })
 
     const content = response.content[0]
