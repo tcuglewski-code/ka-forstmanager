@@ -91,8 +91,7 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'charge.refunded':
-        // Placeholder for Sprint KG PO-02
-        console.log('[Stripe Webhook] charge.refunded received - handler pending (KG)');
+        await handleChargeRefunded(event);
         break;
 
       default:
@@ -322,5 +321,204 @@ async function handleInvoicePaid(event: Stripe.Event) {
       null
     );
     console.warn(`[Stripe Webhook] ⚠️ Unmatched invoice payment ${invoiceId}`);
+  }
+}
+
+/**
+ * Handler für charge.refunded (Sprint KG PO-02)
+ * Erstellt automatisch Stornorechnung bei Stripe-Refund
+ */
+async function handleChargeRefunded(event: Stripe.Event) {
+  const charge = event.data.object as Stripe.Charge;
+  
+  const chargeId = charge.id;
+  const paymentIntentId = typeof charge.payment_intent === 'string'
+    ? charge.payment_intent
+    : charge.payment_intent?.id;
+  const refundedAmount = charge.amount_refunded;
+  const originalAmount = charge.amount;
+  const isFullRefund = refundedAmount === originalAmount;
+  
+  console.log(
+    `[Stripe Webhook] charge.refunded: ${chargeId}, ` +
+    `PaymentIntent: ${paymentIntentId}, ` +
+    `Refund: ${(refundedAmount / 100).toFixed(2)} € / ${(originalAmount / 100).toFixed(2)} € ` +
+    `(${isFullRefund ? 'Vollständig' : 'Teilweise'})`
+  );
+
+  if (!paymentIntentId) {
+    console.warn('[Stripe Webhook] charge.refunded ohne PaymentIntent - kann Rechnung nicht zuordnen');
+    
+    // Log für manuelle Bearbeitung
+    await prisma.activityLog.create({
+      data: {
+        action: 'REFUND_UNMATCHED',
+        entityType: 'payment',
+        entityId: chargeId,
+        entityName: `Ungematchter Refund ${(refundedAmount / 100).toFixed(2)} €`,
+        metadata: JSON.stringify({
+          chargeId,
+          refundedAmount,
+          originalAmount,
+          isFullRefund,
+          eventId: event.id,
+        }),
+      },
+    });
+    return;
+  }
+
+  // Suche Rechnung über PaymentIntent
+  const rechnung = await prisma.rechnung.findFirst({
+    where: {
+      stripePaymentIntentId: paymentIntentId,
+      deletedAt: null,
+      status: { not: 'storniert' },
+    },
+    select: {
+      id: true,
+      nummer: true,
+      bruttoBetrag: true,
+      betrag: true,
+      status: true,
+    },
+  });
+
+  if (!rechnung) {
+    console.warn(`[Stripe Webhook] Keine Rechnung für PaymentIntent ${paymentIntentId} gefunden`);
+    
+    // Log für manuelle Bearbeitung
+    await prisma.activityLog.create({
+      data: {
+        action: 'REFUND_NO_RECHNUNG',
+        entityType: 'payment',
+        entityId: paymentIntentId,
+        entityName: `Refund ohne Rechnung: ${(refundedAmount / 100).toFixed(2)} €`,
+        metadata: JSON.stringify({
+          paymentIntentId,
+          chargeId,
+          refundedAmount,
+          originalAmount,
+          eventId: event.id,
+        }),
+      },
+    });
+    return;
+  }
+
+  // Refund-ID aus den Refunds extrahieren (letzter Refund)
+  const refunds = charge.refunds?.data || [];
+  const latestRefund = refunds.length > 0 ? refunds[refunds.length - 1] : null;
+  const refundId = latestRefund?.id;
+  const refundReason = latestRefund?.reason || 'requested_by_customer';
+
+  // Stornierung via interner API durchführen
+  try {
+    const stornoResponse = await fetch(
+      `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/rechnungen/${rechnung.id}/stornieren`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-stripe-webhook': 'true', // Interner Auth-Bypass für Webhook
+        },
+        body: JSON.stringify({
+          grund: `Stripe Refund: ${refundReason}`,
+          stripeRefundId: refundId,
+          teilbetrag: isFullRefund ? undefined : refundedAmount / 100,
+          erstelleGutschrift: true,
+        }),
+      }
+    );
+
+    const stornoResult = await stornoResponse.json();
+
+    if (stornoResponse.ok) {
+      console.log(
+        `[Stripe Webhook] ✅ Rechnung ${rechnung.nummer} automatisch storniert (Refund: ${refundId})`
+      );
+
+      // Update PaymentRecord
+      await prisma.paymentRecord.updateMany({
+        where: { stripePaymentIntentId: paymentIntentId },
+        data: {
+          status: isFullRefund ? 'refunded' : 'partially_refunded',
+        },
+      });
+
+    } else {
+      console.error(
+        `[Stripe Webhook] ❌ Stornierung fehlgeschlagen für ${rechnung.nummer}:`,
+        stornoResult.error
+      );
+
+      // Log für manuelle Bearbeitung
+      await prisma.activityLog.create({
+        data: {
+          action: 'REFUND_STORNO_FAILED',
+          entityType: 'rechnung',
+          entityId: rechnung.id,
+          entityName: `Stornierung fehlgeschlagen: ${rechnung.nummer}`,
+          metadata: JSON.stringify({
+            error: stornoResult.error,
+            refundId,
+            paymentIntentId,
+            chargeId,
+            refundedAmount,
+          }),
+        },
+      });
+    }
+
+  } catch (error) {
+    console.error('[Stripe Webhook] Fehler bei automatischer Stornierung:', error);
+    
+    // Fallback: Direktes Update ohne Gutschrift
+    await prisma.$transaction([
+      prisma.rechnung.update({
+        where: { id: rechnung.id },
+        data: {
+          status: isFullRefund ? 'storniert' : 'teilstorniert',
+          notizen: `[STRIPE REFUND ${new Date().toISOString()}]: ${refundReason} (${refundId})`,
+        },
+      }),
+      prisma.rechnungAuditLog.create({
+        data: {
+          rechnungId: rechnung.id,
+          action: 'STORNO_VIA_STRIPE',
+          field: 'status',
+          oldValue: JSON.stringify(rechnung.status),
+          newValue: JSON.stringify(isFullRefund ? 'storniert' : 'teilstorniert'),
+          userId: 'STRIPE_WEBHOOK',
+          userName: 'Stripe Refund Webhook',
+          metadata: JSON.stringify({
+            refundId,
+            chargeId,
+            paymentIntentId,
+            refundedAmount,
+            originalAmount,
+            isFullRefund,
+          }),
+        },
+      }),
+      prisma.activityLog.create({
+        data: {
+          action: 'RECHNUNG_STORNIERT',
+          entityType: 'rechnung',
+          entityId: rechnung.id,
+          entityName: `Stripe-Refund: ${rechnung.nummer}`,
+          metadata: JSON.stringify({
+            refundId,
+            refundedAmount,
+            isFullRefund,
+            fallbackUpdate: true,
+          }),
+        },
+      }),
+    ]);
+
+    console.log(
+      `[Stripe Webhook] ⚠️ Fallback-Stornierung für ${rechnung.nummer} durchgeführt`
+    );
   }
 }
