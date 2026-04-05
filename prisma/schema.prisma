@@ -1840,3 +1840,54 @@ model UnmatchedPayment {
   @@index([status])
   @@index([stripePaidAt])
 }
+
+// ============================================================
+// SOS NOTFALL-SYSTEM (Sprint JJ SOS-02+04)
+// Speichert alle SOS-Events mit GPS-Daten für Koordinatoren
+// ============================================================
+
+enum SOSStatus {
+  pending      // Gerade gesendet
+  sent         // An Koordinatoren zugestellt
+  acknowledged // Von Koordinator bestätigt
+  resolved     // Abgeschlossen
+}
+
+model SOSEvent {
+  id                     String    @id @default(cuid())
+  eventId                String    @unique // Client-generierte ID (SOS-timestamp-userId)
+  mitarbeiterId          String
+  mitarbeiterName        String
+  // Einsatz-Kontext (optional)
+  aktiverEinsatzId       String?
+  aktiverEinsatzName     String?
+  // GPS-Daten (nullable wenn kein GPS)
+  gpsLatitude            Float?
+  gpsLongitude           Float?
+  gpsAccuracy            Float?
+  gpsAltitude            Float?
+  gpsTimestamp           DateTime?
+  googleMapsLink         String?
+  // Zeitstempel
+  ausgeloestAt           DateTime  // Wann der MA den SOS ausgelöst hat
+  gesendetAt             DateTime? // Wann an Server gesendet
+  acknowledgedAt         DateTime? // Wann Koordinator bestätigt hat
+  resolvedAt             DateTime? // Wann aufgelöst
+  // Status & Resolution
+  status                 SOSStatus @default(pending)
+  resolvedBy             String?   // Name/ID des Auflösenden
+  resolutionNotes        String?   // Notizen zur Auflösung
+  isDelayedSync          Boolean   @default(false) // War offline, nachträglich synchronisiert
+  // Koordinatoren-Info
+  koordinatorenNotified  Int       @default(0) // Anzahl benachrichtigter Koordinatoren
+  // Device Info
+  deviceInfo             Json?     // OS, App-Version, etc.
+  // Audit
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  @@index([mitarbeiterId])
+  @@index([status])
+  @@index([ausgeloestAt])
+  @@index([aktiverEinsatzId])
+}
