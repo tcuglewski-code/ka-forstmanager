@@ -135,7 +135,7 @@ Analysiere und ranke die Unterkünfte nach Eignung für das Forstarbeiter-Team.`
 
   const client = new Anthropic({
     apiKey,
-    defaultHeaders: { 'anthropic-beta': 'no-store-1' },
+    defaultHeaders: { 'x-anthropic-no-store': 'true' },
   })
 
   // DSGVO Art. 25: Pseudonymisierung vor Übermittlung an externe KI-API

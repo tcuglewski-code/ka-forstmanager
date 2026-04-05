@@ -7,7 +7,7 @@ import { logAiCall } from '@/lib/ai-audit';
 const anthropic = process.env.ANTHROPIC_API_KEY
   ? new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY,
-      defaultHeaders: { 'anthropic-beta': 'no-store-1' },
+      defaultHeaders: { 'x-anthropic-no-store': 'true' },
     })
   : null;
 

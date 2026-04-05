@@ -95,7 +95,7 @@ export async function analysiereDokument(
 
   const client = new Anthropic({
     apiKey,
-    defaultHeaders: { 'anthropic-beta': 'no-store-1' },
+    defaultHeaders: { 'x-anthropic-no-store': 'true' },
   })
 
   try {
