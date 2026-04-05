@@ -41,6 +41,21 @@ export function isAdmin(user: { role?: string } | null): boolean {
   return user?.role === "admin"
 }
 
+/**
+ * Check if user has accountant role (Steuerberater)
+ * Accountants have read-only access to invoices and time entries
+ */
+export function isAccountant(user: { role?: string } | null): boolean {
+  return user?.role === "accountant"
+}
+
+/**
+ * Check if user can access accounting data (admin or accountant)
+ */
+export function canAccessAccounting(user: { role?: string } | null): boolean {
+  return isAdmin(user) || isAccountant(user) || user?.role === "ka_admin"
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [

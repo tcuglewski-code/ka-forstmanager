@@ -11,7 +11,7 @@ model User {
   name                 String
   email                String       @unique
   password             String
-  // Rollen: ka_admin, ka_gruppenführer, ka_mitarbeiter, baumschule, kunde
+  // Rollen: ka_admin, ka_gruppenführer, ka_mitarbeiter, baumschule, kunde, accountant (Steuerberater - Read-Only)
   role                 String       @default("mitarbeiter")
   avatar               String?
   active               Boolean      @default(true)
