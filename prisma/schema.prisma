@@ -2112,3 +2112,145 @@ model AlleinarbeitAlert {
   @@index([createdAt])
   @@index([eskalationsStufe])
 }
+
+// ══════════════════════════════════════════════════════════════
+// Sprint KM — Feature Flags + Business KPIs
+// ══════════════════════════════════════════════════════════════
+
+enum FeatureFlagType {
+  boolean   // On/Off
+  percentage // Rollout percentage
+  variant   // A/B test variants
+}
+
+model FeatureFlag {
+  id           String          @id @default(cuid())
+  key          String          @unique // e.g. "ki_assistent", "offline_sync"
+  name         String          // Human-readable name
+  description  String?
+  type         FeatureFlagType @default(boolean)
+  enabled      Boolean         @default(false) // Global default
+  percentage   Int?            // For rollout (0-100)
+  variants     Json?           // For A/B: {"control": 50, "variant_a": 25, "variant_b": 25}
+  // Metadata
+  category     String?         // "ki", "sync", "ux", "beta"
+  tags         String[]        @default([])
+  // Audit
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  createdBy    String?
+  // Relations
+  overrides    FeatureFlagOverride[]
+  usageLogs    FeatureUsageLog[]
+
+  @@index([key])
+  @@index([category])
+  @@index([enabled])
+}
+
+model FeatureFlagOverride {
+  id            String      @id @default(cuid())
+  featureFlagId String
+  // Override Target (one of these)
+  userId        String?     // User-specific override
+  tenantId      String?     // Tenant-specific override (for multi-tenant)
+  // Override Values
+  enabled       Boolean?
+  variant       String?     // Specific variant assignment
+  // Audit
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  createdBy     String?
+  reason        String?     // Why this override exists
+  // Relations
+  featureFlag   FeatureFlag @relation(fields: [featureFlagId], references: [id], onDelete: Cascade)
+
+  @@unique([featureFlagId, userId])
+  @@unique([featureFlagId, tenantId])
+  @@index([userId])
+  @@index([tenantId])
+}
+
+model FeatureUsageLog {
+  id            String      @id @default(cuid())
+  featureFlagId String
+  userId        String?
+  // Evaluation Result
+  wasEnabled    Boolean
+  variant       String?     // Which variant was shown
+  // Context
+  source        String?     // "web", "app", "api"
+  userAgent     String?
+  // Timestamp
+  evaluatedAt   DateTime    @default(now())
+  // Relations
+  featureFlag   FeatureFlag @relation(fields: [featureFlagId], references: [id], onDelete: Cascade)
+
+  @@index([featureFlagId])
+  @@index([userId])
+  @@index([evaluatedAt])
+}
+
+// ══════════════════════════════════════════════════════════════
+// Business KPIs — Snapshots for Dashboard
+// ══════════════════════════════════════════════════════════════
+
+model BusinessKpiSnapshot {
+  id              String   @id @default(cuid())
+  // Period
+  periodStart     DateTime
+  periodEnd       DateTime
+  periodType      String   // "daily", "weekly", "monthly"
+  // Revenue KPIs
+  mrr             Float?   // Monthly Recurring Revenue (EUR)
+  arr             Float?   // Annual Recurring Revenue (EUR)
+  newMrr          Float?   // MRR from new customers
+  churnMrr        Float?   // MRR lost to churn
+  expansionMrr    Float?   // MRR from upsells/expansions
+  netMrrGrowth    Float?   // New + Expansion - Churn
+  // Customer KPIs
+  totalCustomers  Int?     // Total paying customers
+  newCustomers    Int?     // New customers this period
+  churnedCustomers Int?    // Customers who cancelled
+  churnRate       Float?   // Churn rate (%)
+  // User KPIs
+  activeUsers     Int?     // Users who logged in
+  dauCount        Int?     // Daily Active Users (avg)
+  wauCount        Int?     // Weekly Active Users (avg)
+  mauCount        Int?     // Monthly Active Users
+  // Engagement KPIs
+  avgSessionDuration Float? // Average session length (minutes)
+  pageViewsTotal  Int?     // Total page views
+  apiCallsTotal   Int?     // Total API calls
+  // Feature Usage
+  featureUsage    Json?    // {"ki_assistent": 423, "offline_sync": 89, ...}
+  // AI Usage
+  aiRequestsTotal Int?     // Total AI/LLM requests
+  aiTokensTotal   Int?     // Total tokens consumed
+  aiCostTotal     Float?   // Total AI cost (EUR)
+  // Audit
+  createdAt       DateTime @default(now())
+  calculatedBy    String?  // "cron", "manual", "amadeus"
+
+  @@unique([periodStart, periodEnd, periodType])
+  @@index([periodType])
+  @@index([periodStart])
+}
+
+model KpiEvent {
+  id          String   @id @default(cuid())
+  // Event Details
+  eventType   String   // "login", "feature_use", "page_view", "api_call", "ai_request"
+  eventName   String?  // Specific event: "wizard_complete", "protokoll_create"
+  userId      String?
+  tenantId    String?
+  // Event Data
+  metadata    Json?    // {"feature": "ki_assistent", "duration_ms": 1234}
+  // Timestamp
+  createdAt   DateTime @default(now())
+
+  @@index([eventType])
+  @@index([eventName])
+  @@index([userId])
+  @@index([createdAt])
+}
