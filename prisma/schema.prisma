@@ -2280,7 +2280,8 @@ model AiAuditLog {
   timestamp  DateTime @default(now())
   userId     String?
   model      String
-  tokenCount Int?
+  tokenCount Int      @default(0)
+  route      String
   createdAt  DateTime @default(now())
 
   @@index([userId])

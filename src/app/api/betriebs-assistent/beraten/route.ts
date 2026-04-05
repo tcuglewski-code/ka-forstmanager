@@ -226,7 +226,7 @@ export async function POST(req: NextRequest) {
         synthese = await genKISynthese(programme, frageClean, bundeslandClean, kombinationen, praxis);
         kiSynthese = true;
         // AI-Audit: Prompt-Hash loggen (kein Klartext)
-        await logAiCall(null, frageClean, 'claude-haiku-4-5');
+        await logAiCall({ prompt: frageClean, model: 'claude-haiku-4-5', route: '/api/betriebs-assistent/beraten' });
       } catch (err) {
         const errMsg = err instanceof Error ? err.message : String(err);
         console.error('KI-Synthese fehlgeschlagen, Fallback:', errMsg);

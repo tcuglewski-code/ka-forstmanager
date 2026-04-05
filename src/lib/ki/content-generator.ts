@@ -119,7 +119,7 @@ ${input.beschreibung ? `Zusatzinfo: ${input.beschreibung}` : ""}
 
     // AI-Audit: Prompt-Hash loggen (kein Klartext)
     const totalTokens = response.usage ? response.usage.input_tokens + response.usage.output_tokens : undefined
-    await logAiCall(null, projektDetails, "claude-3-haiku-20240307", totalTokens)
+    await logAiCall({ prompt: projektDetails, model: "claude-3-haiku-20240307", tokenCount: totalTokens, route: "/api/content" })
 
     const content = response.content[0]
     if (content.type !== "text") {

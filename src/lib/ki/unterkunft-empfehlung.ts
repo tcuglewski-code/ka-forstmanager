@@ -156,7 +156,7 @@ Analysiere und ranke die Unterkünfte nach Eignung für das Forstarbeiter-Team.`
 
     // AI-Audit: Prompt-Hash loggen (kein Klartext)
     const totalTokens = response.usage ? response.usage.input_tokens + response.usage.output_tokens : undefined
-    await logAiCall(null, userPrompt, "claude-3-5-haiku-20241022", totalTokens)
+    await logAiCall({ prompt: userPrompt, model: "claude-3-5-haiku-20241022", tokenCount: totalTokens, route: "/api/ki/unterkunft-analyse" })
 
     // JSON parsen
     const kiErgebnis = JSON.parse(content.text.trim())

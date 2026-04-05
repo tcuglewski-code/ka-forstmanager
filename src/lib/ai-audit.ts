@@ -5,21 +5,23 @@ import { prisma } from "@/lib/prisma"
  * Loggt einen KI-Aufruf in die AiAuditLog-Tabelle.
  * Speichert NUR den SHA-256 Hash des Prompts, niemals den Klartext.
  */
-export async function logAiCall(
-  userId: string | null,
-  prompt: string,
-  model: string,
+export async function logAiCall(params: {
+  userId?: string | null
+  prompt: string
+  model: string
   tokenCount?: number
-): Promise<void> {
-  const promptHash = createHash("sha256").update(prompt).digest("hex")
+  route: string
+}): Promise<void> {
+  const promptHash = createHash("sha256").update(params.prompt).digest("hex")
 
   try {
     await prisma.aiAuditLog.create({
       data: {
         promptHash,
-        userId: userId ?? undefined,
-        model,
-        tokenCount: tokenCount ?? undefined,
+        userId: params.userId ?? undefined,
+        model: params.model,
+        tokenCount: params.tokenCount ?? 0,
+        route: params.route,
       },
     })
   } catch (error) {

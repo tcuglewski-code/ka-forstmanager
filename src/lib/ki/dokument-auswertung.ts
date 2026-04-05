@@ -127,7 +127,7 @@ export async function analysiereDokument(
     // AI-Audit: Prompt-Hash loggen (kein Klartext)
     const inputTokens = response.usage?.input_tokens
     const outputTokens = response.usage?.output_tokens
-    await logAiCall(null, "dokument-analyse", "claude-sonnet-4-20250514", inputTokens && outputTokens ? inputTokens + outputTokens : undefined)
+    await logAiCall({ prompt: "dokument-analyse", model: "claude-sonnet-4-20250514", tokenCount: inputTokens && outputTokens ? inputTokens + outputTokens : undefined, route: "/api/ki/dokument-analyse" })
 
     // Extrahiere JSON aus der Antwort
     const content = response.content[0]
