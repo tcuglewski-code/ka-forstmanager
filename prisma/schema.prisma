@@ -2,6 +2,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator docs {
+  provider = "node node_modules/prisma-docs-generator"
+  output   = "../../docs/prisma/forstmanager"
+}
+
 datasource db {
   provider = "postgresql"
 }
@@ -27,6 +32,9 @@ model User {
   twoFactorEnabled     Boolean      @default(false)
   twoFactorBackupCodes String[]     @default([]) // Hashed backup codes
   twoFactorVerifiedAt  DateTime? // When 2FA was first verified
+  // B2B Unternehmererklärung (§14 BGB)
+  unternehmerErklaerung   Boolean   @default(false)
+  unternehmerErklaerungAt DateTime?
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
   sessions             Session[]
@@ -112,6 +120,9 @@ model Mitarbeiter {
   lagerBewegungen           LagerBewegung[]
   lohnabrechnungen          Lohnabrechnung[]
   dokumente                 Dokument[]
+
+  @@index([status])
+  @@index([createdAt])
 }
 
 model Saison {
@@ -242,6 +253,10 @@ model Auftrag {
   stundeneintraege    Stundeneintrag[]
   logs                AuftragLog[]
   angebote            Angebot[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([saisonId])
 }
 
 // AUDIT-LOG FÜR AUFTRÄGE (Sprint S)
@@ -522,6 +537,10 @@ model Stundeneintrag {
   createdAt         DateTime    @default(now())
   mitarbeiter       Mitarbeiter @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
   auftrag           Auftrag?    @relation(fields: [auftragId], references: [id], onDelete: SetNull)
+
+  @@index([mitarbeiterId])
+  @@index([datum])
+  @@index([auftragId])
 }
 
 model Abwesenheit {
@@ -607,6 +626,9 @@ model Dokument {
   beschreibung   String?
   auftrag        Auftrag?     @relation(fields: [auftragId], references: [id], onDelete: SetNull)
   saison         Saison?      @relation(fields: [saisonId], references: [id], onDelete: SetNull)
+
+  @@index([auftragId])
+  @@index([mitarbeiterId])
 }
 
 // ABNAHMEN
@@ -756,6 +778,9 @@ model Tagesprotokoll {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([auftragId])
+  @@index([datum])
 }
 
 // KONTAKTE
@@ -772,6 +797,8 @@ model Kontakt {
   deletedAt DateTime? // Soft-Delete Timestamp (DSGVO Retention)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  @@index([typ])
 }
 
 // MASCHINENEINSATZ (Sprint K2)
@@ -929,6 +956,8 @@ model Lohnabrechnung {
   notizen        String?
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
+
+  @@index([mitarbeiterId])
 }
 
 // ============================================================
@@ -2286,4 +2315,21 @@ model AiAuditLog {
 
   @@index([userId])
   @@index([timestamp])
+}
+
+// GENERAL AUDIT LOG (Sprint MS)
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String   // CREATE, UPDATE, DELETE
+  entityType String   // User, Auftrag, Mitarbeiter, etc.
+  entityId   String
+  oldValue   Json?
+  newValue   Json?
+  ip         String?
+  timestamp  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([timestamp])
+  @@index([userId])
 }

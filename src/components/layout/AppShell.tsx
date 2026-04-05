@@ -7,7 +7,7 @@ import { ForstManagerTour } from "@/components/tour/ForstManagerTour"
 import { QuickSearch } from "@/components/search/QuickSearch"
 import { KeyboardShortcuts } from "@/components/shortcuts/KeyboardShortcuts"
 import { FeedbackButton } from "@/components/feedback/FeedbackButton"
-import { Bell, User, Search } from "lucide-react"
+import { Bell, User, Search, HelpCircle } from "lucide-react"
 
 interface AppShellProps {
   children: React.ReactNode
@@ -85,6 +85,18 @@ export function AppShell({ children, title }: AppShellProps) {
 
           {/* Actions */}
           <div className="flex items-center gap-1">
+            <a
+              href="https://docs.feldhub.de"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-xl tonal-transition"
+              style={{ color: "var(--color-on-surface-variant)" }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--color-surface-container)")}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
+              title="Hilfe & Dokumentation"
+            >
+              <HelpCircle className="w-5 h-5" />
+            </a>
             <button
               className="p-2 rounded-xl tonal-transition"
               style={{ color: "var(--color-on-surface-variant)" }}

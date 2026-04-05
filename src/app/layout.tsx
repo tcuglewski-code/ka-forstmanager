@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Manrope, Inter, Barlow_Condensed } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "sonner"
+import PostHogProvider from "@/components/providers/PostHogProvider"
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -44,7 +45,9 @@ export default function RootLayout({
           color: "var(--color-on-surface)",
         }}
       >
-        {children}
+        <PostHogProvider>
+          {children}
+        </PostHogProvider>
         <Toaster
           position="top-right"
           theme="light"

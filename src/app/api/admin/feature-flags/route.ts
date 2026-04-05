@@ -1,10 +1,11 @@
 /**
  * Feature Flags Admin API
  * Sprint KM — FF-01/KP-01
- * 
- * GET  - List all feature flags
- * POST - Create/update feature flag
- * 
+ *
+ * GET   - List all feature flags (or single flag by ?key=...)
+ * POST  - Create/update feature flag
+ * PATCH - Update flag by key (body: { key, enabled?, percentage? })
+ *
  * Requires: ka_admin role
  */
 
@@ -24,8 +25,25 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if seed param is set (one-time setup)
     const { searchParams } = new URL(request.url);
+
+    // Single flag lookup by key (for useFeatureFlag hook)
+    const keyParam = searchParams.get('key');
+    if (keyParam) {
+      const flag = await prisma.featureFlag.findUnique({
+        where: { key: keyParam },
+      });
+      if (!flag) {
+        return NextResponse.json({ enabled: false }, { status: 200 });
+      }
+      return NextResponse.json({
+        enabled: flag.enabled,
+        percentage: flag.percentage,
+        key: flag.key,
+      });
+    }
+
+    // Check if seed param is set (one-time setup)
     if (searchParams.get('seed') === 'true') {
       await seedDefaultFeatureFlags();
     }
@@ -109,6 +127,53 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ flag });
   } catch (error) {
     console.error('[FeatureFlags] POST error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user || !['ka_admin', 'super_admin'].includes((session.user as { role?: string }).role || '')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { key, enabled, percentage } = body;
+
+    if (!key) {
+      return NextResponse.json(
+        { error: 'key is required' },
+        { status: 400 }
+      );
+    }
+
+    const existing = await prisma.featureFlag.findUnique({
+      where: { key },
+    });
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: `Feature flag '${key}' not found` },
+        { status: 404 }
+      );
+    }
+
+    const updateData: Record<string, unknown> = {};
+    if (typeof enabled === 'boolean') updateData.enabled = enabled;
+    if (typeof percentage === 'number') updateData.percentage = percentage;
+
+    const updated = await prisma.featureFlag.update({
+      where: { key },
+      data: updateData,
+    });
+
+    return NextResponse.json({ flag: updated });
+  } catch (error) {
+    console.error('[FeatureFlags] PATCH error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

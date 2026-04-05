@@ -2,17 +2,21 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 
 /**
- * DSGVO Kunden-Cleanup Cron (IMPL-DA-21b)
+ * DSGVO Kunden-Cleanup Cron (IMPL-DA-21b + MR Datenlöschkonzept)
  *
- * Soft-Delete: Kontakt-Datensätze wo updatedAt > 10 Jahre
- *   → setzt deletedAt als Grace-Period-Start (30 Tage)
- * Hard-Delete: Kontakt-Datensätze wo deletedAt > 30 Tage
- *   → unwiderrufliche Löschung + DeletionLog
+ * 1. Kontakt-Datensätze:
+ *    - Soft-Delete: updatedAt > 10 Jahre → setzt deletedAt (30 Tage Grace Period)
+ *    - Hard-Delete: deletedAt > 30 Tage → unwiderrufliche Löschung + DeletionLog
+ *
+ * 2. GPS-Logs: Tagesprotokolle mit GPS-Daten älter als 3 Jahre → GPS-Felder nullifizieren
+ *
+ * 3. Allgemeine Datensätze: Tagesprotokolle + Stundeneinträge älter als 10 Jahre → Hard-Delete + DeletionLog
  *
  * Trigger: Vercel Cron (täglich 03:00 UTC) oder manuell via GET
  */
 
 const RETENTION_YEARS = 10
+const GPS_RETENTION_YEARS = 3
 const GRACE_PERIOD_DAYS = 30
 const TELEGRAM_CHAT_ID = "977688457"
 
@@ -96,14 +100,133 @@ export async function GET(req: NextRequest) {
       )
     }
 
+    // ── Phase 3: GPS-Logs älter als 3 Jahre nullifizieren ──────
+    let gpsCleanedCount = 0
+    const gpsCutoff = new Date()
+    gpsCutoff.setFullYear(gpsCutoff.getFullYear() - GPS_RETENTION_YEARS)
+
+    try {
+      const gpsResult = await prisma.tagesprotokoll.updateMany({
+        where: {
+          datum: { lt: gpsCutoff },
+          OR: [
+            { gpsStartLat: { not: null } },
+            { gpsStartLon: { not: null } },
+            { gpsEndLat: { not: null } },
+            { gpsEndLon: { not: null } },
+            { gpsTrack: { not: null } },
+          ],
+        },
+        data: {
+          gpsStartLat: null,
+          gpsStartLon: null,
+          gpsEndLat: null,
+          gpsEndLon: null,
+          gpsTrack: null,
+        },
+      })
+      gpsCleanedCount = gpsResult.count
+
+      if (gpsCleanedCount > 0) {
+        await prisma.deletionLog.create({
+          data: {
+            entityType: "GPS_DATA_3Y",
+            entityId: `cron-cleanup-customers-gps-${now.toISOString().slice(0, 10)}`,
+            entitySummary: `GPS-Daten nullifiziert: ${gpsCleanedCount} Protokolle (>3 Jahre)`,
+            deletedBy: "SYSTEM_CRON",
+            reason: "RETENTION_POLICY",
+            retentionDays: GPS_RETENTION_YEARS * 365,
+          },
+        })
+      }
+    } catch (e) {
+      errors.push(
+        `GPS-Cleanup: ${e instanceof Error ? e.message : "Unknown error"}`
+      )
+    }
+
+    // ── Phase 4: Allgemeine Datensätze älter als 10 Jahre hard-deleten ──
+    let protokolleDeletedCount = 0
+    let stundenDeletedCount = 0
+
+    try {
+      // Tagesprotokolle älter als 10 Jahre
+      const oldProtokolle = await prisma.tagesprotokoll.findMany({
+        where: { datum: { lt: retentionCutoff } },
+        select: { id: true },
+      })
+
+      if (oldProtokolle.length > 0) {
+        const ids = oldProtokolle.map((p: { id: string }) => p.id)
+
+        await prisma.deletionLog.createMany({
+          data: ids.map((id: string) => ({
+            entityType: "Tagesprotokoll",
+            entityId: id,
+            entitySummary: `Tagesprotokoll ${id.slice(-6)}`,
+            deletedBy: "SYSTEM_CRON",
+            reason: "DSGVO_RETENTION_10Y",
+            retentionDays: RETENTION_YEARS * 365,
+          })),
+        })
+
+        // Direct deleteMany (Tagesprotokoll has no deletedAt, so no soft-delete intercept)
+        await prisma.tagesprotokoll.deleteMany({
+          where: { id: { in: ids } },
+        })
+
+        protokolleDeletedCount = ids.length
+      }
+    } catch (e) {
+      errors.push(
+        `Protokoll-Cleanup: ${e instanceof Error ? e.message : "Unknown error"}`
+      )
+    }
+
+    try {
+      // Stundeneinträge älter als 10 Jahre
+      const oldStunden = await prisma.stundeneintrag.findMany({
+        where: { datum: { lt: retentionCutoff } },
+        select: { id: true },
+      })
+
+      if (oldStunden.length > 0) {
+        const ids = oldStunden.map((s: { id: string }) => s.id)
+
+        await prisma.deletionLog.createMany({
+          data: ids.map((id: string) => ({
+            entityType: "Stundeneintrag",
+            entityId: id,
+            entitySummary: `Stundeneintrag ${id.slice(-6)}`,
+            deletedBy: "SYSTEM_CRON",
+            reason: "DSGVO_RETENTION_10Y",
+            retentionDays: RETENTION_YEARS * 365,
+          })),
+        })
+
+        await prisma.stundeneintrag.deleteMany({
+          where: { id: { in: ids } },
+        })
+
+        stundenDeletedCount = ids.length
+      }
+    } catch (e) {
+      errors.push(
+        `Stunden-Cleanup: ${e instanceof Error ? e.message : "Unknown error"}`
+      )
+    }
+
     // Telegram-Benachrichtigung
-    if (softDeleteCount > 0 || hardDeleteCount > 0) {
+    if (softDeleteCount > 0 || hardDeleteCount > 0 || gpsCleanedCount > 0 || protokolleDeletedCount > 0 || stundenDeletedCount > 0) {
       const telegramToken = process.env.TELEGRAM_BOT_TOKEN
       if (telegramToken) {
         const message =
-          `🗑️ Kunden-Cleanup (DSGVO ${RETENTION_YEARS}J):\n` +
-          `• Soft-Delete (Grace Period): ${softDeleteCount}\n` +
-          `• Hard-Delete (endgültig): ${hardDeleteCount}` +
+          `🗑️ Kunden-Cleanup (DSGVO):\n` +
+          `• Kontakte Soft-Delete (Grace Period): ${softDeleteCount}\n` +
+          `• Kontakte Hard-Delete (endgültig): ${hardDeleteCount}\n` +
+          `• GPS-Daten nullifiziert (>${GPS_RETENTION_YEARS}J): ${gpsCleanedCount}\n` +
+          `• Protokolle gelöscht (>${RETENTION_YEARS}J): ${protokolleDeletedCount}\n` +
+          `• Stundeneinträge gelöscht (>${RETENTION_YEARS}J): ${stundenDeletedCount}` +
           (errors.length > 0 ? `\n\n⚠️ Fehler:\n${errors.join("\n")}` : "")
 
         try {
@@ -127,11 +250,19 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       success: true,
       retentionYears: RETENTION_YEARS,
+      gpsRetentionYears: GPS_RETENTION_YEARS,
       gracePeriodDays: GRACE_PERIOD_DAYS,
-      softDeleted: softDeleteCount,
-      hardDeleted: hardDeleteCount,
-      hardDeletedIds:
-        hardDeletedIds.length > 0 ? hardDeletedIds : undefined,
+      kontakte: {
+        softDeleted: softDeleteCount,
+        hardDeleted: hardDeleteCount,
+        hardDeletedIds:
+          hardDeletedIds.length > 0 ? hardDeletedIds : undefined,
+      },
+      gpsCleaned: gpsCleanedCount,
+      recordsDeleted: {
+        tagesprotokolle: protokolleDeletedCount,
+        stundeneintraege: stundenDeletedCount,
+      },
       errors: errors.length > 0 ? errors : undefined,
     })
   } catch (error) {

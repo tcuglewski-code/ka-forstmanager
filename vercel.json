@@ -76,6 +76,14 @@
     {
       "path": "/api/cron/cleanup-ai-audit",
       "schedule": "30 3 * * 0"
+    },
+    {
+      "path": "/api/cron/sync-wetterdaten",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/check-zeiterfassung-anomalien",
+      "schedule": "0 6 * * *"
     }
   ]
 }

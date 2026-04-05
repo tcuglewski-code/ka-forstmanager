@@ -1,13 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import useSWR from "swr"
 import { Sparkles, X } from "lucide-react"
+import { useState } from "react"
 
 interface AiUsageData {
   currentUsage: number
   monthlyLimit: number
   tier: string
 }
+
+const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
 function Skeleton() {
   return (
@@ -28,20 +31,13 @@ function Skeleton() {
 }
 
 export function AiUsageWidget() {
-  const [data, setData] = useState<AiUsageData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data, isLoading } = useSWR<AiUsageData>("/api/ai/usage", fetcher, {
+    refreshInterval: 60_000,
+  })
   const [dismissedWarning, setDismissedWarning] = useState(false)
   const [dismissedLimit, setDismissedLimit] = useState(false)
 
-  useEffect(() => {
-    fetch("/api/ai/usage")
-      .then((r) => r.json())
-      .then(setData)
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [])
-
-  if (loading) return <Skeleton />
+  if (isLoading) return <Skeleton />
   if (!data) return null
 
   const percent = data.monthlyLimit > 0 ? (data.currentUsage / data.monthlyLimit) * 100 : 0
@@ -112,7 +108,7 @@ export function AiUsageWidget() {
             border: "1px solid rgba(217,119,6,0.2)",
           }}
         >
-          <span>Achtung: {Math.round(percent)}% des Kontingents verbraucht</span>
+          <span>Du näherst dich deinem monatlichen KI-Limit</span>
           <button
             onClick={() => setDismissedWarning(true)}
             className="flex-shrink-0 p-0.5 rounded hover:bg-black/5"
@@ -132,7 +128,7 @@ export function AiUsageWidget() {
             border: "1px solid rgba(186,26,26,0.2)",
           }}
         >
-          <span>Limit erreicht — Upgrade verfügbar</span>
+          <span>Limit erreicht — KI-Features pausiert</span>
           <button
             onClick={() => setDismissedLimit(true)}
             className="flex-shrink-0 p-0.5 rounded hover:bg-black/5"

@@ -4,10 +4,15 @@ import bcrypt from 'bcryptjs'
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, password, role } = await req.json()
+    const { name, email, password, role, unternehmerErklaerung } = await req.json()
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: 'Name, E-Mail und Passwort erforderlich' }, { status: 400 })
+    }
+
+    // B2B: Unternehmererklärung muss akzeptiert werden
+    if (!unternehmerErklaerung) {
+      return NextResponse.json({ error: 'Unternehmererklärung (§14 BGB) muss bestätigt werden' }, { status: 400 })
     }
 
     // Prüfe ob Email schon vergeben
@@ -25,6 +30,8 @@ export async function POST(req: NextRequest) {
         password: hash,
         role: role || 'ka_mitarbeiter',
         active: true,
+        unternehmerErklaerung: true,
+        unternehmerErklaerungAt: new Date(),
       }
     })
 

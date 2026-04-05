@@ -7,9 +7,13 @@ const STORAGE_KEY = "ki-disclaimer-dismissed"
 
 interface KiDisclaimerProps {
   variant?: "banner" | "badge"
+  euAiActLabel?: string
 }
 
-export default function KiDisclaimer({ variant = "banner" }: KiDisclaimerProps) {
+export default function KiDisclaimer({
+  variant = "banner",
+  euAiActLabel = "Limited Risk AI System gemäß EU AI Act Art. 52",
+}: KiDisclaimerProps) {
   const [dismissed, setDismissed] = useState(true)
 
   useEffect(() => {
@@ -33,15 +37,17 @@ export default function KiDisclaimer({ variant = "banner" }: KiDisclaimerProps) 
         >
           <X className="w-3 h-3" />
         </button>
+        <span className="block text-[10px] text-amber-400/70 mt-0.5">{euAiActLabel}</span>
       </span>
     )
   }
 
   return (
     <div className="flex items-center justify-between gap-3 px-4 py-2.5 mb-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-      <p className="text-xs text-amber-300">
-        ⚠️ KI-Hinweis: Empfehlungen sind unverbindlich und ersetzen keine Fachberatung.
-      </p>
+      <div className="text-xs text-amber-300">
+        <p>⚠️ KI-Hinweis: Empfehlungen sind unverbindlich und ersetzen keine Fachberatung.</p>
+        <p className="text-[10px] text-amber-400/70 mt-0.5">{euAiActLabel}</p>
+      </div>
       <button
         onClick={() => {
           localStorage.setItem(STORAGE_KEY, "true")
