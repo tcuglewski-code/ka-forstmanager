@@ -8,9 +8,10 @@ import { NextRequest, NextResponse } from "next/server"
 // ============================================================
 
 interface ResolveRequest {
-  resolvedBy: string
+  resolvedBy?: string
   resolvedAt?: string
   notes?: string
+  resolutionNotes?: string // Alternative field name
 }
 
 export async function POST(
@@ -25,9 +26,9 @@ export async function POST(
   const { eventId } = await params
   const body: ResolveRequest = await req.json()
 
-  if (!body.resolvedBy) {
-    return NextResponse.json({ error: "resolvedBy ist erforderlich" }, { status: 400 })
-  }
+  // Use session user as resolvedBy fallback
+  const resolvedBy = body.resolvedBy || (session.user as any)?.name || (session.user as any)?.email || "System"
+  const resolutionNotes = body.notes || body.resolutionNotes || null
 
   const sosEvent = await prisma.sOSEvent.findUnique({
     where: { eventId },
@@ -46,12 +47,12 @@ export async function POST(
     data: {
       status: "resolved",
       resolvedAt: body.resolvedAt ? new Date(body.resolvedAt) : new Date(),
-      resolvedBy: body.resolvedBy,
-      resolutionNotes: body.notes || null,
+      resolvedBy,
+      resolutionNotes,
     },
   })
 
-  console.log(`[SOS] Event ${eventId} aufgelöst von ${body.resolvedBy}`)
+  console.log(`[SOS] Event ${eventId} aufgelöst von ${resolvedBy}`)
 
   return NextResponse.json({
     success: true,
