@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Settings, Users, Building2, Cpu, Plus, Pencil, Loader2, Check, CreditCard } from "lucide-react"
+import { Settings, Users, Building2, Cpu, Plus, Pencil, Loader2, Check, CreditCard, Smartphone } from "lucide-react"
 import { toast } from "sonner"
 import { BillingPortalCard } from "@/components/billing/BillingPortalCard"
+import { DeviceList } from "@/components/settings/DeviceList"
 
 interface User {
   id: string
@@ -22,7 +23,7 @@ const rolleBadge: Record<string, string> = {
 }
 
 export default function EinstellungenPage() {
-  const [tab, setTab] = useState<"benutzer" | "firma" | "system" | "abonnement">("benutzer")
+  const [tab, setTab] = useState<"benutzer" | "firma" | "system" | "abonnement" | "geraete">("benutzer")
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
@@ -149,11 +150,12 @@ export default function EinstellungenPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-[#161616] border border-[#2a2a2a] rounded-lg p-1 w-fit">
+      <div className="flex gap-1 mb-6 bg-[#161616] border border-[#2a2a2a] rounded-lg p-1 w-fit flex-wrap">
         {([
           { key: "benutzer", label: "Benutzer", icon: Users },
           { key: "firma", label: "Firma", icon: Building2 },
           { key: "abonnement", label: "Abonnement", icon: CreditCard },
+          { key: "geraete", label: "Geräte", icon: Smartphone },
           { key: "system", label: "System", icon: Cpu },
         ] as const).map((t) => {
           const Icon = t.icon
@@ -401,6 +403,13 @@ export default function EinstellungenPage() {
               Feldhub/Koch Aufforstung speichert keine Zahlungsdaten lokal.
             </p>
           </div>
+        </div>
+      )}
+
+      {/* Geräte Tab (Sprint KK) */}
+      {tab === "geraete" && (
+        <div className="max-w-2xl">
+          <DeviceList />
         </div>
       )}
 

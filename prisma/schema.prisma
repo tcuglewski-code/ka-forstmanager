@@ -38,12 +38,24 @@ model User {
 }
 
 model Session {
-  id        String   @id @default(cuid())
-  userId    String
-  token     String   @unique
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String    @id @default(cuid())
+  userId       String
+  token        String    @unique
+  expiresAt    DateTime
+  // Device Tracking (Sprint KK KD-03/04)
+  userAgent    String?   // Full User-Agent string
+  deviceType   String?   // "desktop" | "mobile" | "tablet" | "app"
+  deviceName   String?   // Parsed device name e.g. "Chrome on Windows"
+  ipAddress    String?   // IP address at login
+  lastActiveAt DateTime? // Last activity timestamp
+  // Session management
+  revokedAt    DateTime? // When session was manually revoked
+  revokedBy    String?   // User ID who revoked the session (admin or self)
+  createdAt    DateTime  @default(now())
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 // Magic-Link Token für passwortlosen Login (Waldbesitzer)

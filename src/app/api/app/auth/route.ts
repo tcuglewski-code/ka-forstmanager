@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma"
 import { signAppToken } from "@/lib/app-jwt"
 import { NextRequest, NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
+import { randomBytes } from "crypto"
+import { parseUserAgent } from "@/lib/device-parser"
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,8 +27,32 @@ export async function POST(req: NextRequest) {
       email: user.email,
       rolle: user.role,
     })
+    
+    // Sprint KK: Device Tracking - Create session record
+    const userAgent = req.headers.get("user-agent") || undefined
+    const forwardedFor = req.headers.get("x-forwarded-for")
+    const realIp = req.headers.get("x-real-ip")
+    const ipAddress = forwardedFor?.split(",")[0]?.trim() || realIp || "Unbekannt"
+    
+    const deviceInfo = parseUserAgent(userAgent)
+    const sessionToken = randomBytes(32).toString("hex")
+    
+    await prisma.session.create({
+      data: {
+        userId: user.id,
+        token: sessionToken,
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+        userAgent: userAgent,
+        deviceType: deviceInfo.deviceType,
+        deviceName: deviceInfo.deviceName,
+        ipAddress: ipAddress,
+        lastActiveAt: new Date(),
+      },
+    })
+    
     return NextResponse.json({
       token,
+      sessionToken, // For device tracking
       user: {
         id: user.id,
         name: user.name,
