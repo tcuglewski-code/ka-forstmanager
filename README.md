@@ -21,6 +21,18 @@ Digitales Betriebssystem für Forstunternehmen. Erste Instanz: **Koch Aufforstun
 - 🔜 Lager
 - 🔜 Dokumente
 
+## 📚 Dokumentation
+
+Ausführliche technische Dokumentation im `/docs` Ordner:
+
+| Datei | Inhalt |
+|-------|--------|
+| [README.md](docs/README.md) | Projekt-Übersicht |
+| [architecture.md](docs/architecture.md) | System-Architektur, Module, Datenfluss |
+| [api.md](docs/api.md) | API-Referenz aller Endpoints |
+| [database.md](docs/database.md) | Prisma-Schema, Relationen, Migrations |
+| [deployment.md](docs/deployment.md) | Vercel Deploy, ENV-Variablen, CI/CD |
+
 ## Setup (lokal)
 
 ### 1. Dependencies installieren
