@@ -14,6 +14,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 import { TagesprotokollFull } from "@/components/tagesprotokoll/TagesprotokollDetail"
 import { AbnahmeStatus } from "@/components/abnahme/AbnahmeStatus"
 import { AuftragFoerderCheck } from "@/components/foerderung/AuftragFoerderCheck"
+import KiDisclaimer from "@/components/ui/KiDisclaimer"
 import { FlaechenPolygon } from "@/components/karten/FlaechenPolygon"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -779,6 +780,7 @@ export default function AuftragDetailPage() {
 
   return (
     <div className="max-w-6xl mx-auto">
+      <KiDisclaimer />
       <Breadcrumb items={[{ label: "Aufträge", href: "/auftraege" }, { label: auftrag.titel }]} />
       {/* Back */}
       <Link href="/auftraege" className="flex items-center gap-2 text-zinc-400 hover:text-white text-sm mb-6 transition-all">

@@ -19,6 +19,7 @@ import {
   Sparkles,
 } from "lucide-react"
 import { BeratungsErgebnis } from "@/components/foerderung/BeratungsErgebnis"
+import KiDisclaimer from "@/components/ui/KiDisclaimer"
 
 // ─────────────── Types ───────────────
 
@@ -522,6 +523,7 @@ export default function FoerderungPage() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
+      <KiDisclaimer />
       {/* Titel */}
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-xl bg-emerald-900/40 flex items-center justify-center">
