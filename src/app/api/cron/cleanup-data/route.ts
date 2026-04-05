@@ -5,18 +5,19 @@ export const dynamic = "force-dynamic"
 export const maxDuration = 60
 
 /**
- * DA-22: Automatische GPS/Temp-Löschroutinen
+ * DA-22: Unified GPS + Temp Data + Soft-Delete Cleanup Cron (DSGVO)
  *
  * 1. GPS-Koordinaten aus Tagesprotokollen, Abnahmen, ErnteEinsätzen
- *    und SOS-Events nullifizieren (konfigurierbar via RetentionConfig)
+ *    und SOS-Events nullifizieren (30d via RetentionConfig)
  * 2. Abgelaufene ExportRequests löschen (>7 Tage nach expiresAt)
+ * 3. Soft-Deleted Einträge >90 Tage unwiderruflich hard-deleten
  *
- * Läuft täglich via Vercel Cron: 30 2 * * * (02:30 UTC)
+ * Läuft täglich via Vercel Cron: 0 4 * * * (04:00 UTC)
  */
 
-// Fallback-Werte falls RetentionConfig noch nicht geseeded
 const FALLBACK_GPS_DAYS = 30
 const FALLBACK_TEMP_DAYS = 7
+const SOFT_DELETE_RETENTION_DAYS = 90
 
 async function getRetentionDays(
   dataType: string,
@@ -26,6 +27,11 @@ async function getRetentionDays(
     where: { dataType },
   })
   return config?.retentionDays ?? fallback
+}
+
+interface SoftDeleteResult {
+  entityType: string
+  count: number
 }
 
 export async function GET(req: NextRequest) {
@@ -39,7 +45,6 @@ export async function GET(req: NextRequest) {
   const now = new Date()
 
   try {
-    // Retention-Tage aus RetentionConfig laden
     const gpsDays = await getRetentionDays("gps_logs", FALLBACK_GPS_DAYS)
     const tempDays = await getRetentionDays("temp_files", FALLBACK_TEMP_DAYS)
 
@@ -49,9 +54,11 @@ export async function GET(req: NextRequest) {
     const tempCutoff = new Date(now)
     tempCutoff.setDate(tempCutoff.getDate() - tempDays)
 
-    // ── 1. GPS-Daten nullifizieren ──────────────────────────────
+    const softDeleteCutoff = new Date(now)
+    softDeleteCutoff.setDate(softDeleteCutoff.getDate() - SOFT_DELETE_RETENTION_DAYS)
 
-    // 1a. Tagesprotokolle: GPS-Felder nullen
+    // ── 1. GPS-Daten nullifizieren (30d) ────────────────────────
+
     const protokolle = await prisma.tagesprotokoll.updateMany({
       where: {
         createdAt: { lt: gpsCutoff },
@@ -72,7 +79,6 @@ export async function GET(req: NextRequest) {
       },
     })
 
-    // 1b. Abnahmen: GPS-Felder nullen
     const abnahmen = await prisma.abnahme.updateMany({
       where: {
         createdAt: { lt: gpsCutoff },
@@ -87,7 +93,6 @@ export async function GET(req: NextRequest) {
       },
     })
 
-    // 1c. ErnteEinsätze: GPS-Track nullen
     const einsaetze = await prisma.ernteEinsatz.updateMany({
       where: {
         createdAt: { lt: gpsCutoff },
@@ -98,7 +103,6 @@ export async function GET(req: NextRequest) {
       },
     })
 
-    // 1d. SOS-Events: GPS-Daten nullen
     const sosEvents = await prisma.sOSEvent.updateMany({
       where: {
         createdAt: { lt: gpsCutoff },
@@ -129,23 +133,76 @@ export async function GET(req: NextRequest) {
       },
     })
 
-    // ── 3. Audit-Trail ──────────────────────────────────────────
+    // ── 3. Soft-Delete → Hard-Delete (90d) ──────────────────────
 
-    const totalCleaned = totalGps + exports.count
+    const softDeleteResults: SoftDeleteResult[] = []
+    const softDeleteErrors: string[] = []
 
-    if (totalCleaned > 0) {
+    const softDeleteTables = [
+      { name: "User", model: prisma.user, select: { id: true } },
+      { name: "Mitarbeiter", model: prisma.mitarbeiter, select: { id: true } },
+      { name: "Auftrag", model: prisma.auftrag, select: { id: true } },
+      { name: "Dokument", model: prisma.dokument, select: { id: true } },
+      { name: "Kontakt", model: prisma.kontakt, select: { id: true } },
+      { name: "LagerArtikel", model: prisma.lagerArtikel, select: { id: true } },
+    ] as const
+
+    for (const table of softDeleteTables) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const model = table.model as any
+        const toDelete = await model.findMany({
+          where: { deletedAt: { not: null, lt: softDeleteCutoff } },
+          select: { id: true },
+        })
+
+        if (toDelete.length > 0) {
+          const ids = toDelete.map((r: { id: string }) => r.id)
+
+          await prisma.deletionLog.createMany({
+            data: ids.map((id: string) => ({
+              entityType: table.name,
+              entityId: id,
+              entitySummary: `${table.name} ${id.slice(-6)}`,
+              deletedBy: "SYSTEM_CRON",
+              reason: "RETENTION_POLICY",
+              retentionDays: SOFT_DELETE_RETENTION_DAYS,
+            })),
+          })
+
+          await model.deleteMany({
+            where: { id: { in: ids } },
+          })
+
+          softDeleteResults.push({ entityType: table.name, count: ids.length })
+        }
+      } catch (e) {
+        softDeleteErrors.push(
+          `${table.name}: ${e instanceof Error ? e.message : "Unknown error"}`
+        )
+      }
+    }
+
+    const totalSoftDeleted = softDeleteResults.reduce((s, r) => s + r.count, 0)
+
+    // ── 4. Audit-Trail ──────────────────────────────────────────
+
+    const totalCleaned = totalGps + exports.count + totalSoftDeleted
+
+    if (totalGps + exports.count > 0) {
       await prisma.deletionLog.create({
         data: {
           entityType: "DATA_RETENTION",
           entityId: `cron-cleanup-data-${now.toISOString().slice(0, 10)}`,
-          entitySummary: `GPS: ${totalGps} Datensätze, Exports: ${exports.count} gelöscht`,
+          entitySummary: `GPS: ${totalGps}, Exports: ${exports.count}, SoftDelete: ${totalSoftDeleted}`,
           deletedBy: "SYSTEM_CRON",
           reason: "RETENTION_POLICY",
           retentionDays: gpsDays,
           metadata: {
             gpsCutoff: gpsCutoff.toISOString(),
             tempCutoff: tempCutoff.toISOString(),
-            retentionConfig: { gpsDays, tempDays },
+            softDeleteCutoff: softDeleteCutoff.toISOString(),
+            retentionConfig: { gpsDays, tempDays, softDeleteDays: SOFT_DELETE_RETENTION_DAYS },
             gps: {
               protokolle: protokolle.count,
               abnahmen: abnahmen.count,
@@ -153,13 +210,15 @@ export async function GET(req: NextRequest) {
               sosEvents: sosEvents.count,
             },
             exports: exports.count,
+            softDelete: softDeleteResults,
+            softDeleteErrors: softDeleteErrors.length > 0 ? softDeleteErrors : undefined,
           },
         },
       })
     }
 
     console.log(
-      `[Cron cleanup-data] GPS: ${totalGps}, Exports: ${exports.count} (gpsDays=${gpsDays}, tempDays=${tempDays})`
+      `[Cron cleanup-data] GPS: ${totalGps}, Exports: ${exports.count}, SoftDelete: ${totalSoftDeleted} (gpsDays=${gpsDays}, tempDays=${tempDays}, softDeleteDays=${SOFT_DELETE_RETENTION_DAYS})`
     )
 
     return NextResponse.json({
@@ -168,6 +227,7 @@ export async function GET(req: NextRequest) {
       retention: {
         gpsDays,
         tempDays,
+        softDeleteDays: SOFT_DELETE_RETENTION_DAYS,
         source: "RetentionConfig",
       },
       cleaned: {
@@ -179,6 +239,11 @@ export async function GET(req: NextRequest) {
           total: totalGps,
         },
         exports: exports.count,
+        softDelete: {
+          results: softDeleteResults,
+          total: totalSoftDeleted,
+          errors: softDeleteErrors.length > 0 ? softDeleteErrors : undefined,
+        },
         total: totalCleaned,
       },
     })
