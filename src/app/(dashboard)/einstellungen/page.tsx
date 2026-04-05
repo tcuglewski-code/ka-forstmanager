@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Settings, Users, Building2, Cpu, Plus, Pencil, Loader2, Check } from "lucide-react"
+import { Settings, Users, Building2, Cpu, Plus, Pencil, Loader2, Check, CreditCard } from "lucide-react"
 import { toast } from "sonner"
+import { BillingPortalCard } from "@/components/billing/BillingPortalCard"
 
 interface User {
   id: string
@@ -21,7 +22,7 @@ const rolleBadge: Record<string, string> = {
 }
 
 export default function EinstellungenPage() {
-  const [tab, setTab] = useState<"benutzer" | "firma" | "system">("benutzer")
+  const [tab, setTab] = useState<"benutzer" | "firma" | "system" | "abonnement">("benutzer")
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
@@ -152,6 +153,7 @@ export default function EinstellungenPage() {
         {([
           { key: "benutzer", label: "Benutzer", icon: Users },
           { key: "firma", label: "Firma", icon: Building2 },
+          { key: "abonnement", label: "Abonnement", icon: CreditCard },
           { key: "system", label: "System", icon: Cpu },
         ] as const).map((t) => {
           const Icon = t.icon
@@ -360,6 +362,45 @@ export default function EinstellungenPage() {
               </button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Abonnement Tab - Sprint KI PO-05/BO-01 */}
+      {tab === "abonnement" && (
+        <div className="space-y-4">
+          <BillingPortalCard />
+          
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+            <h3 className="font-semibold text-white mb-3">Abrechnungsdetails</h3>
+            <p className="text-sm text-zinc-400 mb-4">
+              Ihr aktuelles Abonnement und Abrechnungsinformationen.
+            </p>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="p-3 bg-[#111] rounded-lg border border-[#333]">
+                <span className="text-zinc-500 block text-xs mb-1">Plan</span>
+                <span className="text-white font-medium">ForstManager Pro</span>
+              </div>
+              <div className="p-3 bg-[#111] rounded-lg border border-[#333]">
+                <span className="text-zinc-500 block text-xs mb-1">Status</span>
+                <span className="text-emerald-400 font-medium">Aktiv</span>
+              </div>
+              <div className="p-3 bg-[#111] rounded-lg border border-[#333]">
+                <span className="text-zinc-500 block text-xs mb-1">Abrechnungszyklus</span>
+                <span className="text-white font-medium">Monatlich</span>
+              </div>
+              <div className="p-3 bg-[#111] rounded-lg border border-[#333]">
+                <span className="text-zinc-500 block text-xs mb-1">Nächste Abrechnung</span>
+                <span className="text-white font-medium">Im Stripe Portal einsehen</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
+            <p className="text-sm text-amber-300">
+              <strong>Hinweis:</strong> Alle Rechnungen und Zahlungsdetails werden sicher über Stripe verwaltet.
+              Feldhub/Koch Aufforstung speichert keine Zahlungsdaten lokal.
+            </p>
+          </div>
         </div>
       )}
 
