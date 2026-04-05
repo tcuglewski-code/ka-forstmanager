@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { Users, Sprout, ClipboardList, TrendingUp, Package, AlertTriangle, Wrench, Clock, BookOpen, CheckSquare, DollarSign, FileText, CalendarClock, UserCheck, Leaf } from "lucide-react"
 import Link from "next/link"
 import { FoerderungWidget } from "@/components/foerderung/FoerderungWidget"
+import { AiUsageWidget } from "@/components/dashboard/AiUsageWidget"
 import { StatCard, QuickLink, HoverLink, HoverActionCard } from "@/components/dashboard/InteractiveCards"
 
 async function getStats() {
@@ -646,6 +647,9 @@ export default async function DashboardPage() {
 
         {/* Förderprogramme Widget */}
         <FoerderungWidget />
+
+        {/* KI-Nutzung Widget */}
+        <AiUsageWidget />
 
         {/* Schnellzugriff */}
         <div
