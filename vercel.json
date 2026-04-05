@@ -48,6 +48,10 @@
     {
       "path": "/api/cron/cleanup-invoices-10y",
       "schedule": "0 4 1 1 *"
+    },
+    {
+      "path": "/api/cron/dunning-enforce",
+      "schedule": "0 3 * * *"
     }
   ]
 }

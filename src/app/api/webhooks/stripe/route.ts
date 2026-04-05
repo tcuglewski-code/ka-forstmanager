@@ -94,6 +94,19 @@ export async function POST(request: NextRequest) {
         await handleChargeRefunded(event);
         break;
 
+      // Sprint KH: Dunning/Mahnprozess
+      case 'invoice.payment_failed':
+        await handleInvoicePaymentFailed(event);
+        break;
+
+      case 'invoice.payment_action_required':
+        await handleInvoicePaymentActionRequired(event);
+        break;
+
+      case 'customer.subscription.updated':
+        await handleSubscriptionUpdated(event);
+        break;
+
       default:
         console.log(`[Stripe Webhook] Unhandled event type: ${event.type}`);
     }
@@ -520,5 +533,353 @@ async function handleChargeRefunded(event: Stripe.Event) {
     console.log(
       `[Stripe Webhook] ⚠️ Fallback-Stornierung für ${rechnung.nummer} durchgeführt`
     );
+  }
+}
+
+// ============================================================
+// DUNNING / MAHNPROZESS HANDLER (Sprint KH PO-04)
+// ============================================================
+
+/**
+ * Handler für invoice.payment_failed
+ * Trackt fehlgeschlagene Zahlungsversuche, sperrt nach 3 Versuchen
+ */
+async function handleInvoicePaymentFailed(event: Stripe.Event) {
+  const invoice = event.data.object as Stripe.Invoice;
+  
+  const invoiceId = invoice.id;
+  const customerId = typeof invoice.customer === 'string'
+    ? invoice.customer
+    : invoice.customer?.id;
+  const subscriptionId = typeof invoice.subscription === 'string'
+    ? invoice.subscription
+    : invoice.subscription?.id;
+  const paymentIntentId = typeof invoice.payment_intent === 'string'
+    ? invoice.payment_intent
+    : invoice.payment_intent?.id;
+  const amount = invoice.amount_due;
+  const attemptCount = invoice.attempt_count || 1;
+  const nextAttempt = invoice.next_payment_attempt 
+    ? new Date(invoice.next_payment_attempt * 1000) 
+    : null;
+
+  // Get failure details from last payment intent
+  let failureCode: string | null = null;
+  let failureMessage: string | null = null;
+  let failureReason: string | null = null;
+
+  if (paymentIntentId) {
+    try {
+      const stripeClient = getStripeClient();
+      const pi = await stripeClient.paymentIntents.retrieve(paymentIntentId);
+      if (pi.last_payment_error) {
+        failureCode = pi.last_payment_error.code || null;
+        failureMessage = pi.last_payment_error.message || null;
+        failureReason = pi.last_payment_error.decline_code || null;
+      }
+    } catch (e) {
+      console.warn(`[Stripe Webhook] Could not fetch PaymentIntent ${paymentIntentId}`);
+    }
+  }
+
+  console.log(
+    `[Stripe Webhook] invoice.payment_failed: ${invoiceId}, ` +
+    `Customer: ${customerId}, Attempt: ${attemptCount}, ` +
+    `Amount: ${(amount / 100).toFixed(2)} €, ` +
+    `Failure: ${failureCode || 'unknown'}`
+  );
+
+  // Find Tenant by Stripe Customer ID
+  const tenant = customerId ? await prisma.tenant.findFirst({
+    where: { stripeCustomerId: customerId },
+  }) : null;
+
+  if (!tenant) {
+    console.warn(`[Stripe Webhook] No tenant found for Stripe Customer ${customerId}`);
+    
+    // Log for admin review
+    await prisma.activityLog.create({
+      data: {
+        action: 'DUNNING_NO_TENANT',
+        entityType: 'payment',
+        entityId: invoiceId,
+        entityName: `Fehlgeschlagene Zahlung ohne Tenant: ${(amount / 100).toFixed(2)} €`,
+        metadata: JSON.stringify({
+          invoiceId,
+          customerId,
+          subscriptionId,
+          attemptCount,
+          failureCode,
+        }),
+      },
+    });
+    return;
+  }
+
+  // Upsert DunningRecord
+  const existingRecord = await prisma.dunningRecord.findUnique({
+    where: { stripeInvoiceId: invoiceId },
+  });
+
+  const now = new Date();
+  const isFirstFailure = !existingRecord && tenant.dunningCurrentAttempt === 0;
+
+  if (existingRecord) {
+    // Update existing record
+    await prisma.dunningRecord.update({
+      where: { id: existingRecord.id },
+      data: {
+        attemptNumber: attemptCount,
+        failureCode,
+        failureMessage,
+        failureReason,
+        nextRetryAt: nextAttempt,
+        rawEventData: event as unknown as object,
+        failedAt: now,
+        updatedAt: now,
+      },
+    });
+  } else {
+    // Create new record
+    await prisma.dunningRecord.create({
+      data: {
+        tenantId: tenant.id,
+        stripeInvoiceId: invoiceId,
+        stripeSubscriptionId: subscriptionId,
+        stripePaymentIntentId: paymentIntentId,
+        stripeEventId: event.id,
+        amount,
+        currency: invoice.currency,
+        attemptNumber: attemptCount,
+        failureCode,
+        failureMessage,
+        failureReason,
+        status: 'pending',
+        nextRetryAt: nextAttempt,
+        rawEventData: event as unknown as object,
+        failedAt: now,
+      },
+    });
+  }
+
+  // Update Tenant dunning state
+  const updateData: Record<string, unknown> = {
+    dunningCurrentAttempt: attemptCount,
+    dunningLastFailedAt: now,
+  };
+
+  if (isFirstFailure) {
+    updateData.dunningFirstFailedAt = now;
+  }
+
+  // Check if max retries reached → suspend
+  if (attemptCount >= tenant.dunningMaxRetries) {
+    console.log(
+      `[Stripe Webhook] ⚠️ Max dunning attempts (${tenant.dunningMaxRetries}) reached for tenant ${tenant.slug}`
+    );
+
+    // Check if grace period passed (dunningGraceDays)
+    const graceDays = tenant.dunningGraceDays;
+    const firstFailed = tenant.dunningFirstFailedAt || now;
+    const daysSinceFirst = Math.floor((now.getTime() - firstFailed.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (daysSinceFirst >= graceDays) {
+      updateData.status = 'payment_suspended';
+      updateData.paymentSuspendedAt = now;
+
+      // Update DunningRecord status
+      await prisma.dunningRecord.updateMany({
+        where: { 
+          tenantId: tenant.id,
+          status: 'pending',
+        },
+        data: { 
+          status: 'suspended',
+          suspendedAt: now,
+        },
+      });
+
+      console.log(
+        `[Stripe Webhook] 🔒 Tenant ${tenant.slug} suspended due to payment failure`
+      );
+
+      // Activity log
+      await prisma.activityLog.create({
+        data: {
+          action: 'TENANT_PAYMENT_SUSPENDED',
+          entityType: 'tenant',
+          entityId: tenant.id,
+          entityName: `Tenant ${tenant.name} wegen Zahlungsausfall gesperrt`,
+          metadata: JSON.stringify({
+            invoiceId,
+            attemptCount,
+            daysSinceFirst,
+            failureCode,
+            amount,
+          }),
+        },
+      });
+    }
+  }
+
+  await prisma.tenant.update({
+    where: { id: tenant.id },
+    data: updateData,
+  });
+
+  // Activity log for failed payment
+  await prisma.activityLog.create({
+    data: {
+      action: 'PAYMENT_FAILED',
+      entityType: 'tenant',
+      entityId: tenant.id,
+      entityName: `Zahlung fehlgeschlagen: ${(amount / 100).toFixed(2)} € (Versuch ${attemptCount}/${tenant.dunningMaxRetries})`,
+      metadata: JSON.stringify({
+        invoiceId,
+        attemptCount,
+        maxRetries: tenant.dunningMaxRetries,
+        failureCode,
+        failureMessage,
+        nextAttempt: nextAttempt?.toISOString(),
+      }),
+    },
+  });
+}
+
+/**
+ * Handler für invoice.payment_action_required
+ * Zahlung erfordert Kundenaktion (z.B. 3D Secure)
+ */
+async function handleInvoicePaymentActionRequired(event: Stripe.Event) {
+  const invoice = event.data.object as Stripe.Invoice;
+  
+  const invoiceId = invoice.id;
+  const customerId = typeof invoice.customer === 'string'
+    ? invoice.customer
+    : invoice.customer?.id;
+  const hostedInvoiceUrl = invoice.hosted_invoice_url;
+
+  console.log(
+    `[Stripe Webhook] invoice.payment_action_required: ${invoiceId}, ` +
+    `Customer: ${customerId}`
+  );
+
+  // Find Tenant
+  const tenant = customerId ? await prisma.tenant.findFirst({
+    where: { stripeCustomerId: customerId },
+  }) : null;
+
+  if (!tenant) {
+    console.warn(`[Stripe Webhook] No tenant for payment action required: ${customerId}`);
+    return;
+  }
+
+  // Log activity - this needs customer action
+  await prisma.activityLog.create({
+    data: {
+      action: 'PAYMENT_ACTION_REQUIRED',
+      entityType: 'tenant',
+      entityId: tenant.id,
+      entityName: `Zahlung erfordert Kundenaktion`,
+      metadata: JSON.stringify({
+        invoiceId,
+        hostedInvoiceUrl,
+        amount: invoice.amount_due,
+      }),
+    },
+  });
+
+  // TODO: Send notification email to tenant with hostedInvoiceUrl
+}
+
+/**
+ * Handler für customer.subscription.updated
+ * Trackt Subscription-Statusänderungen (inkl. Dunning Resolution)
+ */
+async function handleSubscriptionUpdated(event: Stripe.Event) {
+  const subscription = event.data.object as Stripe.Subscription;
+  
+  const subscriptionId = subscription.id;
+  const customerId = typeof subscription.customer === 'string'
+    ? subscription.customer
+    : subscription.customer?.id;
+  const status = subscription.status;
+
+  console.log(
+    `[Stripe Webhook] customer.subscription.updated: ${subscriptionId}, ` +
+    `Status: ${status}`
+  );
+
+  // Find Tenant
+  const tenant = customerId ? await prisma.tenant.findFirst({
+    where: { stripeCustomerId: customerId },
+  }) : null;
+
+  if (!tenant) {
+    console.warn(`[Stripe Webhook] No tenant for subscription update: ${customerId}`);
+    return;
+  }
+
+  // If subscription becomes active again, resolve dunning
+  if (status === 'active' && tenant.dunningCurrentAttempt > 0) {
+    const now = new Date();
+
+    // Reset dunning state
+    await prisma.tenant.update({
+      where: { id: tenant.id },
+      data: {
+        dunningCurrentAttempt: 0,
+        dunningResolvedAt: now,
+        dunningFirstFailedAt: null,
+        dunningLastFailedAt: null,
+        // If was suspended, restore to active
+        status: tenant.status === 'payment_suspended' ? 'active' : tenant.status,
+        paymentSuspendedAt: null,
+      },
+    });
+
+    // Update all pending DunningRecords to resolved
+    await prisma.dunningRecord.updateMany({
+      where: {
+        tenantId: tenant.id,
+        status: { in: ['pending', 'retrying', 'suspended'] },
+      },
+      data: {
+        status: 'resolved',
+        resolvedAt: now,
+      },
+    });
+
+    console.log(`[Stripe Webhook] ✅ Dunning resolved for tenant ${tenant.slug}`);
+
+    await prisma.activityLog.create({
+      data: {
+        action: 'DUNNING_RESOLVED',
+        entityType: 'tenant',
+        entityId: tenant.id,
+        entityName: `Zahlung erfolgreich - Mahnverfahren beendet`,
+        metadata: JSON.stringify({
+          subscriptionId,
+          previousAttempts: tenant.dunningCurrentAttempt,
+          wasSupended: tenant.status === 'payment_suspended',
+        }),
+      },
+    });
+  }
+
+  // If subscription is cancelled
+  if (status === 'canceled' || status === 'unpaid') {
+    await prisma.dunningRecord.updateMany({
+      where: {
+        tenantId: tenant.id,
+        stripeSubscriptionId: subscriptionId,
+        status: 'pending',
+      },
+      data: {
+        status: 'cancelled',
+      },
+    });
+
+    console.log(`[Stripe Webhook] Subscription ${subscriptionId} cancelled/unpaid`);
   }
 }

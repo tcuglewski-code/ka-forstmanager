@@ -126,11 +126,12 @@ model Saison {
 // ============================================================
 
 enum TenantStatus {
-  active         // Aktiver Vertrag, voller Zugriff
-  cancelled      // Kündigung eingereicht, noch aktiv bis contractEndDate
-  grace_period   // Vertrag ausgelaufen, 30 Tage Lesezugriff + Export
-  archived       // Nach Grace Period: Steuerrelevante Daten archiviert, GPS gelöscht
-  deleted        // Vollständig gelöscht (nur bei Nicht-Kunden ohne Daten)
+  active              // Aktiver Vertrag, voller Zugriff
+  cancelled           // Kündigung eingereicht, noch aktiv bis contractEndDate
+  grace_period        // Vertrag ausgelaufen, 30 Tage Lesezugriff + Export
+  archived            // Nach Grace Period: Steuerrelevante Daten archiviert, GPS gelöscht
+  deleted             // Vollständig gelöscht (nur bei Nicht-Kunden ohne Daten)
+  payment_suspended   // Zahlung fehlgeschlagen, Zugriff gesperrt (Sprint KH Dunning)
 }
 
 model Tenant {
@@ -152,6 +153,21 @@ model Tenant {
   // Churn-Notification Tracking (Sprint OD)
   lastChurnNotifyAt DateTime?   // Letztes Datum einer Churn-Benachrichtigung
   lastChurnNotifyDays Int?      // Tage bis Sperre bei letzter Benachrichtigung
+  // ── Stripe Billing ──────────────────────────────────────────
+  stripeCustomerId   String?    @unique // Stripe Customer ID
+  stripeSubscriptionId String?  @unique // Stripe Subscription ID
+  // ── Dunning/Mahnprozess (Sprint KH PO-04) ───────────────────
+  dunningMaxRetries     Int     @default(3)     // Max. Zahlungsversuche bevor Sperre
+  dunningRetryDays      Int[]   @default([3, 7, 14]) // Tage zwischen Versuchen (Stripe Billing config)
+  dunningGraceDays      Int     @default(7)     // Tage nach letztem Versuch bis Sperre
+  dunningCurrentAttempt Int     @default(0)     // Aktueller Zahlungsversuch (0 = keine Probleme)
+  dunningFirstFailedAt  DateTime?              // Wann schlug die erste Zahlung fehl
+  dunningLastFailedAt   DateTime?              // Wann schlug die letzte Zahlung fehl
+  dunningLastNotifyAt   DateTime?              // Wann wurde letzte Dunning-E-Mail gesendet
+  dunningResolvedAt     DateTime?              // Wann wurde das Problem behoben (Zahlung erfolgreich)
+  paymentSuspendedAt    DateTime?              // Wann wurde wegen Zahlung gesperrt
+  // Relations
+  dunningRecords DunningRecord[]
   createdAt    DateTime @default(now())
 }
 
@@ -1705,6 +1721,58 @@ model UserAgreement {
   @@index([agreementType])
   @@index([acceptedAt])
   @@index([agreementVersion])
+}
+
+// ============================================================
+// DUNNING / MAHNPROZESS (Sprint KH PO-04)
+// Trackt fehlgeschlagene Zahlungsversuche pro Tenant
+// 3 Versuche → automatische Zugriffssperre
+// ============================================================
+
+enum DunningStatus {
+  pending      // Zahlung fehlgeschlagen, warten auf Retry
+  retrying     // Stripe versucht erneut
+  resolved     // Zahlung erfolgreich
+  suspended    // Max. Versuche erreicht, Tenant gesperrt
+  cancelled    // Subscription abgebrochen
+}
+
+model DunningRecord {
+  id                    String        @id @default(cuid())
+  tenantId              String
+  tenant                Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  // Stripe IDs
+  stripeInvoiceId       String        @unique // Die fehlgeschlagene Invoice
+  stripeSubscriptionId  String?       // Zugehörige Subscription
+  stripePaymentIntentId String?       // PaymentIntent des fehlgeschlagenen Versuchs
+  stripeEventId         String?       // Stripe Event ID für Idempotency
+  // Zahlungsdetails
+  amount                Int           // Betrag in Cents
+  currency              String        @default("eur")
+  attemptNumber         Int           @default(1) // Welcher Versuch (1, 2, 3)
+  // Failure Info
+  failureCode           String?       // Stripe failure code (e.g. 'card_declined')
+  failureMessage        String?       // Stripe failure message
+  failureReason         String?       // 'insufficient_funds', 'expired_card', etc.
+  // Status Tracking
+  status                DunningStatus @default(pending)
+  resolvedAt            DateTime?     // Wann wurde erfolgreich bezahlt
+  suspendedAt           DateTime?     // Wann wurde Tenant gesperrt
+  // Notifications
+  notificationsSent     Int           @default(0) // Anzahl gesendeter E-Mails
+  lastNotificationAt    DateTime?     // Letzte E-Mail
+  nextRetryAt           DateTime?     // Wann versucht Stripe erneut (aus Invoice)
+  // Raw Data
+  rawEventData          Json?         // Stripe Event für Debugging
+  // Timestamps
+  failedAt              DateTime      // Wann schlug die Zahlung fehl
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  @@index([tenantId])
+  @@index([status])
+  @@index([stripeInvoiceId])
+  @@index([failedAt])
 }
 
 // ============================================================
