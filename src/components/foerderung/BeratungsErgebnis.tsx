@@ -290,7 +290,7 @@ export function BeratungsErgebnis({
       const url = URL.createObjectURL(blob)
       const link = document.createElement("a")
       link.href = url
-      link.download = `Foerderberatung_${new Date().toISOString().split("T")[0]}.pdf`
+      link.download = `Betriebs-Assistent_${new Date().toISOString().split("T")[0]}.pdf`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)

@@ -69,7 +69,7 @@ Alle Fehler folgen dem Format:
     { name: "Rechnungen", description: "Rechnungsstellung" },
     { name: "Fuhrpark", description: "Fahrzeug- und Geräteverwaltung" },
     { name: "Schulungen", description: "Schulungs- und Qualifikationsverwaltung" },
-    { name: "Förderung", description: "Förderberatung und -programme" },
+    { name: "Förderung", description: "Betriebs-Assistent und Förderprogramme" },
     { name: "Sync", description: "Mobile App Synchronisation" },
     { name: "Auth", description: "Authentifizierung und Autorisierung" },
     { name: "GDPR", description: "DSGVO-Compliance Endpoints" },
