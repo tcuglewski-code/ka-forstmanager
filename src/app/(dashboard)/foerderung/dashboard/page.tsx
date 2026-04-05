@@ -5,6 +5,7 @@ import { RefreshCw, TrendingUp, Clock, Euro, FileText, ArrowUpRight, ArrowDownRi
 import Link from "next/link"
 import { FristenWidget } from "@/components/foerderung/FristenWidget"
 import { PraxisStatistik } from "@/components/foerderung/PraxisStatistik"
+import KiDisclaimer from "@/components/ui/KiDisclaimer"
 
 interface KPIs {
   gesamt_programme: number
@@ -77,6 +78,7 @@ export default function FoerderungDashboardPage() {
 
   return (
     <div className="p-6 space-y-6">
+      <KiDisclaimer />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

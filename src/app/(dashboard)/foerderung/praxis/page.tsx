@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Plus, RefreshCw, CheckCircle, XCircle, Clock, Pencil, Euro } from "lucide-react"
 import { PraxisFormular } from "@/components/foerderung/PraxisFormular"
+import KiDisclaimer from "@/components/ui/KiDisclaimer"
 
 interface PraxisEintrag {
   id: number
@@ -83,6 +84,7 @@ export default function FoerderungPraxisPage() {
 
   return (
     <div className="p-6 space-y-6">
+      <KiDisclaimer />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
