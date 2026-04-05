@@ -3,6 +3,7 @@
 
 import Anthropic from "@anthropic-ai/sdk"
 import { pseudonymizePrompt } from "@/lib/pseudonymize"
+import { logAiCall } from "@/lib/ai-audit"
 
 // Feature-Flag prüfen
 const KI_ENABLED = process.env.KI_ENABLED === "true" || process.env.NODE_ENV === "development"
@@ -132,7 +133,10 @@ ${unterkunftListe}
 
 Analysiere und ranke die Unterkünfte nach Eignung für das Forstarbeiter-Team.`
 
-  const client = new Anthropic({ apiKey })
+  const client = new Anthropic({
+    apiKey,
+    defaultHeaders: { 'anthropic-beta': 'no-store-1' },
+  })
 
   // DSGVO Art. 25: Pseudonymisierung vor Übermittlung an externe KI-API
   const { text: pseudonymizedPrompt } = pseudonymizePrompt(userPrompt)
@@ -149,6 +153,10 @@ Analysiere und ranke die Unterkünfte nach Eignung für das Forstarbeiter-Team.`
     if (content.type !== "text") {
       throw new Error("Unerwartetes Antwortformat von der KI")
     }
+
+    // AI-Audit: Prompt-Hash loggen (kein Klartext)
+    const totalTokens = response.usage ? response.usage.input_tokens + response.usage.output_tokens : undefined
+    await logAiCall(null, userPrompt, "claude-3-5-haiku-20241022", totalTokens)
 
     // JSON parsen
     const kiErgebnis = JSON.parse(content.text.trim())

@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { querySecondBrain as query } from '@/lib/secondbrain-db';
 import Anthropic from '@anthropic-ai/sdk';
 import { pseudonymizePrompt } from '@/lib/pseudonymize';
+import { logAiCall } from '@/lib/ai-audit';
 
 const anthropic = process.env.ANTHROPIC_API_KEY
-  ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+  ? new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+      defaultHeaders: { 'anthropic-beta': 'no-store-1' },
+    })
   : null;
 
 async function genKISynthese(
@@ -221,6 +225,8 @@ export async function POST(req: NextRequest) {
       try {
         synthese = await genKISynthese(programme, frageClean, bundeslandClean, kombinationen, praxis);
         kiSynthese = true;
+        // AI-Audit: Prompt-Hash loggen (kein Klartext)
+        await logAiCall(null, frageClean, 'claude-haiku-4-5');
       } catch (err) {
         const errMsg = err instanceof Error ? err.message : String(err);
         console.error('KI-Synthese fehlgeschlagen, Fallback:', errMsg);

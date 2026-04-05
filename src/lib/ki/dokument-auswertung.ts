@@ -2,6 +2,7 @@
 // Nutzt Claude Vision API zur Extraktion von Auftragsdaten aus Dokumenten/Fotos
 
 import Anthropic from "@anthropic-ai/sdk"
+import { logAiCall } from "@/lib/ai-audit"
 
 // Feature-Flag: Kann in env.ts oder .env gesetzt werden
 export const KI_ENABLED = process.env.KI_ENABLED === "true"
@@ -92,7 +93,10 @@ export async function analysiereDokument(
     throw new Error(`Nicht unterstütztes Format: ${mimeType}. Unterstützt: ${supportedTypes.join(", ")}`)
   }
 
-  const client = new Anthropic({ apiKey })
+  const client = new Anthropic({
+    apiKey,
+    defaultHeaders: { 'anthropic-beta': 'no-store-1' },
+  })
 
   try {
     const response = await client.messages.create({
@@ -119,6 +123,11 @@ export async function analysiereDokument(
         },
       ],
     })
+
+    // AI-Audit: Prompt-Hash loggen (kein Klartext)
+    const inputTokens = response.usage?.input_tokens
+    const outputTokens = response.usage?.output_tokens
+    await logAiCall(null, "dokument-analyse", "claude-sonnet-4-20250514", inputTokens && outputTokens ? inputTokens + outputTokens : undefined)
 
     // Extrahiere JSON aus der Antwort
     const content = response.content[0]

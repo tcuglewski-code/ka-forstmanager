@@ -5,6 +5,7 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { KI_ENABLED } from "./dokument-auswertung"
 import { pseudonymizePrompt } from "@/lib/pseudonymize"
+import { logAiCall } from "@/lib/ai-audit"
 
 export interface ContentGeneratorInput {
   auftragId: string
@@ -95,7 +96,10 @@ ${input.wizardDaten?.zauntyp ? `Zaunschutz: ${input.wizardDaten.zauntyp}` : ""}
 ${input.beschreibung ? `Zusatzinfo: ${input.beschreibung}` : ""}
 `.trim()
 
-  const client = new Anthropic({ apiKey })
+  const client = new Anthropic({
+    apiKey,
+    defaultHeaders: { 'anthropic-beta': 'no-store-1' },
+  })
 
   // DSGVO Art. 25: Pseudonymisierung vor Übermittlung an externe KI-API
   const { text: pseudonymizedDetails } = pseudonymizePrompt(projektDetails)
@@ -112,6 +116,10 @@ ${input.beschreibung ? `Zusatzinfo: ${input.beschreibung}` : ""}
         },
       ],
     })
+
+    // AI-Audit: Prompt-Hash loggen (kein Klartext)
+    const totalTokens = response.usage ? response.usage.input_tokens + response.usage.output_tokens : undefined
+    await logAiCall(null, projektDetails, "claude-3-haiku-20240307", totalTokens)
 
     const content = response.content[0]
     if (content.type !== "text") {
