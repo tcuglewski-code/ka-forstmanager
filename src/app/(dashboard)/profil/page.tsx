@@ -1087,6 +1087,25 @@ export default function ProfilPage() {
         </div>
       </section>
 
+      {/* DSGVO Datenexport */}
+      <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <Shield className="w-5 h-5 text-emerald-400" />
+          Datenschutz (DSGVO)
+        </h2>
+        <p className="text-sm text-zinc-400 mb-4">
+          Gemäß DSGVO Art. 15 können Sie alle über Sie gespeicherten personenbezogenen Daten exportieren.
+        </p>
+        <a
+          href={`/api/gdpr/export?userId=${profile?.id || ''}`}
+          download
+          className="px-4 py-2 bg-[#2C3A1C] text-emerald-400 rounded-lg hover:bg-[#3d4f28] transition-colors inline-flex items-center gap-2"
+        >
+          <Save className="w-4 h-4" />
+          Meine Daten exportieren
+        </a>
+      </section>
+
       {/* Tour & Hilfe */}
       <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
