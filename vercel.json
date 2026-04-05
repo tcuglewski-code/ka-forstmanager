@@ -68,6 +68,10 @@
     {
       "path": "/api/cron/cleanup-customers",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/cleanup-data",
+      "schedule": "30 2 * * *"
     }
   ]
 }
