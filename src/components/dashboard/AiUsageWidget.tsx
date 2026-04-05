@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Sparkles } from "lucide-react"
+import { Sparkles, X } from "lucide-react"
 
 interface AiUsageData {
   currentUsage: number
@@ -9,23 +9,47 @@ interface AiUsageData {
   tier: string
 }
 
+function Skeleton() {
+  return (
+    <div
+      className="rounded-xl p-6 ambient-shadow-md animate-pulse"
+      style={{ backgroundColor: "var(--color-surface-container-low)" }}
+    >
+      <div className="flex items-center gap-2 mb-4">
+        <div className="w-4 h-4 rounded" style={{ backgroundColor: "var(--color-surface-container-high)" }} />
+        <div className="h-4 w-24 rounded" style={{ backgroundColor: "var(--color-surface-container-high)" }} />
+        <div className="ml-auto h-4 w-12 rounded-full" style={{ backgroundColor: "var(--color-surface-container-high)" }} />
+      </div>
+      <div className="h-4 w-48 rounded mb-2" style={{ backgroundColor: "var(--color-surface-container-high)" }} />
+      <div className="w-full h-2 rounded-full" style={{ backgroundColor: "var(--color-surface-container-high)" }} />
+      <div className="h-3 w-20 rounded mt-2" style={{ backgroundColor: "var(--color-surface-container-high)" }} />
+    </div>
+  )
+}
+
 export function AiUsageWidget() {
   const [data, setData] = useState<AiUsageData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [dismissedWarning, setDismissedWarning] = useState(false)
+  const [dismissedLimit, setDismissedLimit] = useState(false)
 
   useEffect(() => {
     fetch("/api/ai/usage")
       .then((r) => r.json())
       .then(setData)
       .catch(() => {})
+      .finally(() => setLoading(false))
   }, [])
 
+  if (loading) return <Skeleton />
   if (!data) return null
 
   const percent = data.monthlyLimit > 0 ? (data.currentUsage / data.monthlyLimit) * 100 : 0
+  const atWarning = percent >= 80 && percent < 100
   const atLimit = percent >= 100
 
   const barColor =
-    percent > 80 ? "var(--color-error)" : percent > 60 ? "#d97706" : "var(--color-primary)"
+    atLimit ? "var(--color-error)" : atWarning ? "#d97706" : "var(--color-primary)"
 
   return (
     <div
@@ -79,16 +103,43 @@ export function AiUsageWidget() {
         {Math.round(percent)}% verbraucht
       </p>
 
-      {atLimit && (
+      {atWarning && !dismissedWarning && (
         <div
-          className="mt-3 rounded-lg px-3 py-2 text-xs font-medium"
+          className="mt-3 rounded-lg px-3 py-2 text-xs font-medium flex items-center justify-between gap-2"
+          style={{
+            backgroundColor: "rgba(217,119,6,0.08)",
+            color: "#d97706",
+            border: "1px solid rgba(217,119,6,0.2)",
+          }}
+        >
+          <span>Achtung: {Math.round(percent)}% des Kontingents verbraucht</span>
+          <button
+            onClick={() => setDismissedWarning(true)}
+            className="flex-shrink-0 p-0.5 rounded hover:bg-black/5"
+            aria-label="Warnung schließen"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        </div>
+      )}
+
+      {atLimit && !dismissedLimit && (
+        <div
+          className="mt-3 rounded-lg px-3 py-2 text-xs font-medium flex items-center justify-between gap-2"
           style={{
             backgroundColor: "rgba(186,26,26,0.08)",
             color: "var(--color-error)",
             border: "1px solid rgba(186,26,26,0.2)",
           }}
         >
-          Limit erreicht — Upgrade verfügbar
+          <span>Limit erreicht — Upgrade verfügbar</span>
+          <button
+            onClick={() => setDismissedLimit(true)}
+            className="flex-shrink-0 p-0.5 rounded hover:bg-black/5"
+            aria-label="Warnung schließen"
+          >
+            <X className="w-3 h-3" />
+          </button>
         </div>
       )}
     </div>
