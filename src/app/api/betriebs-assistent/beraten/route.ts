@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { querySecondBrain as query } from '@/lib/secondbrain-db';
 import Anthropic from '@anthropic-ai/sdk';
+import { pseudonymizePrompt } from '@/lib/pseudonymize';
 
 const anthropic = process.env.ANTHROPIC_API_KEY
   ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
@@ -52,11 +53,14 @@ Erstelle eine strukturierte Förderberatung (max. 4 Absätze):
 
 Schreibe direkt und ohne Einleitung. Verwende Markdown (fett, Listen). Abschließend ein kurzer Haftungshinweis.`;
 
+  // DSGVO Art. 25: Pseudonymisierung vor Übermittlung an externe KI-API
+  const { text: pseudonymizedPrompt } = pseudonymizePrompt(userPrompt);
+
   const msg = await anthropic.messages.create({
     model: 'claude-haiku-4-5',
     max_tokens: 600,
     system: systemPrompt,
-    messages: [{ role: 'user', content: userPrompt }],
+    messages: [{ role: 'user', content: pseudonymizedPrompt }],
   });
 
   return (msg.content[0] as { type: string; text: string }).text;
