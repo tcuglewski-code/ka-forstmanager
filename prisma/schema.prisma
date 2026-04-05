@@ -794,6 +794,11 @@ model Rechnung {
   gdprRestrictedAt  DateTime? // Wann wurde die Einschränkung aktiviert
   gdprRestrictedBy  String? // User-ID oder 'SYSTEM'
   gdprRequestId     String? // Verweis auf GdprRequest
+  // Sprint KF: Stripe Payment Reconciliation
+  stripePaymentIntentId String?        @unique // Stripe PaymentIntent ID für Matching
+  stripeInvoiceId       String?        @unique // Stripe Invoice ID (wenn Billing genutzt wird)
+  paidAt                DateTime?      // Wann wurde bezahlt
+  paidViaMittel         String?        // Zahlungsmittel: 'stripe', 'überweisung', 'bar', etc.
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   auftrag           Auftrag?           @relation(fields: [auftragId], references: [id], onDelete: SetNull)
@@ -801,8 +806,10 @@ model Rechnung {
   auditLog          RechnungAuditLog[]
   versionen         RechnungVersion[]
   gdprRequest       GdprRequest?       @relation(fields: [gdprRequestId], references: [id])
+  paymentRecords    PaymentRecord[]
 
   @@index([deletedAt]) // Index für effiziente Filterung aktiver Rechnungen
+  @@index([stripePaymentIntentId])
 }
 
 // RECHNUNGS-AUDIT-LOG (Sprint GB-01: GoBD-Compliance)
@@ -1767,4 +1774,69 @@ model ExportRequest {
   @@index([token])
   @@index([status])
   @@index([expiresAt])
+}
+
+// ============================================================
+// STRIPE PAYMENT RECONCILIATION (Sprint KF PO-01)
+// Verfolgt alle Stripe-Zahlungen und matcht sie mit Rechnungen
+// ============================================================
+
+model PaymentRecord {
+  id                    String   @id @default(cuid())
+  stripePaymentIntentId String   @unique
+  stripeEventId         String   @unique // Idempotency: Verhindert doppelte Verarbeitung
+  amount                Int      // Betrag in Cents
+  currency              String   @default("eur")
+  status                String   // 'succeeded', 'failed', 'refunded'
+  // Matching
+  rechnungId            String?  // Verknüpfte Rechnung (null wenn nicht gemappt)
+  rechnung              Rechnung? @relation(fields: [rechnungId], references: [id], onDelete: SetNull)
+  matched               Boolean  @default(false) // true wenn erfolgreich mit Rechnung verknüpft
+  matchedAt             DateTime? // Wann wurde gematcht
+  matchMethod           String?  // 'payment_intent_id', 'invoice_id', 'amount_date', 'manual'
+  // Stripe Metadata
+  stripeCustomerId      String?
+  stripeInvoiceId       String?
+  paymentMethodType     String?  // 'card', 'sepa_debit', etc.
+  // Raw Event Data (für Debugging/Audit)
+  rawEventData          Json?
+  // Timestamps
+  stripePaidAt          DateTime // Wann Stripe die Zahlung verarbeitet hat
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([rechnungId])
+  @@index([stripePaymentIntentId])
+  @@index([matched])
+  @@index([stripePaidAt])
+}
+
+// Ungematchte Zahlungen für Admin-Review
+model UnmatchedPayment {
+  id                    String   @id @default(cuid())
+  stripePaymentIntentId String   @unique
+  stripeEventId         String   @unique
+  amount                Int      // Betrag in Cents
+  currency              String   @default("eur")
+  stripeCustomerId      String?
+  stripeCustomerEmail   String?
+  stripeInvoiceId       String?
+  paymentMethodType     String?
+  // Matching-Versuch Info
+  attemptedMatches      Json?    // Array von möglichen Matches: [{rechnungId, score, reason}]
+  // Status
+  status                String   @default("pending") // 'pending', 'resolved', 'ignored'
+  resolvedAt            DateTime?
+  resolvedBy            String?  // User-ID
+  resolutionNote        String?  // "Manuell mit RE-2026-0042 verknüpft" oder "Testbuchung"
+  // Stripe Metadata
+  rawEventData          Json?
+  stripePaidAt          DateTime
+  // Alert
+  alertSentAt           DateTime? // Wann wurde der Admin benachrichtigt
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([status])
+  @@index([stripePaidAt])
 }
