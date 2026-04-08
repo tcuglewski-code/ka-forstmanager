@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { verifyToken } from "@/lib/auth"
+import { verifyToken } from "@/lib/auth-helpers"
 
 // ============================================================
 // WatermelonDB Sync — PULL Endpunkt (Sprint AP + SC-04 Fix)

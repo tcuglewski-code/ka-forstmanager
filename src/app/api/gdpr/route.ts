@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyToken, isAdmin } from '@/lib/auth'
+import { verifyToken, isAdmin } from '@/lib/auth-helpers'
 import { addDays } from 'date-fns'
 
 // GET: Liste aller GDPR-Anfragen (nur Admin)

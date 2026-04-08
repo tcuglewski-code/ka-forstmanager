@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/prisma';
 
 // Push-Benachrichtigung Helper (TODO: in lib/notifications.ts auslagern)

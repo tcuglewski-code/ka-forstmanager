@@ -16,7 +16,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { verifyToken, isAdmin } from "@/lib/auth";
+import { verifyToken, isAdmin } from "@/lib/auth-helpers";
 import archiver from "archiver";
 
 // Tenant-ID aus Config (für Single-Tenant Setup)

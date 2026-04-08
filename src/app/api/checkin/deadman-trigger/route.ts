@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth-helpers';
 import { triggerDeadManSwitch, processActiveAlerts } from '@/lib/deadman-switch';
 import type { EskalationsStufe } from '@/lib/deadman-switch';
 

@@ -9,7 +9,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyToken, isAdmin } from '@/lib/auth'
+import { verifyToken, isAdmin } from '@/lib/auth-helpers'
 
 // POST: Einschränkung auf Rechnungen anwenden
 export async function POST(req: NextRequest) {
