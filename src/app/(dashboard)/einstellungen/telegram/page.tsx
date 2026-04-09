@@ -84,7 +84,7 @@ export default function TelegramEinstellungenPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <MessageCircle className="w-6 h-6 text-emerald-400" /> Telegram Benachrichtigungen
           </h1>
           <p className="text-zinc-500 text-sm mt-1">

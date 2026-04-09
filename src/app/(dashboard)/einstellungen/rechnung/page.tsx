@@ -97,7 +97,7 @@ export default function RechnungsEinstellungenPage() {
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-3">
             <FileText className="w-6 h-6 text-emerald-400" />
             Rechnungseinstellungen
           </h1>

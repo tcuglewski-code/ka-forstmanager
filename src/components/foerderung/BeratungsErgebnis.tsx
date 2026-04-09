@@ -311,7 +311,7 @@ export function BeratungsErgebnis({
             <Sparkles className="w-4 h-4 text-emerald-400" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-white">Beratungsergebnis</h3>
+            <h3 className="text-sm font-semibold text-foreground">Beratungsergebnis</h3>
             <p className="text-xs text-zinc-500">
               {ergebnis.ki_synthese ? "KI-gestützte Analyse" : "Automatische Analyse"} ·{" "}
               {ergebnis.programme?.length || 0} Programme gefunden

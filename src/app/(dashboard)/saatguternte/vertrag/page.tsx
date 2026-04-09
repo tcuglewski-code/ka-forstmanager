@@ -152,7 +152,7 @@ function VertragPageInner() {
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-white">Ernteüberlassungsvertrag</h1>
+            <h1 className="text-xl font-semibold text-foreground">Ernteüberlassungsvertrag</h1>
             <p className="text-sm text-zinc-500">{flaechen.length} Fläche(n) ausgewählt</p>
           </div>
           <div className="flex-1" />

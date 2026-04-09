@@ -237,7 +237,7 @@ export default function BenutzerVerwaltungPage() {
             <Users className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">Benutzerverwaltung</h1>
+            <h1 className="text-2xl font-bold text-foreground">Benutzerverwaltung</h1>
             <p className="text-sm text-zinc-500">{users.length} Benutzer</p>
           </div>
         </div>

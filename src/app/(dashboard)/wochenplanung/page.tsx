@@ -189,7 +189,7 @@ export default function WochenplanungPage() {
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Seiten-Header */}
       <div>
-        <h1 className="text-2xl font-bold text-white">📅 Wochenplanung</h1>
+        <h1 className="text-2xl font-bold text-foreground">📅 Wochenplanung</h1>
         <p className="text-zinc-400 text-sm mt-1">
           Planung aller Dienstleistungen nach Kalenderwoche
         </p>

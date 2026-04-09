@@ -153,7 +153,7 @@ function PlanungPageInner() {
         <div className="flex items-center gap-3">
           <Map className="w-6 h-6 text-emerald-400" />
           <div>
-            <h1 className="text-2xl font-bold text-white">Flächenplanung</h1>
+            <h1 className="text-2xl font-bold text-foreground">Flächenplanung</h1>
             <p className="text-sm text-zinc-500 mt-0.5">
               {planungFlaechen.length} Fläche{planungFlaechen.length !== 1 ? "n" : ""}
               {mitKoords > 0 && ` · ${mitKoords} mit Koordinaten`}

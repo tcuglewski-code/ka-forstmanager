@@ -116,7 +116,7 @@ export default function ReportsPage() {
   return (
     <div className="max-w-5xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <BarChart3 className="w-6 h-6 text-emerald-400" /> Reports
         </h1>
         <p className="text-zinc-500 text-sm mt-1">Auswertungen und CSV-Export</p>

@@ -41,7 +41,7 @@ export default async function CrawlerPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-white">Crawler-Management</h1>
+            <h1 className="text-2xl font-bold text-foreground">Crawler-Management</h1>
           </div>
           <p className="text-zinc-500 text-sm mt-0.5 flex items-center gap-1.5">
             <Bot className="w-3.5 h-3.5" />

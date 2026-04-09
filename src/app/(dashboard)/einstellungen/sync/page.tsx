@@ -130,7 +130,7 @@ export default function SyncSettingsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Synchronisation</h1>
+          <h1 className="text-2xl font-bold text-foreground">Synchronisation</h1>
           <p className="text-zinc-500 text-sm mt-0.5">
             WordPress ↔ ForstManager Datenabgleich
           </p>

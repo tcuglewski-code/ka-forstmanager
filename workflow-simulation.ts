@@ -5,7 +5,7 @@
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 
-const DB_URL = 'postgresql://neondb_owner:REDACTED_DB_PASSWORD@ep-misty-moon-aldvc64t-pooler.c-3.eu-central-1.aws.neon.tech/ForstManagerKADB?sslmode=require'
+const DB_URL = 'postgresql://neondb_owner:npg_1GXdqethC2bJ@ep-misty-moon-aldvc64t-pooler.c-3.eu-central-1.aws.neon.tech/ForstManagerKADB?sslmode=require'
 process.env.DATABASE_URL = DB_URL
 
 const adapter = new PrismaPg({ connectionString: DB_URL })

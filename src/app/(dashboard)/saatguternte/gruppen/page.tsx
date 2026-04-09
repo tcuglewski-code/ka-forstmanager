@@ -71,7 +71,7 @@ export default function GruppenPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Erntegruppen</h1>
+          <h1 className="text-2xl font-bold text-foreground">Erntegruppen</h1>
           <p className="text-sm text-zinc-400 mt-1">Sammler-Teams · Gruppenführer · Saisonplanung</p>
         </div>
         <button

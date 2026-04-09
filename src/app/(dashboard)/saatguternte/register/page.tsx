@@ -233,7 +233,7 @@ export default async function RegisterPage({
       <div className="flex items-center justify-between mb-6">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-white">Erntebestand-Register</h1>
+            <h1 className="text-2xl font-bold text-foreground">Erntebestand-Register</h1>
             <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-sm font-medium">
               {gesamtanzahl.toLocaleString("de-DE")} Flächen
             </span>

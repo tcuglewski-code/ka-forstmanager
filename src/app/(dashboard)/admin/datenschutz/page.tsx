@@ -258,7 +258,7 @@ export default function DatenschutzVerwaltungPage() {
             <Shield className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">Datenschutz-Anfragen</h1>
+            <h1 className="text-2xl font-bold text-foreground">Datenschutz-Anfragen</h1>
             <p className="text-sm text-zinc-500">
               DSGVO Art. 12-23 Betroffenenanfragen verwalten
             </p>

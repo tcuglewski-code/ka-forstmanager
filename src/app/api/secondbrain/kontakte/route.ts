@@ -7,7 +7,7 @@ import { Pool } from "pg"
 
 const secondBrainPool = new Pool({
   connectionString: process.env.SECONDBRAIN_DATABASE_URL || 
-    "postgresql://neondb_owner:REDACTED_DB_PASSWORD@ep-misty-moon-aldvc64t-pooler.c-3.eu-central-1.aws.neon.tech/SecondBrainKADB?sslmode=require",
+    "postgresql://neondb_owner:npg_1GXdqethC2bJ@ep-misty-moon-aldvc64t-pooler.c-3.eu-central-1.aws.neon.tech/SecondBrainKADB?sslmode=require",
   ssl: { rejectUnauthorized: false },
   max: 5,
 })

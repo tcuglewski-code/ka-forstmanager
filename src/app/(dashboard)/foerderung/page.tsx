@@ -530,7 +530,7 @@ export default function FoerderungPage() {
           <TreePine className="w-5 h-5 text-emerald-400" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-white">Förder-Intelligence</h1>
+          <h1 className="text-xl font-bold text-foreground">Förder-Intelligence</h1>
           <p className="text-sm text-zinc-500">
             {ergebnisse.length > 0 && gestartet
               ? `${ergebnisse.length} Förderprogramme gefunden`

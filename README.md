@@ -43,8 +43,8 @@ npm install
 ### 2. Umgebungsvariablen
 Erstelle `.env.local`:
 ```
-DATABASE_URL="postgresql://neondb_owner:REDACTED_DB_PASSWORD@ep-misty-moon-aldvc64t-pooler.c-3.eu-central-1.aws.neon.tech/ForstManagerKADB?sslmode=require&channel_binding=require"
-DIRECT_URL="postgresql://neondb_owner:REDACTED_DB_PASSWORD@ep-misty-moon-aldvc64t-pooler.c-3.eu-central-1.aws.neon.tech/ForstManagerKADB?sslmode=require&channel_binding=require"
+DATABASE_URL="postgresql://neondb_owner:npg_1GXdqethC2bJ@ep-misty-moon-aldvc64t-pooler.c-3.eu-central-1.aws.neon.tech/ForstManagerKADB?sslmode=require&channel_binding=require"
+DIRECT_URL="postgresql://neondb_owner:npg_1GXdqethC2bJ@ep-misty-moon-aldvc64t-pooler.c-3.eu-central-1.aws.neon.tech/ForstManagerKADB?sslmode=require&channel_binding=require"
 NEXTAUTH_SECRET="forstmanager-secret-2026-ka"
 NEXTAUTH_URL="http://localhost:3001"
 NEXT_PUBLIC_APP_NAME="ForstManager"

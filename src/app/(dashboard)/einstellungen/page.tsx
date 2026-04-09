@@ -143,7 +143,7 @@ export default function EinstellungenPage() {
   return (
     <div className="max-w-5xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <Settings className="w-6 h-6 text-emerald-400" /> Einstellungen
         </h1>
         <p className="text-zinc-500 text-sm mt-1">Benutzer, Firma und System</p>
