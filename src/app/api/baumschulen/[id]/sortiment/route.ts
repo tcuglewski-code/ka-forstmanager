@@ -18,8 +18,12 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
   }
 
   // Nur eigene Baumschule oder Admin
-  const userRole = (session.user as any).role
-  if (userRole === "baumschule" && baumschule.userId !== session.user.id) {
+  const userRole = session.user.role
+  const userBaumschuleId = session.user.baumschuleId
+  if (userRole === "baumschule" && userBaumschuleId !== baumschuleId) {
+    return NextResponse.json({ error: "Zugriff verweigert" }, { status: 403 })
+  }
+  if (userRole !== "baumschule" && userRole !== "ka_admin") {
     return NextResponse.json({ error: "Zugriff verweigert" }, { status: 403 })
   }
 
@@ -46,8 +50,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ error: "Baumschule nicht gefunden" }, { status: 404 })
   }
 
-  const userRole = (session.user as any).role
-  if (userRole === "baumschule" && baumschule.userId !== session.user.id) {
+  const userRole = session.user.role
+  const userBaumschuleId = session.user.baumschuleId
+  if (userRole === "baumschule" && userBaumschuleId !== baumschuleId) {
+    return NextResponse.json({ error: "Zugriff verweigert" }, { status: 403 })
+  }
+  if (userRole !== "baumschule" && userRole !== "ka_admin") {
     return NextResponse.json({ error: "Zugriff verweigert" }, { status: 403 })
   }
 

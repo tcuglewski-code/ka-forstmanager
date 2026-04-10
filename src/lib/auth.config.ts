@@ -11,14 +11,16 @@ export const authConfig = {
     jwt({ token, user }) {
       if (user) {
         token.id = user.id
-        token.role = (user as any).role
+        token.role = user.role
+        token.baumschuleId = user.baumschuleId ?? null
       }
       return token
     },
     session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string
-        ;(session.user as any).role = token.role
+        session.user.role = token.role
+        session.user.baumschuleId = token.baumschuleId ?? null
       }
       return session
     },

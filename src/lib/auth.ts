@@ -26,7 +26,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!user || !user.active) return null
         const valid = await bcrypt.compare(credentials.password as string, user.password)
         if (!valid) return null
-        
+
         // Sprint Q015: 2FA Check
         // Wenn 2FA aktiviert ist, muss twoFactorValidated gesetzt sein
         // (wird vom Login-Flow nach erfolgreicher 2FA-Validierung gesetzt)
@@ -34,14 +34,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           // 2FA erforderlich aber nicht validiert → ablehnen
           return null
         }
-        
+
         // Letzten Login aktualisieren
         await prisma.user.update({
           where: { id: user.id },
           data: { lastLoginAt: new Date() }
         })
-        
-        return { id: user.id, name: user.name, email: user.email, role: user.role }
+
+        // Baumschule-ID laden falls Rolle = baumschule
+        let baumschuleId: string | null = null
+        if (user.role === "baumschule") {
+          const baumschule = await prisma.baumschule.findFirst({
+            where: { userId: user.id },
+            select: { id: true },
+          })
+          baumschuleId = baumschule?.id ?? null
+        }
+
+        return { id: user.id, name: user.name, email: user.email, role: user.role, baumschuleId }
       },
     }),
     // Magic-Link Login für Waldbesitzer (Kunden)
@@ -80,7 +90,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           data: { lastLoginAt: new Date() }
         })
         
-        return { id: user.id, name: user.name, email: user.email, role: user.role }
+        // Baumschule-ID laden falls Rolle = baumschule
+        let baumschuleId: string | null = null
+        if (user.role === "baumschule") {
+          const baumschule = await prisma.baumschule.findFirst({
+            where: { userId: user.id },
+            select: { id: true },
+          })
+          baumschuleId = baumschule?.id ?? null
+        }
+
+        return { id: user.id, name: user.name, email: user.email, role: user.role, baumschuleId }
       },
     }),
   ],

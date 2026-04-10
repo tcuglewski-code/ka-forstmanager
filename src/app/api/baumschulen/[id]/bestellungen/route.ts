@@ -17,8 +17,12 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
     return NextResponse.json({ error: "Baumschule nicht gefunden" }, { status: 404 })
   }
 
-  const userRole = (session.user as any).role
-  if (userRole === "baumschule" && baumschule.userId !== session.user.id) {
+  const userRole = session.user.role
+  const userBaumschuleId = session.user.baumschuleId
+  if (userRole === "baumschule" && userBaumschuleId !== baumschuleId) {
+    return NextResponse.json({ error: "Zugriff verweigert" }, { status: 403 })
+  }
+  if (userRole !== "baumschule" && userRole !== "ka_admin") {
     return NextResponse.json({ error: "Zugriff verweigert" }, { status: 403 })
   }
 
@@ -62,20 +66,16 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
     return false
   })
 
-  // Map to a clean response format
+  // Map to a clean response format — NO personal data (waldbesitzer, email, telefon)
   const result = pflanzanfragen.map((a) => ({
     id: a.id,
     titel: a.titel,
-    typ: a.typ,
     status: a.status,
     flaeche_ha: a.flaeche_ha,
     standort: a.standort,
     bundesland: a.bundesland,
-    waldbesitzer: a.waldbesitzer,
     baumarten: a.baumarten,
-    zeitraum: a.zeitraum,
     createdAt: a.createdAt,
-    updatedAt: a.updatedAt,
   }))
 
   return NextResponse.json({ pflanzanfragen: result })
