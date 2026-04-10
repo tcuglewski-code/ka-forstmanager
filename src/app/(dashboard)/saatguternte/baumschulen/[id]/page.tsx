@@ -4,7 +4,7 @@
 // Sprint AI: Baumschule-Detailansicht mit Preislisten-Tab
 
 import { useState, useEffect } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { Plus, Pencil, Trash2, Check, X, ChevronLeft } from "lucide-react"
 import Link from "next/link"
 
@@ -41,10 +41,18 @@ const EINHEITEN = ["kg", "Stück", "Bündel", "Liter", "Kilo"]
 export default function BaumschuleDetailPage() {
   const params = useParams()
   const id = params.id as string
+  const router = useRouter()
+
+  // Guard: "neu" should not reach detail page (modal handles creation)
+  if (id === "neu") {
+    router.push("/saatguternte/baumschulen")
+    return null
+  }
 
   const [baumschule, setBaumschule] = useState<Baumschule | null>(null)
   const [preislisten, setPreislisten] = useState<Preisliste[]>([])
   const [laden, setLaden] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [aktTab, setAktTab] = useState<"info" | "preislisten">("preislisten")
 
   // Formular für neue Preisliste
@@ -66,11 +74,18 @@ export default function BaumschuleDetailPage() {
   async function laden_() {
     try {
       const res = await fetch(`/api/baumschulen/${id}/preislisten`)
+      if (res.status === 404) {
+        setError("Baumschule nicht gefunden")
+        router.push("/saatguternte/baumschulen")
+        return
+      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const daten = await res.json()
       setBaumschule(daten.baumschule)
       setPreislisten(daten.preislisten)
     } catch (err) {
       console.error("Fehler beim Laden:", err)
+      setError("Fehler beim Laden der Baumschule")
     } finally {
       setLaden(false)
     }
@@ -142,8 +157,8 @@ export default function BaumschuleDetailPage() {
   if (!baumschule) {
     return (
       <div className="p-6 text-red-400">
-        Baumschule nicht gefunden.
-        <Link href="/saatguternte" className="ml-2 underline text-zinc-300">← Zurück</Link>
+        {error || "Baumschule nicht gefunden."}
+        <Link href="/saatguternte/baumschulen" className="ml-2 underline text-zinc-300">← Zurück zur Liste</Link>
       </div>
     )
   }
