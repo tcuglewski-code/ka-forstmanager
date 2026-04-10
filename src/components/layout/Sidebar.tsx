@@ -42,6 +42,7 @@ import {
   Shield,
   Command,
   Plus,
+  TreeDeciduous,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { resetAndStartTour } from "@/components/tour/ForstManagerTour"
@@ -81,6 +82,7 @@ const saatgutSubItems = [
   { href: "/saatguternte/anfragen", label: "Ernteanfragen", icon: ClipboardCheck },
   { href: "/saatguternte/gruppen", label: "Gruppen", icon: UsersRound },
   { href: "/saatguternte/vertrag", label: "Verträge", icon: FileText },
+  { href: "/saatguternte/baumschulen", label: "Baumschulen", icon: TreeDeciduous },
   { href: "/saatguternte/crawler", label: "Crawler", icon: Bot },
 ]
 
