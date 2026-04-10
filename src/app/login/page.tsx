@@ -269,7 +269,9 @@ export default function LoginPage() {
 
             {!requiresTwoFactor && (
               <p className="text-center text-xs text-zinc-600 mt-3">
-                Passwort vergessen? Kontaktiere den Administrator.
+                <a href="/forgot-password" className="hover:text-zinc-400 underline transition-colors">
+                  Passwort vergessen?
+                </a>
               </p>
             )}
           </form>

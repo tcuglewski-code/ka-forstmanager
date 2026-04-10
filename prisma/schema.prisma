@@ -71,6 +71,15 @@ model MagicToken {
   createdAt DateTime @default(now())
 }
 
+// Password-Reset Token (Sprint PW-Reset)
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
 model Mitarbeiter {
   id                        String                     @id @default(cuid())
   userId                    String?                    @unique
