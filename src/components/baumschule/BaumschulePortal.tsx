@@ -29,20 +29,6 @@ interface Preisliste {
   updatedAt: string
 }
 
-interface Bestellung {
-  id: string
-  baumschuleId: string
-  wpOrderId: number | null
-  baumart: string
-  menge: number
-  preis: number | null
-  einheit: string
-  status: string
-  notizen: string | null
-  createdAt: string
-  updatedAt: string
-}
-
 interface Ernteanfrage {
   id: string
   baumschuleId: string
@@ -59,18 +45,17 @@ interface Ernteanfrage {
 interface Props {
   baumschule: Baumschule
   sortiment: Preisliste[]
-  bestellungen: Bestellung[]
   ernteanfragen: Ernteanfrage[]
 }
 
-type Tab = "sortiment" | "bestellungen" | "saatguternte"
+type Tab = "sortiment" | "pflanzanfragen" | "saatguternte"
 
-export function BaumschulePortal({ baumschule, sortiment, bestellungen, ernteanfragen }: Props) {
+export function BaumschulePortal({ baumschule, sortiment, ernteanfragen }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("sortiment")
 
   const tabs: Array<{ key: Tab; label: string; count?: number; hidden?: boolean }> = [
     { key: "sortiment", label: "Mein Sortiment", count: sortiment.length },
-    { key: "bestellungen", label: "Bestellungen", count: bestellungen.filter((b) => b.status === "neu").length },
+    { key: "pflanzanfragen", label: "Pflanzanfragen" },
     { key: "saatguternte", label: "Saatguternte", count: ernteanfragen.length, hidden: ernteanfragen.length === 0 },
   ]
 
@@ -126,8 +111,8 @@ export function BaumschulePortal({ baumschule, sortiment, bestellungen, ernteanf
       {/* Content */}
       <main className="max-w-6xl mx-auto px-4 py-6">
         {activeTab === "sortiment" && <SortimentEditor baumschuleId={baumschule.id} initialSortiment={sortiment} />}
-        {activeTab === "bestellungen" && (
-          <BestellungenListe baumschuleId={baumschule.id} initialBestellungen={bestellungen} />
+        {activeTab === "pflanzanfragen" && (
+          <BestellungenListe baumschuleId={baumschule.id} />
         )}
         {activeTab === "saatguternte" && <SaatgutErnteStatus ernteanfragen={ernteanfragen} />}
       </main>

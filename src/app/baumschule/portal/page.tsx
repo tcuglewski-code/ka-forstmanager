@@ -24,14 +24,10 @@ export default async function BaumschulePortalPage() {
     redirect("/baumschule/login")
   }
 
-  const [sortiment, bestellungen, ernteanfragen] = await Promise.all([
+  const [sortiment, ernteanfragen] = await Promise.all([
     prisma.baumschulPreisliste.findMany({
       where: { baumschuleId: baumschule.id },
       orderBy: [{ verfuegbar: "desc" }, { baumart: "asc" }],
-    }),
-    prisma.baumschulBestellung.findMany({
-      where: { baumschuleId: baumschule.id },
-      orderBy: { createdAt: "desc" },
     }),
     prisma.ernteanfrage.findMany({
       where: { baumschuleId: baumschule.id },
@@ -43,7 +39,6 @@ export default async function BaumschulePortalPage() {
     <BaumschulePortal
       baumschule={JSON.parse(JSON.stringify(baumschule))}
       sortiment={JSON.parse(JSON.stringify(sortiment))}
-      bestellungen={JSON.parse(JSON.stringify(bestellungen))}
       ernteanfragen={JSON.parse(JSON.stringify(ernteanfragen))}
     />
   )
