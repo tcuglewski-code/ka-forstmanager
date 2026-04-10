@@ -1352,9 +1352,10 @@ model Baumschule {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  anfragen    Ernteanfrage[]
-  preislisten BaumschulPreisliste[]
-  user        User?                 @relation(fields: [userId], references: [id])
+  anfragen     Ernteanfrage[]
+  preislisten  BaumschulPreisliste[]
+  bestellungen BaumschulBestellung[]
+  user         User?                 @relation(fields: [userId], references: [id])
 }
 
 // Sprint AI: Preislistenverwaltung für Baumschulen
@@ -1367,6 +1368,23 @@ model BaumschulPreisliste {
   einheit      String     @default("kg") // kg, Stück, Bündel
   saison       String? // z.B. "2025", "2025/2026"
   aktiv        Boolean    @default(true)
+  notizen      String?
+  menge        Int?       // Verfügbare Stückzahl/Menge
+  verfuegbar   Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model BaumschulBestellung {
+  id           String     @id @default(cuid())
+  baumschuleId String
+  baumschule   Baumschule @relation(fields: [baumschuleId], references: [id])
+  wpOrderId    Int?       // WooCommerce Order ID
+  baumart      String
+  menge        Int
+  preis        Float?
+  einheit      String     @default("Stück")
+  status       String     @default("neu") // neu, bestaetigt, geliefert, storniert
   notizen      String?
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt

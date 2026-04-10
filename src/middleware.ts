@@ -52,7 +52,7 @@ export default auth((req) => {
 
   const isLoggedIn = !!req.auth
   const isLoginPage = pathname === "/login"
-  const isPublicPage = pathname === "/login" || pathname === "/forgot-password" || pathname === "/reset-password"
+  const isPublicPage = pathname === "/login" || pathname === "/forgot-password" || pathname === "/reset-password" || pathname.startsWith("/baumschule/login")
 
   if (!isLoggedIn && !isPublicPage) {
     return NextResponse.redirect(new URL("/login", req.url))
@@ -60,6 +60,15 @@ export default auth((req) => {
   if (isLoggedIn && isLoginPage) {
     return NextResponse.redirect(new URL("/dashboard", req.url))
   }
+
+  // Baumschule-Portal: nur baumschule oder admin Rolle
+  if (pathname.startsWith("/baumschule/portal") && isLoggedIn) {
+    const role = (req.auth as any)?.user?.role
+    if (role !== "baumschule" && role !== "ka_admin") {
+      return NextResponse.redirect(new URL("/dashboard", req.url))
+    }
+  }
+
   return NextResponse.next()
 })
 
