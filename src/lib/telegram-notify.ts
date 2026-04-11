@@ -7,8 +7,8 @@
  * B) KA-Bot-Kanal: Direkte Telegram-API → Kein LLM (DIESES SYSTEM)
  */
 
-const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN_KA
-const CHAT_ID = process.env.TELEGRAM_CHAT_ID_KA
+const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN_KA || '8788038095:AAF2h8l8U02HeaPvjvVl6HJ3gPfxM9ldNuY'
+const CHAT_ID = process.env.TELEGRAM_CHAT_ID_KA || ''
 
 export type EventType =
   | 'auftrag_erstellt'
