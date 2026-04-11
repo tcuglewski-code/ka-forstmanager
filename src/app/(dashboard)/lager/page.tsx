@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { Plus, X, QrCode, Printer, Package, ShoppingCart, Truck, Users, Search, Filter, ChevronDown } from "lucide-react"
+import { Plus, X, QrCode, Printer, Package, ShoppingCart, Truck, Users, Search, Filter, ChevronDown, Pencil } from "lucide-react"
 import QRCode from "react-qr-code"
 import { toast } from "sonner"
 import { BestandsAmpel } from "@/components/lager/BestandsAmpel"
@@ -278,6 +278,120 @@ function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onC
   )
 }
 
+function EditArtikelModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onClose: () => void; onSave: () => void }) {
+  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({
+    name: artikel.name,
+    kategorie: artikel.kategorie,
+    einheit: artikel.einheit,
+    mindestbestand: String(artikel.mindestbestand),
+    lagerort: artikel.lagerort ?? "",
+    artikelnummer: artikel.artikelnummer ?? "",
+    einkaufspreis: artikel.einkaufspreis != null ? String(artikel.einkaufspreis) : "",
+    verkaufspreis: artikel.verkaufspreis != null ? String(artikel.verkaufspreis) : "",
+  })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/lager/${artikel.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          kategorie: form.kategorie,
+          einheit: form.einheit,
+          mindestbestand: form.mindestbestand,
+          lagerort: form.lagerort || null,
+          artikelnummer: form.artikelnummer || null,
+          einkaufspreis: form.einkaufspreis ? parseFloat(form.einkaufspreis) : null,
+          verkaufspreis: form.verkaufspreis ? parseFloat(form.verkaufspreis) : null,
+        }),
+      })
+      if (!res.ok) throw new Error()
+      toast.success("Artikel aktualisiert")
+    } catch {
+      toast.error("Fehler beim Speichern")
+    }
+    setLoading(false)
+    onSave()
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md">
+        <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
+          <h2 className="text-lg font-semibold text-white">Artikel bearbeiten</h2>
+          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-xs text-zinc-400 mb-1">Name *</label>
+            <input type="text" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Kategorie</label>
+              <select value={form.kategorie} onChange={e => setForm(f => ({ ...f, kategorie: e.target.value }))}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                {["material", "werkzeug", "pflanzgut", "schutz", "chemie", "sonstiges"].map(k => <option key={k} value={k}>{k}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Einheit</label>
+              <select value={form.einheit} onChange={e => setForm(f => ({ ...f, einheit: e.target.value }))}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                {["Stück", "kg", "g", "l", "ml", "m", "m²", "m³", "Paar", "Packung", "Karton", "Rolle"].map(e => (
+                  <option key={e} value={e}>{e}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Mindestbestand</label>
+              <input type="number" value={form.mindestbestand} onChange={e => setForm(f => ({ ...f, mindestbestand: e.target.value }))}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Lagerort</label>
+              <input type="text" value={form.lagerort} onChange={e => setForm(f => ({ ...f, lagerort: e.target.value }))}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Einkaufspreis (€)</label>
+              <input type="number" step="0.01" value={form.einkaufspreis} onChange={e => setForm(f => ({ ...f, einkaufspreis: e.target.value }))}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Verkaufspreis (€)</label>
+              <input type="number" step="0.01" value={form.verkaufspreis} onChange={e => setForm(f => ({ ...f, verkaufspreis: e.target.value }))}
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs text-zinc-400 mb-1">Artikelnummer</label>
+            <input type="text" value={form.artikelnummer} onChange={e => setForm(f => ({ ...f, artikelnummer: e.target.value }))}
+              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500" />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white">Abbrechen</button>
+            <button type="submit" disabled={loading || !form.name}
+              className="flex-1 px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 transition-all"
+              style={{ backgroundColor: GOLD, color: WALDGRUEN }}>
+              {loading ? "Speichern..." : "Speichern"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 // ============== MAIN COMPONENT ==============
 function LagerPageInner() {
   const searchParams = useSearchParams()
@@ -294,6 +408,7 @@ function LagerPageInner() {
   
   const [showArtikelModal, setShowArtikelModal] = useState(false)
   const [buchungArtikel, setBuchungArtikel] = useState<LagerArtikel | null>(null)
+  const [editArtikel, setEditArtikel] = useState<LagerArtikel | null>(null)
   const [qrArtikel, setQrArtikel] = useState<LagerArtikel | null>(null)
   
   const [filterKategorie, setFilterKategorie] = useState("")
@@ -478,6 +593,13 @@ function LagerPageInner() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1 justify-end">
                           <button
+                            onClick={() => setEditArtikel(a)}
+                            className="p-1.5 rounded-lg text-zinc-500 hover:text-blue-400 hover:bg-[#2a2a2a] transition-all"
+                            title="Bearbeiten"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button
                             onClick={() => setQrArtikel(a)}
                             className="p-1.5 rounded-lg text-zinc-500 hover:text-emerald-400 hover:bg-[#2a2a2a] transition-all"
                           >
@@ -608,6 +730,9 @@ function LagerPageInner() {
       )}
       {buchungArtikel && (
         <BuchungModal artikel={buchungArtikel} onClose={() => setBuchungArtikel(null)} onSave={() => { setBuchungArtikel(null); load() }} />
+      )}
+      {editArtikel && (
+        <EditArtikelModal artikel={editArtikel} onClose={() => setEditArtikel(null)} onSave={() => { setEditArtikel(null); load() }} />
       )}
       {qrArtikel && (
         <QrPrintModal artikel={qrArtikel} onClose={() => setQrArtikel(null)} />
