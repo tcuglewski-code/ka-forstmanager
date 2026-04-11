@@ -11,7 +11,8 @@
     "db:seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
     "db:seed-demo": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-demo.ts",
     "db:studio": "prisma studio",
-    "seed:test": "tsx prisma/seed-test.ts"
+    "seed:test": "tsx prisma/seed-test.ts",
+    "test:e2e": "playwright test tests/e2e/"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",
