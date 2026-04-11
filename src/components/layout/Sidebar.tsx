@@ -65,6 +65,7 @@ const navItems = [
   { href: "/dokumente", label: "Dokumente", icon: FileText },
   { href: "/protokolle", label: "Protokolle", icon: ScrollText, tourId: "protokolle" },
   { href: "/abnahmen", label: "Abnahmen", icon: CheckSquare, tourId: "abnahmen" },
+  { href: "/saatguternte/baumschulen", label: "Baumschulen", icon: TreeDeciduous },
   { href: "/kontakte", label: "Kontakte", icon: MapPin },
   { href: "/wissensbank", label: "Wissensbank", icon: BookOpen },
   { href: "/foerderung", label: "Förderberater", icon: Leaf },

@@ -1131,24 +1131,24 @@ export default function ProfilPage() {
 
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-zinc-500">Eingeloggt als</span>
+            <span className="text-zinc-400">Eingeloggt als</span>
             <span className="text-white">{profile?.email}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-zinc-500">Rolle</span>
+            <span className="text-zinc-400">Rolle</span>
             <span className="text-emerald-400">{getRoleLabel(profile?.role)}</span>
           </div>
           {profile?.lastLoginAt && (
             <div className="flex justify-between">
-              <span className="text-zinc-500">Letzte Aktivität</span>
-              <span className="text-zinc-400">
+              <span className="text-zinc-400">Letzte Aktivität</span>
+              <span className="text-zinc-300">
                 {new Date(profile.lastLoginAt).toLocaleString("de-DE")}
               </span>
             </div>
           )}
           <div className="flex justify-between">
-            <span className="text-zinc-500">Konto erstellt</span>
-            <span className="text-zinc-400">
+            <span className="text-zinc-400">Konto erstellt</span>
+            <span className="text-zinc-300">
               {profile?.createdAt && new Date(profile.createdAt).toLocaleDateString("de-DE")}
             </span>
           </div>
