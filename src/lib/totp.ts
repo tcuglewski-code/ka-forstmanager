@@ -17,7 +17,7 @@ const PERIOD = 30
 export function generateSecret(): string {
   // 20 Bytes = 160 Bits, Standard für TOTP
   const bytes = crypto.randomBytes(20)
-  return OTPAuth.Secret.fromUInt8Array(bytes).base32
+  return new OTPAuth.Secret({ buffer: bytes.buffer }).base32
 }
 
 /**
