@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { isAdmin } from "@/lib/permissions"
 // Sprint FW (E5): Email bei Freigabe
 import { sendEmail, rechnungEmailHtml } from "@/lib/email"
+import { sendKANotification } from "@/lib/telegram-notify"
 
 // Sprint GB-01: GoBD-Compliance-Konstanten
 const GOBD_LOCK_HOURS = 24 // Rechnungen werden nach 24h automatisch gesperrt
@@ -371,6 +372,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }).catch(err => console.error("[Rechnung Email Fehler]", err))
   }
 
+  // KA-Bot: Zahlung eingegangen (fire-and-forget)
+  if (body.status === "bezahlt") {
+    sendKANotification({
+      event: "zahlung_eingegangen",
+      data: { nummer: rechnung.nummer, betrag: String(rechnung.betrag) },
+    }).catch(() => {})
+  }
+
   return NextResponse.json({
     ...rechnung,
     isLocked: isRechnungLocked(rechnung),
@@ -544,6 +553,14 @@ export async function PUT(
       change.new,
       req
     )
+  }
+
+  // KA-Bot: Zahlung eingegangen (fire-and-forget)
+  if (body.status === "bezahlt" && aktuelleRechnung.status !== "bezahlt") {
+    sendKANotification({
+      event: "zahlung_eingegangen",
+      data: { nummer: aktuelleRechnung.nummer, betrag: String(bruttoBetrag) },
+    }).catch(() => {})
   }
 
   return NextResponse.json({

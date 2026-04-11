@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { getAppUser } from "@/lib/app-auth"
 import { NextRequest, NextResponse } from "next/server"
+import { sendKANotification } from "@/lib/telegram-notify"
 
 export async function POST(req: NextRequest) {
   const appUser = await getAppUser(req)
@@ -19,5 +20,11 @@ export async function POST(req: NextRequest) {
       genehmigt: false,
     },
   })
+  // KA-Bot: Mitarbeiter eingestempelt (fire-and-forget)
+  sendKANotification({
+    event: "mitarbeiter_eingestempelt",
+    data: { name: String(appUser.email ?? "Mitarbeiter"), ort: "App" },
+  }).catch(() => {})
+
   return NextResponse.json(entry, { status: 201 })
 }

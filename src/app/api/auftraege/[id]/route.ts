@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth"
 import { emailService } from "@/lib/email"
 // Telegram-Benachrichtigung bei Status-Änderung
 import { notifyAuftragStatusChange } from "@/lib/telegram"
+import { sendKANotification } from "@/lib/telegram-notify"
 // KT-1: Bidirektionaler WP-Sync
 import { wpSyncEngine } from "@/lib/sync/wp-sync"
 
@@ -125,6 +126,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         body.status,
         auftragVorher.status ?? undefined
       ).catch((err) => console.error("[Telegram] notifyAuftragStatusChange fehlgeschlagen:", err))
+
+      // KA-Bot: Event bei Abschluss (fire-and-forget)
+      if (body.status === "abgeschlossen") {
+        sendKANotification({
+          event: "auftrag_abgeschlossen",
+          data: { name: auftrag.titel, mitarbeiter: (session?.user as { name?: string })?.name ?? "System" },
+        }).catch(() => {})
+      }
 
       // KT-1: Status-Rückkanal zu WordPress (fire-and-forget)
       wpSyncEngine.pushStatusToWP({

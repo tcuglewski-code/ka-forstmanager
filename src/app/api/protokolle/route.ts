@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
+import { sendKANotification } from "@/lib/telegram-notify"
 
 export async function GET(req: NextRequest) {
   const session = await auth()
@@ -57,5 +58,11 @@ export async function POST(req: NextRequest) {
     },
     include: { auftrag: { select: { id: true, titel: true } } },
   })
+  // KA-Bot: Protokoll eingereicht (fire-and-forget)
+  sendKANotification({
+    event: "protokoll_eingereicht",
+    data: { auftrag: proto.auftrag?.titel ?? "—", ersteller: proto.ersteller ?? "Unbekannt" },
+  }).catch(() => {})
+
   return NextResponse.json(proto, { status: 201 })
 }
