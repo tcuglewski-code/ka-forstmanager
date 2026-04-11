@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 // Sprint AG: E-Mail-Benachrichtigung beim Erstellen eines Auftrags
 import { emailService } from "@/lib/email"
+import { sendKANotification } from "@/lib/telegram-notify"
 import { z } from "zod"
 
 // KC-1: Zod Schema für Auftrags-Validierung
@@ -199,6 +200,16 @@ export async function POST(req: NextRequest) {
       flaeche_ha: auftrag.flaeche_ha ?? undefined,
       standort: auftrag.standort ?? undefined,
     }).catch((err) => console.error("[Email] auftragErstellt fehlgeschlagen:", err))
+
+    // Telegram-Benachrichtigung (direkt, kein LLM)
+    sendKANotification({
+      event: 'auftrag_erstellt',
+      data: {
+        name: auftrag.titel,
+        kunde: auftrag.waldbesitzer ?? 'Unbekannt',
+        datum: new Date().toLocaleDateString('de-DE'),
+      },
+    }).catch((err) => console.error("[TG-KA] Notification fehlgeschlagen:", err))
 
     return NextResponse.json(auftrag, { status: 201 })
   } catch (error) {

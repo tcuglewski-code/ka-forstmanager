@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import { isAdmin, isAdminOrGF } from "@/lib/permissions"
+import { sendKANotification } from "@/lib/telegram-notify"
 
 // Sprint GB-01: GoBD-Compliance-Konstanten
 const GOBD_LOCK_HOURS = 24 // Rechnungen werden nach 24h automatisch gesperrt
@@ -152,6 +153,15 @@ export async function POST(req: NextRequest) {
     // Audit-Log-Fehler blockieren nicht die Erstellung
   }
   
+  // Telegram-Benachrichtigung (direkt, kein LLM)
+  sendKANotification({
+    event: 'rechnung_erstellt',
+    data: {
+      nummer: rechnung.nummer,
+      betrag: rechnung.betrag.toFixed(2),
+    },
+  }).catch((err) => console.error("[TG-KA] Notification fehlgeschlagen:", err))
+
   return NextResponse.json({
     ...rechnung,
     isLocked: false,
