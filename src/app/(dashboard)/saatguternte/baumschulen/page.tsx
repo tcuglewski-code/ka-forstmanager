@@ -63,7 +63,7 @@ export default function BaumschulenPage() {
       const r = await fetch(`/api/baumschulen/${id}/login-link`, { method: "POST" })
       if (!r.ok) throw new Error(`HTTP ${r.status}`)
       const d = await r.json()
-      if (d.loginUrl) setLinkResult({ id, link: d.loginUrl })
+      if (d.loginLink) setLinkResult({ id, link: d.loginLink })
     } catch (e) {
       alert("Fehler beim Generieren des Login-Links")
     } finally {
