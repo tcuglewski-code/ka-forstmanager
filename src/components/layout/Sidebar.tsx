@@ -43,6 +43,7 @@ import {
   Command,
   Plus,
   TreeDeciduous,
+  MessageCircle,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { resetAndStartTour } from "@/components/tour/ForstManagerTour"
@@ -74,6 +75,7 @@ const navItems = [
   { href: "/reports", label: "Reports", icon: BarChart3, tourId: "reports" },
   { href: "/jahresuebersicht", label: "Jahresübersicht", icon: BarChart3 },
   { href: "/einstellungen", label: "Einstellungen", icon: Settings, tourId: "einstellungen" },
+  { href: "/einstellungen/telegram", label: "Telegram", icon: MessageCircle },
 ]
 
 const saatgutSubItems = [

@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react"
 import {
   ArrowLeft, ExternalLink, Save, Phone, Mail, User, TreePine, MapPin, Calendar,
-  FileText, Shield, Sprout, Scissors, Package, Layers, Info, BadgeCheck, ChevronRight, Camera, CheckSquare, Plus
+  FileText, Shield, Sprout, Scissors, Package, Layers, Info, BadgeCheck, ChevronRight, Camera, CheckSquare, Plus,
+  MessageCircle
 } from "lucide-react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
@@ -91,6 +92,8 @@ interface Auftrag {
   protokolle?: { id: string; datum: string; gepflanzt?: number | null; witterung?: string | null; ersteller?: string | null; fotos?: string | null }[]
   abnahmen?: { id: string; datum: string; status: string; notizen?: string | null }[]
   rechnungen?: { id: string; nummer: string; betrag: number; status: string }[]
+  telegramChatId?: string | null
+  nummer?: string | null
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -803,6 +806,16 @@ export default function AuftragDetailPage() {
               <span className={`px-2 py-0.5 rounded-full text-xs border ${statusObj.color}`}>
                 {statusObj.label}
               </span>
+              {/* Telegram Badge */}
+              {auftrag.telegramChatId ? (
+                <span className="px-2 py-0.5 rounded-full text-xs bg-blue-500/20 text-blue-400 border border-blue-500/30 flex items-center gap-1" title={`Chat-ID: ${auftrag.telegramChatId}`}>
+                  <MessageCircle className="w-3 h-3" /> Telegram verbunden
+                </span>
+              ) : (
+                <span className="px-2 py-0.5 rounded-full text-xs bg-zinc-700/30 text-zinc-500 border border-zinc-600/30 flex items-center gap-1" title={`Waldbesitzer kann @KochAufforstungBot /anmelden ${auftrag.nummer ?? auftrag.id} schreiben`}>
+                  <MessageCircle className="w-3 h-3" /> Telegram nicht verbunden
+                </span>
+              )}
             </div>
             <p className="text-zinc-500 text-xs">Erstellt: {new Date(auftrag.createdAt).toLocaleDateString("de-DE")}</p>
           </div>

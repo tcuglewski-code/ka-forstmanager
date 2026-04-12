@@ -1,10 +1,10 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
-import { MessageCircle, RefreshCw, Copy, ExternalLink, Loader2 } from "lucide-react"
+import { MessageCircle, RefreshCw, Copy, ExternalLink, Loader2, Send, Trash2, Users } from "lucide-react"
 import { toast } from "sonner"
 
-const BOT_USERNAME = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME ?? "ForstManagerBot"
+const BOT_USERNAME = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME ?? "KochAufforstungBot"
 
 interface TelegramRegistrierung {
   id: string
@@ -28,6 +28,8 @@ export default function TelegramEinstellungenPage() {
   const [loading, setLoading] = useState(true)
   const [selectedAuftragId, setSelectedAuftragId] = useState("")
   const [copied, setCopied] = useState(false)
+  const [sendingTest, setSendingTest] = useState(false)
+  const [deactivatingId, setDeactivatingId] = useState<string | null>(null)
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -36,12 +38,12 @@ export default function TelegramEinstellungenPage() {
         fetch("/api/telegram/registrierungen"),
         fetch("/api/auftraege?limit=100"),
       ])
-      
+
       if (regRes.ok) {
         const data = await regRes.json()
         setRegistrierungen(data)
       }
-      
+
       if (auftRes.ok) {
         const data = await auftRes.json()
         setAuftraege(data.auftraege ?? data)
@@ -67,6 +69,46 @@ export default function TelegramEinstellungenPage() {
     setCopied(true)
     toast.success("Link kopiert!")
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  async function sendTestMessage(chatId?: string) {
+    setSendingTest(true)
+    try {
+      const res = await fetch("/api/telegram/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(chatId ? { chatId } : {}),
+      })
+      if (res.ok) {
+        toast.success(chatId ? "Testnachricht gesendet!" : "Testnachricht an interne Gruppe gesendet!")
+      } else {
+        const data = await res.json()
+        toast.error(data.error ?? "Fehler beim Senden")
+      }
+    } catch {
+      toast.error("Fehler beim Senden der Testnachricht")
+    } finally {
+      setSendingTest(false)
+    }
+  }
+
+  async function deactivateRegistrierung(id: string) {
+    setDeactivatingId(id)
+    try {
+      const res = await fetch(`/api/telegram/registrierungen/${id}`, { method: "DELETE" })
+      if (res.ok) {
+        toast.success("Registrierung deaktiviert")
+        setRegistrierungen(prev =>
+          prev.map(r => r.id === id ? { ...r, aktiv: false } : r)
+        )
+      } else {
+        toast.error("Fehler beim Deaktivieren")
+      }
+    } catch {
+      toast.error("Fehler beim Deaktivieren")
+    } finally {
+      setDeactivatingId(null)
+    }
   }
 
   function formatDate(dateString: string): string {
@@ -101,6 +143,36 @@ export default function TelegramEinstellungenPage() {
         </button>
       </div>
 
+      {/* Interne Gruppe */}
+      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 mb-6">
+        <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
+          <Users className="w-4 h-4 text-blue-400" />
+          Interne Gruppe
+        </h3>
+        <p className="text-sm text-zinc-400 mb-4">
+          Interne Telegram-Benachrichtigungen (neue Aufträge, Abschlüsse, etc.) werden an die konfigurierte Gruppen-Chat-ID gesendet.
+        </p>
+        <div className="flex items-center gap-4 mb-4">
+          <span className="text-sm text-zinc-400">TELEGRAM_CHAT_ID_KA:</span>
+          <code className="bg-[#111] px-2 py-1 rounded text-zinc-300 text-sm">Über Umgebungsvariable konfiguriert</code>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => sendTestMessage()}
+            disabled={sendingTest}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-500/20 border border-blue-500/40 text-blue-400 rounded-lg text-sm hover:bg-blue-500/30 disabled:opacity-50"
+          >
+            <Send className="w-4 h-4" />
+            {sendingTest ? "Sende..." : "Testnachricht an Gruppe"}
+          </button>
+        </div>
+        <div className="mt-4 p-3 bg-[#111] rounded-lg border border-[#333] text-sm text-zinc-500">
+          💡 <strong>Chat-ID herausfinden:</strong> Bot zur Gruppe hinzufügen, eine Nachricht senden, dann{" "}
+          <code className="text-zinc-400">https://api.telegram.org/bot&lt;TOKEN&gt;/getUpdates</code>{" "}
+          aufrufen und die <code className="text-zinc-400">chat.id</code> aus dem Response ablesen (negative Zahl für Gruppen).
+        </div>
+      </div>
+
       {/* Bot Info Card */}
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 mb-6">
         <h3 className="font-semibold text-white mb-3">Bot-Konfiguration</h3>
@@ -124,7 +196,7 @@ export default function TelegramEinstellungenPage() {
           <p className="text-sm text-zinc-500 mb-3">
             Generieren Sie einen Link für Kunden. Beim Klick wird der Bot geöffnet und der Kunde automatisch für Updates registriert.
           </p>
-          
+
           <div className="flex gap-2 mb-3">
             <select
               className="flex-1 max-w-md bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white"
@@ -159,13 +231,13 @@ export default function TelegramEinstellungenPage() {
         </div>
       </div>
 
-      {/* Registrierungen Liste */}
+      {/* Waldbesitzer Registrierungen */}
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
         <div className="px-6 py-4 border-b border-[#2a2a2a]">
-          <h3 className="font-semibold text-white">Registrierte Nutzer</h3>
+          <h3 className="font-semibold text-white">Waldbesitzer-Übersicht</h3>
           <p className="text-xs text-zinc-500 mt-1">Kunden, die Telegram-Benachrichtigungen aktiviert haben</p>
         </div>
-        
+
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-6 h-6 text-emerald-400 animate-spin" />
@@ -183,6 +255,7 @@ export default function TelegramEinstellungenPage() {
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Auftrag</th>
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Status</th>
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Registriert am</th>
+                <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Aktionen</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#2a2a2a]">
@@ -212,8 +285,8 @@ export default function TelegramEinstellungenPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-0.5 rounded-full text-xs ${
-                        reg.aktiv 
-                          ? "bg-emerald-500/20 text-emerald-400" 
+                        reg.aktiv
+                          ? "bg-emerald-500/20 text-emerald-400"
                           : "bg-zinc-700/50 text-zinc-400"
                       }`}>
                         {reg.aktiv ? "Aktiv" : "Inaktiv"}
@@ -221,6 +294,28 @@ export default function TelegramEinstellungenPage() {
                     </td>
                     <td className="px-6 py-4 text-sm text-zinc-500">
                       {formatDate(reg.createdAt)}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => sendTestMessage(reg.chatId)}
+                          disabled={sendingTest || !reg.aktiv}
+                          title="Testnachricht senden"
+                          className="p-1.5 rounded hover:bg-[#222] text-zinc-400 hover:text-blue-400 disabled:opacity-30"
+                        >
+                          <Send className="w-4 h-4" />
+                        </button>
+                        {reg.aktiv && (
+                          <button
+                            onClick={() => deactivateRegistrierung(reg.id)}
+                            disabled={deactivatingId === reg.id}
+                            title="Deaktivieren"
+                            className="p-1.5 rounded hover:bg-[#222] text-zinc-400 hover:text-red-400 disabled:opacity-30"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 )
@@ -237,9 +332,10 @@ export default function TelegramEinstellungenPage() {
           <li><strong className="text-white">Deep-Link generieren:</strong> Wählen Sie oben einen Auftrag aus und kopieren Sie den Link.</li>
           <li><strong className="text-white">Link an Kunden senden:</strong> Per E-Mail, SMS oder auf der Rechnung.</li>
           <li><strong className="text-white">Kunde klickt den Link:</strong> Der Telegram-Bot wird geöffnet und der Kunde automatisch registriert.</li>
+          <li><strong className="text-white">Alternativ:</strong> Kunde kann auch direkt <code className="bg-[#111] px-1 rounded text-zinc-300">/anmelden AU-2025-0001</code> im Bot eingeben.</li>
           <li><strong className="text-white">Automatische Updates:</strong> Bei Statusänderungen erhält der Kunde eine Telegram-Nachricht.</li>
         </ol>
-        
+
         <div className="mt-4 p-3 bg-[#111] rounded-lg border border-[#333] text-sm text-zinc-500">
           💡 <strong>Tipp:</strong> Sie können den Link auch als QR-Code auf Rechnungen drucken. Verwenden Sie dafür einen QR-Code-Generator mit dem Deep-Link.
         </div>
