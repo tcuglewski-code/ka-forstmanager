@@ -6,7 +6,19 @@ export async function GET() {
   try {
     const baumschulen = await prisma.baumschule.findMany({
       orderBy: { name: "asc" },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        ort: true,
+        bundesland: true,
+        ansprechpartner: true,
+        email: true,
+        telefon: true,
+        notizen: true,
+        aktiv: true,
+        userId: true,
+        createdAt: true,
+        updatedAt: true,
         _count: { select: { anfragen: true } },
       },
     })
