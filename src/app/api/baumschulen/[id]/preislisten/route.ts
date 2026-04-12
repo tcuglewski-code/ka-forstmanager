@@ -15,7 +15,6 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
   // Baumschule existiert?
   const baumschule = await prisma.baumschule.findUnique({
     where: { id: baumschuleId },
-    select: { id: true, name: true },
   })
   if (!baumschule) {
     return NextResponse.json({ error: "Baumschule nicht gefunden" }, { status: 404 })
