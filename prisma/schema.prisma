@@ -1386,6 +1386,13 @@ model BaumschulBestellung {
   einheit      String     @default("Stück")
   status       String     @default("neu") // neu, bestaetigt, geliefert, storniert
   notizen      String?
+  // Website-Anfrage Felder
+  kontaktName    String?
+  kontaktEmail   String?
+  kontaktTelefon String?
+  flaecheHa      Float?
+  pflanzenArten  Json?      // Array von Pflanzenarten bei Website-Anfragen
+  quelle         String?    // z.B. "website-wizard", "intern"
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }
