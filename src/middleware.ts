@@ -69,6 +69,27 @@ export default auth((req) => {
     }
   }
 
+  // RBAC: Rollenbasierte Route-Beschränkungen
+  if (isLoggedIn) {
+    const role = (req.auth as any)?.user?.role as string | undefined
+    const rbacRules: Record<string, string[]> = {
+      "/lohn": ["admin", "ka_admin"],
+      "/vorschuesse": ["admin", "ka_admin"],
+      "/fuhrpark": ["admin", "ka_admin"],
+      "/rechnungen": ["admin", "ka_admin", "ka_gruppenführer"],
+      "/einstellungen": ["admin"],
+      "/admin": ["admin"],
+    }
+
+    for (const [route, allowedRoles] of Object.entries(rbacRules)) {
+      if (pathname === route || pathname.startsWith(route + "/")) {
+        if (!role || !allowedRoles.includes(role)) {
+          return NextResponse.redirect(new URL("/dashboard", req.url))
+        }
+      }
+    }
+  }
+
   return NextResponse.next()
 })
 

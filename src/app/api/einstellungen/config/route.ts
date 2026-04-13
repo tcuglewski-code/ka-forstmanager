@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 
 export async function GET() {
+  const session = await auth()
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
   // Standard-Werte (Sprint Q): werden angelegt falls noch nicht in DB
   const defaults: Record<string, string> = {
     vollkosten_pro_stunde: "43.50",      // Was der Kunde zahlt (Lohn + Steuern + Versicherung)

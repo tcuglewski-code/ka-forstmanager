@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 
 export async function GET() {
+  const session = await auth()
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
   const gruppen = await prisma.gruppe.findMany({
     include: {
       saison: { select: { id: true, name: true } },
