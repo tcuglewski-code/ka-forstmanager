@@ -2,10 +2,12 @@
  * Next.js Middleware (Sprint DA-29 + SC-02)
  * - Protokolliert alle Zugriffe auf personenbezogene Daten
  * - Rate-Limiting für API-Routen (60 req/min) und Auth-Routen (5 req/min)
+ * - Upstash Redis Rate-Limiting für Login-Endpoint (5 req/15min)
  */
 
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { loginRateLimit } from '@/lib/rate-limit'
 
 // ============================================
 // Rate Limiting (SC-02)
@@ -172,6 +174,28 @@ function getActionFromMethod(method: string): string {
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const ip = getClientIP(request)
+
+  // 0. Upstash Rate-Limiting für Login (5 Versuche / 15 Min)
+  if (
+    pathname === '/api/auth/callback/credentials' &&
+    request.method === 'POST'
+  ) {
+    const { success, remaining, reset } = await loginRateLimit.limit(ip)
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Zu viele Versuche. Bitte 15 Minuten warten.' },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': '900',
+            'X-RateLimit-Limit': '5',
+            'X-RateLimit-Remaining': String(remaining),
+            'X-RateLimit-Reset': String(reset),
+          },
+        }
+      )
+    }
+  }
 
   // 1. Rate Limiting prüfen (nur für API-Routen)
   if (pathname.startsWith('/api/')) {
