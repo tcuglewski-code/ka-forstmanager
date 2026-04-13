@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { sanitizeStrings } from "@/lib/sanitize"
 
 export async function GET() {
   const session = await auth()
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
-    const data = await req.json()
+    const data = sanitizeStrings(await req.json())
     const saison = await prisma.saison.create({ data })
     return NextResponse.json(saison, { status: 201 })
   } catch {

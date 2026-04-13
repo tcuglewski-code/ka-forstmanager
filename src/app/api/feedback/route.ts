@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { sendTelegramNotification } from "@/lib/telegram"
+import { stripHtml } from "@/lib/sanitize"
 
 const MC_API_URL = "https://mission-control-tawny-omega.vercel.app/api/tasks"
 const MC_BYPASS_TOKEN = "rpFNEmGS7CB0FunapN20rLGDCG0foMzx"
@@ -52,13 +53,13 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // 1. Save to database
+    // 1. Save to database (sanitize user input)
     const feedback = await prisma.feedbackEintrag.create({
       data: {
         typ: body.typ,
-        text: body.text,
-        seite: body.seite ?? null,
-        nutzer: body.nutzer ?? null,
+        text: stripHtml(body.text),
+        seite: stripHtml(body.seite) || null,
+        nutzer: stripHtml(body.nutzer) || null,
       },
     })
 

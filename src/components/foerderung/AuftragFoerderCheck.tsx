@@ -232,11 +232,18 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
         <div className="space-y-4">
           {/* KI-Synthese */}
           <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <CheckCircle className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs font-medium text-emerald-400 uppercase tracking-wide">
-                {result.meta.ki_synthese ? "KI-Analyse" : "Automatische Analyse"}
-              </span>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-medium text-emerald-400 uppercase tracking-wide">
+                  {result.meta.ki_synthese ? "KI-Analyse" : "Automatische Analyse"}
+                </span>
+              </div>
+              {result.meta.ki_synthese && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-500/10 text-blue-400 text-xs font-medium rounded-full border border-blue-500/20">
+                  KI-generiert
+                </span>
+              )}
             </div>
             <p className="text-sm text-zinc-300 whitespace-pre-line leading-relaxed">
               {result.synthese}

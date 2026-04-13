@@ -341,10 +341,15 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
       {/* KI-Empfehlungen anzeigen */}
       {kiEmpfehlungen.length > 0 && (
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
-          <h3 className="text-sm font-medium text-white flex items-center gap-2 mb-4">
-            <Sparkles className="w-4 h-4 text-[#C5A55A]" />
-            KI-Empfehlungen
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-medium text-white flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#C5A55A]" />
+              KI-Empfehlungen
+            </h3>
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-500/10 text-blue-400 text-xs font-medium rounded-full border border-blue-500/20">
+              KI-generiert
+            </span>
+          </div>
           <div className="space-y-3">
             {kiEmpfehlungen.map((emp, idx) => (
               <div 
@@ -392,6 +397,9 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
               </div>
             ))}
           </div>
+          <p className="text-xs text-zinc-500 mt-3">
+            KI-Hinweis gem. EU AI Act Art. 50: Empfehlungen sind maschinell generiert und unverbindlich.
+          </p>
         </div>
       )}
 

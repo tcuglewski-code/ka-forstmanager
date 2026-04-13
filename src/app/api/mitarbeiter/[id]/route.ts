@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { sanitizeStrings } from "@/lib/sanitize"
 
 export async function GET(
   req: NextRequest,
@@ -25,7 +26,7 @@ export async function PATCH(
 
   const { id } = await params
   try {
-    const data = await req.json()
+    const data = sanitizeStrings(await req.json())
     const mitarbeiter = await prisma.mitarbeiter.update({ where: { id }, data })
     return NextResponse.json(mitarbeiter)
   } catch {

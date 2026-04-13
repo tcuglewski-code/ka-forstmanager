@@ -3,6 +3,7 @@
 
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
+import { stripHtml } from "@/lib/sanitize"
 import { prisma } from "@/lib/prisma"
 import { generiereAuftragsContent } from "@/lib/ki/content-generator"
 import { wpSyncEngine } from "@/lib/sync/wp-sync"
@@ -134,7 +135,7 @@ export async function POST(request: NextRequest) {
 
       // Schritt 3: Tomek-Freigabe
       case "freigeben": {
-        const { contentFinal } = body
+        const contentFinal = body.contentFinal ? stripHtml(body.contentFinal) : null
 
         await prisma.kundenContent.update({
           where: { auftragId },

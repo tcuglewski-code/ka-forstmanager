@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { sanitizeStrings } from "@/lib/sanitize"
 
 export async function GET(req: NextRequest) {
   const session = await auth()
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
-    const body = await req.json()
+    const body = sanitizeStrings(await req.json())
 
     // Pflichtfeld-Validierung (Sprint P)
     if (!body.vorname?.trim() || !body.nachname?.trim()) {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { stripHtml } from "@/lib/sanitize"
 
 export async function GET(req: NextRequest) {
   const session = await auth()
@@ -36,14 +37,14 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const kontakt = await prisma.kontakt.create({
       data: {
-        name: body.name,
+        name: stripHtml(body.name),
         typ: body.typ ?? "sonstig",
         telefon: body.telefon ?? null,
         email: body.email ?? null,
-        forstamt: body.forstamt ?? null,
-        revier: body.revier ?? null,
-        adresse: body.adresse ?? null,
-        notizen: body.notizen ?? null,
+        forstamt: stripHtml(body.forstamt) || null,
+        revier: stripHtml(body.revier) || null,
+        adresse: stripHtml(body.adresse) || null,
+        notizen: stripHtml(body.notizen) || null,
       },
     })
     return NextResponse.json(kontakt, { status: 201 })
