@@ -5,6 +5,7 @@ import { UserPlus, Search, Pencil, Trash2, Loader2, Eye, CheckSquare, X, Chevron
 import { MitarbeiterModal } from "@/components/mitarbeiter/MitarbeiterModal"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 interface Mitarbeiter {
@@ -45,6 +46,7 @@ const statusBadge: Record<string, string> = {
 }
 
 export default function MitarbeiterPage() {
+  const router = useRouter()
   const [mitarbeiter, setMitarbeiter] = useState<Mitarbeiter[]>([])
   const [loading, setLoading] = useState(true)
   const [suche, setSuche] = useState("")
@@ -341,15 +343,16 @@ export default function MitarbeiterPage() {
                 return (
                   <tr
                     key={m.id}
+                    onClick={() => router.push(`/mitarbeiter/${m.id}`)}
                     className={cn(
-                      "border-b border-[#2a2a2a] last:border-0 transition-colors",
+                      "border-b border-[#2a2a2a] last:border-0 transition-colors cursor-pointer",
                       istAusgewaehlt
                         ? "bg-emerald-500/5 hover:bg-emerald-500/8"
                         : "hover:bg-[#1a1a1a]"
                     )}
                   >
                     {/* Zeilen-Checkbox */}
-                    <td className="px-4 py-4 w-10">
+                    <td className="px-4 py-4 w-10" onClick={(e) => e.stopPropagation()}>
                       <input
                         type="checkbox"
                         checked={istAusgewaehlt}
@@ -384,7 +387,7 @@ export default function MitarbeiterPage() {
                       </span>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                         <Link
                           href={`/mitarbeiter/${m.id}`}
                           className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 hover:bg-[#2a2a2a] hover:text-emerald-400 transition-all"
