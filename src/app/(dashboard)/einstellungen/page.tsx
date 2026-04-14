@@ -40,6 +40,11 @@ export default function EinstellungenPage() {
     firma_farbe: "#2C3A1C",
     preis_pro_ha: "1800",
     standard_stundenlohn: "12",
+    // Notfall-Kontakte für App (BUG-001)
+    notfall_buero_name: "Koch Aufforstung GmbH",
+    notfall_buero_telefon: "",
+    notfall_hotline_name: "",
+    notfall_hotline_telefon: "",
   })
   const [configLoading, setConfigLoading] = useState(true)
   const [firmaSaved, setFirmaSaved] = useState(false)
@@ -124,6 +129,11 @@ export default function EinstellungenPage() {
             // Sprint FQ (B2): Neue Kalkulations-Parameter
             preis_pro_baum_default: config.preis_pro_baum_default,
             mwst_satz: config.mwst_satz,
+            // BUG-001: Notfall-Kontakte für App
+            notfall_buero_name: config.notfall_buero_name,
+            notfall_buero_telefon: config.notfall_buero_telefon,
+            notfall_hotline_name: config.notfall_hotline_name,
+            notfall_hotline_telefon: config.notfall_hotline_telefon,
           },
         }),
       })
@@ -353,6 +363,52 @@ export default function EinstellungenPage() {
                   </div>
                 </div>
                 <p className="text-xs text-zinc-600">💡 Vollkosten = Lohn + Steuern + Versicherung — wird dem Kunden in Rechnung gestellt.</p>
+              </div>
+
+              {/* Notfall-Kontakte für App (BUG-001) */}
+              <div className="space-y-4 mt-6 pt-4 border-t border-[#2a2a2a]">
+                <h3 className="text-sm font-semibold text-zinc-300">Notfall-Kontakte (App)</h3>
+                <p className="text-xs text-zinc-500">Diese Nummern erscheinen in der Mitarbeiter-App unter "Notfall"</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs text-zinc-500 mb-1 block">Büro-Kontakt Name</label>
+                    <input
+                      value={config.notfall_buero_name ?? "Koch Aufforstung GmbH"}
+                      onChange={(e) => setConfig(prev => ({ ...prev, notfall_buero_name: e.target.value }))}
+                      placeholder="z.B. Koch Aufforstung GmbH"
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-zinc-500 mb-1 block">Büro-Kontakt Telefon</label>
+                    <input
+                      type="tel"
+                      value={config.notfall_buero_telefon ?? ""}
+                      onChange={(e) => setConfig(prev => ({ ...prev, notfall_buero_telefon: e.target.value }))}
+                      placeholder="+49 6052 ..."
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-zinc-500 mb-1 block">Notfall-Hotline Name</label>
+                    <input
+                      value={config.notfall_hotline_name ?? ""}
+                      onChange={(e) => setConfig(prev => ({ ...prev, notfall_hotline_name: e.target.value }))}
+                      placeholder="z.B. Tomek Cuglewski (GF)"
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-zinc-500 mb-1 block">Notfall-Hotline Telefon</label>
+                    <input
+                      type="tel"
+                      value={config.notfall_hotline_telefon ?? ""}
+                      onChange={(e) => setConfig(prev => ({ ...prev, notfall_hotline_telefon: e.target.value }))}
+                      placeholder="+49 171 ..."
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                    />
+                  </div>
+                </div>
               </div>
 
               <button
