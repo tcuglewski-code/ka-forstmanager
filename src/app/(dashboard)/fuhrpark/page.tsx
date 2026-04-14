@@ -107,7 +107,7 @@ function FahrzeugEditModal({
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
           <h2 className="text-lg font-semibold text-white">Fahrzeug bearbeiten</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="grid grid-cols-2 gap-3">
@@ -198,7 +198,7 @@ function FahrzeugModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
           <h2 className="text-lg font-semibold text-white">Neues Fahrzeug</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="grid grid-cols-2 gap-3">
@@ -283,7 +283,7 @@ function GeraetModal({ onClose, onSave }: { onClose: () => void; onSave: () => v
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
           <h2 className="text-lg font-semibold text-white">Neues Gerät</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {[["Typ *", "typ"], ["Bezeichnung *", "bezeichnung"], ["Seriennummer", "seriennummer"]].map(([label, key]) => (
@@ -356,7 +356,7 @@ function EinsatzModal({
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
           <h2 className="text-lg font-semibold text-white">Einsatz buchen</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
@@ -506,7 +506,7 @@ export default function FuhrparkPage() {
         <>
           {/* ─── Tab: Fahrzeuge ─────────────────────────────────────────── */}
           {tab === "fahrzeuge" && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-[#2a2a2a]">
@@ -570,7 +570,7 @@ export default function FuhrparkPage() {
 
           {/* ─── Tab: Geräte ─────────────────────────────────────────────── */}
           {tab === "geraete" && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-[#2a2a2a]">
@@ -613,7 +613,7 @@ export default function FuhrparkPage() {
 
           {/* ─── Tab: Einsätze (K2) ──────────────────────────────────────── */}
           {tab === "einsaetze" && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-[#2a2a2a]">

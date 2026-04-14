@@ -182,7 +182,7 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
                       <button
                         type="button"
                         onClick={() => removePosition(index)}
-                        className="p-1.5 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                        className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

@@ -489,7 +489,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
                     onChange={e => mangelAendern(idx, "beschreibung", e.target.value)}
                     className="flex-1 bg-[#0f0f0f] border border-[#2a2a2a] rounded px-2 py-1.5 text-sm text-white placeholder-zinc-600 outline-none"
                   />
-                  <button type="button" onClick={() => mangelEntfernen(idx)} className="text-red-400 hover:text-red-300 p-1">
+                  <button type="button" onClick={() => mangelEntfernen(idx)} className="text-red-400 hover:text-red-300 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center">
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>

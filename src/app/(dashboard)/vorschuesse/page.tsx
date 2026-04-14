@@ -71,7 +71,7 @@ export default function VorschuessePage() {
       {loading ? (
         <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
       ) : (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-[#2a2a2a]">

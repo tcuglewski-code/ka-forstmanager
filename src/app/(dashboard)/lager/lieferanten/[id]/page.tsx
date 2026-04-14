@@ -222,6 +222,7 @@ Koch Aufforstung GmbH`
             Keine Artikel zugeordnet
           </div>
         ) : (
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#2a2a2a]">
@@ -266,6 +267,7 @@ Koch Aufforstung GmbH`
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

@@ -98,7 +98,7 @@ function QrPrintModal({ artikel, onClose }: { artikel: LagerArtikel; onClose: ()
             <QrCode className="w-5 h-5 text-emerald-400" />
             QR Code
           </h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
         <div className="p-6 flex flex-col items-center gap-4">
           <div ref={printRef} className="hidden">
@@ -151,7 +151,7 @@ function ArtikelModal({ onClose, onSave }: { onClose: () => void; onSave: () => 
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
           <h2 className="text-lg font-semibold text-white">Neuer Artikel</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
@@ -242,7 +242,7 @@ function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onC
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-sm">
         <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
           <h2 className="text-lg font-semibold text-white">Buchung: {artikel.name}</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
@@ -323,7 +323,7 @@ function EditArtikelModal({ artikel, onClose, onSave }: { artikel: LagerArtikel;
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
           <h2 className="text-lg font-semibold text-white">Artikel bearbeiten</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
@@ -558,7 +558,7 @@ function LagerPageInner() {
           </div>
 
           {/* Artikel-Tabelle */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#2a2a2a]">
@@ -623,7 +623,7 @@ function LagerPageInner() {
       )}
 
       {activeTab === "reservierungen" && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#2a2a2a]">
@@ -664,7 +664,7 @@ function LagerPageInner() {
               Neue Bestellung
             </a>
           </div>
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#2a2a2a]">

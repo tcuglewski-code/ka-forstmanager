@@ -351,6 +351,7 @@ export default function BestellungenPage() {
             <p className="text-zinc-500 text-sm">Keine Bestellungen vorhanden</p>
           </div>
         ) : (
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#2a2a2a]">
@@ -406,6 +407,7 @@ export default function BestellungenPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

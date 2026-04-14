@@ -97,6 +97,7 @@ export default function LieferantenPage() {
             <p className="text-zinc-600 text-sm mt-1">Erstelle deinen ersten Lieferanten</p>
           </div>
         ) : (
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#2a2a2a]">
@@ -180,6 +181,7 @@ export default function LieferantenPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

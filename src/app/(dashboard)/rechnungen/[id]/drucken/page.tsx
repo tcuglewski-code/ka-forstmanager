@@ -58,6 +58,7 @@ export default async function RechnungDrucken({
       </div>
 
       {/* Leistungsübersicht */}
+      <div className="overflow-x-auto">
       <table className="w-full mb-8 border-collapse">
         <thead>
           <tr className="border-b-2 border-black">
@@ -88,6 +89,7 @@ export default async function RechnungDrucken({
           </tr>
         </tfoot>
       </table>
+      </div>
 
       {/* Zahlungsziel */}
       {rechnung.faelligAm && (

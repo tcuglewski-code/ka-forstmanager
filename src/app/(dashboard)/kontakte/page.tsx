@@ -106,7 +106,7 @@ function KontaktModal({ kontakt, onClose, onSave }: { kontakt?: Kontakt | null; 
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md flex flex-col max-h-[85vh]">
         <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a] shrink-0">
           <h2 className="text-lg font-semibold text-white">{kontakt?.id ? "Kontakt bearbeiten" : "Neuer Kontakt"}</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
           <div className="overflow-y-auto flex-1 p-6 space-y-4">

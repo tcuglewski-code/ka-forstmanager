@@ -247,6 +247,7 @@ export default function TelegramEinstellungenPage() {
             Noch keine Registrierungen vorhanden.
           </div>
         ) : (
+          <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-[#2a2a2a]">
@@ -322,6 +323,7 @@ export default function TelegramEinstellungenPage() {
               })}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

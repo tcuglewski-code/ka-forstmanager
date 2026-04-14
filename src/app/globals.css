@@ -101,6 +101,27 @@ body {
 }
 
 /* ============================================================
+   Mobile UX — iOS Auto-Zoom Prevention
+   font-size < 16px triggers auto-zoom on iOS Safari
+   ============================================================ */
+input,
+textarea,
+select {
+  font-size: 1rem;
+}
+
+/* ============================================================
+   Mobile UX — Touch Target Minimum (Apple HIG 44px)
+   ============================================================ */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================================
    Typography Utilities
    ============================================================ */
 .font-display {

@@ -206,6 +206,7 @@ export default function SyncSettingsPage() {
             <p className="text-zinc-500 text-sm">Keine Sync-Logs vorhanden</p>
           </div>
         ) : (
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#2a2a2a]">
@@ -248,6 +249,7 @@ export default function SyncSettingsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

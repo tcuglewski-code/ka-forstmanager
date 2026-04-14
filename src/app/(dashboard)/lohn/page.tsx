@@ -186,7 +186,7 @@ function NeueLohnabrechnungModal({ mitarbeiter, saisons, onClose, onSave }: {
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
           <h2 className="text-lg font-semibold text-white">Neue Lohnabrechnung</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
@@ -298,7 +298,7 @@ function AbrechnungModal({ mitarbeiter, monat, jahr, onClose, onSave }: {
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
           <h2 className="text-lg font-semibold text-white">Abrechnung erstellen</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
@@ -392,7 +392,7 @@ function VorschussModal({ mitarbeiter, onClose, onSave }: {
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
           <h2 className="text-lg font-semibold text-white">Vorschuss erfassen</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
@@ -720,7 +720,7 @@ export default function LohnPage() {
               <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md">
                 <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
                   <h2 className="text-lg font-semibold text-white">Abrechnung bearbeiten</h2>
-                  <button onClick={() => setEditAbrechnung(null)}><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+                  <button onClick={() => setEditAbrechnung(null)} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
                 </div>
                 <div className="p-6 space-y-4">
                   <div>
