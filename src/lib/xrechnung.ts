@@ -260,8 +260,15 @@ export function generateXRechnungXml(rechnung: XRechnungData): string {
         </ram:PayeeSpecifiedCreditorFinancialInstitution>` : ''}
       </ram:SpecifiedTradeSettlementPaymentMeans>` : ''
 
+  // BT-34: Seller electronic address (PFLICHT in XRechnung 3.0)
+  const verkaeuferEmailXml = rechnung.verkaeuferEmail
+    ? `<ram:URIUniversalCommunication>
+          <ram:URIID schemeID="EM">${escapeXml(rechnung.verkaeuferEmail)}</ram:URIID>
+        </ram:URIUniversalCommunication>`
+    : ''
+
   // USt-ID des Verkäufers (BT-31 - mandatory in XRechnung wenn vorhanden)
-  const verkaeuferSteuerXml = rechnung.verkaeuferUstId 
+  const verkaeuferSteuerXml = rechnung.verkaeuferUstId
     ? `<ram:SpecifiedTaxRegistration>
           <ram:ID schemeID="VA">${escapeXml(rechnung.verkaeuferUstId)}</ram:ID>
         </ram:SpecifiedTaxRegistration>`
@@ -299,10 +306,9 @@ export function generateXRechnungXml(rechnung: XRechnungData): string {
       <ram:Content>${escapeXml(rechnung.notizen)}</ram:Content>
     </ram:IncludedNote>` : ''
 
-  // Buyer Reference / Leitweg-ID (BT-10 - mandatory für B2G)
-  const buyerReferenceXml = rechnung.leitwegId 
-    ? `<ram:BuyerReference>${escapeXml(rechnung.leitwegId)}</ram:BuyerReference>`
-    : ''
+  // Buyer Reference / Leitweg-ID (BT-10 - PFLICHT in XRechnung 3.0, auch B2B)
+  const buyerReference = rechnung.leitwegId || rechnung.rechnungsNummer
+  const buyerReferenceXml = `<ram:BuyerReference>${escapeXml(buyerReference)}</ram:BuyerReference>`
 
   // Bestellnummer (BT-13 - optional)
   const bestellnummerXml = rechnung.bestellnummer
@@ -341,6 +347,7 @@ export function generateXRechnungXml(rechnung: XRechnungData): string {
     <ram:ApplicableHeaderTradeAgreement>${buyerReferenceXml}
       <ram:SellerTradeParty>
         <ram:Name>${escapeXml(rechnung.verkaeufer.name)}</ram:Name>${verkaeuferKontakt}${verkaeuferAdresse}
+        ${verkaeuferEmailXml}
         ${verkaeuferSteuerXml}
       </ram:SellerTradeParty>
       <ram:BuyerTradeParty>
@@ -552,6 +559,11 @@ export function validateXRechnungData(data: XRechnungData): string[] {
   if (!data.kaeufer?.ort) errors.push('Käufer Ort fehlt (BT-52)')
   if (!data.positionen?.length) errors.push('Mindestens eine Position erforderlich (BG-25)')
   
+  // BT-34: Seller electronic address (Pflicht in XRechnung 3.0)
+  if (!data.verkaeuferEmail) {
+    errors.push('Verkäufer E-Mail-Adresse fehlt (BT-34)')
+  }
+
   // Steuernummer oder USt-ID (BT-31/BT-32)
   if (!data.verkaeuferUstId && !data.verkaeuferSteuernummer) {
     errors.push('Verkäufer USt-ID oder Steuernummer erforderlich (BT-31/BT-32)')
