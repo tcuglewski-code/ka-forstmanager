@@ -44,6 +44,7 @@ import {
   Plus,
   TreeDeciduous,
   MessageCircle,
+  Bell,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { resetAndStartTour } from "@/components/tour/ForstManagerTour"
@@ -70,6 +71,7 @@ const navItems = [
   { href: "/kontakte", label: "Kontakte", icon: MapPin },
   { href: "/wissensbank", label: "Wissensbank", icon: BookOpen },
   { href: "/foerderung", label: "Förderberater", icon: Leaf },
+  { href: "/foerderung/news", label: "Aktuelle Updates", icon: Bell },
   { href: "/foerderung/praxis", label: "Unsere Erfahrungen", icon: BookOpen },
   { href: "/foerderung/dashboard", label: "Erfolgsquoten", icon: BarChart3 },
   { href: "/reports", label: "Reports", icon: BarChart3, tourId: "reports" },

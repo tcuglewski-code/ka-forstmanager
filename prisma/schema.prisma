@@ -2362,3 +2362,39 @@ model AuditLog {
   @@index([timestamp])
   @@index([userId])
 }
+
+// WordPress Anfragen via Webhook (Sprint 0.4 — WP→FM Sync)
+model WpAnfrage {
+  id          String   @id @default(cuid())
+  source      String   // "ka_anfrage", "contact_form_7", "wizard"
+  formId      String?
+  formTitle   String?
+  name        String?
+  email       String?
+  telefon     String?
+  leistung    String?
+  nachricht   String?  @db.Text
+  rawData     Json?
+  submittedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  @@index([source])
+  @@index([createdAt])
+}
+
+// Förder-News / Updates (Sprint 0.4)
+model FoerderNews {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  title       String
+  programm    String
+  aenderung   String    @db.Text
+  prioritaet  String    @default("MITTEL") // KRITISCH | HOCH | MITTEL | NIEDRIG
+  handlung    String?   @db.Text
+  gueltigBis  DateTime?
+  aktiv       Boolean   @default(true)
+
+  @@index([prioritaet])
+  @@index([aktiv])
+}
