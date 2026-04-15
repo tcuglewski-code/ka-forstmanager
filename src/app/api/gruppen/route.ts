@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  const { searchParams } = new URL(req.url)
+  const page = parseInt(searchParams.get("page") || "1")
+  const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 200)
+  const skip = (page - 1) * limit
 
   const gruppen = await prisma.gruppe.findMany({
     include: {
@@ -14,6 +19,8 @@ export async function GET() {
       },
     },
     orderBy: { createdAt: "desc" },
+    skip,
+    take: limit,
   })
 
   // Enrich with Gruppenführer details (no relation in schema, fetch manually)
@@ -37,7 +44,8 @@ export async function GET() {
     gruppenfuehrer: g.gruppenfuehrerId ? (fuellerMap[g.gruppenfuehrerId] ?? null) : null,
   }))
 
-  return NextResponse.json(result)
+  const total = await prisma.gruppe.count()
+  return NextResponse.json({ items: result, total, page, totalPages: Math.ceil(total / limit) })
 }
 
 export async function POST(req: NextRequest) {

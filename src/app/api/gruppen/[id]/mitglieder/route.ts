@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+
+export const GET = withErrorHandler(async (_req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const { id: gruppeId } = await params
@@ -11,9 +13,9 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     include: { mitarbeiter: { select: { id: true, vorname: true, nachname: true, stundenlohn: true } } },
   })
   return NextResponse.json(mitglieder)
-}
+})
 
-export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export const POST = withErrorHandler(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
@@ -25,9 +27,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     update: { rolle: rolle ?? "mitarbeiter" },
   })
   return NextResponse.json(mitglied, { status: 201 })
-}
+})
 
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export const DELETE = withErrorHandler(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
@@ -37,4 +39,4 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     where: { gruppeId_mitarbeiterId: { gruppeId, mitarbeiterId } },
   })
   return NextResponse.json({ ok: true })
-}
+})

@@ -3,11 +3,11 @@
 
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+
+export const GET = withErrorHandler(async (req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params
   const format = new URL(req.url).searchParams.get("format") ?? "gpx"
 
@@ -77,7 +77,7 @@ export async function GET(
       "Content-Disposition": `attachment; filename="${dateiname}.kml"`,
     },
   })
-}
+})
 
 // ── Hilfsfunktion: XML-Sonderzeichen escapen ──────────────────────────────
 function escapeXml(str: string): string {

@@ -105,7 +105,8 @@ export default function AbnahmenPage() {
         <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
       ) : (
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-          <table className="w-full">
+          <div className="overflow-x-auto">
+          <table className="min-w-full">
             <thead>
               <tr className="border-b border-[#2a2a2a]">
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Auftrag</th>
@@ -137,6 +138,7 @@ export default function AbnahmenPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

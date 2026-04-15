@@ -11,22 +11,33 @@ export async function GET(req: NextRequest) {
   const typ = searchParams.get("typ")
   const search = searchParams.get("search")
 
-  const kontakte = await prisma.kontakt.findMany({
-    where: {
-      ...(typ ? { typ } : {}),
-      ...(search
-        ? {
-            OR: [
-              { name: { contains: search, mode: "insensitive" } },
-              { email: { contains: search, mode: "insensitive" } },
-              { forstamt: { contains: search, mode: "insensitive" } },
-            ],
-          }
-        : {}),
-    },
-    orderBy: { name: "asc" },
-  })
-  return NextResponse.json(kontakte)
+  const page = parseInt(searchParams.get("page") || "1")
+  const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 200)
+  const skip = (page - 1) * limit
+
+  const where = {
+    ...(typ ? { typ } : {}),
+    ...(search
+      ? {
+          OR: [
+            { name: { contains: search, mode: "insensitive" as const } },
+            { email: { contains: search, mode: "insensitive" as const } },
+            { forstamt: { contains: search, mode: "insensitive" as const } },
+          ],
+        }
+      : {}),
+  }
+
+  const [items, total] = await Promise.all([
+    prisma.kontakt.findMany({
+      where,
+      orderBy: { name: "asc" },
+      skip,
+      take: limit,
+    }),
+    prisma.kontakt.count({ where }),
+  ])
+  return NextResponse.json({ items, total, page, totalPages: Math.ceil(total / limit) })
 }
 
 export async function POST(req: NextRequest) {

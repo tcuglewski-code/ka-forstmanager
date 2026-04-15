@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+
+export const GET = withErrorHandler(async (req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -30,12 +30,10 @@ export async function GET(
 
   if (!p) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
   return NextResponse.json(p)
-}
+})
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export const PUT = withErrorHandler(async (req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -53,16 +51,14 @@ export async function PUT(
   })
 
   return NextResponse.json(p)
-}
+})
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export const DELETE = withErrorHandler(async (req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
   await prisma.tagesprotokoll.delete({ where: { id } })
   return NextResponse.json({ ok: true })
-}
+})

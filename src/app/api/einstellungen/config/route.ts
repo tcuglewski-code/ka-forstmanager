@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function GET() {
+
+export const GET = withErrorHandler(async () => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
@@ -28,9 +30,9 @@ export async function GET() {
   const result: Record<string, string> = {}
   for (const c of configs) result[c.key] = c.value
   return NextResponse.json(result)
-}
+})
 
-export async function POST(req: Request) {
+export const POST = withErrorHandler(async (req: Request) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
@@ -55,4 +57,4 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json({ ok: true })
-}
+})

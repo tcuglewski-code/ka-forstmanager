@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+
+export const PATCH = withErrorHandler(async (req: Request,
+  { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
@@ -34,16 +34,14 @@ export async function PATCH(
   }
 
   return NextResponse.json(einsatz)
-}
+})
 
-export async function DELETE(
-  _req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export const DELETE = withErrorHandler(async (_req: Request,
+  { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const { id } = await params
   await prisma.maschineneinsatz.delete({ where: { id } })
   return NextResponse.json({ ok: true })
-}
+})

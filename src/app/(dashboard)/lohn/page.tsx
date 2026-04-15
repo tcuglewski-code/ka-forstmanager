@@ -781,7 +781,8 @@ export default function LohnPage() {
           </div>
 
           <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
               <thead>
                 <tr className="border-b border-[#2a2a2a]">
                   <th className="text-left px-4 py-3 text-zinc-500 font-medium">Mitarbeiter</th>
@@ -826,6 +827,7 @@ export default function LohnPage() {
                 </tfoot>
               )}
             </table>
+            </div>
           </div>
         </>
       )}
@@ -851,7 +853,8 @@ export default function LohnPage() {
                 {gruppenFilter ? `Gefiltert: ${filteredVorschuesse.length} Vorschüsse` : "Alle erfassten Vorschüsse an Mitarbeiter"}
               </p>
             </div>
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
               <thead>
                 <tr className="border-b border-[#2a2a2a]">
                   <th className="text-left px-4 py-3 text-zinc-500 font-medium">Mitarbeiter</th>
@@ -921,6 +924,7 @@ export default function LohnPage() {
                 </tfoot>
               )}
             </table>
+            </div>
           </div>
         </>
       )}
@@ -947,7 +951,8 @@ export default function LohnPage() {
               </button>
             </div>
           </div>
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="min-w-full text-sm">
             <thead>
               <tr className="border-b border-[#2a2a2a]">
                 <th className="text-left px-4 py-3 text-zinc-500 font-medium">Mitarbeiter</th>
@@ -1010,6 +1015,7 @@ export default function LohnPage() {
               </tfoot>
             )}
           </table>
+          </div>
         </div>
       )}
 

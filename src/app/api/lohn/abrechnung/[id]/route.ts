@@ -4,8 +4,10 @@ import { auth } from "@/lib/auth"
 import { isAdminOrGF } from "@/lib/permissions"
 // Sprint AG: E-Mail-Benachrichtigung bei Lohnabrechnung-Freigabe
 import { emailService } from "@/lib/email"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+
+export const PATCH = withErrorHandler(async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!isAdminOrGF(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
@@ -47,4 +49,4 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   }
 
   return NextResponse.json(updated)
-}
+})

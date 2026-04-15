@@ -3,6 +3,8 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 const GUELTIGE_TYPEN = [
   "pflanzung",
@@ -13,7 +15,7 @@ const GUELTIGE_TYPEN = [
   "sonstiges",
 ]
 
-export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export const POST = withErrorHandler(async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
 
@@ -61,9 +63,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   })
 
   return NextResponse.json(position, { status: 201 })
-}
+})
 
-export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export const DELETE = withErrorHandler(async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
 
@@ -85,4 +87,4 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   await prisma.wochenplanPosition.delete({ where: { id: positionId } })
 
   return NextResponse.json({ message: "Position gelöscht" })
-}
+})

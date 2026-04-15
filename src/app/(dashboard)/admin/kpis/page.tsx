@@ -44,7 +44,7 @@ function KpiCard({
 }: {
   title: string
   value: string
-  icon: React.ComponentType<{ className?: string }>
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>
   trend?: string
   color: string
 }) {

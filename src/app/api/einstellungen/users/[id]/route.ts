@@ -3,8 +3,10 @@ import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
 import { isAdmin } from "@/lib/permissions"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+
+export const PATCH = withErrorHandler(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!isAdmin(session)) {
@@ -24,9 +26,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     select: { id: true, name: true, email: true, role: true, active: true },
   })
   return NextResponse.json(user)
-}
+})
 
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export const DELETE = withErrorHandler(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!isAdmin(session)) {
@@ -39,4 +41,4 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   }
   await prisma.user.delete({ where: { id } })
   return NextResponse.json({ success: true })
-}
+})

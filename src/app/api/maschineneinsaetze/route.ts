@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function GET() {
+
+export const GET = withErrorHandler(async () => {
   const einsaetze = await prisma.maschineneinsatz.findMany({
     include: {
       fahrzeug: { select: { id: true, bezeichnung: true, kennzeichen: true } },
@@ -12,9 +14,9 @@ export async function GET() {
     orderBy: { vonDatum: "desc" },
   })
   return NextResponse.json(einsaetze)
-}
+})
 
-export async function POST(req: Request) {
+export const POST = withErrorHandler(async (req: Request) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
@@ -40,4 +42,4 @@ export async function POST(req: Request) {
     .catch((err) => { console.error("Fahrzeug-Status Update Fehler:", err) })
 
   return NextResponse.json(einsatz, { status: 201 })
-}
+})

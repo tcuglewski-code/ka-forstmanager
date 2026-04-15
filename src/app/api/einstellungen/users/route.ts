@@ -3,8 +3,10 @@ import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
 import { isAdmin } from "@/lib/permissions"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function GET() {
+
+export const GET = withErrorHandler(async () => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!isAdmin(session)) {
@@ -15,9 +17,9 @@ export async function GET() {
     orderBy: { name: "asc" },
   })
   return NextResponse.json(users)
-}
+})
 
-export async function POST(req: NextRequest) {
+export const POST = withErrorHandler(async (req: NextRequest) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!isAdmin(session)) {
@@ -39,4 +41,4 @@ export async function POST(req: NextRequest) {
     select: { id: true, name: true, email: true, role: true, active: true, createdAt: true },
   })
   return NextResponse.json(user, { status: 201 })
-}
+})

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 /**
  * DEPRECATED: Dieser Endpunkt ist veraltet.
@@ -8,7 +10,7 @@ import { auth } from '@/lib/auth';
  * Redirect zu neuem Endpunkt für Abwärtskompatibilität.
  */
 
-export async function POST(req: NextRequest) {
+export const POST = withErrorHandler(async (req: NextRequest) => {
   const session = await auth()
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -42,9 +44,9 @@ export async function POST(req: NextRequest) {
       'X-Redirect-To': '/api/betriebs-assistent/beraten',
     }
   });
-}
+})
 
-export async function GET(req: NextRequest) {
+export const GET = withErrorHandler(async (req: NextRequest) => {
   const session = await auth()
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -66,4 +68,4 @@ export async function GET(req: NextRequest) {
       'X-Redirect-To': '/api/betriebs-assistent/beraten',
     }
   });
-}
+})

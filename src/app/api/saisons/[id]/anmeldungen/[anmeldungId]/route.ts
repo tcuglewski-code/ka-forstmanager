@@ -1,11 +1,11 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string; anmeldungId: string }> }
-) {
+
+export const PATCH = withErrorHandler(async (req: NextRequest,
+  { params }: { params: Promise<{ id: string; anmeldungId: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const { anmeldungId } = await params
@@ -15,4 +15,4 @@ export async function PATCH(
     data: { status: body.status },
   })
   return NextResponse.json(anmeldung)
-}
+})

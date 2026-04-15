@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/prisma"
 import { getAppUser } from "@/lib/app-auth"
 import { NextRequest, NextResponse } from "next/server"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function GET(req: NextRequest) {
+
+export const GET = withErrorHandler(async (req: NextRequest) => {
   const appUser = await getAppUser(req)
   if (!appUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const mitarbeiterId = appUser.mitarbeiterId as string | null
@@ -13,4 +15,4 @@ export async function GET(req: NextRequest) {
   })
   if (!mitarbeiter) return NextResponse.json({ error: "Not found" }, { status: 404 })
   return NextResponse.json(mitarbeiter)
-}
+})

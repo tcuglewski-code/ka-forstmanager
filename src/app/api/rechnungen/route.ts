@@ -3,6 +3,16 @@ import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import { isAdmin, isAdminOrGF } from "@/lib/permissions"
 import { sendKANotification } from "@/lib/telegram-notify"
+import { z } from "zod"
+
+const RechnungCreateSchema = z.object({
+  betrag: z.union([z.number(), z.string().transform(Number)]).pipe(z.number().positive("Betrag muss positiv sein")),
+  auftragId: z.string().optional().nullable(),
+  nummer: z.string().max(50).optional().nullable(),
+  mwst: z.union([z.number(), z.string().transform(Number)]).pipe(z.number().min(0).max(100)).optional(),
+  faelligAm: z.string().optional().nullable(),
+  notizen: z.string().max(5000).optional().nullable(),
+})
 
 // Sprint GB-01: GoBD-Compliance-Konstanten
 const GOBD_LOCK_HOURS = 24 // Rechnungen werden nach 24h automatisch gesperrt
@@ -98,15 +108,17 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!isAdmin(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   const body = await req.json()
-  if (body.betrag === undefined || body.betrag === null) {
-    return NextResponse.json({ error: "betrag ist ein Pflichtfeld" }, { status: 400 })
+  const parsed = RechnungCreateSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({
+      error: "Ungültige Daten",
+      details: parsed.error.issues.map(e => ({ field: e.path.join("."), message: e.message })),
+    }, { status: 400 })
   }
-  if (isNaN(parseFloat(body.betrag)) || parseFloat(body.betrag) <= 0) {
-    return NextResponse.json({ error: "betrag muss eine positive Zahl sein" }, { status: 400 })
-  }
+  const validData = parsed.data
 
   // Sprint Q: Auto-Rechnungsnummer generieren falls nicht angegeben
-  let nummer = body.nummer?.trim()
+  let nummer = validData.nummer?.trim()
   if (!nummer) {
     const lastRechnung = await prisma.rechnung.findFirst({
       orderBy: { createdAt: "desc" },
@@ -121,12 +133,12 @@ export async function POST(req: NextRequest) {
   const rechnung = await prisma.rechnung.create({
     data: {
       nummer,
-      auftragId: body.auftragId || null,
-      betrag: parseFloat(body.betrag),
-      mwst: body.mwst ? parseFloat(body.mwst) : 19,
+      auftragId: validData.auftragId || null,
+      betrag: validData.betrag,
+      mwst: validData.mwst ?? 19,
       status: "offen",
-      faelligAm: body.faelligAm ? new Date(body.faelligAm) : null,
-      notizen: body.notizen ?? null,
+      faelligAm: validData.faelligAm ? new Date(validData.faelligAm) : null,
+      notizen: validData.notizen ?? null,
     },
     include: { auftrag: { select: { id: true, titel: true } } },
   })

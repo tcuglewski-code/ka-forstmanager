@@ -397,7 +397,8 @@ export default function GeraetePage() {
 
       {/* Tabelle */}
       <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="min-w-full text-sm">
           <thead>
             <tr className="border-b border-[#2a2a2a]">
               {/* Y3: Header-Checkbox */}
@@ -508,6 +509,7 @@ export default function GeraetePage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Modals */}

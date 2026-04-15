@@ -13,6 +13,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 // Anonymisierte Werte gemäß DSGVO/GoBD Best Practices
 const ANONYMIZED = {
@@ -37,10 +39,8 @@ const ANONYMIZED = {
   notizen: "[Personenbezogene Daten gemäß DSGVO Art. 17 gelöscht]"
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export const DELETE = withErrorHandler(async (req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }) => {
   // Auth check
   const session = await auth()
   if (!session) {
@@ -186,7 +186,7 @@ export async function DELETE(
       dokumenteSoftDeleted: true,
     }
   })
-}
+})
 
 // OPTIONS für CORS
 export async function OPTIONS() {

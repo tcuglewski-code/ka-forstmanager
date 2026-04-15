@@ -2,12 +2,12 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { isAdminOrGF } from "@/lib/permissions"
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 // ─── GET: Einzelnes Angebot ────────────────────────────────────────────────────
-export async function GET(
-  _req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export const GET = withErrorHandler(async (_req: Request,
+  { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
@@ -23,13 +23,11 @@ export async function GET(
   if (!angebot) return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 })
 
   return NextResponse.json(angebot)
-}
+})
 
 // ─── PATCH: Status ändern / Angebot zu Auftrag konvertieren ───────────────────
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export const PATCH = withErrorHandler(async (req: Request,
+  { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!isAdminOrGF(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
@@ -117,13 +115,11 @@ export async function PATCH(
   })
 
   return NextResponse.json(updated)
-}
+})
 
 // ─── DELETE: Angebot löschen ──────────────────────────────────────────────────
-export async function DELETE(
-  _req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export const DELETE = withErrorHandler(async (_req: Request,
+  { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!isAdminOrGF(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
@@ -133,4 +129,4 @@ export async function DELETE(
   await prisma.angebot.delete({ where: { id } })
 
   return NextResponse.json({ ok: true })
-}
+})

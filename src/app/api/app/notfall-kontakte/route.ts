@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 /**
  * GET /api/app/notfall-kontakte
@@ -15,7 +17,7 @@ import { NextResponse } from "next/server"
  *
  * BUG-001: Notfall-Nummern in FM konfigurierbar machen
  */
-export async function GET() {
+export const GET = withErrorHandler(async () => {
 
   // Read config values from SystemConfig
   const configs = await prisma.systemConfig.findMany({
@@ -48,4 +50,4 @@ export async function GET() {
       telefon: configMap.notfall_hotline_telefon || "",
     },
   })
-}
+})

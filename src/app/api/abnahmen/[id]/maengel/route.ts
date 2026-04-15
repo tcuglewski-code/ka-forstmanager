@@ -1,10 +1,12 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 // POST /api/abnahmen/[id]/maengel — Mängel hinzufügen/aktualisieren
 // body: { maengel: [{beschreibung, priorität: "hoch"|"mittel"|"niedrig", erledigtAm?: null}], frist?: string }
-export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export const POST = withErrorHandler(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
@@ -29,10 +31,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   return NextResponse.json(updated)
-}
+})
 
 // GET /api/abnahmen/[id]/maengel — Aktuelle Mängelliste abrufen
-export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export const GET = withErrorHandler(async (_req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
@@ -44,4 +46,4 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
   if (!abnahme) return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 })
   return NextResponse.json(abnahme)
-}
+})

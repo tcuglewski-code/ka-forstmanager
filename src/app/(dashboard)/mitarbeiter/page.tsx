@@ -8,6 +8,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { useConfirm } from "@/hooks/useConfirm"
+import { fetchWithTimeout } from "@/hooks/useFetchWithTimeout"
 
 interface Mitarbeiter {
   id: string
@@ -68,12 +69,17 @@ export default function MitarbeiterPage() {
       const params = new URLSearchParams()
       if (suche) params.set("suche", suche)
       if (rolleFilter) params.set("rolle", rolleFilter)
-      const res = await fetch(`/api/mitarbeiter?${params}`)
+      const res = await fetchWithTimeout(`/api/mitarbeiter?${params}`)
       const data = await res.json()
       setMitarbeiter(data)
       // Auswahl zurücksetzen wenn neue Daten geladen
       setSelected([])
-    } catch {
+    } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") {
+        toast.error("Laden dauert zu lange. Bitte Seite neu laden.")
+      } else {
+        toast.error("Fehler beim Laden der Mitarbeiter.")
+      }
       setMitarbeiter([])
     } finally {
       setLoading(false)
@@ -318,7 +324,8 @@ export default function MitarbeiterPage() {
             </p>
           </div>
         ) : (
-          <table className="w-full">
+          <div className="overflow-x-auto">
+          <table className="min-w-full">
             <thead>
               <tr className="border-b border-[#2a2a2a]">
                 {/* Header-Checkbox */}
@@ -422,6 +429,7 @@ export default function MitarbeiterPage() {
               })}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

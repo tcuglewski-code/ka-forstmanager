@@ -1,9 +1,11 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 // POST /api/abnahmen/[id]/bestaetigen — Schnell-Bestätigung mit optionaler Signatur
-export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export const POST = withErrorHandler(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
@@ -37,4 +39,4 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   })
 
   return NextResponse.json({ ok: true, abnahme: updated })
-}
+})

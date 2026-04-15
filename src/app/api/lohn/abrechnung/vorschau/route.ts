@@ -2,9 +2,11 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { isAdminOrGF } from "@/lib/permissions"
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 // GET /api/lohn/abrechnung/vorschau?mitarbeiterId=&saisonId=&zeitraumVon=&zeitraumBis=
-export async function GET(req: Request) {
+export const GET = withErrorHandler(async (req: Request) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!isAdminOrGF(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
@@ -77,4 +79,4 @@ export async function GET(req: Request) {
     vorschuesse: vorschussGesamt,
     auszahlung,
   })
-}
+})

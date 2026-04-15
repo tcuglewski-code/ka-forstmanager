@@ -4,8 +4,10 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { isAdminOrGF } from "@/lib/permissions"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
+
+export const GET = withErrorHandler(async (_: Request, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
 
@@ -26,9 +28,9 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
   }
 
   return NextResponse.json(wochenplan)
-}
+})
 
-export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export const PATCH = withErrorHandler(async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
   if (!isAdminOrGF(session)) return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 })
@@ -50,9 +52,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   })
 
   return NextResponse.json(aktualisiert)
-}
+})
 
-export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
+export const DELETE = withErrorHandler(async (_: Request, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
   if (!isAdminOrGF(session)) return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 })
@@ -62,4 +64,4 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
   await prisma.wochenplan.delete({ where: { id } })
 
   return NextResponse.json({ message: "Wochenplan gelöscht" })
-}
+})

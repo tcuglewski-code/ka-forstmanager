@@ -7,8 +7,10 @@ import { auth } from "@/lib/auth"
 import { isAdmin } from "@/lib/permissions"
 import crypto from "crypto"
 import bcrypt from "bcryptjs"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function POST(_: Request, { params }: { params: Promise<{ id: string }> }) {
+
+export const POST = withErrorHandler(async (_: Request, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
   if (!isAdmin(session)) return NextResponse.json({ error: "Nur Admins dürfen Login-Links generieren" }, { status: 403 })
@@ -71,4 +73,4 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
     baumschuleName: baumschule.name,
     message: `Login-Link für ${baumschule.name} generiert. Gültig bis ${tokenExpiry.toLocaleDateString("de-DE")}`,
   })
-}
+})

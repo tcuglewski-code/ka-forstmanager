@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { unstable_cache } from "next/cache"
 import { Users, Sprout, ClipboardList, TrendingUp, Package, AlertTriangle, Wrench, Clock, BookOpen, CheckSquare, DollarSign, FileText, CalendarClock, UserCheck, Leaf } from "lucide-react"
 import Link from "next/link"
 import { FoerderungWidget } from "@/components/foerderung/FoerderungWidget"
@@ -171,6 +172,12 @@ async function getStats() {
   }
 }
 
+const getCachedStats = unstable_cache(
+  getStats,
+  ['dashboard-stats'],
+  { revalidate: 300 } // 5 Minuten Cache
+)
+
 const STATUS_LABELS: Record<string, string> = {
   anfrage: "Anfrage",
   geprueft: "Geprüft",
@@ -197,7 +204,7 @@ const SCHULUNG_TYP: Record<string, string> = {
 
 export default async function DashboardPage() {
   const session = await auth()
-  const stats = await getStats()
+  const stats = await getCachedStats()
 
   const heute = new Date().toLocaleDateString("de-DE", {
     weekday: "long",

@@ -43,7 +43,10 @@ export async function DELETE(
 
   const { id } = await params
   try {
-    await prisma.mitarbeiter.delete({ where: { id } })
+    await prisma.mitarbeiter.update({
+      where: { id },
+      data: { deletedAt: new Date(), status: 'inaktiv' },
+    })
     return NextResponse.json({ success: true })
   } catch {
     return NextResponse.json({ error: "Fehler beim Löschen" }, { status: 500 })

@@ -3,12 +3,12 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 // PATCH: Preisliste aktualisieren
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ id: string; preisId: string }> }
-) {
+export const PATCH = withErrorHandler(async (req: Request,
+  { params }: { params: Promise<{ id: string; preisId: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
 
@@ -35,13 +35,11 @@ export async function PATCH(
   })
 
   return NextResponse.json(aktualisiert)
-}
+})
 
 // DELETE: Preisliste löschen
-export async function DELETE(
-  _: Request,
-  { params }: { params: Promise<{ id: string; preisId: string }> }
-) {
+export const DELETE = withErrorHandler(async (_: Request,
+  { params }: { params: Promise<{ id: string; preisId: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
 
@@ -57,4 +55,4 @@ export async function DELETE(
   await prisma.baumschulPreisliste.delete({ where: { id: preisId } })
 
   return NextResponse.json({ message: "Preiseintrag gelöscht" })
-}
+})

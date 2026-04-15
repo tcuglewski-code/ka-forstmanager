@@ -287,6 +287,27 @@ export async function auftragStatusUpdate(daten: {
 }
 
 // ─── Legacy-Kompatibilitäts-Export ────────────────────────────────────────────
+export async function lohnabrechnungFreigegeben(daten: {
+  abrechnungId: string
+  mitarbeiterName: string
+  mitarbeiterEmail?: string
+  zeitraumVon: Date | null
+  zeitraumBis: Date | null
+  auszahlung: number | null
+}): Promise<EmailResult> {
+  if (!daten.mitarbeiterEmail) {
+    return { success: false, error: "Keine E-Mail-Adresse" }
+  }
+  const zeitraum = daten.zeitraumVon && daten.zeitraumBis
+    ? `${daten.zeitraumVon.toLocaleDateString("de-DE")} – ${daten.zeitraumBis.toLocaleDateString("de-DE")}`
+    : "—"
+  return sendEmail({
+    to: daten.mitarbeiterEmail,
+    subject: `Lohnabrechnung freigegeben – ${zeitraum}`,
+    html: `<p>Hallo ${daten.mitarbeiterName},</p><p>Ihre Lohnabrechnung für den Zeitraum <strong>${zeitraum}</strong> wurde freigegeben.</p><p>Mit freundlichen Grüßen,<br/>Koch Aufforstung</p>`,
+  })
+}
+
 // Alte Imports nutzen `emailService` — exportieren wir als Objekt
 export const emailService = {
   sendEmail,
@@ -295,4 +316,5 @@ export const emailService = {
   auftragErstellt,
   einwilligungAnfrage,
   auftragStatusUpdate,
+  lohnabrechnungFreigegeben,
 }

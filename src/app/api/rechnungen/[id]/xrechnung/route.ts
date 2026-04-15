@@ -74,7 +74,7 @@ export async function GET(
   }
 
   // Permissions-Check: Nur Admin, Geschäftsführer oder Accountant
-  const adminOrGF = await isAdminOrGF(session.user.id)
+  const adminOrGF = isAdminOrGF(session)
   const userRole = (session.user as { rolle?: string }).rolle
   const isAccountant = userRole === 'accountant'
   

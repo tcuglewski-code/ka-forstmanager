@@ -5,8 +5,10 @@ import { RefreshCw, Filter, Eye, Plus, Sparkles, Download, List, BarChart3 } fro
 import { AuftragModal } from "@/components/auftraege/AuftragModal"
 import { GanttChart } from "@/components/auftraege/GanttChart"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { useConfirm } from "@/hooks/useConfirm"
+import { fetchWithTimeout } from "@/hooks/useFetchWithTimeout"
 
 // X2: Saison-ID im Interface ergänzt, Q048: Gruppen-ID für Gantt + Filter
 interface Auftrag {
@@ -97,6 +99,7 @@ function typLabel(typ: string): string {
 }
 
 export default function AuftraegePage() {
+  const router = useRouter()
   const { confirm, ConfirmDialogElement } = useConfirm()
   const [auftraege, setAuftraege] = useState<Auftrag[]>([])
   const [loading, setLoading] = useState(true)
@@ -132,9 +135,14 @@ export default function AuftraegePage() {
       if (filterStatus) params.set("status", filterStatus)
       if (filterTyp) params.set("typ", filterTyp)
       if (suche) params.set("search", suche)
-      const res = await fetch(`/api/auftraege?${params}`)
+      const res = await fetchWithTimeout(`/api/auftraege?${params}`)
       setAuftraege(await res.json())
     } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") {
+        toast.error("Laden dauert zu lange. Bitte Seite neu laden.")
+      } else {
+        toast.error("Fehler beim Laden der Aufträge.")
+      }
       console.error("Aufträge laden fehlgeschlagen", e)
     } finally {
       setLoading(false)
@@ -632,7 +640,8 @@ export default function AuftraegePage() {
       {viewMode === "liste" ? (
         /* Tabelle */
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="min-w-full text-sm">
             <thead>
               <tr className="border-b border-[#2a2a2a]">
                 <th className="px-4 py-3">
@@ -687,7 +696,7 @@ export default function AuftraegePage() {
                   <tr
                     key={a.id}
                     className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] cursor-pointer transition-colors"
-                    onClick={() => (window.location.href = `/auftraege/${a.id}`)}
+                    onClick={() => (router.push(`/auftraege/${a.id}`))}
                   >
                     <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       <input
@@ -763,12 +772,13 @@ export default function AuftraegePage() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       ) : (
         /* Q048: Gantt-Ansicht mit Drag&Drop (KZ) */
         <GanttChart
           auftraege={filtered}
-          onAuftragClick={(id) => (window.location.href = `/auftraege/${id}`)}
+          onAuftragClick={(id) => router.push(`/auftraege/${id}`)}
           onAuftragUpdate={load}
         />
       )}

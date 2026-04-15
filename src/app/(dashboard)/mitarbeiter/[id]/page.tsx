@@ -207,7 +207,8 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
           {ma.stundeneintraege.length === 0 ? (
             <p className="text-zinc-600 text-sm">Keine Stundeneinträge</p>
           ) : (
-            <table className="w-full">
+            <div className="overflow-x-auto">
+            <table className="min-w-full">
               <thead><tr className="border-b border-[#2a2a2a]">
                 <th className="text-left py-2 text-xs text-zinc-500">Datum</th>
                 <th className="text-left py-2 text-xs text-zinc-500">Stunden</th>
@@ -229,6 +230,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </Section>
 
@@ -237,7 +239,8 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
           {ma.lohneintraege.length === 0 ? (
             <p className="text-zinc-600 text-sm">Keine Lohneinträge</p>
           ) : (
-            <table className="w-full">
+            <div className="overflow-x-auto">
+            <table className="min-w-full">
               <thead><tr className="border-b border-[#2a2a2a]">
                 <th className="text-left py-2 text-xs text-zinc-500">Monat/Jahr</th>
                 <th className="text-left py-2 text-xs text-zinc-500">Stunden</th>
@@ -259,6 +262,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </Section>
 

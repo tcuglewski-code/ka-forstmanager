@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 // GET: Pflanzanfragen (Aufträge) die Baumarten aus dem Sortiment der Baumschule enthalten
-export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
+export const GET = withErrorHandler(async (_: Request, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
 
@@ -79,4 +81,4 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
   }))
 
   return NextResponse.json({ pflanzanfragen: result })
-}
+})

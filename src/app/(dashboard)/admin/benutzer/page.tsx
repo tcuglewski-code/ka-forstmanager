@@ -270,7 +270,8 @@ export default function BenutzerVerwaltungPage() {
 
       {/* Users Table */}
       <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl overflow-hidden">
-        <table className="w-full">
+        <div className="overflow-x-auto">
+        <table className="min-w-full">
           <thead>
             <tr className="border-b border-[#2a2a2a]">
               <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">Name</th>
@@ -349,6 +350,7 @@ export default function BenutzerVerwaltungPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       {ConfirmDialogElement}

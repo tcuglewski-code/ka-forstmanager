@@ -1,16 +1,16 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 // ============================================================
 // SOS Status API — Sprint JJ (SOS-02+04)
 // Gibt den Status eines einzelnen SOS-Events zurück
 // ============================================================
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ eventId: string }> }
-) {
+export const GET = withErrorHandler(async (req: NextRequest,
+  { params }: { params: Promise<{ eventId: string }> }) => {
   const session = await auth()
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -27,13 +27,11 @@ export async function GET(
   }
 
   return NextResponse.json(sosEvent)
-}
+})
 
 // PATCH: Status aktualisieren (z.B. acknowledged)
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ eventId: string }> }
-) {
+export const PATCH = withErrorHandler(async (req: NextRequest,
+  { params }: { params: Promise<{ eventId: string }> }) => {
   const session = await auth()
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -67,4 +65,4 @@ export async function PATCH(
   })
 
   return NextResponse.json(updated)
-}
+})

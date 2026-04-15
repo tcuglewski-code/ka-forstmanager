@@ -151,7 +151,8 @@ export default function QualifikationenPage() {
         </div>
       ) : tab === "katalog" ? (
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-          <table className="w-full">
+          <div className="overflow-x-auto">
+          <table className="min-w-full">
             <thead>
               <tr className="border-b border-[#2a2a2a]">
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Name</th>
@@ -183,6 +184,7 @@ export default function QualifikationenPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       ) : (
         <>
@@ -199,7 +201,8 @@ export default function QualifikationenPage() {
             ))}
           </div>
           <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-            <table className="w-full">
+            <div className="overflow-x-auto">
+            <table className="min-w-full">
               <thead>
                 <tr className="border-b border-[#2a2a2a]">
                   <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Mitarbeiter</th>
@@ -237,6 +240,7 @@ export default function QualifikationenPage() {
                 })}
               </tbody>
             </table>
+            </div>
           </div>
         </>
       )}

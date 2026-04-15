@@ -10,6 +10,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 // Helper: Flatten object for CSV
 function flattenForCSV(obj: Record<string, unknown>, prefix = ""): Record<string, string> {
@@ -56,10 +58,8 @@ function toCSV(data: Record<string, unknown>[], sectionName: string): string {
   return csvRows.join("\n")
 }
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export const GET = withErrorHandler(async (req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }) => {
   // Auth check
   const session = await auth()
   if (!session) {
@@ -252,4 +252,4 @@ export async function GET(
       "Content-Disposition": `attachment; filename="${filename}"`,
     },
   })
-}
+})

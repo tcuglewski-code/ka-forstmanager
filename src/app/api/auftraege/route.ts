@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
     // KC-1: Zod-Validierung
     const validation = AuftragCreateSchema.safeParse(body)
     if (!validation.success) {
-      const errors = validation.error.errors.map(e => ({
+      const errors = validation.error.issues.map(e => ({
         field: e.path.join("."),
         message: e.message
       }))

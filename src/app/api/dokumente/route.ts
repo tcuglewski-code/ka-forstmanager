@@ -9,19 +9,29 @@ export async function GET(req: NextRequest) {
   const typ = searchParams.get("typ")
   const auftragId = searchParams.get("auftragId")
   const saisonId = searchParams.get("saisonId")
+  const page = parseInt(searchParams.get("page") || "1")
+  const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 200)
+  const skip = (page - 1) * limit
+
   const where: Record<string, unknown> = {}
   if (typ) where.typ = typ
   if (auftragId) where.auftragId = auftragId
   if (saisonId) where.saisonId = saisonId
-  const data = await prisma.dokument.findMany({
-    where,
-    include: {
-      auftrag: { select: { id: true, titel: true } },
-      saison: { select: { id: true, name: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  })
-  return NextResponse.json(data)
+
+  const [items, total] = await Promise.all([
+    prisma.dokument.findMany({
+      where,
+      include: {
+        auftrag: { select: { id: true, titel: true } },
+        saison: { select: { id: true, name: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: limit,
+    }),
+    prisma.dokument.count({ where }),
+  ])
+  return NextResponse.json({ items, total, page, totalPages: Math.ceil(total / limit) })
 }
 
 export async function POST(req: NextRequest) {

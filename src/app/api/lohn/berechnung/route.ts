@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 // GET /api/lohn/berechnung?saisonId=xxx
 // Automatische Lohnberechnung aus gespeicherten Stundenbuchungen
-export async function GET(req: NextRequest) {
+export const GET = withErrorHandler(async (req: NextRequest) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
@@ -76,4 +78,4 @@ export async function GET(req: NextRequest) {
   }))
 
   return NextResponse.json(result)
-}
+})

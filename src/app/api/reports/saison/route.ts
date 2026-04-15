@@ -1,8 +1,10 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function GET(req: NextRequest) {
+
+export const GET = withErrorHandler(async (req: NextRequest) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const { searchParams } = new URL(req.url)
@@ -55,4 +57,4 @@ export async function GET(req: NextRequest) {
     auftraege,
     gruppen,
   })
-}
+})

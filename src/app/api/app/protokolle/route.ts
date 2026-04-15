@@ -2,8 +2,10 @@ import { prisma } from "@/lib/prisma"
 import { getAppUser } from "@/lib/app-auth"
 import { NextRequest, NextResponse } from "next/server"
 import { sendKANotification } from "@/lib/telegram-notify"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function POST(req: NextRequest) {
+
+export const POST = withErrorHandler(async (req: NextRequest) => {
   const appUser = await getAppUser(req)
   if (!appUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const body = await req.json()
@@ -26,4 +28,4 @@ export async function POST(req: NextRequest) {
   }).catch(() => {})
 
   return NextResponse.json(proto, { status: 201 })
-}
+})

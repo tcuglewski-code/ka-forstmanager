@@ -5,6 +5,8 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 // GPS-Punkt Typ
 interface GpsPunkt {
@@ -13,7 +15,7 @@ interface GpsPunkt {
   timestamp: string // ISO 8601
 }
 
-export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
+export const GET = withErrorHandler(async (_: Request, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
 
@@ -36,9 +38,9 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
     gpsTrack: (einsatz.gpsTrack as unknown as GpsPunkt[]) ?? [],
     punkteAnzahl: Array.isArray(einsatz.gpsTrack) ? (einsatz.gpsTrack as unknown as GpsPunkt[]).length : 0,
   })
-}
+})
 
-export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export const POST = withErrorHandler(async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
 
@@ -97,9 +99,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     punkteAnzahl: aktualisiertTrack.length,
     neuePunkte: punkteMitTimestamp.length,
   })
-}
+})
 
-export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
+export const DELETE = withErrorHandler(async (_: Request, { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
 
@@ -112,4 +114,4 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
   })
 
   return NextResponse.json({ einsatzId: aktualisiert.id, message: "GPS-Track gelöscht" })
-}
+})

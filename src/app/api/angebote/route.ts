@@ -2,8 +2,10 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { isAdminOrGF } from "@/lib/permissions"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function GET(req: Request) {
+
+export const GET = withErrorHandler(async (req: Request) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
@@ -20,9 +22,9 @@ export async function GET(req: Request) {
   })
 
   return NextResponse.json(data)
-}
+})
 
-export async function POST(req: Request) {
+export const POST = withErrorHandler(async (req: Request) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!isAdminOrGF(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
@@ -84,4 +86,4 @@ export async function POST(req: Request) {
   })
 
   return NextResponse.json(data, { status: 201 })
-}
+})

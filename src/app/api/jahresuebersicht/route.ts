@@ -2,8 +2,10 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { isAdmin } from "@/lib/permissions"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function GET(req: Request) {
+
+export const GET = withErrorHandler(async (req: Request) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   if (!isAdmin(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
@@ -76,4 +78,4 @@ export async function GET(req: Request) {
     : 0
 
   return NextResponse.json({ saisons: result, gesamt: { ...gesamt, marge: gesamtMarge } })
-}
+})

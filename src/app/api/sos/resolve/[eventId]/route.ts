@@ -1,6 +1,8 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 // ============================================================
 // SOS Resolve API — Sprint JJ (SOS-02+04)
@@ -14,10 +16,8 @@ interface ResolveRequest {
   resolutionNotes?: string // Alternative field name
 }
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ eventId: string }> }
-) {
+export const POST = withErrorHandler(async (req: NextRequest,
+  { params }: { params: Promise<{ eventId: string }> }) => {
   const session = await auth()
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -58,4 +58,4 @@ export async function POST(
     success: true,
     event: updated,
   })
-}
+})

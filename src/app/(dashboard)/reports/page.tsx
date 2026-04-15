@@ -176,7 +176,8 @@ export default function ReportsPage() {
                 <div className="px-6 py-4 border-b border-[#2a2a2a]">
                   <h3 className="font-semibold text-white">Aufträge</h3>
                 </div>
-                <table className="w-full">
+                <div className="overflow-x-auto">
+                <table className="min-w-full">
                   <thead><tr className="border-b border-[#2a2a2a]">
                     <th className="text-left px-6 py-3 text-xs text-zinc-500">Titel</th>
                     <th className="text-left px-6 py-3 text-xs text-zinc-500">Typ</th>
@@ -199,6 +200,7 @@ export default function ReportsPage() {
                     ))}
                   </tbody>
                 </table>
+                </div>
               </div>
             </div>
           )}
@@ -227,7 +229,8 @@ export default function ReportsPage() {
               <div className="px-6 py-4 border-b border-[#2a2a2a]">
                 <h3 className="font-semibold text-white">{monate[maReport.monat - 1]} {maReport.jahr}</h3>
               </div>
-              <table className="w-full">
+              <div className="overflow-x-auto">
+              <table className="min-w-full">
                 <thead><tr className="border-b border-[#2a2a2a]">
                   <th className="text-left px-6 py-3 text-xs text-zinc-500">Mitarbeiter</th>
                   <th className="text-left px-6 py-3 text-xs text-zinc-500">Stunden</th>
@@ -257,6 +260,7 @@ export default function ReportsPage() {
                   </tfoot>
                 )}
               </table>
+              </div>
             </div>
           )}
         </div>
@@ -299,7 +303,8 @@ export default function ReportsPage() {
             <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
           ) : (
             <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-              <table className="w-full">
+              <div className="overflow-x-auto">
+              <table className="min-w-full">
                 <thead><tr className="border-b border-[#2a2a2a]">
                   <th className="text-left px-6 py-3 text-xs text-zinc-500">Artikel</th>
                   <th className="text-left px-6 py-3 text-xs text-zinc-500">Bestand</th>
@@ -327,6 +332,7 @@ export default function ReportsPage() {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
         </div>

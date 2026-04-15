@@ -313,7 +313,8 @@ export default function StundenPage() {
                     </div>
                     {/* Einträge des Tages */}
                     <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-                      <table className="w-full">
+                      <div className="overflow-x-auto">
+                      <table className="min-w-full">
                         <thead>
                           <tr className="border-b border-[#2a2a2a]">
                             <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">Mitarbeiter</th>
@@ -352,6 +353,7 @@ export default function StundenPage() {
                           ))}
                         </tbody>
                       </table>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -366,7 +368,8 @@ export default function StundenPage() {
             <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
           ) : (
             <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-              <table className="w-full">
+              <div className="overflow-x-auto">
+              <table className="min-w-full">
                 <thead>
                   <tr className="border-b border-[#2a2a2a]">
                     <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Mitarbeiter</th>
@@ -408,6 +411,7 @@ export default function StundenPage() {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
         </>

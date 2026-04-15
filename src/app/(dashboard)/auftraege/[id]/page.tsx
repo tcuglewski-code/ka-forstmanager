@@ -16,7 +16,12 @@ import { TagesprotokollFull } from "@/components/tagesprotokoll/TagesprotokollDe
 import { AbnahmeStatus } from "@/components/abnahme/AbnahmeStatus"
 import { AuftragFoerderCheck } from "@/components/foerderung/AuftragFoerderCheck"
 import KiDisclaimer from "@/components/ui/KiDisclaimer"
-import { FlaechenPolygon } from "@/components/karten/FlaechenPolygon"
+import dynamic from "next/dynamic"
+
+const FlaechenPolygon = dynamic(
+  () => import("@/components/karten/FlaechenPolygon").then(m => m.FlaechenPolygon),
+  { ssr: false, loading: () => <div className="h-64 bg-zinc-800 animate-pulse rounded-lg" /> }
+)
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

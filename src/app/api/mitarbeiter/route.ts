@@ -2,6 +2,18 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { sanitizeStrings } from "@/lib/sanitize"
+import { z } from "zod"
+
+const MitarbeiterSchema = z.object({
+  vorname: z.string().min(1, "Vorname ist Pflichtfeld").max(100),
+  nachname: z.string().min(1, "Nachname ist Pflichtfeld").max(100),
+  email: z.string().email("Ungültige E-Mail").optional().nullable(),
+  telefon: z.string().max(50).optional().nullable(),
+  rolle: z.enum(["mitarbeiter", "gruppenfuehrer", "admin", "koordinator"]).optional(),
+  status: z.string().optional(),
+  personalNr: z.string().max(50).optional().nullable(),
+  stundenlohn: z.number().min(0).max(1000).optional().nullable(),
+})
 
 export async function GET(req: NextRequest) {
   const session = await auth()
@@ -15,6 +27,7 @@ export async function GET(req: NextRequest) {
   const mitarbeiter = await prisma.mitarbeiter.findMany({
     where: {
       AND: [
+        { deletedAt: null },
         suche
           ? {
               OR: [
@@ -41,12 +54,15 @@ export async function POST(req: NextRequest) {
   try {
     const body = sanitizeStrings(await req.json())
 
-    // Pflichtfeld-Validierung (Sprint P)
-    if (!body.vorname?.trim() || !body.nachname?.trim()) {
-      return NextResponse.json({ error: "vorname und nachname sind Pflichtfelder" }, { status: 400 })
+    const parsed = MitarbeiterSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json({
+        error: "Ungültige Daten",
+        details: parsed.error.issues.map(e => ({ field: e.path.join("."), message: e.message })),
+      }, { status: 400 })
     }
 
-    const { vorname, nachname, email, telefon, rolle, status, personalNr } = body
+    const { vorname, nachname, email, telefon, rolle, status, personalNr } = parsed.data
     const mitarbeiter = await prisma.mitarbeiter.create({
       data: { vorname, nachname, email, telefon, rolle, status, personalNr },
     })

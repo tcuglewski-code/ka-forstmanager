@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 /**
  * POST /api/tagesprotokoll/[id]/einreichen
@@ -14,10 +16,8 @@ import { auth } from '@/lib/auth'
  * maschinenEinsatz im Format:
  * [{ mitarbeiterId, mitarbeiterName, maschine, stunden, qualifikationId }]
  */
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export const POST = withErrorHandler(async (req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -72,4 +72,4 @@ export async function POST(
   ])
 
   return NextResponse.json({ ok: true, stundeneintraege: stundenOps.length })
-}
+})

@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { withErrorHandler } from "@/lib/api-handler"
+
 
 const VALID_STATUS = ["neu", "bestaetigt", "geliefert", "storniert"]
 
 // PATCH: Bestellungs-Status aktualisieren
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ id: string; bestellungId: string }> }
-) {
+export const PATCH = withErrorHandler(async (req: Request,
+  { params }: { params: Promise<{ id: string; bestellungId: string }> }) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
 
@@ -49,4 +49,4 @@ export async function PATCH(
   })
 
   return NextResponse.json(aktualisiert)
-}
+})

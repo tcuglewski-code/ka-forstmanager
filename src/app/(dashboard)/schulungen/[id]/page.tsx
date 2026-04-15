@@ -147,7 +147,8 @@ export default function SchulungDetailPage() {
         <div className="px-6 py-4 border-b border-[#2a2a2a]">
           <h2 className="font-semibold text-white">Teilnehmer ({schulung.teilnehmer.length})</h2>
         </div>
-        <table className="w-full">
+        <div className="overflow-x-auto">
+        <table className="min-w-full">
           <thead>
             <tr className="border-b border-[#2a2a2a]">
               <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Name</th>
@@ -179,6 +180,7 @@ export default function SchulungDetailPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   )

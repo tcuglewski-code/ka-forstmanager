@@ -59,12 +59,14 @@ export async function GET(req: NextRequest) {
       return acc
     }, {} as Record<string, { name: string; artikel: Array<{ id: string; name: string; bestand: number; mindestbestand: number; einheit: string; empfohleneBestellung: number }> }>)
 
+    type LieferantGroup = typeof nachLieferant[string]
+
     // Telegram-Benachrichtigung senden
     const telegramToken = process.env.TELEGRAM_BOT_TOKEN
     if (telegramToken) {
       const message = `📦 Lager-Alarm: ${unterMindestbestand.length} Artikel unter Mindestbestand\n\n` +
         Object.entries(nachLieferant)
-          .map(([_, data]) => {
+          .map(([_, data]: [string, LieferantGroup]) => {
             const artikelListe = data.artikel
               .map(a => `  • ${a.name}: ${a.bestand}/${a.mindestbestand} ${a.einheit}`)
               .join("\n")
@@ -91,7 +93,7 @@ export async function GET(req: NextRequest) {
     // Erstelle Draft-Bestellungen für jeden Lieferanten mit kritischen Artikeln
     const erstellteBestellungen = []
     
-    for (const [lieferantId, data] of Object.entries(nachLieferant)) {
+    for (const [lieferantId, data] of Object.entries(nachLieferant) as [string, LieferantGroup][]) {
       if (lieferantId === "ohne_lieferant") continue
       
       // Prüfe ob bereits ein Entwurf für diesen Lieferanten existiert

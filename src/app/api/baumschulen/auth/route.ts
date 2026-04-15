@@ -4,8 +4,10 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { signIn } from "@/lib/auth"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function POST(req: Request) {
+
+export const POST = withErrorHandler(async (req: Request) => {
   const body = await req.json()
   const { token } = body
 
@@ -49,4 +51,4 @@ export async function POST(req: Request) {
       role: baumschule.user.role,
     },
   })
-}
+})

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { withErrorHandler } from "@/lib/api-handler"
 
-export async function GET(req: NextRequest) {
+
+export const GET = withErrorHandler(async (req: NextRequest) => {
   const { searchParams } = new URL(req.url)
   const bundesland = searchParams.get("bundesland")
   const baumart = searchParams.get("baumart")
@@ -72,4 +74,4 @@ export async function GET(req: NextRequest) {
       "Content-Disposition": `attachment; filename="register-export-${new Date().toISOString().split("T")[0]}.csv"`
     }
   })
-}
+})

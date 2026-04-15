@@ -12,18 +12,27 @@ export async function GET(req: NextRequest) {
   const monat = searchParams.get("monat")
   const jahr = searchParams.get("jahr")
 
+  const page = parseInt(searchParams.get("page") || "1")
+  const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 200)
+  const skip = (page - 1) * limit
+
   const where: Record<string, number> = {}
   if (monat) where.monat = parseInt(monat)
   if (jahr) where.jahr = parseInt(jahr)
 
-  const eintraege = await prisma.lohneintrag.findMany({
-    where,
-    include: {
-      mitarbeiter: { select: { id: true, vorname: true, nachname: true } },
-    },
-    orderBy: [{ jahr: "desc" }, { monat: "desc" }],
-  })
-  return NextResponse.json(eintraege)
+  const [items, total] = await Promise.all([
+    prisma.lohneintrag.findMany({
+      where,
+      include: {
+        mitarbeiter: { select: { id: true, vorname: true, nachname: true } },
+      },
+      orderBy: [{ jahr: "desc" }, { monat: "desc" }],
+      skip,
+      take: limit,
+    }),
+    prisma.lohneintrag.count({ where }),
+  ])
+  return NextResponse.json({ items, total, page, totalPages: Math.ceil(total / limit) })
 }
 
 export async function POST(req: NextRequest) {
