@@ -132,9 +132,12 @@ export function ForstManagerTour({ autoStart = true }: ForstManagerTourProps) {
     if (!autoStart) return
     if (typeof window === "undefined") return
 
-    // Prüfe ob Tour schon abgeschlossen
+    // Prüfe ob Tour schon abgeschlossen oder gestartet
     const tourDone = localStorage.getItem(TOUR_STORAGE_KEY)
     if (tourDone) return
+
+    // Sofort als gestartet markieren, damit Navigation mid-tour keinen Neustart auslöst
+    localStorage.setItem(TOUR_STORAGE_KEY, "true")
 
     // Verzögerung damit DOM-Elemente geladen sind
     const timer = setTimeout(() => {

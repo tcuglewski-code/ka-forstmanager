@@ -5,7 +5,7 @@
 // KW-Picker + Gruppen-Auswahl + Dienstleistungstyp
 
 import { useState, useEffect } from "react"
-import { Plus, FileDown, ChevronLeft, ChevronRight, Trash2, Edit2 } from "lucide-react"
+import { Plus, FileDown, ChevronLeft, ChevronRight, Trash2, Edit2, Sprout, Wrench, Scissors, Shield, Wheat, ClipboardList, MapPin } from "lucide-react"
 
 // ── Typen ─────────────────────────────────────────────────────────────────────
 
@@ -43,12 +43,12 @@ interface Gruppe {
 // ── Konstanten ────────────────────────────────────────────────────────────────
 
 const DIENSTLEISTUNG_TYPEN = [
-  { key: "pflanzung", label: "🌱 Pflanzung", farbe: "bg-green-900/50 text-green-300 border-green-700" },
-  { key: "flaechenvorbereitung", label: "🔧 Flächenvorbereitung", farbe: "bg-amber-900/50 text-amber-300 border-amber-700" },
-  { key: "kulturpflege", label: "✂️ Kulturpflege", farbe: "bg-blue-900/50 text-blue-300 border-blue-700" },
-  { key: "kulturschutz", label: "🛡️ Kulturschutz", farbe: "bg-purple-900/50 text-purple-300 border-purple-700" },
-  { key: "saatguternte", label: "🌾 Saatguternte", farbe: "bg-yellow-900/50 text-yellow-300 border-yellow-700" },
-  { key: "sonstiges", label: "📋 Sonstiges", farbe: "bg-zinc-700/50 text-zinc-300 border-zinc-600" },
+  { key: "pflanzung", label: "Pflanzung", icon: Sprout, farbe: "bg-green-900/50 text-green-300 border-green-700" },
+  { key: "flaechenvorbereitung", label: "Flächenvorbereitung", icon: Wrench, farbe: "bg-amber-900/50 text-amber-300 border-amber-700" },
+  { key: "kulturpflege", label: "Kulturpflege", icon: Scissors, farbe: "bg-blue-900/50 text-blue-300 border-blue-700" },
+  { key: "kulturschutz", label: "Kulturschutz", icon: Shield, farbe: "bg-purple-900/50 text-purple-300 border-purple-700" },
+  { key: "saatguternte", label: "Saatguternte", icon: Wheat, farbe: "bg-yellow-900/50 text-yellow-300 border-yellow-700" },
+  { key: "sonstiges", label: "Sonstiges", icon: ClipboardList, farbe: "bg-zinc-700/50 text-zinc-300 border-zinc-600" },
 ]
 
 const BAUMARTEN = [
@@ -189,7 +189,7 @@ export default function WochenplanungPage() {
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Seiten-Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">📅 Wochenplanung</h1>
+        <h1 className="text-2xl font-bold text-foreground">Wochenplanung</h1>
         <p className="text-zinc-400 text-sm mt-1">
           Planung aller Dienstleistungen nach Kalenderwoche
         </p>
@@ -298,13 +298,14 @@ export default function WochenplanungPage() {
           </div>
 
           {/* Positionen je Dienstleistungstyp */}
-          {DIENSTLEISTUNG_TYPEN.map(({ key, label, farbe }) => {
+          {DIENSTLEISTUNG_TYPEN.map(({ key, label, icon: Icon, farbe }) => {
             const posFuerTyp = wochenplan.positionen.filter((p) => p.dienstleistungstyp === key)
 
             return (
               <div key={key} className="space-y-2">
                 <div className="flex items-center gap-3">
-                  <h3 className={`text-sm font-bold px-3 py-1 rounded-full border ${farbe}`}>
+                  <h3 className={`text-sm font-bold px-3 py-1 rounded-full border flex items-center gap-1.5 ${farbe}`}>
+                    <Icon className="w-3.5 h-3.5" />
                     {label}
                   </h3>
                   <span className="text-zinc-500 text-xs">({posFuerTyp.length})</span>
@@ -411,19 +412,19 @@ export default function WochenplanungPage() {
                             )}
                             {/* Pflanzung-Details */}
                             {key === "pflanzung" && pos.baumart && (
-                              <span className="text-xs text-green-400">
-                                🌱 {pos.baumart}{pos.stueckzahl ? ` · ${pos.stueckzahl.toLocaleString("de-DE")} Stück` : ""}
+                              <span className="text-xs text-green-400 flex items-center gap-1">
+                                <Sprout className="w-3 h-3" /> {pos.baumart}{pos.stueckzahl ? ` · ${pos.stueckzahl.toLocaleString("de-DE")} Stück` : ""}
                               </span>
                             )}
                             {/* Saatguternte-Details */}
                             {key === "saatguternte" && (
-                              <span className="text-xs text-yellow-400">
-                                🌾 {pos.baumart ?? "?"}{pos.herkunftscode ? ` · HKG: ${pos.herkunftscode}` : ""}
+                              <span className="text-xs text-yellow-400 flex items-center gap-1">
+                                <Wheat className="w-3 h-3" /> {pos.baumart ?? "?"}{pos.herkunftscode ? ` · HKG: ${pos.herkunftscode}` : ""}
                                 {pos.zielkg ? ` · Ziel: ${pos.zielkg} kg` : ""}
                               </span>
                             )}
                             {pos.treffpunkt && (
-                              <span className="text-xs text-zinc-400">📍 {pos.treffpunkt}</span>
+                              <span className="text-xs text-zinc-400 flex items-center gap-1"><MapPin className="w-3 h-3" /> {pos.treffpunkt}</span>
                             )}
                           </div>
                           {pos.notizen && (

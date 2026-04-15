@@ -125,13 +125,18 @@ export default function AuftraegePage() {
 
   const load = useCallback(async () => {
     setLoading(true)
-    const params = new URLSearchParams()
-    if (filterStatus) params.set("status", filterStatus)
-    if (filterTyp) params.set("typ", filterTyp)
-    if (suche) params.set("suche", suche)
-    const res = await fetch(`/api/auftraege?${params}`)
-    setAuftraege(await res.json())
-    setLoading(false)
+    try {
+      const params = new URLSearchParams()
+      if (filterStatus) params.set("status", filterStatus)
+      if (filterTyp) params.set("typ", filterTyp)
+      if (suche) params.set("search", suche)
+      const res = await fetch(`/api/auftraege?${params}`)
+      setAuftraege(await res.json())
+    } catch (e) {
+      console.error("Aufträge laden fehlgeschlagen", e)
+    } finally {
+      setLoading(false)
+    }
   }, [filterStatus, filterTyp, suche])
 
   const sync = useCallback(

@@ -50,12 +50,17 @@ export async function PATCH(
     }
 
     // Auftragnummer generieren
+    const year = new Date().getFullYear()
     const lastA = await prisma.auftrag.findFirst({
-      orderBy: { createdAt: "desc" },
-      where: { nummer: { not: null } },
+      where: { nummer: { startsWith: `AU-${year}-` } },
+      orderBy: { nummer: "desc" },
     })
-    const lastANum = lastA?.nummer ? parseInt(lastA.nummer.replace(/\D/g, "")) : 0
-    const auftragNummer = `AU-${new Date().getFullYear()}-${String(lastANum + 1).padStart(4, "0")}`
+    let nextANum = 1
+    if (lastA?.nummer) {
+      const match = lastA.nummer.match(/AU-\d{4}-(\d+)/)
+      if (match) nextANum = parseInt(match[1], 10) + 1
+    }
+    const auftragNummer = `AU-${year}-${String(nextANum).padStart(4, "0")}`
 
     const auftrag = await prisma.auftrag.create({
       data: {

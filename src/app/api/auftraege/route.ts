@@ -149,15 +149,18 @@ export async function POST(req: NextRequest) {
     // Sprint Q: Auto-Auftragsnummer generieren falls nicht angegeben
     let auftragNummer = body.nummer?.trim() || null
     if (!auftragNummer) {
+      const year = new Date().getFullYear()
       const lastAuftrag = await prisma.auftrag.findFirst({
-        orderBy: { createdAt: "desc" },
-        where: { nummer: { not: null } },
+        where: { nummer: { startsWith: `AU-${year}-` } },
+        orderBy: { nummer: "desc" },
         select: { nummer: true },
       })
-      const lastNum = lastAuftrag?.nummer
-        ? parseInt(lastAuftrag.nummer.replace(/\D/g, "")) || 0
-        : 0
-      auftragNummer = `AU-${new Date().getFullYear()}-${String(lastNum + 1).padStart(4, "0")}`
+      let nextNum = 1
+      if (lastAuftrag?.nummer) {
+        const match = lastAuftrag.nummer.match(/AU-\d{4}-(\d+)/)
+        if (match) nextNum = parseInt(match[1], 10) + 1
+      }
+      auftragNummer = `AU-${year}-${String(nextNum).padStart(4, "0")}`
     }
 
     // KC-1: Verwende validierte Daten

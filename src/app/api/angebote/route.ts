@@ -30,12 +30,17 @@ export async function POST(req: Request) {
   const body = await req.json()
 
   // Auto-Nummer generieren
+  const year = new Date().getFullYear()
   const last = await prisma.angebot.findFirst({
-    orderBy: { createdAt: "desc" },
-    where: { nummer: { not: null } },
+    where: { nummer: { startsWith: `AN-${year}-` } },
+    orderBy: { nummer: "desc" },
   })
-  const lastNum = last?.nummer ? parseInt(last.nummer.replace(/\D/g, "")) : 0
-  const nummer = body.nummer ?? `AN-${new Date().getFullYear()}-${String(lastNum + 1).padStart(4, "0")}`
+  let nextNum = 1
+  if (last?.nummer) {
+    const match = last.nummer.match(/AN-\d{4}-(\d+)/)
+    if (match) nextNum = parseInt(match[1], 10) + 1
+  }
+  const nummer = body.nummer ?? `AN-${year}-${String(nextNum).padStart(4, "0")}`
 
   // Gesamtpreis berechnen falls nicht angegeben
   let gesamtpreis = body.gesamtpreis
