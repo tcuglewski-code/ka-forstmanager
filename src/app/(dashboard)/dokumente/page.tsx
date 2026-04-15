@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { FileText, Plus, Loader2, Download, Trash2, ExternalLink } from "lucide-react"
 import { toast } from "sonner"
+import { useConfirm } from "@/hooks/useConfirm"
 
 interface Dokument {
   id: string
@@ -37,6 +38,7 @@ const typLabel: Record<string, string> = {
 }
 
 export default function DokumentePage() {
+  const { confirm, ConfirmDialogElement } = useConfirm()
   const [dokumente, setDokumente] = useState<Dokument[]>([])
   const [auftraege, setAuftraege] = useState<Auftrag[]>([])
   const [saisons, setSaisons] = useState<Saison[]>([])
@@ -86,7 +88,8 @@ export default function DokumentePage() {
   }
 
   async function deleteDok(id: string) {
-    if (!confirm("Dokument löschen?")) return
+    const ok = await confirm({ title: "Bestätigen", message: "Dokument löschen?" })
+    if (!ok) return
     try {
       await fetch(`/api/dokumente/${id}`, { method: "DELETE" })
       toast.success("Gelöscht")
@@ -173,6 +176,8 @@ export default function DokumentePage() {
           </table>
         </div>
       )}
+
+      {ConfirmDialogElement}
 
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">

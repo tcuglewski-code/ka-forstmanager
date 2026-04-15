@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { BookOpen, ArrowLeft, UserPlus, CheckCircle, Loader2, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import { useConfirm } from "@/hooks/useConfirm"
 
 interface Schulung {
   id: string
@@ -36,6 +37,7 @@ const statusBadge: Record<string, string> = {
 export default function SchulungDetailPage() {
   const params = useParams()
   const id = params.id as string
+  const { confirm, ConfirmDialogElement } = useConfirm()
   const [schulung, setSchulung] = useState<Schulung | null>(null)
   const [alleMitarbeiter, setAlleMitarbeiter] = useState<Mitarbeiter[]>([])
   const [loading, setLoading] = useState(true)
@@ -69,13 +71,15 @@ export default function SchulungDetailPage() {
   }
 
   async function removeTeilnehmer(mitarbeiterId: string) {
-    if (!confirm("Teilnehmer entfernen?")) return
+    const ok = await confirm({ title: "Bestätigen", message: "Teilnehmer entfernen?" })
+    if (!ok) return
     await fetch(`/api/schulungen/${id}/teilnehmer?mitarbeiterId=${mitarbeiterId}`, { method: "DELETE" })
     await fetchSchulung()
   }
 
   async function abschliessen() {
-    if (!confirm("Schulung abschließen? Alle angemeldeten Teilnehmer werden als abgeschlossen markiert.")) return
+    const ok = await confirm({ title: "Bestätigen", message: "Schulung abschließen? Alle angemeldeten Teilnehmer werden als abgeschlossen markiert." })
+    if (!ok) return
     setSaving(true)
     await fetch(`/api/schulungen/${id}/teilnehmer`, {
       method: "POST",
@@ -95,6 +99,7 @@ export default function SchulungDetailPage() {
 
   return (
     <div className="max-w-4xl mx-auto">
+      {ConfirmDialogElement}
       <Link href="/schulungen" className="flex items-center gap-2 text-zinc-400 hover:text-white text-sm mb-6 transition-all">
         <ArrowLeft className="w-4 h-4" /> Zurück zu Schulungen
       </Link>

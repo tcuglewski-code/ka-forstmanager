@@ -5,6 +5,7 @@ import { Plus, Loader2, Sprout, Calendar, Pencil, Trash2, X } from "lucide-react
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { toast } from "sonner"
+import { useConfirm } from "@/hooks/useConfirm"
 
 interface Saison {
   id: string
@@ -48,6 +49,7 @@ const defaultForm = {
 }
 
 export default function SaisonsPage() {
+  const { confirm, ConfirmDialogElement } = useConfirm()
   const [saisons, setSaisons] = useState<Saison[]>([])
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
@@ -132,7 +134,8 @@ export default function SaisonsPage() {
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation()
     e.preventDefault()
-    if (!confirm("Saison wirklich löschen?")) return
+    const ok = await confirm({ title: "Bestätigen", message: "Saison wirklich löschen?" })
+    if (!ok) return
     setDeleting(id)
     try {
       await fetch(`/api/saisons/${id}`, { method: "DELETE" })
@@ -246,6 +249,8 @@ export default function SaisonsPage() {
           ))}
         </div>
       )}
+
+      {ConfirmDialogElement}
 
       {/* Modal */}
       {modalOpen && (

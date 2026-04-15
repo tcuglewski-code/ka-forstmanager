@@ -4,6 +4,8 @@
 
 import { useState, useRef, useCallback, useEffect } from "react"
 import { Upload, X, File, FileText, Image, Trash2, Download } from "lucide-react"
+import { toast } from "sonner"
+import { useConfirm } from "@/hooks/useConfirm"
 
 interface DateiInfo {
   id?: string
@@ -35,6 +37,7 @@ function DateiIcon({ contentType }: { contentType: string }) {
 }
 
 export function DokumentenUpload({ kundeId, auftragId, maxMb = 20 }: DokumentenUploadProps) {
+  const { confirm, ConfirmDialogElement } = useConfirm()
   const [dateien, setDateien] = useState<DateiInfo[]>([])
   const [ladenDateien, setLadenDateien] = useState(true)
   const [dropAktiv, setDropAktiv] = useState(false)
@@ -123,7 +126,7 @@ export function DokumentenUpload({ kundeId, auftragId, maxMb = 20 }: DokumentenU
     const maxBytes = maxMb * 1024 * 1024
     for (const datei of Array.from(files)) {
       if (datei.size > maxBytes) {
-        alert(`"${datei.name}" ist zu groß (max. ${maxMb} MB)`)
+        toast.warning(`"${datei.name}" ist zu groß (max. ${maxMb} MB)`)
         continue
       }
       await dateiHochladen(datei)
@@ -150,7 +153,8 @@ export function DokumentenUpload({ kundeId, auftragId, maxMb = 20 }: DokumentenU
 
   // Datei löschen
   async function dateiLoeschen(datei: DateiInfo) {
-    if (!confirm(`"${datei.name}" wirklich löschen?`)) return
+    const ok = await confirm({ title: "Bestätigen", message: `"${datei.name}" wirklich löschen?` })
+    if (!ok) return
     try {
       const params = new URLSearchParams({ pfad: datei.pfad })
       if (datei.id) params.set("id", datei.id)
@@ -158,12 +162,13 @@ export function DokumentenUpload({ kundeId, auftragId, maxMb = 20 }: DokumentenU
       if (!res.ok) throw new Error("Löschen fehlgeschlagen")
       setDateien((prev) => prev.filter((d) => d.pfad !== datei.pfad))
     } catch (err) {
-      alert("Fehler beim Löschen: " + (err instanceof Error ? err.message : "Unbekannt"))
+      toast.error("Fehler beim Löschen: " + (err instanceof Error ? err.message : "Unbekannt"))
     }
   }
 
   return (
     <div className="space-y-4">
+      {ConfirmDialogElement}
       {/* Drop-Zone */}
       <div
         onDragOver={onDragOver}

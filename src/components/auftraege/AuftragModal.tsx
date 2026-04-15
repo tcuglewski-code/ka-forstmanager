@@ -367,7 +367,7 @@ export function AuftragModal({
   // FM-02: GPS-Koordinaten ermitteln
   const getGPSLocation = async () => {
     if (!navigator.geolocation) {
-      alert("Geolocation wird von diesem Browser nicht unterstützt")
+      toast.warning("Geolocation wird von diesem Browser nicht unterstützt")
       return
     }
     setGeoLoading(true)
@@ -382,7 +382,7 @@ export function AuftragModal({
       },
       (error) => {
         console.error("GPS Fehler:", error)
-        alert("Standort konnte nicht ermittelt werden")
+        toast.warning("Standort konnte nicht ermittelt werden")
         setGeoLoading(false)
       },
       { enableHighAccuracy: true, timeout: 10000 }
@@ -392,14 +392,14 @@ export function AuftragModal({
   // FM-02: GPS für spezifische Fläche ermitteln
   const getGPSForFlaeche = (flaecheId: string) => {
     if (!navigator.geolocation) {
-      alert("Geolocation wird von diesem Browser nicht unterstützt")
+      toast.warning("Geolocation wird von diesem Browser nicht unterstützt")
       return
     }
     setGeoLoading(true)
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setFlaechen(prev => prev.map(f => 
-          f.id === flaecheId 
+        setFlaechen(prev => prev.map(f =>
+          f.id === flaecheId
             ? { ...f, lat: position.coords.latitude.toFixed(6), lng: position.coords.longitude.toFixed(6) }
             : f
         ))
@@ -407,7 +407,7 @@ export function AuftragModal({
       },
       (error) => {
         console.error("GPS Fehler:", error)
-        alert("Standort konnte nicht ermittelt werden")
+        toast.warning("Standort konnte nicht ermittelt werden")
         setGeoLoading(false)
       },
       { enableHighAccuracy: true, timeout: 10000 }

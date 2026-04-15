@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { GraduationCap, Plus, Trash2, Loader2, UserCheck } from "lucide-react"
+import { toast } from "sonner"
+import { useConfirm } from "@/hooks/useConfirm"
 
 interface Qualifikation {
   id: string
@@ -51,6 +53,7 @@ function ablaufStatus(ablauf?: string | null): "abgelaufen" | "kritisch" | "ok" 
 }
 
 export default function QualifikationenPage() {
+  const { confirm, ConfirmDialogElement } = useConfirm()
   const [tab, setTab] = useState<"katalog" | "mitarbeiter">("katalog")
   const [qualifikationen, setQualifikationen] = useState<Qualifikation[]>([])
   const [mitarbeiterQuals, setMitarbeiterQuals] = useState<MitarbeiterQual[]>([])
@@ -88,7 +91,8 @@ export default function QualifikationenPage() {
   }
 
   async function deleteQual(id: string) {
-    if (!confirm("Qualifikation löschen?")) return
+    const ok = await confirm({ title: "Bestätigen", message: "Qualifikation löschen?" })
+    if (!ok) return
     await fetch(`/api/qualifikationen/${id}`, { method: "DELETE" })
     await fetchAll()
   }
@@ -103,13 +107,15 @@ export default function QualifikationenPage() {
   }
 
   async function removeAssignment(id: string) {
-    if (!confirm("Zuweisung entfernen?")) return
+    const ok = await confirm({ title: "Bestätigen", message: "Zuweisung entfernen?" })
+    if (!ok) return
     await fetch(`/api/mitarbeiter-qualifikationen/${id}`, { method: "DELETE" })
     await fetchAll()
   }
 
   return (
     <div className="max-w-6xl mx-auto">
+      {ConfirmDialogElement}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">

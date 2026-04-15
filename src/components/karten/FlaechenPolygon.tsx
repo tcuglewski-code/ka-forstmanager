@@ -6,6 +6,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Trash2, Save, MapPin, Maximize2 } from "lucide-react"
 import { toast } from "sonner"
+import { useConfirm } from "@/hooks/useConfirm"
 
 interface GeoJSONPolygon {
   type: "Polygon"
@@ -100,6 +101,7 @@ export function FlaechenPolygon({
   hoehe = 400,
   onSave,
 }: FlaechenPolygonProps) {
+  const { confirm, ConfirmDialogElement } = useConfirm()
   const karteRef = useRef<HTMLDivElement>(null)
   const karteInstanz = useRef<LeafletMap | null>(null)
   const drawnItems = useRef<LeafletFeatureGroup | null>(null)
@@ -298,7 +300,8 @@ export function FlaechenPolygon({
 
   // Polygon löschen
   async function handleDelete() {
-    if (!confirm("Flächenpolygon wirklich löschen?")) return
+    const ok = await confirm({ title: "Bestätigen", message: "Flächenpolygon wirklich löschen?" })
+    if (!ok) return
 
     drawnItems.current?.clearLayers()
     setGeojson(null)
@@ -335,6 +338,7 @@ export function FlaechenPolygon({
 
   return (
     <div className="space-y-3">
+      {ConfirmDialogElement}
       {/* Toolbar */}
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center gap-3">

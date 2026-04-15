@@ -6,6 +6,7 @@ import { AuftragModal } from "@/components/auftraege/AuftragModal"
 import { GanttChart } from "@/components/auftraege/GanttChart"
 import Link from "next/link"
 import { toast } from "sonner"
+import { useConfirm } from "@/hooks/useConfirm"
 
 // X2: Saison-ID im Interface ergänzt, Q048: Gruppen-ID für Gantt + Filter
 interface Auftrag {
@@ -96,6 +97,7 @@ function typLabel(typ: string): string {
 }
 
 export default function AuftraegePage() {
+  const { confirm, ConfirmDialogElement } = useConfirm()
   const [auftraege, setAuftraege] = useState<Auftrag[]>([])
   const [loading, setLoading] = useState(true)
   const [syncing, setSyncing] = useState(false)
@@ -291,6 +293,7 @@ export default function AuftraegePage() {
 
   return (
     <div className="max-w-7xl mx-auto">
+      {ConfirmDialogElement}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white">Aufträge</h1>
@@ -591,7 +594,8 @@ export default function AuftraegePage() {
           {/* X3: Bulk-Löschen mit korrektem Error-Handling */}
           <button
             onClick={async () => {
-              if (!confirm(`${selected.length} Aufträge wirklich löschen?`)) return
+              const ok = await confirm({ title: "Bestätigen", message: `${selected.length} Aufträge wirklich löschen?` })
+              if (!ok) return
               const count = selected.length
               let errors = 0
               for (const id of selected) {

@@ -5,6 +5,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { Plus, X, Wrench, Loader2 } from "lucide-react"
 import { toast } from "sonner"
+import { useConfirm } from "@/hooks/useConfirm"
 
 interface Geraet {
   id: string
@@ -258,6 +259,7 @@ function GeraetNeuModal({
 // ─── Haupt-Seite ──────────────────────────────────────────────────────────────
 
 export default function GeraetePage() {
+  const { confirm, ConfirmDialogElement } = useConfirm()
   const [geraete, setGeraete] = useState<Geraet[]>([])
   const [loading, setLoading] = useState(true)
   const [showNeuModal, setShowNeuModal] = useState(false)
@@ -309,7 +311,8 @@ export default function GeraetePage() {
 
   // Y3: Bulk-Löschen
   const handleBulkDelete = async () => {
-    if (!confirm(`${selected.length} Geräte wirklich löschen?`)) return
+    const ok = await confirm({ title: "Bestätigen", message: `${selected.length} Geräte wirklich löschen?` })
+    if (!ok) return
     const count = selected.length
     let errors = 0
     for (const id of selected) {
@@ -327,6 +330,7 @@ export default function GeraetePage() {
 
   return (
     <div className="max-w-6xl mx-auto">
+      {ConfirmDialogElement}
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>

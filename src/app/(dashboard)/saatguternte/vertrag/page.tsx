@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense, useRef } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { ArrowLeft, Printer, FileDown, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
 interface Flaeche {
   id: string
@@ -102,7 +103,7 @@ function VertragPageInner() {
       })
       if (!res.ok) {
         const err = await res.json()
-        alert("Fehler: " + (err.error ?? "Unbekannter Fehler"))
+        toast.error("Fehler: " + (err.error ?? "Unbekannter Fehler"))
         return
       }
       const blob = await res.blob()
@@ -113,7 +114,7 @@ function VertragPageInner() {
       a.click()
       URL.revokeObjectURL(url)
     } catch (e: any) {
-      alert("Fehler beim Generieren: " + e.message)
+      toast.error("Fehler beim Generieren: " + e.message)
     } finally {
       setGenerating(false)
     }

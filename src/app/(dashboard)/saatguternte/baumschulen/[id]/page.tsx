@@ -7,6 +7,8 @@ import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { Plus, Pencil, Trash2, Check, X, ChevronLeft } from "lucide-react"
 import Link from "next/link"
+import { toast } from "sonner"
+import { useConfirm } from "@/hooks/useConfirm"
 
 interface Baumschule {
   id: string
@@ -42,6 +44,7 @@ export default function BaumschuleDetailPage() {
   const params = useParams()
   const id = params.id as string
   const router = useRouter()
+  const { confirm, ConfirmDialogElement } = useConfirm()
 
   // Guard: "neu" should not reach detail page (modal handles creation)
   if (id === "neu") {
@@ -108,7 +111,7 @@ export default function BaumschuleDetailPage() {
       setFormDaten({ baumart: "", preis: "", einheit: "kg", saison: new Date().getFullYear().toString(), aktiv: true, notizen: "" })
       setFormOffen(false)
     } catch (err) {
-      alert("Fehler: " + (err as Error).message)
+      toast.error("Fehler: " + (err as Error).message)
     } finally {
       setSpeichern(false)
     }
@@ -127,18 +130,19 @@ export default function BaumschuleDetailPage() {
       setBearbeiteId(null)
       setBearbeiteDaten({})
     } catch (err) {
-      alert("Fehler: " + (err as Error).message)
+      toast.error("Fehler: " + (err as Error).message)
     }
   }
 
   async function preisLoeschen(preisId: string) {
-    if (!confirm("Preiseintrag wirklich löschen?")) return
+    const ok = await confirm({ title: "Bestätigen", message: "Preiseintrag wirklich löschen?" })
+    if (!ok) return
     try {
       const res = await fetch(`/api/baumschulen/${id}/preislisten/${preisId}`, { method: "DELETE" })
       if (!res.ok) throw new Error("Fehler beim Löschen")
       setPreislisten((prev) => prev.filter((p) => p.id !== preisId))
     } catch (err) {
-      alert("Fehler: " + (err as Error).message)
+      toast.error("Fehler: " + (err as Error).message)
     }
   }
 
@@ -165,6 +169,7 @@ export default function BaumschuleDetailPage() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
+      {ConfirmDialogElement}
       {/* Header */}
       <div className="flex items-start gap-4">
         <Link

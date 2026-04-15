@@ -9,6 +9,7 @@
  */
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react"
+import { toast } from "sonner"
 
 type TenantStatus = "active" | "cancelled" | "grace_period" | "archived" | "deleted"
 
@@ -77,7 +78,7 @@ export function ReadonlyModeProvider({ children }: ReadonlyModeProviderProps) {
   const checkWriteAllowed = (): boolean => {
     if (isReadonly) {
       // Toast-Benachrichtigung (könnte auch ein State sein für ein Modal)
-      alert("Schreibzugriff nicht möglich. Ihr Vertrag ist ausgelaufen. Bitte kontaktieren Sie den Support zur Reaktivierung.")
+      toast.error("Schreibzugriff nicht möglich. Ihr Vertrag ist ausgelaufen. Bitte kontaktieren Sie den Support zur Reaktivierung.")
       return false
     }
     return true

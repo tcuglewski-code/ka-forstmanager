@@ -24,6 +24,7 @@ import {
 import { cn } from "@/lib/utils"
 import { format, formatDistanceToNow } from "date-fns"
 import { de } from "date-fns/locale"
+import { useConfirm } from "@/hooks/useConfirm"
 
 interface GdprRequest {
   id: string
@@ -73,6 +74,7 @@ const REQUEST_TYPES: Record<string, string> = {
 export default function DatenschutzVerwaltungPage() {
   const { data: session } = useSession()
   const router = useRouter()
+  const { confirm, ConfirmDialogElement } = useConfirm()
   const [requests, setRequests] = useState<GdprRequest[]>([])
   const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(true)
@@ -196,9 +198,8 @@ export default function DatenschutzVerwaltungPage() {
   }
 
   const applyRestriction = async (gdprRequestId: string, rechnungIds: string[]) => {
-    if (!confirm("Einschränkung auf ausgewählte Rechnungen anwenden? Diese Aktion kann nicht rückgängig gemacht werden.")) {
-      return
-    }
+    const ok = await confirm({ title: "Bestätigen", message: "Einschränkung auf ausgewählte Rechnungen anwenden? Diese Aktion kann nicht rückgängig gemacht werden." })
+    if (!ok) return
 
     try {
       const res = await fetch("/api/gdpr/restrict", {
@@ -525,6 +526,8 @@ export default function DatenschutzVerwaltungPage() {
           </div>
         </>
       )}
+
+      {ConfirmDialogElement}
 
       {/* Detail Modal */}
       {detailModalOpen && selectedRequest && (

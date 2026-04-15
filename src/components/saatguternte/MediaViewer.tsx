@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { useConfirm } from "@/hooks/useConfirm"
 import {
   Video, Image as ImageIcon, FolderOpen, ChevronRight,
   X, ChevronLeft, ChevronRight as ChevronRightIcon,
@@ -192,6 +193,7 @@ interface MediaViewerProps {
 }
 
 export function MediaViewer({ flaecheId }: MediaViewerProps) {
+  const { confirm, ConfirmDialogElement } = useConfirm()
   // ─── Zugeordnete Medien ───
   const [medien, setMedien] = useState<MediaZuordnung[]>([])
   const [loadingMedien, setLoadingMedien] = useState(true)
@@ -298,7 +300,8 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
 
   // ─── Zuordnung entfernen ───
   async function handleRemove(id: string) {
-    if (!confirm("Zuordnung entfernen?")) return
+    const ok = await confirm({ title: "Bestätigen", message: "Zuordnung entfernen?" })
+    if (!ok) return
     try {
       await fetch(`/api/saatguternte/medien/zuordnung/${id}`, { method: "DELETE" })
       toast.success("Zuordnung entfernt")
@@ -323,6 +326,7 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
 
   return (
     <div className="space-y-6">
+      {ConfirmDialogElement}
       {/* Header */}
       <div className="flex items-center gap-3">
         <Camera className="w-5 h-5 text-emerald-400" />

@@ -4,6 +4,7 @@
 // Verwendet Leaflet.js via CDN (kein npm-Paket nötig)
 
 import { useEffect, useRef, useState } from "react"
+import { toast } from "sonner"
 
 interface GpsPunkt {
   lat: number
@@ -199,7 +200,7 @@ export function GpsKarte({ einsatzId, bearbeitbar = false, hoehe = 400 }: GpsKar
   // Live-GPS-Aufzeichnung (Geolocation API)
   const aufzeichnungStarten = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation wird von diesem Browser nicht unterstützt")
+      toast.warning("Geolocation wird von diesem Browser nicht unterstützt")
       return
     }
     setAufzeichnen(true)

@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Plus, Search, TreeDeciduous, MapPin, Phone, Mail, ExternalLink, Key, X } from "lucide-react"
 import Link from "next/link"
+import { toast } from "sonner"
 
 interface Baumschule {
   id: string
@@ -65,7 +66,7 @@ export default function BaumschulenPage() {
       const d = await r.json()
       if (d.loginLink) setLinkResult({ id, link: d.loginLink })
     } catch (e) {
-      alert("Fehler beim Generieren des Login-Links")
+      toast.error("Fehler beim Generieren des Login-Links")
     } finally {
       setGeneratingLink(null)
     }

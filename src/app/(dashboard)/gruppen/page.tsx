@@ -5,6 +5,7 @@ import { Plus, Users, ChevronRight, Crown, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
 import { GruppeModal } from "@/components/gruppen/GruppeModal"
+import { useConfirm } from "@/hooks/useConfirm"
 
 interface GruppeMitglied {
   id: string
@@ -22,6 +23,7 @@ interface Gruppe {
 }
 
 export default function GruppenPage() {
+  const { confirm, ConfirmDialogElement } = useConfirm()
   const [gruppen, setGruppen] = useState<Gruppe[]>([])
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState<{ open: boolean; gruppe?: Gruppe | null }>({ open: false })
@@ -37,7 +39,8 @@ export default function GruppenPage() {
   useEffect(() => { load() }, [load])
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Gruppe "${name}" wirklich löschen?`)) return
+    const ok = await confirm({ title: "Bestätigen", message: `Gruppe "${name}" wirklich löschen?` })
+    if (!ok) return
     setDeleting(id)
     try {
       const res = await fetch(`/api/gruppen/${id}`, { method: 'DELETE' })
@@ -153,6 +156,8 @@ export default function GruppenPage() {
           ))}
         </div>
       )}
+
+      {ConfirmDialogElement}
 
       {modal.open && (
         <GruppeModal

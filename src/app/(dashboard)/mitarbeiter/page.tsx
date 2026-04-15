@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import { useConfirm } from "@/hooks/useConfirm"
 
 interface Mitarbeiter {
   id: string
@@ -47,6 +48,7 @@ const statusBadge: Record<string, string> = {
 
 export default function MitarbeiterPage() {
   const router = useRouter()
+  const { confirm, ConfirmDialogElement } = useConfirm()
   const [mitarbeiter, setMitarbeiter] = useState<Mitarbeiter[]>([])
   const [loading, setLoading] = useState(true)
   const [suche, setSuche] = useState("")
@@ -117,7 +119,8 @@ export default function MitarbeiterPage() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Mitarbeiter wirklich löschen?")) return
+    const ok = await confirm({ title: "Bestätigen", message: "Mitarbeiter wirklich löschen?" })
+    if (!ok) return
     setDeleting(id)
     try {
       await fetch(`/api/mitarbeiter/${id}`, { method: "DELETE" })
@@ -159,7 +162,8 @@ export default function MitarbeiterPage() {
 
   // Bulk: Löschen
   const handleBulkLoeschen = async () => {
-    if (!confirm(`${selected.length} Mitarbeiter wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.`)) return
+    const ok = await confirm({ title: "Bestätigen", message: `${selected.length} Mitarbeiter wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.` })
+    if (!ok) return
     setBulkLoading(true)
     let errors = 0
     for (const id of selected) {
@@ -421,6 +425,7 @@ export default function MitarbeiterPage() {
         )}
       </div>
 
+      {ConfirmDialogElement}
       <MitarbeiterModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}

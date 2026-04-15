@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import { Plus, Pencil, Trash2, ExternalLink, Phone, Mail, MapPin, Package, X, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
+import { useConfirm } from "@/hooks/useConfirm"
 
 interface Lieferant {
   id: string
@@ -23,6 +24,7 @@ interface Lieferant {
 }
 
 export default function LieferantenPage() {
+  const { confirm, ConfirmDialogElement } = useConfirm()
   const [lieferanten, setLieferanten] = useState<Lieferant[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
@@ -47,7 +49,8 @@ export default function LieferantenPage() {
   }
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Lieferant "${name}" wirklich löschen?`)) return
+    const ok = await confirm({ title: "Bestätigen", message: `Lieferant "${name}" wirklich löschen?` })
+    if (!ok) return
 
     try {
       const res = await fetch(`/api/lager/lieferanten/${id}`, { method: "DELETE" })
@@ -184,6 +187,8 @@ export default function LieferantenPage() {
           </div>
         )}
       </div>
+
+      {ConfirmDialogElement}
 
       {/* Modal */}
       {showModal && (

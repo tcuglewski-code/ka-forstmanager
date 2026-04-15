@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { Phone, MapPin, Clock, CheckCircle, AlertTriangle, User, Navigation, RefreshCw } from "lucide-react"
+import { toast } from "sonner"
 import dynamic from "next/dynamic"
 
 // Lazy load Leaflet map (SSR incompatible)
@@ -136,7 +137,7 @@ export default function SOSKoordinatorDashboard() {
   // Resolve SOS
   const resolveEvent = useCallback(async (eventId: string) => {
     if (!resolutionNotes.trim()) {
-      alert("Bitte Auflösungs-Notiz eingeben")
+      toast.warning("Bitte Auflösungs-Notiz eingeben")
       return
     }
     setResolving(eventId)

@@ -5,6 +5,8 @@
 
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { useConfirm } from "@/hooks/useConfirm"
 import { 
   Upload, Plus, Trash2, Save, FileSpreadsheet, AlertTriangle,
   Loader2, Check, X, Sparkles, Calendar
@@ -44,6 +46,7 @@ interface Props {
 
 export default function PreislisteClient({ lieferant }: Props) {
   const router = useRouter()
+  const { confirm, ConfirmDialogElement } = useConfirm()
   const fileInputRef = useRef<HTMLInputElement>(null)
   
   const [artikel, setArtikel] = useState<Artikel[]>(lieferant.artikel)
@@ -210,19 +213,23 @@ export default function PreislisteClient({ lieferant }: Props) {
 
   // Artikel löschen
   const handleDeleteArtikel = async (artikelId: string) => {
-    if (!confirm("Artikel wirklich löschen?")) return
+    const ok = await confirm({ title: "Bestätigen", message: "Artikel wirklich löschen?" })
+    if (!ok) return
 
     try {
       await fetch(`/api/lager/artikel/${artikelId}`, { method: "DELETE" })
       setArtikel(prev => prev.filter(a => a.id !== artikelId))
       setSuccess("Artikel gelöscht")
+      toast.success("Artikel gelöscht")
     } catch (err) {
       setError("Löschen fehlgeschlagen")
+      toast.error("Löschen fehlgeschlagen")
     }
   }
 
   return (
     <div className="space-y-6">
+      {ConfirmDialogElement}
       {/* Fehler/Erfolg-Meldungen */}
       {error && (
         <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">

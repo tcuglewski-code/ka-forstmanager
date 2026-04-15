@@ -20,6 +20,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ALL_PERMISSIONS, PERMISSION_GROUPS, ROLE_TEMPLATES, Permission } from "@/lib/permissions"
+import { useConfirm } from "@/hooks/useConfirm"
 
 interface UserData {
   id: string
@@ -43,6 +44,7 @@ const ROLES = [
 export default function BenutzerVerwaltungPage() {
   const { data: session } = useSession()
   const router = useRouter()
+  const { confirm, ConfirmDialogElement } = useConfirm()
   const [users, setUsers] = useState<UserData[]>([])
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
@@ -194,7 +196,8 @@ export default function BenutzerVerwaltungPage() {
 
   // Löschen
   const handleDelete = async (user: UserData) => {
-    if (!confirm(`Benutzer "${user.name}" wirklich löschen?`)) return
+    const ok = await confirm({ title: "Bestätigen", message: `Benutzer "${user.name}" wirklich löschen?` })
+    if (!ok) return
 
     try {
       const res = await fetch(`/api/admin/benutzer?id=${user.id}`, {
@@ -347,6 +350,8 @@ export default function BenutzerVerwaltungPage() {
           </tbody>
         </table>
       </div>
+
+      {ConfirmDialogElement}
 
       {/* Modal */}
       {modalOpen && (

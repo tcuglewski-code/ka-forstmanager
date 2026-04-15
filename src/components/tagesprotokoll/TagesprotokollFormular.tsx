@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Typen
@@ -169,7 +170,7 @@ export default function TagesprotokollFormular({
     const diffStunden = (endTime - start) / (1000 * 60 * 60)
 
     if (diffStunden > 10) {
-      alert('Arbeitszeit darf 10 Stunden nicht überschreiten (gesetzliche Vorgabe, ArbZG §3).')
+      toast.warning('Arbeitszeit darf 10 Stunden nicht überschreiten (gesetzliche Vorgabe, ArbZG §3).')
       const maxEnde = new Date(start + 10 * 60 * 60 * 1000)
       setForm(f => ({ ...f, zeitEnde: maxEnde.toISOString().slice(0, 16) }))
       return
@@ -371,7 +372,7 @@ export default function TagesprotokollFormular({
       if (onSaved) onSaved()
       else router.back()
     } catch (e) {
-      alert('Fehler: ' + (e as Error).message)
+      toast.error('Fehler: ' + (e as Error).message)
     } finally {
       setLoading(false)
     }

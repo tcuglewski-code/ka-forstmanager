@@ -6,6 +6,8 @@
 
 import { useState, useEffect } from "react"
 import { Plus, FileDown, ChevronLeft, ChevronRight, Trash2, Edit2, Sprout, Wrench, Scissors, Shield, Wheat, ClipboardList, MapPin } from "lucide-react"
+import { toast } from "sonner"
+import { useConfirm } from "@/hooks/useConfirm"
 
 // ── Typen ─────────────────────────────────────────────────────────────────────
 
@@ -70,6 +72,7 @@ function aktuelleKW(): { kw: number; jahr: number } {
 
 export default function WochenplanungPage() {
   const { kw: initKW, jahr: initJahr } = aktuelleKW()
+  const { confirm, ConfirmDialogElement } = useConfirm()
   const [kw, setKW] = useState(initKW)
   const [jahr, setJahr] = useState(initJahr)
   const [aktGruppeId, setAktGruppeId] = useState<string | null>(null)
@@ -114,7 +117,7 @@ export default function WochenplanungPage() {
       })
       if (!res.ok) {
         const err = await res.json()
-        alert(err.error ?? "Fehler beim Erstellen")
+        toast.error(err.error ?? "Fehler beim Erstellen")
         return
       }
       const neu = await res.json()
@@ -148,13 +151,15 @@ export default function WochenplanungPage() {
       form.reset()
       setPositionFormTyp(null)
     } catch (err) {
-      alert("Fehler: " + (err as Error).message)
+      toast.error("Fehler: " + (err as Error).message)
     }
   }
 
   // Position löschen
   async function positionLoeschen(positionId: string) {
-    if (!wochenplan || !confirm("Position löschen?")) return
+    if (!wochenplan) return
+    const ok = await confirm({ title: "Bestätigen", message: "Position löschen?" })
+    if (!ok) return
     try {
       const res = await fetch(
         `/api/wochenplanung/${wochenplan.id}/positionen?positionId=${positionId}`,
@@ -165,7 +170,7 @@ export default function WochenplanungPage() {
         prev ? { ...prev, positionen: prev.positionen.filter((p) => p.id !== positionId) } : prev
       )
     } catch (err) {
-      alert("Fehler: " + (err as Error).message)
+      toast.error("Fehler: " + (err as Error).message)
     }
   }
 
@@ -451,5 +456,6 @@ export default function WochenplanungPage() {
         </div>
       )}
     </div>
+    {ConfirmDialogElement}
   )
 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useParams } from "next/navigation"
+import { toast } from "sonner"
 
 export default function DruckButton() {
   const params = useParams()
@@ -26,7 +27,7 @@ export default function DruckButton() {
       URL.revokeObjectURL(url)
     } catch (error) {
       console.error("PDF Download Fehler:", error)
-      alert("PDF konnte nicht erstellt werden. Bitte versuchen Sie es erneut.")
+      toast.error("PDF konnte nicht erstellt werden. Bitte versuchen Sie es erneut.")
     } finally {
       setDownloading(false)
     }

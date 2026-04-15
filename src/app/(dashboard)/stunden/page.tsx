@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { Clock, Plus, Loader2, Check, X, Download } from "lucide-react"
+import { toast } from "sonner"
 
 interface Auftrag {
   id: string
@@ -39,7 +40,7 @@ interface Mitarbeiter {
 
 function exportStundenCSV(stunden: Stundeneintrag[], filename: string) {
   if (!stunden.length) {
-    alert("Keine Daten zum Exportieren")
+    toast.warning("Keine Daten zum Exportieren")
     return
   }
   const BOM = "\uFEFF"
