@@ -314,3 +314,91 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: rgba(2, 108, 71, 0.15);
   color: var(--color-on-surface);
 }
+
+/* ============================================================
+   FM-5: Focus-Visible Rings — Accessibility
+   Design Playbook: Klare Fokus-Indikatoren für Keyboard-Navigation
+   ============================================================ */
+*:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-primary);
+  border-radius: 4px;
+}
+
+/* Für Buttons und Links */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-primary);
+}
+
+/* Für Inputs (überschreibt .input-adaptive) */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* ============================================================
+   FM-6: Table Row Minimum Height — Touch-Friendly
+   Design Playbook: Min 48px für Touch-Geräte
+   ============================================================ */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  min-height: 48px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+tr {
+  min-height: 48px;
+}
+
+/* ============================================================
+   FM-7: Badge Contrast Fixes — WCAG AA Compliance
+   Design Playbook: 4.5:1 Mindest-Kontrast für Text
+   ============================================================ */
+
+/* Status-Badges mit verbessertem Kontrast */
+.badge-status-aktiv {
+  @apply bg-emerald-100 text-emerald-800 border border-emerald-300;
+}
+.badge-status-inaktiv {
+  @apply bg-red-100 text-red-800 border border-red-300;
+}
+.badge-status-pending {
+  @apply bg-amber-100 text-amber-800 border border-amber-300;
+}
+.badge-status-info {
+  @apply bg-blue-100 text-blue-800 border border-blue-300;
+}
+.badge-status-warning {
+  @apply bg-orange-100 text-orange-800 border border-orange-300;
+}
+
+/* Dark Mode Badges */
+.dark .badge-status-aktiv,
+[data-theme="dark"] .badge-status-aktiv {
+  @apply bg-emerald-900/50 text-emerald-300 border-emerald-700;
+}
+.dark .badge-status-inaktiv,
+[data-theme="dark"] .badge-status-inaktiv {
+  @apply bg-red-900/50 text-red-300 border-red-700;
+}
+.dark .badge-status-pending,
+[data-theme="dark"] .badge-status-pending {
+  @apply bg-amber-900/50 text-amber-300 border-amber-700;
+}
+.dark .badge-status-info,
+[data-theme="dark"] .badge-status-info {
+  @apply bg-blue-900/50 text-blue-300 border-blue-700;
+}
+.dark .badge-status-warning,
+[data-theme="dark"] .badge-status-warning {
+  @apply bg-orange-900/50 text-orange-300 border-orange-700;
+}
