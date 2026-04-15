@@ -163,14 +163,14 @@ export function Sidebar() {
   } as const
 
   const subNavItemBase =
-    "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-all tonal-transition"
+    "flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs transition-all tonal-transition"
 
   return (
     <>
       {/* Hamburger — Mobile only */}
       <button
         onClick={() => setOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-xl border"
+        className="lg:hidden fixed top-3 left-3 z-50 p-3 rounded-xl border shadow-lg"
         style={{
           backgroundColor: "var(--color-surface-container)",
           borderColor: "var(--color-outline-variant)",
@@ -178,7 +178,7 @@ export function Sidebar() {
         }}
         aria-label="Menü öffnen"
       >
-        <Menu className="w-5 h-5" />
+        <Menu className="w-6 h-6" />
       </button>
 
       {/* Overlay — Mobile */}
@@ -201,11 +201,11 @@ export function Sidebar() {
         {/* Close Button — Mobile only */}
         <button
           onClick={() => setOpen(false)}
-          className="lg:hidden absolute top-4 right-4 p-1"
-          style={{ color: "var(--sidebar-text-muted)" }}
+          className="lg:hidden absolute top-3 right-3 p-2.5 rounded-lg"
+          style={{ color: "var(--sidebar-text-muted)", backgroundColor: "rgba(255,255,255,0.06)" }}
           aria-label="Menü schließen"
         >
-          <X className="w-4 h-4" />
+          <X className="w-5 h-5" />
         </button>
 
         {/* ── Brand ── */}

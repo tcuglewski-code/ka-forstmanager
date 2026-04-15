@@ -122,6 +122,77 @@ select {
 }
 
 /* ============================================================
+   Mobile UX — Global Touch Target Enforcement
+   All interactive elements get minimum 44px on mobile
+   ============================================================ */
+@media (max-width: 1023px) {
+  /* Buttons and links minimum touch area */
+  button,
+  a[href],
+  [role="button"],
+  input[type="submit"],
+  input[type="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Inline text links are exempt */
+  p a,
+  li > a:not([class*="flex"]),
+  td a:not([class*="flex"]):not([class*="btn"]) {
+    min-height: unset;
+    min-width: unset;
+  }
+
+  /* Sidebar navigation items */
+  aside nav a,
+  aside nav button {
+    min-height: 48px;
+  }
+
+  /* Icon-only buttons need padding */
+  button:has(> svg:only-child),
+  a:has(> svg:only-child) {
+    padding: 10px;
+  }
+
+  /* Table action buttons */
+  td button,
+  td a[href] {
+    min-height: 40px;
+    min-width: 40px;
+    padding: 8px;
+  }
+}
+
+/* ============================================================
+   Mobile UX — Overflow Prevention
+   ============================================================ */
+@media (max-width: 1023px) {
+  html,
+  body,
+  main,
+  #__next {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* Cards respect viewport */
+  .card,
+  [class*="Card"] {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Tables: horizontal scroll in container */
+  .table-wrapper,
+  [class*="table-container"] {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ============================================================
    Typography Utilities
    ============================================================ */
 .font-display {
