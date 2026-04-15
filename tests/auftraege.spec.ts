@@ -3,25 +3,7 @@ import { test, expect } from "@playwright/test"
 // KD-1: Playwright E2E Tests für ForstManager - Aufträge
 
 test.describe("Aufträge", () => {
-  // Login vor jedem Test
-  test.beforeEach(async ({ page }) => {
-    // Navigiere zur Login-Seite
-    await page.goto("/login")
-    
-    // Warte auf Login-Form
-    await page.waitForSelector('input[type="email"], input[name="email"]', { timeout: 10000 })
-    
-    // Login mit Test-Credentials (falls verfügbar)
-    const email = process.env.TEST_USER_EMAIL || "test@kochaufforstung.de"
-    const password = process.env.TEST_USER_PASSWORD || "test1234"
-    
-    await page.fill('input[type="email"], input[name="email"]', email)
-    await page.fill('input[type="password"]', password)
-    await page.click('button[type="submit"]')
-    
-    // Warte auf Dashboard oder Aufträge-Seite
-    await page.waitForURL(/\/(dashboard|auftraege)/, { timeout: 15000 })
-  })
+  // Auth via storageState (siehe auth.setup.ts)
 
   test("Auftrag erstellen — Validierung", async ({ page }) => {
     // Navigiere zur Aufträge-Seite
@@ -135,19 +117,7 @@ test.describe("Aufträge", () => {
 })
 
 test.describe("Lager-Buchung", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/login")
-    await page.waitForSelector('input[type="email"]', { timeout: 10000 })
-    
-    const email = process.env.TEST_USER_EMAIL || "test@kochaufforstung.de"
-    const password = process.env.TEST_USER_PASSWORD || "test1234"
-    
-    await page.fill('input[type="email"]', email)
-    await page.fill('input[type="password"]', password)
-    await page.click('button[type="submit"]')
-    
-    await page.waitForURL(/\/(dashboard|auftraege)/, { timeout: 15000 })
-  })
+  // Auth via storageState (siehe auth.setup.ts)
 
   test("Lager Buchung Mengenvalidierung", async ({ page }) => {
     // Navigiere zum Lager (falls vorhanden)

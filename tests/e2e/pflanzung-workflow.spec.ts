@@ -1,18 +1,7 @@
 import { test, expect } from "@playwright/test"
 
 test.describe("Pflanzung Workflow", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/login")
-    await page.waitForSelector('input[type="email"]', { timeout: 10000 })
-
-    const email = process.env.TEST_USER_EMAIL || "admin@kochaufforstung.de"
-    const password = process.env.TEST_USER_PASSWORD || "Admin2026!"
-
-    await page.fill('input[type="email"]', email)
-    await page.fill('input[type="password"]', password)
-    await page.click('button[type="submit"]')
-    await page.waitForURL(/\/(dashboard|auftraege)/, { timeout: 15000 })
-  })
+  // Auth via storageState (siehe auth.setup.ts)
 
   test("Pflanzung — neue Fläche anlegen", async ({ page }) => {
     await page.goto("/auftraege")

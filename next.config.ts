@@ -28,6 +28,15 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   serverExternalPackages: ["@prisma/client", "@prisma/adapter-pg", "pg"],
   typescript: { ignoreBuildErrors: true },
+  async redirects() {
+    return [
+      {
+        source: "/kunden",
+        destination: "/kontakte",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
