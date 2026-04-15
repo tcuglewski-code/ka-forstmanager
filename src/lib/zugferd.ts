@@ -4,7 +4,7 @@
  * Generiert ZUGFeRD 2.3 / Factur-X konformes XML nach EN 16931
  * und bettet es in PDF/A-3 ein.
  * 
- * Profil: EXTENDED (für volle Rechnungsdaten)
+ * Profil: EN16931 (KOSIT-kompatibel)
  * 
  * @see https://zugferd.de/
  * @see https://fnfe-mpe.org/factur-x/
@@ -142,7 +142,7 @@ function getUnitCode(einheit: string): string {
 
 /**
  * Generiert ZUGFeRD 2.3 / Factur-X konformes XML
- * Profil: EXTENDED (vollständige Rechnungsdaten)
+ * Profil: EN16931 (KOSIT-kompatibel)
  */
 export function generateZUGFeRDXml(rechnung: ZUGFeRDRechnungData): string {
   const waehrung = rechnung.waehrung || 'EUR'
@@ -230,7 +230,7 @@ export function generateZUGFeRDXml(rechnung: ZUGFeRDRechnungData): string {
   
   <rsm:ExchangedDocumentContext>
     <ram:GuidelineSpecifiedDocumentContextParameter>
-      <ram:ID>urn:factur-x.eu:1p0:extended</ram:ID>
+      <ram:ID>urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:en16931</ram:ID>
     </ram:GuidelineSpecifiedDocumentContextParameter>
   </rsm:ExchangedDocumentContext>
   
@@ -270,7 +270,6 @@ export function generateZUGFeRDXml(rechnung: ZUGFeRDRechnungData): string {
     
     <ram:ApplicableHeaderTradeSettlement>
       <ram:InvoiceCurrencyCode>${waehrung}</ram:InvoiceCurrencyCode>
-      ${rechnung.zahlungsReferenz ? `<ram:PaymentReference>${escapeXml(rechnung.zahlungsReferenz)}</ram:PaymentReference>` : ''}
       ${zahlungXml}
       <ram:ApplicableTradeTax>
         <ram:CalculatedAmount>${formatAmount(rechnung.mwstSumme)}</ram:CalculatedAmount>
@@ -292,6 +291,7 @@ export function generateZUGFeRDXml(rechnung: ZUGFeRDRechnungData): string {
         <ram:GrandTotalAmount>${formatAmount(rechnung.bruttoSumme)}</ram:GrandTotalAmount>
         <ram:DuePayableAmount>${formatAmount(rechnung.bruttoSumme)}</ram:DuePayableAmount>
       </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+      ${rechnung.zahlungsReferenz ? `<ram:PaymentReference>${escapeXml(rechnung.zahlungsReferenz)}</ram:PaymentReference>` : ''}
     </ram:ApplicableHeaderTradeSettlement>
   </rsm:SupplyChainTradeTransaction>
 </rsm:CrossIndustryInvoice>`

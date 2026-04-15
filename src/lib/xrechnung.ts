@@ -369,7 +369,6 @@ export function generateXRechnungXml(rechnung: XRechnungData): string {
     
     <ram:ApplicableHeaderTradeSettlement>
       <ram:InvoiceCurrencyCode>${waehrung}</ram:InvoiceCurrencyCode>
-      ${rechnung.zahlungsReferenz ? `<ram:PaymentReference>${escapeXml(rechnung.zahlungsReferenz)}</ram:PaymentReference>` : ''}
       ${zahlungXml}${rabattXml}
       <ram:ApplicableTradeTax>
         <ram:CalculatedAmount>${formatAmount(rechnung.mwstSumme)}</ram:CalculatedAmount>
@@ -391,6 +390,7 @@ export function generateXRechnungXml(rechnung: XRechnungData): string {
         <ram:GrandTotalAmount>${formatAmount(rechnung.bruttoSumme)}</ram:GrandTotalAmount>
         <ram:DuePayableAmount>${formatAmount(rechnung.bruttoSumme)}</ram:DuePayableAmount>
       </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+      ${rechnung.zahlungsReferenz ? `<ram:PaymentReference>${escapeXml(rechnung.zahlungsReferenz)}</ram:PaymentReference>` : ''}
     </ram:ApplicableHeaderTradeSettlement>
   </rsm:SupplyChainTradeTransaction>
 </rsm:CrossIndustryInvoice>`
