@@ -59,6 +59,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Datensatz nicht gefunden" }, { status: 404 })
     }
     console.error("[Lohn POST]", error)
-    return NextResponse.json({ error: "Interner Serverfehler", details: String(error) }, { status: 500 })
+    return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 })
   }
 }

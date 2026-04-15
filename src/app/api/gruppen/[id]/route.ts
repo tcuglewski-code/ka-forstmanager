@@ -40,11 +40,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       }
     }
 
-    const gruppe = await prisma.gruppe.update({ where: { id }, data: body })
+    const { name, saisonId, gruppenfuehrerId, status } = body
+    const gruppe = await prisma.gruppe.update({
+      where: { id },
+      data: { name, saisonId, gruppenfuehrerId, status },
+    })
     return NextResponse.json(gruppe)
   } catch (error) {
     console.error("[Gruppen PATCH]", error)
-    return NextResponse.json({ error: "Interner Serverfehler", details: String(error) }, { status: 500 })
+    return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 })
   }
 }
 
@@ -58,6 +62,6 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ ok: true })
   } catch (error) {
     console.error("[Gruppen DELETE]", error)
-    return NextResponse.json({ error: "Interner Serverfehler", details: String(error) }, { status: 500 })
+    return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 })
   }
 }

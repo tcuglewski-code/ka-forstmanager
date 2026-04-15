@@ -111,7 +111,7 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error("[Kundenportal Upload] Fehler:", err)
     return NextResponse.json(
-      { error: "Interner Fehler beim Upload", details: String(err) },
+      { error: "Interner Fehler beim Upload" },
       { status: 500 }
     )
   }

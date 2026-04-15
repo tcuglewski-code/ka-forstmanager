@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { querySecondBrain } from "@/lib/secondbrain-db"
+import { auth } from "@/lib/auth"
 
 export const runtime = "nodejs"
 
@@ -25,6 +26,11 @@ interface KPIs {
 
 // GET: Erfolgsquoten und Statistiken pro Programm
 export async function GET() {
+  const session = await auth()
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
     // Haupt-Statistiken pro Programm
     const statsRows = await querySecondBrain(`

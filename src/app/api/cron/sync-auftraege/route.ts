@@ -5,7 +5,7 @@ const WP_API_URL = "https://peru-otter-113714.hostingersite.com/wp-json/wp/v2/ka
 const WP_USER = process.env.WP_USER ?? "openclaw"
 const WP_PASS = process.env.WP_PASSWORD ?? ""
 const WP_AUTH = Buffer.from(`${WP_USER}:${WP_PASS}`).toString("base64")
-const CRON_SECRET = process.env.CRON_SECRET ?? "forstmanager-cron-2026"
+const CRON_SECRET = process.env.CRON_SECRET ?? ""
 
 export async function GET(req: Request) {
   // Vercel Cron Auth
@@ -152,6 +152,7 @@ export async function GET(req: Request) {
       ts: new Date().toISOString()
     })
   } catch (error) {
-    return NextResponse.json({ error: String(error) }, { status: 500 })
+    console.error("[sync-auftraege]", error)
+    return NextResponse.json({ error: "Interner Fehler" }, { status: 500 })
   }
 }

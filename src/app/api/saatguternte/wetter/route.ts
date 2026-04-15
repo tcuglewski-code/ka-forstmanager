@@ -5,11 +5,17 @@ import {
   fetchCurrentWeather,
   aggregiereWetterdaten,
 } from "@/lib/open-meteo"
+import { auth } from "@/lib/auth"
 
 // POST /api/saatguternte/wetter
 // Body: { flaecheId: string, year?: number }
 export async function POST(req: NextRequest) {
   try {
+    const session = await auth()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const body = await req.json()
     const { flaecheId, year } = body as { flaecheId: string; year?: number }
 
@@ -92,6 +98,11 @@ export async function POST(req: NextRequest) {
 // Gibt gespeicherte WetterSnapshots zurück + lädt aktuelle 7-Tage-Vorschau frisch
 export async function GET(req: NextRequest) {
   try {
+    const session = await auth()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const { searchParams } = new URL(req.url)
     const flaecheId = searchParams.get("flaecheId")
 

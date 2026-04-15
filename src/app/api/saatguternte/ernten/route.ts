@@ -1,9 +1,15 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { auth } from "@/lib/auth"
 
 export async function GET(req: NextRequest) {
   try {
+    const session = await auth()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const sp = req.nextUrl.searchParams
     const saison = sp.get("saison") ? parseInt(sp.get("saison")!) : undefined
     const baumart = sp.get("baumart") ?? undefined
@@ -56,6 +62,11 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await auth()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const body = await req.json()
     const { profilId, saison, datum, baumart, mengeKgGesamt, notizen, positionen } = body
 

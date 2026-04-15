@@ -2,12 +2,17 @@ import { auth } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
 
 // Nextcloud WebDAV-Konfiguration
-const NEXTCLOUD_BASE = "http://187.124.18.244:32774/remote.php/dav/files/polskagenetic"
-const NEXTCLOUD_USER = "polskagenetic"
-const NEXTCLOUD_APP_PASSWORD = "Sz9S4-2XZpG-HjzXc-pPQy8-38THR"
+const NC_URL = process.env.NEXTCLOUD_URL ?? ""
+const NC_USER = process.env.NEXTCLOUD_USER ?? ""
+const NC_PASS = process.env.NEXTCLOUD_APP_PASSWORD ?? process.env.NEXTCLOUD_PASS ?? ""
+const NEXTCLOUD_BASE = `${NC_URL}/remote.php/dav/files/${NC_USER}`
+
+if (!NC_URL || !NC_USER || !NC_PASS) {
+  console.error("NEXTCLOUD_URL, NEXTCLOUD_USER, or NEXTCLOUD_APP_PASSWORD not set")
+}
 
 function getAuthHeader(): string {
-  return `Basic ${Buffer.from(`${NEXTCLOUD_USER}:${NEXTCLOUD_APP_PASSWORD}`).toString("base64")}`
+  return `Basic ${Buffer.from(`${NC_USER}:${NC_PASS}`).toString("base64")}`
 }
 
 // Ordner erstellen (ignoriert Fehler wenn Ordner existiert)
@@ -77,7 +82,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Erfolg - URL zurückgeben
-    const shareUrl = `http://187.124.18.244:32774/remote.php/dav/files/polskagenetic${ncPath}`
+    const shareUrl = `${NEXTCLOUD_BASE}${ncPath}`
     
     return NextResponse.json({
       success: true,

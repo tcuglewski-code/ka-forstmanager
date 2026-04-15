@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { querySecondBrain } from '@/lib/secondbrain-db';
+import { auth } from '@/lib/auth';
 
 /**
  * API-Route für Förderantrags-Verläufe
@@ -9,6 +10,11 @@ import { querySecondBrain } from '@/lib/secondbrain-db';
  */
 
 export async function GET(req: NextRequest) {
+  const session = await auth()
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   const { searchParams } = new URL(req.url);
   const programmId = searchParams.get('programm_id');
   const auftragId = searchParams.get('auftrag_id');
@@ -48,6 +54,11 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const session = await auth()
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
     const body = await req.json();
     const { programm_id, auftrag_id, status, eingereicht_am, beantragter_betrag_eur, bewilligungsstelle, notizen } = body;
@@ -70,6 +81,11 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
+  const session = await auth()
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
     const body = await req.json();
     const { id, status, entschieden_am, bewilligter_betrag_eur, notizen } = body;

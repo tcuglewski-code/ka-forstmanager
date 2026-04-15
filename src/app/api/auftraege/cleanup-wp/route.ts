@@ -8,7 +8,7 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 
 const WP_CLEANUP_URL = "https://peru-otter-113714.hostingersite.com/wp-json/ka/v1/wp-projekt"
-const WP_FM_SECRET = process.env.WP_FM_SECRET ?? "ka-forstmanager-sync-2026"
+const WP_FM_SECRET = process.env.WP_FM_SECRET ?? ""
 
 export async function POST() {
   const session = await auth()
@@ -60,6 +60,6 @@ export async function POST() {
     })
   } catch (error) {
     console.error("[cleanup-wp]", error)
-    return NextResponse.json({ error: String(error) }, { status: 500 })
+    return NextResponse.json({ error: "Interner Fehler" }, { status: 500 })
   }
 }

@@ -23,7 +23,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json(fahrzeug)
   } catch (error) {
     console.error("[Fuhrpark PATCH]", error)
-    return NextResponse.json({ error: "Interner Serverfehler", details: String(error) }, { status: 500 })
+    return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 })
   }
 }
 
@@ -37,6 +37,6 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ ok: true })
   } catch (error) {
     console.error("[Fuhrpark DELETE]", error)
-    return NextResponse.json({ error: "Interner Serverfehler", details: String(error) }, { status: 500 })
+    return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 })
   }
 }

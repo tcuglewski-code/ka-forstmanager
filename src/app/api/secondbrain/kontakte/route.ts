@@ -5,9 +5,12 @@ import { Pool } from "pg"
 // KC-4: Second Brain API für Forstamt-Kontakte
 // Verbindung zur SecondBrainKADB Neon-Datenbank
 
+if (!process.env.SECONDBRAIN_DATABASE_URL) {
+  console.error("SECONDBRAIN_DATABASE_URL not set")
+}
+
 const secondBrainPool = new Pool({
-  connectionString: process.env.SECONDBRAIN_DATABASE_URL || 
-    "postgresql://neondb_owner:npg_1GXdqethC2bJ@ep-misty-moon-aldvc64t-pooler.c-3.eu-central-1.aws.neon.tech/SecondBrainKADB?sslmode=require",
+  connectionString: process.env.SECONDBRAIN_DATABASE_URL ?? "",
   ssl: { rejectUnauthorized: false },
   max: 5,
 })
@@ -40,7 +43,7 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error("[SecondBrain Kontakte]", error)
     return NextResponse.json(
-      { error: "Datenbankfehler", details: String(error) },
+      { error: "Datenbankfehler" },
       { status: 500 }
     )
   }

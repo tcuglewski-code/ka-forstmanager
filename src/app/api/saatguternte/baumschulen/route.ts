@@ -1,9 +1,15 @@
 // @ts-nocheck
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { auth } from "@/lib/auth"
 
 export async function GET() {
   try {
+    const session = await auth()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const baumschulen = await prisma.baumschule.findMany({
       orderBy: { name: "asc" },
       select: {
@@ -31,6 +37,11 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    const session = await auth()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const body = await req.json()
     const { name, ort, bundesland, ansprechpartner, email, telefon, notizen } = body
 

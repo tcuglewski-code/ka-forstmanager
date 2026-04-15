@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { querySecondBrain } from "@/lib/secondbrain-db"
+import { auth } from "@/lib/auth"
 
 export const dynamic = "force-dynamic"
 
@@ -34,6 +35,11 @@ const KEYWORD_SYNONYME: Record<string, string> = {
 }
 
 export async function GET(req: NextRequest) {
+  const session = await auth()
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
     const { searchParams } = new URL(req.url)
     const q = searchParams.get("q") || ""

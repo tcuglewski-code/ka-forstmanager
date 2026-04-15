@@ -1,7 +1,13 @@
 import { prisma } from "@/lib/prisma"
-import { NextRequest } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@/lib/auth"
 
 export async function GET(request: NextRequest) {
+  const session = await auth()
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
     const searchParams = request.nextUrl.searchParams
     const prioritaet = searchParams.get("prioritaet")

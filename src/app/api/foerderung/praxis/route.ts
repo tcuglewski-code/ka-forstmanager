@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { querySecondBrain } from "@/lib/secondbrain-db"
+import { auth } from "@/lib/auth"
 
 export const runtime = "nodejs"
 
@@ -22,6 +23,11 @@ interface PraxisEintrag {
 
 // GET: Liste aller Praxis-Einträge mit Programm-Namen
 export async function GET() {
+  const session = await auth()
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
     const rows = await querySecondBrain(`
       SELECT 
@@ -56,6 +62,11 @@ export async function GET() {
 
 // POST: Neuen Eintrag erstellen
 export async function POST(req: NextRequest) {
+  const session = await auth()
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
     const body = await req.json()
     
@@ -120,6 +131,11 @@ export async function POST(req: NextRequest) {
 
 // PATCH: Eintrag aktualisieren
 export async function PATCH(req: NextRequest) {
+  const session = await auth()
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
     const body = await req.json()
     const { id, ...updates } = body

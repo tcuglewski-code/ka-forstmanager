@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { createCipheriv, randomBytes } from "crypto"
+import { auth } from "@/lib/auth"
 
 function getEncryptionKey(): Buffer {
   let keyHex = process.env.ENCRYPTION_KEY
@@ -20,6 +21,14 @@ function getEncryptionKey(): Buffer {
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await auth()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+    if ((session.user as { role?: string })?.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+
     const body = await req.json()
     const { quelleId, username, password } = body
 

@@ -66,7 +66,7 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error("[Produkt-Konsistenz Cron]", error)
     return NextResponse.json(
-      { error: "Konsistenzprüfung fehlgeschlagen", details: String(error) },
+      { error: "Konsistenzprüfung fehlgeschlagen" },
       { status: 500 }
     )
   }

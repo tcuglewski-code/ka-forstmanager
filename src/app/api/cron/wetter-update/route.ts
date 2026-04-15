@@ -9,7 +9,12 @@ function sleep(ms: number) {
 
 // GET /api/cron/wetter-update (Vercel Cron — jeden Montag um 03:00)
 // Holt alle Flächen MIT Koordinaten, die keinen aktuellen WetterSnapshot haben
-export async function GET() {
+export async function GET(req: Request) {
+  const secret = req.headers.get("authorization")?.replace("Bearer ", "")
+  if (secret !== process.env.CRON_SECRET) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   const startTime = Date.now()
   const targetYear = new Date().getFullYear() - 1
   const einMonatZurueck = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)

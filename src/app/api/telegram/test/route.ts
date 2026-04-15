@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     if (!res.ok) {
       const err = await res.text()
       console.error("[Telegram Test] API Error:", err)
-      return NextResponse.json({ error: "Telegram API Fehler", details: err }, { status: 502 })
+      return NextResponse.json({ error: "Telegram API Fehler" }, { status: 502 })
     }
 
     return NextResponse.json({ ok: true, chatId })

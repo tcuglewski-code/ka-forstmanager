@@ -27,7 +27,7 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const key = searchParams.get("key")
 
-  if (key !== "forstmanager-setup-2026") {
+  if (key !== (process.env.SETUP_KEY || "forstmanager-setup-2026")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
@@ -77,11 +77,10 @@ export async function GET(req: Request) {
       ok: true,
       message: "Setup erfolgreich abgeschlossen.",
       adminEmail: admin.email,
-      adminPassword: "Admin2026!",
       naechsterSchritt: "Bitte sofort das Passwort ändern und SETUP_DISABLED=true in .env setzen!",
     })
   } catch (error) {
     console.error("[Setup]", error)
-    return NextResponse.json({ error: String(error) }, { status: 500 })
+    return NextResponse.json({ error: "Setup fehlgeschlagen" }, { status: 500 })
   }
 }

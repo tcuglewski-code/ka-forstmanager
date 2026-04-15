@@ -50,6 +50,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(kontakt, { status: 201 })
   } catch (error) {
     console.error("[Kontakte POST]", error)
-    return NextResponse.json({ error: "Interner Serverfehler", details: String(error) }, { status: 500 })
+    return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 })
   }
 }

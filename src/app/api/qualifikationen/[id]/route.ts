@@ -7,7 +7,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const { id } = await params
   const body = await req.json()
-  const qual = await prisma.qualifikation.update({ where: { id }, data: body })
+  const { name, typ, beschreibung } = body
+  const qual = await prisma.qualifikation.update({ where: { id }, data: { name, typ, beschreibung } })
   return NextResponse.json(qual)
 }
 

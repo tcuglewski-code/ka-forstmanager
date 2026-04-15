@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma"
 
-const WEBHOOK_SECRET = process.env.FM_WEBHOOK_SECRET || "ka_fm_sync_2026"
+const WEBHOOK_SECRET = process.env.FM_WEBHOOK_SECRET ?? ""
 
 export async function POST(request: Request) {
   try {

@@ -1,11 +1,17 @@
 import { NextResponse } from 'next/server';
 import { querySecondBrain } from '@/lib/secondbrain-db';
+import { auth } from '@/lib/auth';
 
 /**
  * Gibt Förderprogramme zurück deren Antragsfrist bald abläuft.
  * GET /api/foerderung/fristen?tage=30
  */
 export async function GET(req: Request) {
+  const session = await auth()
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   const { searchParams } = new URL(req.url);
   const tage = parseInt(searchParams.get('tage') || '60');
   

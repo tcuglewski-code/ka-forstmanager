@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma"
 import { sendEmail } from "@/lib/email"
 
 // Webhook-Token für Authentifizierung
-const WEBHOOK_TOKEN = process.env.WP_WEBHOOK_TOKEN || "KochAufforstungWebhook2026"
+const WEBHOOK_TOKEN = process.env.WP_WEBHOOK_TOKEN ?? ""
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "info@koch-aufforstung.de"
 
 interface WPWizardDaten {

@@ -46,7 +46,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "vorname und nachname sind Pflichtfelder" }, { status: 400 })
     }
 
-    const mitarbeiter = await prisma.mitarbeiter.create({ data: body })
+    const { vorname, nachname, email, telefon, rolle, status, personalNr } = body
+    const mitarbeiter = await prisma.mitarbeiter.create({
+      data: { vorname, nachname, email, telefon, rolle, status, personalNr },
+    })
     return NextResponse.json(mitarbeiter, { status: 201 })
   } catch (error) {
     return NextResponse.json({ error: "Fehler beim Erstellen" }, { status: 500 })

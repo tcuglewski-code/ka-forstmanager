@@ -9,11 +9,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   try {
     const { id } = await params
     const body = await req.json()
-    const kontakt = await prisma.kontakt.update({ where: { id }, data: body })
+    const { name, typ, telefon, email, forstamt, revier, adresse, notizen } = body
+    const kontakt = await prisma.kontakt.update({
+      where: { id },
+      data: { name, typ, telefon, email, forstamt, revier, adresse, notizen },
+    })
     return NextResponse.json(kontakt)
   } catch (error) {
     console.error("[Kontakte PATCH]", error)
-    return NextResponse.json({ error: "Interner Serverfehler", details: String(error) }, { status: 500 })
+    return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 })
   }
 }
 
@@ -27,6 +31,6 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ ok: true })
   } catch (error) {
     console.error("[Kontakte DELETE]", error)
-    return NextResponse.json({ error: "Interner Serverfehler", details: String(error) }, { status: 500 })
+    return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 })
   }
 }

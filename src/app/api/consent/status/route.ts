@@ -47,7 +47,7 @@ export async function GET() {
   } catch (error) {
     console.error("[Consent Status]", error)
     return NextResponse.json(
-      { error: "Interner Serverfehler", details: String(error) },
+      { error: "Interner Serverfehler" },
       { status: 500 }
     )
   }

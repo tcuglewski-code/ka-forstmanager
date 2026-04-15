@@ -1,9 +1,13 @@
 // Sprint AL: Nextcloud WebDAV Hilfsfunktionen
 // WebDAV-Client für Dateioperationen in der Nextcloud-Instanz
 
-const NEXTCLOUD_URL = process.env.NEXTCLOUD_URL ?? "http://187.124.18.244:32774"
-const NEXTCLOUD_USER = process.env.NEXTCLOUD_USER ?? "polskagenetic"
-const NEXTCLOUD_PASS = process.env.NEXTCLOUD_PASS ?? "Sz9S4-2XZpG-HjzXc-pPQy8-38THR"
+const NEXTCLOUD_URL = process.env.NEXTCLOUD_URL ?? ""
+const NEXTCLOUD_USER = process.env.NEXTCLOUD_USER ?? ""
+const NEXTCLOUD_PASS = process.env.NEXTCLOUD_PASS ?? ""
+
+if (!NEXTCLOUD_URL || !NEXTCLOUD_USER || !NEXTCLOUD_PASS) {
+  console.error("NEXTCLOUD_URL, NEXTCLOUD_USER, or NEXTCLOUD_PASS not set")
+}
 
 // WebDAV-Basis-URL
 const WEBDAV_BASE = `${NEXTCLOUD_URL}/remote.php/dav/files/${NEXTCLOUD_USER}`

@@ -10,6 +10,9 @@ import { sendKANotification } from "@/lib/telegram-notify"
 import { wpSyncEngine } from "@/lib/sync/wp-sync"
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth()
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
   const { id } = await params
   const auftrag = await prisma.auftrag.findUnique({
     where: { id },
@@ -146,7 +149,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json(auftrag)
   } catch (error) {
     console.error("[Auftraege PATCH]", error)
-    return NextResponse.json({ error: "Interner Serverfehler", details: String(error) }, { status: 500 })
+    return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 })
   }
 }
 
@@ -155,7 +158,7 @@ const WP_USER = process.env.WP_USER ?? "openclaw"
 const WP_PASS = process.env.WP_PASSWORD ?? ""
 const WP_AUTH = Buffer.from(`${WP_USER}:${WP_PASS}`).toString("base64")
 const WP_CLEANUP_URL = "https://peru-otter-113714.hostingersite.com/wp-json/ka/v1/wp-projekt"
-const WP_FM_SECRET = process.env.WP_FM_SECRET ?? "ka-forstmanager-sync-2026"
+const WP_FM_SECRET = process.env.WP_FM_SECRET ?? ""
 
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -207,6 +210,6 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ ok: true })
   } catch (error) {
     console.error("[Auftraege DELETE]", error)
-    return NextResponse.json({ error: "Interner Serverfehler", details: String(error) }, { status: 500 })
+    return NextResponse.json({ error: "Interner Serverfehler" }, { status: 500 })
   }
 }

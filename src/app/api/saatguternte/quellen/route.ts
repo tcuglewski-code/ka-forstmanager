@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { auth } from "@/lib/auth"
 
 export async function GET() {
   try {
+    const session = await auth()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const quellen = await prisma.ernteRegisterQuelle.findMany({
       include: {
         _count: { select: { flaechen: true } },
@@ -38,6 +44,11 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await auth()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const body = await req.json()
     const { name, kuerzel, bundeslaender, baseUrl, crawlUrl, loginRequired } = body
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
 
 /**
  * DEPRECATED: Dieser Endpunkt ist veraltet.
@@ -8,6 +9,11 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 
 export async function POST(req: NextRequest) {
+  const session = await auth()
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   // Redirect: Forward Request an neuen Endpunkt
   const newUrl = new URL('/api/betriebs-assistent/beraten', req.url);
   
@@ -39,6 +45,11 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  const session = await auth()
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   const newUrl = new URL('/api/betriebs-assistent/beraten', req.url);
   
   const response = await fetch(newUrl.toString(), {

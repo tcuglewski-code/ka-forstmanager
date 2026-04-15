@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { 
-  parseMultiEntryBaumart, 
-  isCorruptedEntry, 
+import {
+  parseMultiEntryBaumart,
+  isCorruptedEntry,
   calculateDataQuality,
-  type DataQualityStats 
+  type DataQualityStats
 } from '@/lib/register-parser'
+import { auth } from "@/lib/auth"
 
 /**
  * GET /api/saatguternte/admin/re-parse
@@ -14,6 +15,14 @@ import {
  */
 export async function GET() {
   try {
+    const session = await auth()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+    if ((session.user as { role?: string })?.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+
     // Alle Einträge laden (für Analyse)
     const allEntries = await prisma.registerFlaeche.findMany({
       select: {
@@ -105,6 +114,14 @@ export async function GET() {
  */
 export async function POST(req: NextRequest) {
   try {
+    const session = await auth()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+    if ((session.user as { role?: string })?.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+
     const body = await req.json().catch(() => ({}))
     const { dryRun = true, limit = 100 } = body
     
@@ -251,6 +268,14 @@ export async function POST(req: NextRequest) {
  */
 export async function DELETE(req: NextRequest) {
   try {
+    const session = await auth()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+    if ((session.user as { role?: string })?.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+
     const { searchParams } = new URL(req.url)
     const confirm = searchParams.get('confirm') === 'true'
     
