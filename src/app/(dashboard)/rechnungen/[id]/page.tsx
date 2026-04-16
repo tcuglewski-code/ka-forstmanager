@@ -282,7 +282,7 @@ export default function RechnungDetailPage() {
             {/* ZUGFeRD E-Rechnung Download */}
             <div className="relative">
               <a
-                href={`/api/rechnungen/${rechnung.id}/pdf`}
+                href={`/api/rechnungen/${rechnung.id}/xrechnung`}
                 download
                 className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-lg hover:from-emerald-500 hover:to-emerald-600 transition-all font-medium"
               >

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Receipt, Plus, Loader2, CheckCircle, ExternalLink, Printer, Lock } from "lucide-react"
+import { Receipt, Plus, Loader2, CheckCircle, ExternalLink, Printer, Lock, FileDown } from "lucide-react"
 import ZipayoButton from "@/components/payments/ZipayoButton"
 
 interface Rechnung {
@@ -272,6 +272,11 @@ export default function RechnungenPage() {
                       <a href={`/rechnungen/${r.id}/drucken`} target="_blank"
                         className="text-xs text-zinc-400 hover:text-white flex items-center gap-1">
                         <Printer className="w-3 h-3" /> Drucken
+                      </a>
+                      <a href={`/api/rechnungen/${r.id}/xrechnung`}
+                        className="text-xs text-blue-400 hover:text-white flex items-center gap-1"
+                        title="ZUGFeRD E-Rechnung herunterladen">
+                        <FileDown className="w-3 h-3" /> E-Rechnung
                       </a>
                       {/* Sprint GB-01: Buttons nur bei nicht-gesperrten Rechnungen */}
                       {!r.isLocked && (
