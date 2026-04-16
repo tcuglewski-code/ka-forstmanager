@@ -10,10 +10,8 @@
  * @see https://fnfe-mpe.org/factur-x/
  */
 
-import { PDFDocument, PDFName, PDFDict, PDFArray, PDFString, PDFHexString, PDFStream, PDFNumber, AFRelationship } from 'pdf-lib'
+import { PDFDocument, PDFName, PDFDict, PDFArray, PDFString, PDFHexString, PDFNumber, AFRelationship } from 'pdf-lib'
 import crypto from 'crypto'
-import fs from 'fs'
-import path from 'path'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TYPEN
@@ -310,15 +308,16 @@ export function generateZUGFeRDXml(rechnung: ZUGFeRDRechnungData): string {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Reads the real sRGB ICC profile from disk (PDF/A-3b requirement)
+ * Fetches the real sRGB ICC profile via URL (Vercel-compatible, no filesystem dependency)
  */
-function getSRGBIccProfile(): Uint8Array {
-  const iccPath = path.join(process.cwd(), 'public/srgb.icc')
-  if (fs.existsSync(iccPath)) {
-    const buffer = fs.readFileSync(iccPath)
-    return new Uint8Array(buffer)
+async function getSRGBIccProfile(): Promise<Uint8Array> {
+  const baseUrl = process.env.NEXTAUTH_URL || 'https://ka-forstmanager.vercel.app'
+  const res = await fetch(`${baseUrl}/srgb.icc`)
+  if (!res.ok) {
+    throw new Error(`sRGB ICC profile fetch failed: ${res.status} ${res.statusText}`)
   }
-  throw new Error('sRGB ICC profile not found at ' + iccPath)
+  const buffer = await res.arrayBuffer()
+  return new Uint8Array(buffer)
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -354,12 +353,17 @@ export async function embedZUGFeRDXml(
   copiedPages.forEach(page => pdfDoc.addPage(page))
 
   // ── 4. Dokument-Metadaten (Info-Dict) ──
-  pdfDoc.setTitle('ZUGFeRD Rechnung')
+  // IMPORTANT: These values MUST match XMP metadata exactly (PDF/A requirement)
+  const PRODUCER = 'ForstManager by Koch Aufforstung'
+  const CREATOR = 'ForstManager ZUGFeRD Export'
+  const TITLE = 'ZUGFeRD Rechnung'
+  const SUBJECT = 'Factur-X / ZUGFeRD 2.3 E-Rechnung'
+  pdfDoc.setTitle(TITLE)
   pdfDoc.setAuthor('Koch Aufforstung GmbH')
-  pdfDoc.setSubject('Factur-X / ZUGFeRD 2.3 E-Rechnung')
+  pdfDoc.setSubject(SUBJECT)
   pdfDoc.setKeywords(['ZUGFeRD', 'Factur-X', 'EN16931', 'E-Rechnung'])
-  pdfDoc.setProducer('ForstManager by Koch Aufforstung')
-  pdfDoc.setCreator('ForstManager ZUGFeRD Export')
+  pdfDoc.setProducer(PRODUCER)
+  pdfDoc.setCreator(CREATOR)
   pdfDoc.setCreationDate(now)
   pdfDoc.setModificationDate(now)
 
@@ -374,7 +378,7 @@ export async function embedZUGFeRDXml(
   })
 
   // ── 6. ICC Farbprofil + OutputIntents (PDF/A-3b Pflicht) ──
-  const iccProfile = getSRGBIccProfile()
+  const iccProfile = await getSRGBIccProfile()
   const iccStream = pdfDoc.context.stream(iccProfile, {
     N: PDFNumber.of(3),
     Length: PDFNumber.of(iccProfile.length),
@@ -410,6 +414,7 @@ export async function embedZUGFeRDXml(
   pdfDoc.context.trailerInfo.ID = pdfDoc.context.obj([docId, docId])
 
   // ── 10. XMP Metadata Stream mit ALLEN erforderlichen Namespaces ──
+  // All values MUST match Info dict exactly (set in step 4)
   const xmpXml = `<?xpacket begin="\ufeff" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/">
   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -423,28 +428,28 @@ export async function embedZUGFeRDXml(
       <dc:format>application/pdf</dc:format>
       <dc:title>
         <rdf:Alt>
-          <rdf:li xml:lang="x-default">ZUGFeRD Rechnung</rdf:li>
+          <rdf:li xml:lang="x-default">${TITLE}</rdf:li>
         </rdf:Alt>
       </dc:title>
       <dc:description>
         <rdf:Alt>
-          <rdf:li xml:lang="x-default">Factur-X / ZUGFeRD 2.3 E-Rechnung</rdf:li>
+          <rdf:li xml:lang="x-default">${SUBJECT}</rdf:li>
         </rdf:Alt>
       </dc:description>
       <dc:creator>
         <rdf:Seq>
-          <rdf:li>ForstManager ZUGFeRD Export</rdf:li>
+          <rdf:li>${CREATOR}</rdf:li>
         </rdf:Seq>
       </dc:creator>
     </rdf:Description>
     <rdf:Description rdf:about=""
         xmlns:pdf="http://ns.adobe.com/pdf/1.3/">
-      <pdf:Producer>ForstManager by Koch Aufforstung</pdf:Producer>
+      <pdf:Producer>${PRODUCER}</pdf:Producer>
       <pdf:Keywords>ZUGFeRD Factur-X EN16931 E-Rechnung</pdf:Keywords>
     </rdf:Description>
     <rdf:Description rdf:about=""
         xmlns:xmp="http://ns.adobe.com/xap/1.0/">
-      <xmp:CreatorTool>ForstManager ZUGFeRD Export</xmp:CreatorTool>
+      <xmp:CreatorTool>${CREATOR}</xmp:CreatorTool>
       <xmp:CreateDate>${now.toISOString()}</xmp:CreateDate>
       <xmp:ModifyDate>${now.toISOString()}</xmp:ModifyDate>
       <xmp:MetadataDate>${now.toISOString()}</xmp:MetadataDate>
@@ -509,8 +514,12 @@ export async function embedZUGFeRDXml(
     Length: PDFNumber.of(xmpBytesData.length),
   })
   const metadataRef = pdfDoc.context.register(metadataStream)
-  // create() garantiert dass catalog.set() korrekt persistiert!
+  // Set on catalog AND raw catalog dict for reliable persistence
   pdfDoc.catalog.set(PDFName.of('Metadata'), metadataRef)
+  const catalogDict = pdfDoc.context.lookup(pdfDoc.catalog.ref()) as PDFDict
+  if (catalogDict) {
+    catalogDict.set(PDFName.of('Metadata'), metadataRef)
+  }
 
   // ── 11. AF Array explizit im Catalog setzen (Factur-X Pflicht) ──
   const namesDict = pdfDoc.context.lookup(

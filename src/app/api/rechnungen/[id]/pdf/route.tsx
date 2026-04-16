@@ -9,14 +9,15 @@ import { isAdminOrGF } from "@/lib/permissions"
 import { renderToBuffer, Document, Page, Text, View, Image, StyleSheet, Font } from "@react-pdf/renderer"
 import QRCode from "qrcode"
 import { generateZUGFeRDXml, embedZUGFeRDXml, rechnungToZUGFeRDData } from "@/lib/zugferd"
-import path from "path"
 
 // NotoSans Font registrieren für PDF/A-3b Font-Embedding Compliance
+// Use absolute URL for font loading (Vercel compatibility — process.cwd() doesn't resolve public/)
+const baseUrl = process.env.NEXTAUTH_URL || "https://ka-forstmanager.vercel.app"
 Font.register({
   family: "NotoSans",
   fonts: [
-    { src: path.join(process.cwd(), "public/fonts/NotoSans-Regular.ttf"), fontWeight: "normal" as const },
-    { src: path.join(process.cwd(), "public/fonts/NotoSans-Bold.ttf"), fontWeight: "bold" as const },
+    { src: `${baseUrl}/fonts/NotoSans-Regular.ttf`, fontWeight: "normal" as const },
+    { src: `${baseUrl}/fonts/NotoSans-Bold.ttf`, fontWeight: "bold" as const },
   ],
 })
 
@@ -332,16 +333,18 @@ async function generateEpcQrCode(
     "",                              // Hint (leer)
   ].join("\n")
 
-  // QR-Code als Data-URL generieren
-  const qrDataUrl = await QRCode.toDataURL(epcData, {
+  // QR-Code als Buffer generieren (solid colors, no transparency = no SMask = PDF/A compliant)
+  const qrBuffer = await QRCode.toBuffer(epcData, {
     errorCorrectionLevel: "M",
     margin: 2,
     width: 200,
+    type: "png",
     color: {
-      dark: "#2C3A1C",
+      dark: "#000000",
       light: "#ffffff",
     },
   })
+  const qrDataUrl = `data:image/png;base64,${qrBuffer.toString("base64")}`
 
   return qrDataUrl
 }
@@ -553,7 +556,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
         {/* ── Zahlungshinweis-Box mit QR-Code ──────────────────────── */}
         <View style={styles.zahlungsBox}>
-          <Text style={styles.zahlungsBoxTitel}>💳 Zahlungsinformationen</Text>
+          <Text style={styles.zahlungsBoxTitel}>Zahlungsinformationen</Text>
           <View style={styles.zahlungsGrid}>
             <View style={styles.zahlungsSpalte}>
               <View style={styles.zahlungsZeile}>
