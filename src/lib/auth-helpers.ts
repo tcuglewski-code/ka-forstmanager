@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
+import { jwtVerify } from "jose"
 
 // Lazy import to avoid circular dependency with NextAuth initialization
 const getAuth = async () => {
@@ -16,6 +17,25 @@ export async function verifyToken(req: NextRequest) {
   const authHeader = req.headers.get("authorization")
   if (authHeader?.startsWith("Bearer ")) {
     const token = authHeader.substring(7)
+
+    // Try JWT verification first (mobile app tokens)
+    if (process.env.NEXTAUTH_SECRET) {
+      try {
+        const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET)
+        const { payload } = await jwtVerify(token, secret)
+        if (payload.sub) {
+          return {
+            id: payload.sub,
+            email: payload.email as string,
+            name: payload.name as string,
+            role: payload.role as string,
+          }
+        }
+      } catch {
+        // Not a valid JWT — fall through to DB API token lookup
+      }
+    }
+
     // For API tokens, look up in database
     const apiToken = await prisma.apiToken?.findUnique?.({
       where: { token },
