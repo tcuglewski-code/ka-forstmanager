@@ -49,6 +49,7 @@ export default function RechnungenPage() {
   const [form, setForm] = useState({ nummer: "", auftragId: "", betrag: "", mwst: "19", faelligAm: "", notizen: "" })
   const [selectedAuftragLink, setSelectedAuftragLink] = useState("")
   const [loadingBetrag, setLoadingBetrag] = useState(false)
+  const [createError, setCreateError] = useState<string | null>(null)
 
   // Sprint Q: Filter + Sortierung
   const [filterStatus, setFilterStatus] = useState("")
@@ -120,11 +121,22 @@ export default function RechnungenPage() {
 
   async function create() {
     setSaving(true)
-    await fetch("/api/rechnungen", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
-    setShowModal(false)
-    setForm({ nummer: "", auftragId: "", betrag: "", mwst: "19", faelligAm: "", notizen: "" })
-    setSelectedAuftragLink("")
-    await fetchAll()
+    setCreateError(null)
+    try {
+      const res = await fetch("/api/rechnungen", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        setCreateError(errData.error || `Fehler ${res.status}: Rechnung konnte nicht erstellt werden`)
+        setSaving(false)
+        return
+      }
+      setShowModal(false)
+      setForm({ nummer: "", auftragId: "", betrag: "", mwst: "19", faelligAm: "", notizen: "" })
+      setSelectedAuftragLink("")
+      await fetchAll()
+    } catch {
+      setCreateError("Netzwerkfehler: Bitte Verbindung prüfen")
+    }
     setSaving(false)
   }
 
@@ -365,6 +377,11 @@ export default function RechnungenPage() {
                 <textarea value={form.notizen} onChange={(e) => setForm({ ...form, notizen: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" rows={2} />
               </div>
             </div>
+            {createError && (
+              <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+                {createError}
+              </div>
+            )}
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => { setShowModal(false); setSelectedAuftragLink("") }}

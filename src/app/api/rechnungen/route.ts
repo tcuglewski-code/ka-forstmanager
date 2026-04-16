@@ -125,58 +125,66 @@ export async function POST(req: NextRequest) {
       select: { nummer: true },
     })
     const lastNum = lastRechnung?.nummer
-      ? parseInt(lastRechnung.nummer.replace(/\D/g, "")) || 0
+      ? (parseInt(lastRechnung.nummer.split("-").pop() || "0", 10) || 0)
       : 0
     nummer = `RE-${new Date().getFullYear()}-${String(lastNum + 1).padStart(4, "0")}`
   }
 
-  const rechnung = await prisma.rechnung.create({
-    data: {
-      nummer,
-      auftragId: validData.auftragId || null,
-      betrag: validData.betrag,
-      mwst: validData.mwst ?? 19,
-      status: "offen",
-      faelligAm: validData.faelligAm ? new Date(validData.faelligAm) : null,
-      notizen: validData.notizen ?? null,
-    },
-    include: { auftrag: { select: { id: true, titel: true } } },
-  })
-  
-  // Sprint GB-01: Audit-Log für Erstellung
   try {
-    await prisma.rechnungAuditLog.create({
+    const rechnung = await prisma.rechnung.create({
       data: {
-        rechnungId: rechnung.id,
-        action: 'CREATE',
-        userId: session.user?.id || null,
-        userName: session.user?.name || null,
-        newValue: JSON.stringify({
-          nummer: rechnung.nummer,
-          betrag: rechnung.betrag,
-          auftragId: rechnung.auftragId,
-        }),
-        ip: req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || null,
-        userAgent: req.headers.get('user-agent') || null,
+        nummer,
+        auftragId: validData.auftragId || null,
+        betrag: validData.betrag,
+        mwst: validData.mwst ?? 19,
+        status: "offen",
+        faelligAm: validData.faelligAm ? new Date(validData.faelligAm) : null,
+        notizen: validData.notizen ?? null,
       },
+      include: { auftrag: { select: { id: true, titel: true } } },
     })
-  } catch (error) {
-    console.error("[AUDIT LOG ERROR]", error)
-    // Audit-Log-Fehler blockieren nicht die Erstellung
-  }
-  
-  // Telegram-Benachrichtigung (direkt, kein LLM)
-  sendKANotification({
-    event: 'rechnung_erstellt',
-    data: {
-      nummer: rechnung.nummer,
-      betrag: rechnung.betrag.toFixed(2),
-    },
-  }).catch((err) => console.error("[TG-KA] Notification fehlgeschlagen:", err))
 
-  return NextResponse.json({
-    ...rechnung,
-    isLocked: false,
-    lockInfo: null,
-  }, { status: 201 })
+    // Sprint GB-01: Audit-Log für Erstellung
+    try {
+      await prisma.rechnungAuditLog.create({
+        data: {
+          rechnungId: rechnung.id,
+          action: 'CREATE',
+          userId: session.user?.id || null,
+          userName: session.user?.name || null,
+          newValue: JSON.stringify({
+            nummer: rechnung.nummer,
+            betrag: rechnung.betrag,
+            auftragId: rechnung.auftragId,
+          }),
+          ip: req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || null,
+          userAgent: req.headers.get('user-agent') || null,
+        },
+      })
+    } catch (error) {
+      console.error("[AUDIT LOG ERROR]", error)
+      // Audit-Log-Fehler blockieren nicht die Erstellung
+    }
+
+    // Telegram-Benachrichtigung (direkt, kein LLM)
+    sendKANotification({
+      event: 'rechnung_erstellt',
+      data: {
+        nummer: rechnung.nummer,
+        betrag: rechnung.betrag.toFixed(2),
+      },
+    }).catch((err) => console.error("[TG-KA] Notification fehlgeschlagen:", err))
+
+    return NextResponse.json({
+      ...rechnung,
+      isLocked: false,
+      lockInfo: null,
+    }, { status: 201 })
+  } catch (error: unknown) {
+    if (error && typeof error === "object" && "code" in error && (error as { code: string }).code === "P2002") {
+      return NextResponse.json({ error: "Rechnungsnummer bereits vergeben. Bitte manuell angeben." }, { status: 409 })
+    }
+    console.error("[RECHNUNG CREATE ERROR]", error)
+    return NextResponse.json({ error: "Fehler beim Erstellen der Rechnung" }, { status: 500 })
+  }
 }
