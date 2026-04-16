@@ -51,13 +51,11 @@ interface ZUGFeRDPdfOptions {
 /**
  * Fetches the sRGB ICC profile
  */
-async function getSRGBIccProfile(): Promise<Uint8Array> {
-  const baseUrl = process.env.NEXTAUTH_URL || 'https://ka-forstmanager.vercel.app'
-  const res = await fetch(`${baseUrl}/srgb.icc`)
-  if (!res.ok) {
-    throw new Error(`sRGB ICC profile fetch failed: ${res.status}`)
-  }
-  return new Uint8Array(await res.arrayBuffer())
+// sRGB ICC profile embedded directly (avoids HTTP fetch in serverless)
+const SRGB_ICC_B64 = 'AAAByGxjbXMCEAAAbW50clJHQiBYWVogB+IAAwAUAAkADgAdYWNzcE1TRlQAAAAAc2F3c2N0cmwAAAAAAAAAAAAAAAAAAPbWAAEAAAAA0y1oYW5knZEAPUCAsD1AdCyBnqUijgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJZGVzYwAAAPAAAABfY3BydAAAAQwAAAAMd3RwdAAAARgAAAAUclhZWgAAASwAAAAUZ1hZWgAAAUAAAAAUYlhZWgAAAVQAAAAUclRSQwAAAWgAAABgZ1RSQwAAAWgAAABgYlRSQwAAAWgAAABgZGVzYwAAAAAAAAAFdVJHQgAAAAAAAAAAAAAAAHRleHQAAAAAQ0MwAFhZWiAAAAAAAADzVAABAAAAARbJWFlaIAAAAAAAAG+gAAA48gAAA49YWVogAAAAAAAAYpYAALeJAAAY2lhZWiAAAAAAAAAkoAAAD4UAALbEY3VydgAAAAAAAAAqAAAAfAD4AZwCdQODBMkGTggSChgMYg70Ec8U9hhqHC4gQySsKWoufjPrObM/1kZXTTZUdlwXZB1shnVWfo2ILJI2nKunjLLbvpnKx9dl5Hfx+f//'
+
+function getSRGBIccProfile(): Uint8Array {
+  return new Uint8Array(Buffer.from(SRGB_ICC_B64, 'base64'))
 }
 
 /**
@@ -240,7 +238,7 @@ export async function generateZUGFeRDPdf(
   })
 
   // ── 5. sRGB ICC profile + OutputIntents (PDF/A-3b mandatory) ──
-  const iccProfile = await getSRGBIccProfile()
+  const iccProfile = getSRGBIccProfile()
   const iccStream = pdfDoc.context.stream(iccProfile, {
     N: PDFNumber.of(3),
     Length: PDFNumber.of(iccProfile.length),
