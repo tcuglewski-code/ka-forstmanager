@@ -323,7 +323,7 @@ export async function embedZUGFeRDXml(
   await pdfDoc.attach(xmlBytes, 'factur-x.xml', {
     mimeType: 'application/xml',
     description: 'Factur-X/ZUGFeRD Invoice Data',
-    afRelationship: AFRelationship.Alternative,
+    afRelationship: AFRelationship.Source,
     creationDate: new Date(),
     modificationDate: new Date(),
   })
@@ -334,7 +334,37 @@ export async function embedZUGFeRDXml(
   pdfDoc.setKeywords(['ZUGFeRD', 'Factur-X', 'EN16931', 'E-Rechnung'])
   pdfDoc.setProducer('ForstManager by Feldhub')
   pdfDoc.setCreator('ForstManager ZUGFeRD Export')
-  
+
+  // XMP Metadata Stream für Factur-X Profil-Deklaration
+  // Validatoren lesen den Profil aus dem XMP, nicht aus dem XML-Inhalt
+  const xmpXml = `<?xpacket begin="\xef\xbb\xbf" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <rdf:Description rdf:about="" xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/">
+      <pdfaid:part>3</pdfaid:part>
+      <pdfaid:conformance>B</pdfaid:conformance>
+    </rdf:Description>
+    <rdf:Description rdf:about="" xmlns:fx="urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0#">
+      <fx:DocumentType>INVOICE</fx:DocumentType>
+      <fx:DocumentFileName>factur-x.xml</fx:DocumentFileName>
+      <fx:Version>1.0</fx:Version>
+      <fx:ConformanceLevel>EN 16931</fx:ConformanceLevel>
+    </rdf:Description>
+    <rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/">
+      <dc:format>application/pdf</dc:format>
+    </rdf:Description>
+  </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="w"?>`
+  const xmpBytes = new TextEncoder().encode(xmpXml)
+  const metadataStream = pdfDoc.context.stream(xmpBytes, {
+    Type: 'Metadata',
+    Subtype: 'XML',
+    Length: xmpBytes.length,
+  })
+  const metadataRef = pdfDoc.context.register(metadataStream)
+  pdfDoc.catalog.set(PDFName.of('Metadata'), metadataRef)
+
   // PDF mit Anhang speichern
   return await pdfDoc.save()
 }
