@@ -1,26 +1,33 @@
 /**
- * XRechnung Export API Route
- * 
- * Sprint FM-02: GET /api/rechnungen/:id/xrechnung
- * Generiert XRechnung 3.0 konformes XML für eine Rechnung
- * 
- * @see https://xeinkauf.de/xrechnung/
+ * ZUGFeRD / XRechnung Export API Route
+ *
+ * GET /api/rechnungen/:id/xrechnung
+ *
+ * Returns a PDF/A-3b document with embedded ZUGFeRD 2.3 XML (Factur-X EN16931).
+ * Query param ?format=xml returns raw XRechnung XML instead.
+ *
+ * This is the machine-readable invoice. The pretty PDF is at /api/rechnungen/:id/pdf.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 import { isAdminOrGF } from '@/lib/permissions'
-import { 
-  generateXRechnungXml, 
-  rechnungToXRechnungData, 
-  validateXRechnungData 
+import {
+  generateXRechnungXml,
+  rechnungToXRechnungData,
+  validateXRechnungData,
 } from '@/lib/xrechnung'
+import {
+  generateZUGFeRDXml,
+  rechnungToZUGFeRDData,
+} from '@/lib/zugferd'
+import { generateZUGFeRDPdf } from '@/lib/zugferd-pdf'
 
-// Firmendaten (Koch Aufforstung GmbH) - aus ENV oder Default
+// Firmendaten (Koch Aufforstung GmbH)
 const FIRMA = {
   name: process.env.COMPANY_NAME || 'Koch Aufforstung GmbH',
-  strasse: process.env.COMPANY_STREET || 'Hauptstraße 42',
+  strasse: process.env.COMPANY_STREET || 'Hauptstra\u00dfe 42',
   plz: process.env.COMPANY_ZIP || '54290',
   ort: process.env.COMPANY_CITY || 'Trier',
   land: process.env.COMPANY_COUNTRY || 'DE',
@@ -37,157 +44,200 @@ interface RouteParams {
   params: Promise<{ id: string }>
 }
 
-/**
- * GET /api/rechnungen/:id/xrechnung
- * 
- * Generiert XRechnung XML für eine Rechnung
- * 
- * Query-Parameter:
- * - leitwegId: Leitweg-ID für öffentliche Auftraggeber (BT-10)
- * - bestellnummer: Bestellnummer des Käufers (BT-13)
- * - validate: "true" - Validierung durchführen, Fehler bei Problemen
- * - download: "true" - Als Datei-Download statt inline
- * 
- * Response:
- * - application/xml mit XRechnung 3.0 konformem XML
- * 
- * Fehler:
- * - 401: Nicht authentifiziert
- * - 403: Keine Berechtigung (nur Admin/GF)
- * - 404: Rechnung nicht gefunden
- * - 410: Rechnung gelöscht (Soft-Delete)
- * - 422: Validierungsfehler (wenn validate=true)
- */
+function formatEuro(n: number): string {
+  return n.toFixed(2)
+}
+
+function formatDatum(d: Date | string): string {
+  const date = new Date(d)
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = date.getFullYear()
+  return `${day}.${month}.${year}`
+}
+
 export async function GET(
   request: NextRequest,
   { params }: RouteParams
 ): Promise<NextResponse> {
   const resolvedParams = await params
 
-  // Auth-Check
+  // Auth
   const session = await auth()
   if (!session?.user?.id) {
-    return NextResponse.json(
-      { error: 'Nicht authentifiziert' },
-      { status: 401 }
-    )
+    return NextResponse.json({ error: 'Nicht authentifiziert' }, { status: 401 })
   }
 
-  // Permissions-Check: Nur Admin, Geschäftsführer oder Accountant
   const adminOrGF = isAdminOrGF(session)
   const userRole = (session.user as { rolle?: string }).rolle
   const isAccountant = userRole === 'accountant'
-  
+
   if (!adminOrGF && !isAccountant) {
     return NextResponse.json(
-      { error: 'Keine Berechtigung für XRechnung-Export' },
+      { error: 'Keine Berechtigung fuer XRechnung-Export' },
       { status: 403 }
     )
   }
 
-  // Query-Parameter
   const searchParams = request.nextUrl.searchParams
+  const format = searchParams.get('format') // "xml" for raw XML, default = PDF
   const leitwegId = searchParams.get('leitwegId') ?? undefined
   const bestellnummer = searchParams.get('bestellnummer') ?? undefined
   const shouldValidate = searchParams.get('validate') === 'true'
-  const asDownload = searchParams.get('download') === 'true'
 
   try {
-    // Rechnung laden mit Auftrag und Positionen
     const rechnung = await prisma.rechnung.findUnique({
       where: { id: resolvedParams.id },
       include: {
         auftrag: true,
-        positionen: true,
+        positionen: {
+          orderBy: { createdAt: 'asc' },
+        },
       },
     })
 
     if (!rechnung) {
-      return NextResponse.json(
-        { error: 'Rechnung nicht gefunden' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Rechnung nicht gefunden' }, { status: 404 })
     }
 
-    // Soft-Delete Check
     if (rechnung.deletedAt) {
-      return NextResponse.json(
-        { error: 'Rechnung wurde gelöscht' },
-        { status: 410 }
-      )
+      return NextResponse.json({ error: 'Rechnung wurde geloescht' }, { status: 410 })
     }
 
-    // GDPR Restriction Check - auch eingeschränkte Rechnungen dürfen exportiert werden
-    // (für steuerliche Zwecke), aber wir loggen den Zugriff
     if (rechnung.gdprRestricted) {
       console.log(
-        `[XRechnung] Zugriff auf DSGVO-eingeschränkte Rechnung ${rechnung.nummer} durch User ${session.user.id}`
+        `[XRechnung] Zugriff auf DSGVO-eingeschraenkte Rechnung ${rechnung.nummer} durch User ${session.user.id}`
       )
     }
 
-    // Konvertierung zu XRechnung-Daten
-    const xrechnungData = rechnungToXRechnungData(
-      rechnung,
-      FIRMA,
-      { leitwegId, bestellnummer }
-    )
+    // ── Format: Raw XRechnung XML ──
+    if (format === 'xml') {
+      const xrechnungData = rechnungToXRechnungData(rechnung, FIRMA, {
+        leitwegId,
+        bestellnummer,
+      })
 
-    // Optionale Validierung
-    if (shouldValidate) {
-      const validationErrors = validateXRechnungData(xrechnungData)
-      if (validationErrors.length > 0) {
-        return NextResponse.json(
-          {
-            error: 'XRechnung-Validierung fehlgeschlagen',
-            validationErrors,
-            hint: 'Bitte ergänzen Sie die fehlenden Pflichtfelder',
-          },
-          { status: 422 }
-        )
+      if (shouldValidate) {
+        const validationErrors = validateXRechnungData(xrechnungData)
+        if (validationErrors.length > 0) {
+          return NextResponse.json(
+            { error: 'XRechnung-Validierung fehlgeschlagen', validationErrors },
+            { status: 422 }
+          )
+        }
       }
+
+      const xml = generateXRechnungXml(xrechnungData)
+      const filename = `xrechnung_${rechnung.nummer.replace(/[^a-zA-Z0-9-]/g, '_')}.xml`
+
+      return new NextResponse(xml, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/xml; charset=utf-8',
+          'Content-Disposition': `attachment; filename="${filename}"`,
+          'X-XRechnung-Version': '3.0',
+          'X-Invoice-Number': rechnung.nummer,
+        },
+      })
     }
 
-    // XML generieren
-    const xml = generateXRechnungXml(xrechnungData)
+    // ── Default: ZUGFeRD PDF/A-3b ──
 
-    // Dateiname für Download
-    const filename = `xrechnung_${rechnung.nummer.replace(/[^a-zA-Z0-9-]/g, '_')}.xml`
+    // Generate ZUGFeRD XML
+    const zugferdData = rechnungToZUGFeRDData(rechnung, {
+      name: FIRMA.name,
+      strasse: FIRMA.strasse,
+      plz: FIRMA.plz,
+      ort: FIRMA.ort,
+      land: FIRMA.land,
+      steuernummer: FIRMA.steuernummer,
+      ustIdNr: FIRMA.ustIdNr,
+      iban: FIRMA.iban,
+      bic: FIRMA.bic,
+      bank: FIRMA.bank,
+    })
+    const zugferdXml = generateZUGFeRDXml(zugferdData)
 
-    // Response mit XML
-    const headers: HeadersInit = {
-      'Content-Type': 'application/xml; charset=utf-8',
-      'X-XRechnung-Version': '3.0',
-      'X-Invoice-Number': rechnung.nummer,
-    }
+    // Calculate amounts for PDF display
+    const mwstSatz = rechnung.mwst ?? 19
+    const netto = rechnung.nettoBetrag ?? rechnung.betrag
+    const rabattAbsolut = rechnung.rabattBetrag ?? ((rechnung.rabatt ?? 0) * netto / 100)
+    const nettoNachRabatt = netto - rabattAbsolut
+    const mwstBetrag = (nettoNachRabatt * mwstSatz) / 100
+    const brutto = rechnung.bruttoBetrag ?? nettoNachRabatt + mwstBetrag
 
-    if (asDownload) {
-      headers['Content-Disposition'] = `attachment; filename="${filename}"`
-    } else {
-      headers['Content-Disposition'] = `inline; filename="${filename}"`
-    }
+    // Build positions for PDF
+    const positionen = rechnung.positionen.length > 0
+      ? rechnung.positionen.map(pos => ({
+          beschreibung: pos.beschreibung,
+          menge: pos.menge.toFixed(2),
+          einheit: pos.einheit,
+          einzelpreis: formatEuro(pos.preisProEinheit),
+          gesamt: formatEuro(pos.gesamt),
+        }))
+      : [{
+          beschreibung: rechnung.notizen ?? rechnung.auftrag?.titel ?? 'Forstdienstleistung',
+          menge: '1.00',
+          einheit: 'pauschal',
+          einzelpreis: formatEuro(netto),
+          gesamt: formatEuro(netto),
+        }]
 
-    return new NextResponse(xml, {
+    // Generate PDF/A-3b with embedded ZUGFeRD XML
+    const pdfBytes = await generateZUGFeRDPdf(zugferdXml, {
+      rechnungsNummer: rechnung.nummer,
+      rechnungsDatum: formatDatum(rechnung.rechnungsDatum),
+      empfaenger: rechnung.auftrag?.waldbesitzer ?? 'Kunde',
+      nettoBetrag: formatEuro(nettoNachRabatt),
+      mwstBetrag: formatEuro(mwstBetrag),
+      bruttoBetrag: formatEuro(brutto),
+      mwstSatz,
+      positionen,
+      firma: {
+        name: FIRMA.name,
+        strasse: FIRMA.strasse,
+        plz: FIRMA.plz,
+        ort: FIRMA.ort,
+        iban: FIRMA.iban,
+        bic: FIRMA.bic,
+        steuernummer: FIRMA.steuernummer,
+        ustIdNr: FIRMA.ustIdNr,
+      },
+    })
+
+    const filename = `ZUGFeRD_${rechnung.nummer.replace(/[^a-zA-Z0-9-]/g, '_')}.pdf`
+
+    console.log(`[ZUGFeRD] PDF/A-3b generiert fuer Rechnung ${rechnung.nummer} (${pdfBytes.length} bytes)`)
+
+    return new NextResponse(pdfBytes as unknown as BodyInit, {
       status: 200,
-      headers,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Content-Length': pdfBytes.length.toString(),
+        'X-ZUGFeRD-Status': 'embedded',
+        'X-ZUGFeRD-Profile': 'EN16931',
+        'X-Invoice-Number': rechnung.nummer,
+      },
     })
   } catch (error) {
     console.error('[XRechnung] Export-Fehler:', error)
     return NextResponse.json(
-      { error: 'Interner Serverfehler beim XRechnung-Export' },
+      { error: 'Interner Serverfehler beim Export' },
       { status: 500 }
     )
   }
 }
 
 /**
- * HEAD - Prüft ob XRechnung-Export verfügbar ist
+ * HEAD - Check if export is available
  */
 export async function HEAD(
   request: NextRequest,
   { params }: RouteParams
 ): Promise<NextResponse> {
   const resolvedParams = await params
-  
+
   const session = await auth()
   if (!session?.user?.id) {
     return new NextResponse(null, { status: 401 })
@@ -207,6 +257,7 @@ export async function HEAD(
     headers: {
       'X-Invoice-Number': rechnung.nummer,
       'X-XRechnung-Available': 'true',
+      'X-ZUGFeRD-Available': 'true',
     },
   })
 }
