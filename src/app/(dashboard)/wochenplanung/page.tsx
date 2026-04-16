@@ -191,6 +191,7 @@ export default function WochenplanungPage() {
     DIENSTLEISTUNG_TYPEN.find((t) => t.key === typ)?.label ?? typ
 
   return (
+    <>
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Seiten-Header */}
       <div>
@@ -457,5 +458,6 @@ export default function WochenplanungPage() {
       )}
     </div>
     {ConfirmDialogElement}
+    </>
   )
 }
