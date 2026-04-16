@@ -516,7 +516,25 @@ export async function embedZUGFeRDXml(
   const metadataRef = pdfDoc.context.register(metadataStream)
   pdfDoc.catalog.set(PDFName.of('Metadata'), metadataRef)
 
-  return await pdfDoc.save()
+  // ── 9. AF Array explizit im Catalog setzen (Factur-X Pflicht) ──
+  const existingAF = pdfDoc.catalog.get(PDFName.of('AF'))
+  if (!existingAF) {
+    const namesDict = pdfDoc.context.lookup(
+      pdfDoc.catalog.get(PDFName.of('Names'))
+    ) as PDFDict | undefined
+    const embeddedFilesRef = namesDict?.get(PDFName.of('EmbeddedFiles'))
+    if (embeddedFilesRef) {
+      const embeddedFiles = pdfDoc.context.lookup(embeddedFilesRef) as PDFDict | undefined
+      const nameArray = embeddedFiles?.get(PDFName.of('Names')) as PDFArray | undefined
+      if (nameArray && nameArray.size() >= 2) {
+        const fileSpecRef = nameArray.get(1)
+        pdfDoc.catalog.set(PDFName.of('AF'), pdfDoc.context.obj([fileSpecRef]))
+      }
+    }
+  }
+
+  // PDF/A-3b VERBIETET Object Streams (ObjStm)
+  return await pdfDoc.save({ useObjectStreams: false })
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
