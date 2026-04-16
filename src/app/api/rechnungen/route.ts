@@ -117,17 +117,25 @@ export async function POST(req: NextRequest) {
   }
   const validData = parsed.data
 
-  // Sprint Q: Auto-Rechnungsnummer generieren falls nicht angegeben
+  // Auto-Rechnungsnummer: find highest RE-YYYY-NNNN number across ALL records
   let nummer = validData.nummer?.trim()
   if (!nummer) {
-    const lastRechnung = await prisma.rechnung.findFirst({
-      orderBy: { createdAt: "desc" },
+    const year = new Date().getFullYear()
+    const pattern = `RE-${year}-`
+    const allRechnungen = await prisma.rechnung.findMany({
+      where: { nummer: { startsWith: pattern } },
       select: { nummer: true },
     })
-    const lastNum = lastRechnung?.nummer
-      ? (parseInt(lastRechnung.nummer.split("-").pop() || "0", 10) || 0)
-      : 0
-    nummer = `RE-${new Date().getFullYear()}-${String(lastNum + 1).padStart(4, "0")}`
+    let maxNum = 0
+    const re = new RegExp(`^RE-${year}-(\\d{4})$`)
+    for (const r of allRechnungen) {
+      const m = r.nummer.match(re)
+      if (m) {
+        const n = parseInt(m[1], 10)
+        if (n > maxNum) maxNum = n
+      }
+    }
+    nummer = `RE-${year}-${String(maxNum + 1).padStart(4, "0")}`
   }
 
   try {
