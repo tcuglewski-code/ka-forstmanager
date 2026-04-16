@@ -6,9 +6,19 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { isAdminOrGF } from "@/lib/permissions"
-import { renderToBuffer, Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer"
+import { renderToBuffer, Document, Page, Text, View, Image, StyleSheet, Font } from "@react-pdf/renderer"
 import QRCode from "qrcode"
 import { generateZUGFeRDXml, embedZUGFeRDXml, rechnungToZUGFeRDData } from "@/lib/zugferd"
+import path from "path"
+
+// NotoSans Font registrieren für PDF/A-3b Font-Embedding Compliance
+Font.register({
+  family: "NotoSans",
+  fonts: [
+    { src: path.join(process.cwd(), "public/fonts/NotoSans-Regular.ttf"), fontWeight: "normal" as const },
+    { src: path.join(process.cwd(), "public/fonts/NotoSans-Bold.ttf"), fontWeight: "bold" as const },
+  ],
+})
 
 // Firmendaten (Koch Aufforstung GmbH) - ZUGFeRD-relevant aus ENV
 const FIRMA = {
@@ -33,7 +43,7 @@ const FIRMA = {
 const styles = StyleSheet.create({
   seite: {
     padding: 40,
-    fontFamily: "Helvetica",
+    fontFamily: "NotoSans",
     fontSize: 10,
     color: "#1a1a1a",
     position: "relative",
@@ -52,7 +62,7 @@ const styles = StyleSheet.create({
   },
   firmaName: {
     fontSize: 18,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans", fontWeight: "bold" as const,
     color: "#2C3A1C",
   },
   firmaUntertitel: {
@@ -70,7 +80,7 @@ const styles = StyleSheet.create({
   },
   rechnungTitel: {
     fontSize: 22,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans", fontWeight: "bold" as const,
     color: "#1a1a1a",
     marginBottom: 6,
   },
@@ -81,7 +91,7 @@ const styles = StyleSheet.create({
   },
   rechnungMetaBold: {
     fontSize: 10,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans", fontWeight: "bold" as const,
     textAlign: "right",
   },
   // Empfänger
@@ -98,7 +108,7 @@ const styles = StyleSheet.create({
   },
   empfaengerName: {
     fontSize: 11,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans", fontWeight: "bold" as const,
     marginBottom: 2,
   },
   empfaengerDetails: {
@@ -115,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#2C3A1C",
     color: "#fff",
     padding: "8 6",
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans", fontWeight: "bold" as const,
     fontSize: 9,
   },
   tabelleZeile: {
@@ -178,12 +188,12 @@ const styles = StyleSheet.create({
   },
   gesamtLabel: {
     fontSize: 12,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans", fontWeight: "bold" as const,
     color: "#2C3A1C",
   },
   gesamtWert: {
     fontSize: 14,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans", fontWeight: "bold" as const,
     color: "#2C3A1C",
   },
   // Zahlungshinweis-Box
@@ -197,7 +207,7 @@ const styles = StyleSheet.create({
   },
   zahlungsBoxTitel: {
     fontSize: 11,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans", fontWeight: "bold" as const,
     color: "#2C3A1C",
     marginBottom: 8,
   },
@@ -219,7 +229,7 @@ const styles = StyleSheet.create({
   },
   zahlungsWert: {
     fontSize: 9,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans", fontWeight: "bold" as const,
     width: "60%",
   },
   // QR-Code
@@ -598,7 +608,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         {/* ── Notizen ──────────────────────────────────────────────── */}
         {rechnung.notizen && (
           <View style={{ marginTop: 12 }}>
-            <Text style={{ fontSize: 8, color: "#666", fontFamily: "Helvetica-Bold" }}>
+            <Text style={{ fontSize: 8, color: "#666", fontFamily: "NotoSans", fontWeight: "bold" as const }}>
               Anmerkungen:
             </Text>
             <Text style={{ fontSize: 8, color: "#444", marginTop: 2 }}>
@@ -672,9 +682,12 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     console.log(`[ZUGFeRD] XML eingebettet für Rechnung ${rechnung.nummer}`)
   } catch (error) {
     console.error("[ZUGFeRD] Fehler beim Einbetten:", error)
+    console.error("[ZUGFeRD] WARNUNG: PDF wurde OHNE ZUGFeRD XML ausgeliefert!")
     // Fallback: Original-PDF ohne ZUGFeRD zurückgeben
     finalPdfBytes = pdfBuffer
   }
+
+  const zugferdEmbedded = finalPdfBytes !== pdfBuffer
 
   // Dateiname generieren (mit ZUGFeRD-Hinweis)
   const dateiname = `Rechnung_${rechnung.nummer.replace(/[^a-zA-Z0-9-]/g, "_")}_ZUGFeRD_${formatDatum(rechnung.rechnungsDatum).replace(/\./g, "-")}.pdf`
@@ -685,6 +698,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="${dateiname}"`,
       "Content-Length": finalPdfBytes.length.toString(),
+      "X-ZUGFeRD-Status": zugferdEmbedded ? "embedded" : "error",
     },
   })
 }
