@@ -339,10 +339,31 @@ export async function embedZUGFeRDXml(
   pdfBytes: Uint8Array,
   xmlString: string
 ): Promise<Uint8Array> {
-  const pdfDoc = await PDFDocument.load(pdfBytes)
   const now = new Date()
 
-  // ── 1. XML als embedded file anhängen ──
+  // ── 1. Quell-PDF laden (von @react-pdf/renderer) ──
+  const sourcePdf = await PDFDocument.load(pdfBytes, { ignoreEncryption: true })
+
+  // ── 2. NEUES sauberes PDF erstellen (volle Kontrolle über Catalog!) ──
+  // NICHT load() verwenden — catalog.set() verliert Änderungen bei load()
+  const pdfDoc = await PDFDocument.create()
+
+  // ── 3. Seiten kopieren (inkl. aller Font-Resources, Bilder, etc.) ──
+  const pageIndices = sourcePdf.getPageIndices()
+  const copiedPages = await pdfDoc.copyPages(sourcePdf, pageIndices)
+  copiedPages.forEach(page => pdfDoc.addPage(page))
+
+  // ── 4. Dokument-Metadaten (Info-Dict) ──
+  pdfDoc.setTitle('ZUGFeRD Rechnung')
+  pdfDoc.setAuthor('Koch Aufforstung GmbH')
+  pdfDoc.setSubject('Factur-X / ZUGFeRD 2.3 E-Rechnung')
+  pdfDoc.setKeywords(['ZUGFeRD', 'Factur-X', 'EN16931', 'E-Rechnung'])
+  pdfDoc.setProducer('ForstManager by Koch Aufforstung')
+  pdfDoc.setCreator('ForstManager ZUGFeRD Export')
+  pdfDoc.setCreationDate(now)
+  pdfDoc.setModificationDate(now)
+
+  // ── 5. XML als Embedded File (Factur-X Pflicht) ──
   const xmlBytes = new TextEncoder().encode(xmlString)
   await pdfDoc.attach(xmlBytes, 'factur-x.xml', {
     mimeType: 'application/xml',
@@ -352,26 +373,16 @@ export async function embedZUGFeRDXml(
     modificationDate: now,
   })
 
-  // ── 2. PDF Metadaten setzen ──
-  pdfDoc.setTitle('ZUGFeRD Rechnung')
-  pdfDoc.setSubject('Factur-X / ZUGFeRD 2.3 E-Rechnung')
-  pdfDoc.setKeywords(['ZUGFeRD', 'Factur-X', 'EN16931', 'E-Rechnung'])
-  pdfDoc.setProducer('ForstManager by Koch Aufforstung')
-  pdfDoc.setCreator('ForstManager ZUGFeRD Export')
-  pdfDoc.setCreationDate(now)
-  pdfDoc.setModificationDate(now)
-
-  // ── 3. ICC Farbprofil + OutputIntents (PDF/A-3b Pflicht) ──
+  // ── 6. ICC Farbprofil + OutputIntents (PDF/A-3b Pflicht) ──
   const iccProfile = getSRGBIccProfile()
   const iccStream = pdfDoc.context.stream(iccProfile, {
-    N: 3, // Number of color components (RGB)
-    Length: iccProfile.length,
+    N: PDFNumber.of(3),
+    Length: PDFNumber.of(iccProfile.length),
   })
   const iccStreamRef = pdfDoc.context.register(iccStream)
-
   const outputIntent = pdfDoc.context.obj({
-    Type: 'OutputIntent',
-    S: 'GTS_PDFA1',
+    Type: PDFName.of('OutputIntent'),
+    S: PDFName.of('GTS_PDFA1'),
     OutputConditionIdentifier: PDFString.of('sRGB'),
     DestOutputProfile: iccStreamRef,
   })
@@ -381,37 +392,15 @@ export async function embedZUGFeRDXml(
     pdfDoc.context.obj([outputIntentRef])
   )
 
-  // ── 4. MarkInfo (PDF/A-3b Pflicht) ──
-  const markInfo = pdfDoc.context.obj({ Marked: true })
-  pdfDoc.catalog.set(PDFName.of('MarkInfo'), markInfo)
+  // ── 7. MarkInfo (PDF/A-3b Pflicht) ──
+  pdfDoc.catalog.set(PDFName.of('MarkInfo'), pdfDoc.context.obj({ Marked: true }))
 
-  // ── 5. StructTreeRoot (PDF/A-3b Pflicht) ──
-  const structTreeRoot = pdfDoc.context.obj({
-    Type: PDFName.of('StructTreeRoot'),
-  })
+  // ── 8. StructTreeRoot (PDF/A-3b Pflicht) ──
+  const structTreeRoot = pdfDoc.context.obj({ Type: PDFName.of('StructTreeRoot') })
   const structTreeRootRef = pdfDoc.context.register(structTreeRoot)
   pdfDoc.catalog.set(PDFName.of('StructTreeRoot'), structTreeRootRef)
 
-  // ── 6. Link Annotations fixen (Print-Flag setzen) ──
-  for (const page of pdfDoc.getPages()) {
-    const annotations = page.node.get(PDFName.of('Annots'))
-    if (annotations instanceof PDFArray) {
-      for (let i = 0; i < annotations.size(); i++) {
-        const annotRef = annotations.get(i)
-        const annotation = page.node.context.lookup(annotRef)
-        if (annotation instanceof PDFDict) {
-          const subtype = annotation.get(PDFName.of('Subtype'))
-          if (subtype === PDFName.of('Link')) {
-            const flagsObj = annotation.get(PDFName.of('F'))
-            const flags = flagsObj instanceof PDFNumber ? flagsObj.asNumber() : 0
-            annotation.set(PDFName.of('F'), PDFNumber.of(flags | 4))
-          }
-        }
-      }
-    }
-  }
-
-  // ── 7. Trailer Info ID (PDF/A-3b Pflicht) ──
+  // ── 9. Trailer Info ID (PDF/A-3b Pflicht) ──
   const idString = `ZUGFeRD-${now.toISOString()}`
   const hash = crypto.createHash('sha256').update(idString).digest()
   const hashHex = Array.from(new Uint8Array(hash))
@@ -420,7 +409,7 @@ export async function embedZUGFeRDXml(
   const docId = PDFHexString.of(hashHex)
   pdfDoc.context.trailerInfo.ID = pdfDoc.context.obj([docId, docId])
 
-  // ── 8. XMP Metadata mit vollständigem pdfaExtension Schema ──
+  // ── 10. XMP Metadata Stream mit ALLEN erforderlichen Namespaces ──
   const xmpXml = `<?xpacket begin="\ufeff" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/">
   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -432,20 +421,26 @@ export async function embedZUGFeRDXml(
     <rdf:Description rdf:about=""
         xmlns:dc="http://purl.org/dc/elements/1.1/">
       <dc:format>application/pdf</dc:format>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li xml:lang="x-default">ZUGFeRD Rechnung</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:description>
+        <rdf:Alt>
+          <rdf:li xml:lang="x-default">Factur-X / ZUGFeRD 2.3 E-Rechnung</rdf:li>
+        </rdf:Alt>
+      </dc:description>
       <dc:creator>
         <rdf:Seq>
           <rdf:li>ForstManager ZUGFeRD Export</rdf:li>
         </rdf:Seq>
       </dc:creator>
-      <dc:date>
-        <rdf:Seq>
-          <rdf:li>${now.toISOString()}</rdf:li>
-        </rdf:Seq>
-      </dc:date>
     </rdf:Description>
     <rdf:Description rdf:about=""
         xmlns:pdf="http://ns.adobe.com/pdf/1.3/">
       <pdf:Producer>ForstManager by Koch Aufforstung</pdf:Producer>
+      <pdf:Keywords>ZUGFeRD Factur-X EN16931 E-Rechnung</pdf:Keywords>
     </rdf:Description>
     <rdf:Description rdf:about=""
         xmlns:xmp="http://ns.adobe.com/xap/1.0/">
@@ -476,19 +471,19 @@ export async function embedZUGFeRDXml(
                   <pdfaProperty:name>DocumentType</pdfaProperty:name>
                   <pdfaProperty:valueType>Text</pdfaProperty:valueType>
                   <pdfaProperty:category>external</pdfaProperty:category>
-                  <pdfaProperty:description>The type of the hybrid document in capital letters, e.g. INVOICE or ORDER</pdfaProperty:description>
+                  <pdfaProperty:description>INVOICE or ORDER</pdfaProperty:description>
                 </rdf:li>
                 <rdf:li rdf:parseType="Resource">
                   <pdfaProperty:name>Version</pdfaProperty:name>
                   <pdfaProperty:valueType>Text</pdfaProperty:valueType>
                   <pdfaProperty:category>external</pdfaProperty:category>
-                  <pdfaProperty:description>The actual version of the standard applying to the embedded XML document</pdfaProperty:description>
+                  <pdfaProperty:description>Standard version</pdfaProperty:description>
                 </rdf:li>
                 <rdf:li rdf:parseType="Resource">
                   <pdfaProperty:name>ConformanceLevel</pdfaProperty:name>
                   <pdfaProperty:valueType>Text</pdfaProperty:valueType>
                   <pdfaProperty:category>external</pdfaProperty:category>
-                  <pdfaProperty:description>The conformance level of the embedded XML document</pdfaProperty:description>
+                  <pdfaProperty:description>Conformance level</pdfaProperty:description>
                 </rdf:li>
               </rdf:Seq>
             </pdfaSchema:property>
@@ -507,29 +502,27 @@ export async function embedZUGFeRDXml(
 </x:xmpmeta>
 <?xpacket end="w"?>`
 
-  const xmpBytes = new TextEncoder().encode(xmpXml)
-  const metadataStream = pdfDoc.context.stream(xmpBytes, {
-    Type: 'Metadata',
-    Subtype: 'XML',
-    Length: xmpBytes.length,
+  const xmpBytesData = new TextEncoder().encode(xmpXml)
+  const metadataStream = pdfDoc.context.stream(xmpBytesData, {
+    Type: PDFName.of('Metadata'),
+    Subtype: PDFName.of('XML'),
+    Length: PDFNumber.of(xmpBytesData.length),
   })
   const metadataRef = pdfDoc.context.register(metadataStream)
+  // create() garantiert dass catalog.set() korrekt persistiert!
   pdfDoc.catalog.set(PDFName.of('Metadata'), metadataRef)
 
-  // ── 9. AF Array explizit im Catalog setzen (Factur-X Pflicht) ──
-  const existingAF = pdfDoc.catalog.get(PDFName.of('AF'))
-  if (!existingAF) {
-    const namesDict = pdfDoc.context.lookup(
-      pdfDoc.catalog.get(PDFName.of('Names'))
-    ) as PDFDict | undefined
-    const embeddedFilesRef = namesDict?.get(PDFName.of('EmbeddedFiles'))
-    if (embeddedFilesRef) {
-      const embeddedFiles = pdfDoc.context.lookup(embeddedFilesRef) as PDFDict | undefined
-      const nameArray = embeddedFiles?.get(PDFName.of('Names')) as PDFArray | undefined
-      if (nameArray && nameArray.size() >= 2) {
-        const fileSpecRef = nameArray.get(1)
-        pdfDoc.catalog.set(PDFName.of('AF'), pdfDoc.context.obj([fileSpecRef]))
-      }
+  // ── 11. AF Array explizit im Catalog setzen (Factur-X Pflicht) ──
+  const namesDict = pdfDoc.context.lookup(
+    pdfDoc.catalog.get(PDFName.of('Names'))
+  ) as PDFDict | undefined
+  const embeddedFilesRef = namesDict?.get(PDFName.of('EmbeddedFiles'))
+  if (embeddedFilesRef) {
+    const embeddedFiles = pdfDoc.context.lookup(embeddedFilesRef) as PDFDict | undefined
+    const nameArray = embeddedFiles?.get(PDFName.of('Names')) as PDFArray | undefined
+    if (nameArray && nameArray.size() >= 2) {
+      const fileSpecRef = nameArray.get(1)
+      pdfDoc.catalog.set(PDFName.of('AF'), pdfDoc.context.obj([fileSpecRef]))
     }
   }
 
