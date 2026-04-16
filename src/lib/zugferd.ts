@@ -10,7 +10,8 @@
  * @see https://fnfe-mpe.org/factur-x/
  */
 
-import { PDFDocument, PDFName, PDFDict, PDFArray, PDFString, PDFHexString, PDFStream, AFRelationship } from 'pdf-lib'
+import { PDFDocument, PDFName, PDFDict, PDFArray, PDFString, PDFHexString, PDFStream, PDFNumber, AFRelationship } from 'pdf-lib'
+import crypto from 'crypto'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TYPEN
@@ -210,16 +211,19 @@ export function generateZUGFeRDXml(rechnung: ZUGFeRDRechnungData): string {
         </ram:PayeeSpecifiedCreditorFinancialInstitution>` : ''}
       </ram:SpecifiedTradeSettlementPaymentMeans>` : ''
 
-  // USt-ID oder Steuernummer
-  const steuerInfoXml = rechnung.verkaeuferUstId 
-    ? `<ram:SpecifiedTaxRegistration>
+  // USt-ID und/oder Steuernummer (BR-CO-26 erfordert mindestens VA oder Seller ID)
+  const steuerInfoParts: string[] = []
+  if (rechnung.verkaeuferUstId) {
+    steuerInfoParts.push(`<ram:SpecifiedTaxRegistration>
           <ram:ID schemeID="VA">${escapeXml(rechnung.verkaeuferUstId)}</ram:ID>
-        </ram:SpecifiedTaxRegistration>`
-    : rechnung.verkaeuferSteuernummer
-    ? `<ram:SpecifiedTaxRegistration>
+        </ram:SpecifiedTaxRegistration>`)
+  }
+  if (rechnung.verkaeuferSteuernummer) {
+    steuerInfoParts.push(`<ram:SpecifiedTaxRegistration>
           <ram:ID schemeID="FC">${escapeXml(rechnung.verkaeuferSteuernummer)}</ram:ID>
-        </ram:SpecifiedTaxRegistration>`
-    : ''
+        </ram:SpecifiedTaxRegistration>`)
+  }
+  const steuerInfoXml = steuerInfoParts.join('\n        ')
 
   // Vollständiges XML
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -230,7 +234,7 @@ export function generateZUGFeRDXml(rechnung: ZUGFeRDRechnungData): string {
   
   <rsm:ExchangedDocumentContext>
     <ram:GuidelineSpecifiedDocumentContextParameter>
-      <ram:ID>urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:en16931</ram:ID>
+      <ram:ID>urn:cen.eu:en16931:2017</ram:ID>
     </ram:GuidelineSpecifiedDocumentContextParameter>
   </rsm:ExchangedDocumentContext>
   
@@ -269,6 +273,7 @@ export function generateZUGFeRDXml(rechnung: ZUGFeRDRechnungData): string {
     </ram:ApplicableHeaderTradeDelivery>
     
     <ram:ApplicableHeaderTradeSettlement>
+      ${rechnung.zahlungsReferenz ? `<ram:PaymentReference>${escapeXml(rechnung.zahlungsReferenz)}</ram:PaymentReference>` : ''}
       <ram:InvoiceCurrencyCode>${waehrung}</ram:InvoiceCurrencyCode>
       ${zahlungXml}
       <ram:ApplicableTradeTax>
@@ -291,7 +296,6 @@ export function generateZUGFeRDXml(rechnung: ZUGFeRDRechnungData): string {
         <ram:GrandTotalAmount>${formatAmount(rechnung.bruttoSumme)}</ram:GrandTotalAmount>
         <ram:DuePayableAmount>${formatAmount(rechnung.bruttoSumme)}</ram:DuePayableAmount>
       </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
-      ${rechnung.zahlungsReferenz ? `<ram:PaymentReference>${escapeXml(rechnung.zahlungsReferenz)}</ram:PaymentReference>` : ''}
     </ram:ApplicableHeaderTradeSettlement>
   </rsm:SupplyChainTradeTransaction>
 </rsm:CrossIndustryInvoice>`
@@ -300,62 +304,267 @@ export function generateZUGFeRDXml(rechnung: ZUGFeRDRechnungData): string {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// PDF/A-3b KONFORMITÄT
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * sRGB IEC61966-2.1 ICC Color Profile (base64-encoded)
+ * Required for PDF/A-3b OutputIntents
+ */
+const SRGB_ICC_PROFILE = `
+AAAL0AAAAAACAAAAbW50clJHQiBYWVogB98AAgAPAAAAAAAAYWNzcAAAAAAAAAAAAAAAAAAAAAAA
+AAABAAAAAAAAAAAAAPbWAAEAAAAA0y0AAAAAPQ6y3q6Tl76bZybOjApDzgAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAQZGVzYwAAAUQAAABjYlhZWgAAAagAAAAUYlRSQwAAAbwAAAgMZ1RS
+QwAAAbwAAAgMclRSQwAAAbwAAAgMZG1kZAAACcgAAACIZ1hZWgAAClAAAAAUbHVtaQAACmQAAAAU
+bWVhcwAACngAAAAkYmtwdAAACpwAAAAUclhZWgAACrAAAAAUdGVjaAAACsQAAAAMdnVlZAAACtAA
+AACHd3RwdAAAC1gAAAAUY3BydAAAC2wAAAA3Y2hhZAAAC6QAAAAsZGVzYwAAAAAAAAAJc1JHQjIw
+MTQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFhZWiAAAAAAAAAkoAAAD4QAALbPY3VydgAAAAAAAAQA
+AAAABQAKAA8AFAAZAB4AIwAoAC0AMgA3ADsAQABFAEoATwBUAFkAXgBjAGgAbQByAHcAfACBAIYA
+iwCQAJUAmgCfAKQAqQCuALIAtwC8AMEAxgDLANAA1QDbAOAA5QDrAPAA9gD7AQEBBwENARMBGQEf
+ASUBKwEyATgBPgFFAUwBUgFZAWABZwFuAXUBfAGDAYsBkgGaAaEBqQGxAbkBwQHJAdEB2QHhAekB
+8gH6AgMCDAIUAh0CJgIvAjgCQQJLAlQCXQJnAnECegKEAo4CmAKiAqwCtgLBAssC1QLgAusC9QMA
+AwsDFgMhAy0DOANDA08DWgNmA3IDfgOKA5YDogOuA7oDxwPTA+AD7AP5BAYEEwQgBC0EOwRIBFUE
+YwRxBH4EjASaBKgEtgTEBNME4QTwBP4FDQUcBSsFOgVJBVgFZwV3BYYFlgWmBbUFxQXVBeUF9gYG
+BhYGJwY3BkgGWQZqBnsGjAadBq8GwAbRBuMG9QcHBxkHKwc9B08HYQd0B4YHmQesB78H0gflB/gI
+CwgfCDIIRghaCG4IggiWCKoIvgjSCOcI+wkQCSUJOglPCWQJeQmPCaQJugnPCeUJ+woRCicKPQpU
+CmoKgQqYCq4KxQrcCvMLCwsiCzkLUQtpC4ALmAuwC8gL4Qv5DBIMKgxDDFwMdQyODKcMwAzZDPMN
+DQ0mDUANWg10DY4NqQ3DDd4N+A4TDi4OSQ5kDn8Omw62DtIO7g8JDyUPQQ9eD3oPlg+zD88P7BAJ
+ECYQQxBhEH4QmxC5ENcQ9RETETERTxFtEYwRqhHJEegSBxImEkUSZBKEEqMSwxLjEwMTIxNDE2MT
+gxOkE8UT5RQGFCcUSRRqFIsUrRTOFPAVEhU0FVYVeBWbFb0V4BYDFiYWSRZsFo8WshbWFvoXHRdB
+F2UXiReuF9IX9xgbGEAYZRiKGK8Y1Rj6GSAZRRlrGZEZtxndGgQaKhpRGncanhrFGuwbFBs7G2Mb
+ihuyG9ocAhwqHFIcexyjHMwc9R0eHUcdcB2ZHcMd7B4WHkAeah6UHr4e6R8THz4faR+UH78f6iAV
+IEEgbCCYIMQg8CEcIUghdSGhIc4h+yInIlUigiKvIt0jCiM4I2YjlCPCI/AkHyRNJHwkqyTaJQkl
+OCVoJZclxyX3JicmVyaHJrcm6CcYJ0kneierJ9woDSg/KHEooijUKQYpOClrKZ0p0CoCKjUqaCqb
+Ks8rAis2K2krnSvRLAUsOSxuLKIs1y0MLUEtdi2rLeEuFi5MLoIuty7uLyQvWi+RL8cv/jA1MGww
+pDDbMRIxSjGCMbox8jIqMmMymzLUMw0zRjN/M7gz8TQrNGU0njTYNRM1TTWHNcI1/TY3NnI2rjbp
+NyQ3YDecN9c4FDhQOIw4yDkFOUI5fzm8Ofk6Njp0OrI67zstO2s7qjvoPCc8ZTykPOM9Ij1hPaE9
+4D4gPmA+oD7gPyE/YT+iP+JAI0BkQKZA50EpQWpBrEHuQjBCckK1QvdDOkN9Q8BEA0RHRIpEzkUS
+RVVFmkXeRiJGZ0arRvBHNUd7R8BIBUhLSJFI10kdSWNJqUnwSjdKfUrESwxLU0uaS+JMKkxyTLpN
+Ak1KTZNN3E4lTm5Ot08AT0lPk0/dUCdQcVC7UQZRUFGbUeZSMVJ8UsdTE1NfU6pT9lRCVI9U21Uo
+VXVVwlYPVlxWqVb3V0RXklfgWC9YfVjLWRpZaVm4WgdaVlqmWvVbRVuVW+VcNVyGXNZdJ114Xcle
+Gl5sXr1fD19hX7NgBWBXYKpg/GFPYaJh9WJJYpxi8GNDY5dj62RAZJRk6WU9ZZJl52Y9ZpJm6Gc9
+Z5Nn6Wg/aJZo7GlDaZpp8WpIap9q92tPa6dr/2xXbK9tCG1gbbluEm5rbsRvHm94b9FwK3CGcOBx
+OnGVcfByS3KmcwFzXXO4dBR0cHTMdSh1hXXhdj52m3b4d1Z3s3gReG54zHkqeYl553pGeqV7BHtj
+e8J8IXyBfOF9QX2hfgF+Yn7CfyN/hH/lgEeAqIEKgWuBzYIwgpKC9INXg7qEHYSAhOOFR4Wrhg6G
+cobXhzuHn4gEiGmIzokziZmJ/opkisqLMIuWi/yMY4zKjTGNmI3/jmaOzo82j56QBpBukNaRP5Go
+khGSepLjk02TtpQglIqU9JVflcmWNJaflwqXdZfgmEyYuJkkmZCZ/JpomtWbQpuvnByciZz3nWSd
+0p5Anq6fHZ+Ln/qgaaDYoUehtqImopajBqN2o+akVqTHpTilqaYapoum/adup+CoUqjEqTepqaoc
+qo+rAqt1q+msXKzQrUStuK4trqGvFq+LsACwdbDqsWCx1rJLssKzOLOutCW0nLUTtYq2AbZ5tvC3
+aLfguFm40blKucK6O7q1uy67p7whvJu9Fb2Pvgq+hL7/v3q/9cBwwOzBZ8Hjwl/C28NYw9TEUcTO
+xUvFyMZGxsPHQce/yD3IvMk6ybnKOMq3yzbLtsw1zLXNNc21zjbOts83z7jQOdC60TzRvtI/0sHT
+RNPG1EnUy9VO1dHWVdbY11zX4Nhk2OjZbNnx2nba+9uA3AXcit0Q3ZbeHN6i3ynfr+A24L3hROHM
+4lPi2+Nj4+vkc+T85YTmDeaW5x/nqegy6LzpRunQ6lvq5etw6/vshu0R7ZzuKO6070DvzPBY8OXx
+cvH/8ozzGfOn9DT0wvVQ9d72bfb794r4Gfio+Tj5x/pX+uf7d/wH/Jj9Kf26/kv+3P9t//9kZXNj
+AAAAAAAAAC5JRUMgNjE5NjYtMi0xIERlZmF1bHQgUkdCIENvbG91ciBTcGFjZSAtIHNSR0IAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAWFlaIAAAAAAAAGKZAAC3hQAAGNpYWVogAAAAAAAAAAAAUAAAAAAA
+AG1lYXMAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlhZWiAAAAAAAAAAngAAAKQAAACH
+WFlaIAAAAAAAAG+iAAA49QAAA5BzaWcgAAAAAENSVCBkZXNjAAAAAAAAAC1SZWZlcmVuY2UgVmll
+d2luZyBDb25kaXRpb24gaW4gSUVDIDYxOTY2LTItMQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWFla
+IAAAAAAAAPbWAAEAAAAA0y10ZXh0AAAAAENvcHlyaWdodCBJbnRlcm5hdGlvbmFsIENvbG9yIENv
+bnNvcnRpdW0sIDIwMTUAAHNmMzIAAAAAAAEMRAAABd////MmAAAHlAAA/Y////uh///9ogAAA9sA
+AMB1`.trim()
+
+/**
+ * Decodes base64 string to Uint8Array
+ */
+function base64ToUint8Array(base64: string): Uint8Array {
+  const binaryString = atob(base64.replace(/\s/g, ''))
+  const bytes = new Uint8Array(binaryString.length)
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i)
+  }
+  return bytes
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // PDF EINBETTUNG
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Bettet ZUGFeRD XML in ein bestehendes PDF ein
- * 
- * Das XML wird als eingebettete Datei (factur-x.xml) mit
- * AFRelationship: Alternative hinzugefügt.
+ * Bettet ZUGFeRD XML in ein bestehendes PDF ein (PDF/A-3b konform)
+ *
+ * Implementiert vollständige PDF/A-3b Konformität:
+ * - sRGB ICC Farbprofil + OutputIntents
+ * - MarkInfo + StructTreeRoot
+ * - Vollständige XMP Metadata mit pdfaExtension Schema
+ * - Trailer Info ID
+ * - Link Annotation Fixes
  */
 export async function embedZUGFeRDXml(
   pdfBytes: Uint8Array,
   xmlString: string
 ): Promise<Uint8Array> {
-  // PDF laden
   const pdfDoc = await PDFDocument.load(pdfBytes)
-  
-  // XML als UTF-8 Bytes
+  const now = new Date()
+
+  // ── 1. XML als embedded file anhängen ──
   const xmlBytes = new TextEncoder().encode(xmlString)
-  
-  // XML als embedded file hinzufügen
   await pdfDoc.attach(xmlBytes, 'factur-x.xml', {
     mimeType: 'application/xml',
     description: 'Factur-X/ZUGFeRD Invoice Data',
-    afRelationship: AFRelationship.Source,
-    creationDate: new Date(),
-    modificationDate: new Date(),
+    afRelationship: AFRelationship.Alternative,
+    creationDate: now,
+    modificationDate: now,
   })
-  
-  // PDF/A-3 Metadaten setzen (vereinfacht)
+
+  // ── 2. PDF Metadaten setzen ──
   pdfDoc.setTitle('ZUGFeRD Rechnung')
   pdfDoc.setSubject('Factur-X / ZUGFeRD 2.3 E-Rechnung')
   pdfDoc.setKeywords(['ZUGFeRD', 'Factur-X', 'EN16931', 'E-Rechnung'])
-  pdfDoc.setProducer('ForstManager by Feldhub')
+  pdfDoc.setProducer('ForstManager by Koch Aufforstung')
   pdfDoc.setCreator('ForstManager ZUGFeRD Export')
+  pdfDoc.setCreationDate(now)
+  pdfDoc.setModificationDate(now)
 
-  // XMP Metadata Stream für Factur-X Profil-Deklaration
-  // Validatoren lesen den Profil aus dem XMP, nicht aus dem XML-Inhalt
-  const xmpXml = `<?xpacket begin="\xef\xbb\xbf" id="W5M0MpCehiHzreSzNTczkc9d"?>
+  // ── 3. ICC Farbprofil + OutputIntents (PDF/A-3b Pflicht) ──
+  const iccProfile = base64ToUint8Array(SRGB_ICC_PROFILE)
+  const iccStream = pdfDoc.context.stream(iccProfile, {
+    N: 3, // Number of color components (RGB)
+    Length: iccProfile.length,
+  })
+  const iccStreamRef = pdfDoc.context.register(iccStream)
+
+  const outputIntent = pdfDoc.context.obj({
+    Type: 'OutputIntent',
+    S: 'GTS_PDFA1',
+    OutputConditionIdentifier: PDFString.of('sRGB'),
+    DestOutputProfile: iccStreamRef,
+  })
+  const outputIntentRef = pdfDoc.context.register(outputIntent)
+  pdfDoc.catalog.set(
+    PDFName.of('OutputIntents'),
+    pdfDoc.context.obj([outputIntentRef])
+  )
+
+  // ── 4. MarkInfo (PDF/A-3b Pflicht) ──
+  const markInfo = pdfDoc.context.obj({ Marked: true })
+  pdfDoc.catalog.set(PDFName.of('MarkInfo'), markInfo)
+
+  // ── 5. StructTreeRoot (PDF/A-3b Pflicht) ──
+  const structTreeRoot = pdfDoc.context.obj({
+    Type: PDFName.of('StructTreeRoot'),
+  })
+  const structTreeRootRef = pdfDoc.context.register(structTreeRoot)
+  pdfDoc.catalog.set(PDFName.of('StructTreeRoot'), structTreeRootRef)
+
+  // ── 6. Link Annotations fixen (Print-Flag setzen) ──
+  for (const page of pdfDoc.getPages()) {
+    const annotations = page.node.get(PDFName.of('Annots'))
+    if (annotations instanceof PDFArray) {
+      for (let i = 0; i < annotations.size(); i++) {
+        const annotRef = annotations.get(i)
+        const annotation = page.node.context.lookup(annotRef)
+        if (annotation instanceof PDFDict) {
+          const subtype = annotation.get(PDFName.of('Subtype'))
+          if (subtype === PDFName.of('Link')) {
+            const flagsObj = annotation.get(PDFName.of('F'))
+            const flags = flagsObj instanceof PDFNumber ? flagsObj.asNumber() : 0
+            annotation.set(PDFName.of('F'), PDFNumber.of(flags | 4))
+          }
+        }
+      }
+    }
+  }
+
+  // ── 7. Trailer Info ID (PDF/A-3b Pflicht) ──
+  const idString = `ZUGFeRD-${now.toISOString()}`
+  const hash = crypto.createHash('sha256').update(idString).digest()
+  const hashHex = Array.from(new Uint8Array(hash))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+  const docId = PDFHexString.of(hashHex)
+  pdfDoc.context.trailerInfo.ID = pdfDoc.context.obj([docId, docId])
+
+  // ── 8. XMP Metadata mit vollständigem pdfaExtension Schema ──
+  const xmpXml = `<?xpacket begin="\ufeff" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/">
   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-    <rdf:Description rdf:about="" xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/">
+    <rdf:Description rdf:about=""
+        xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/">
       <pdfaid:part>3</pdfaid:part>
       <pdfaid:conformance>B</pdfaid:conformance>
     </rdf:Description>
-    <rdf:Description rdf:about="" xmlns:fx="urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0#">
+    <rdf:Description rdf:about=""
+        xmlns:dc="http://purl.org/dc/elements/1.1/">
+      <dc:format>application/pdf</dc:format>
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>ForstManager ZUGFeRD Export</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <dc:date>
+        <rdf:Seq>
+          <rdf:li>${now.toISOString()}</rdf:li>
+        </rdf:Seq>
+      </dc:date>
+    </rdf:Description>
+    <rdf:Description rdf:about=""
+        xmlns:pdf="http://ns.adobe.com/pdf/1.3/">
+      <pdf:Producer>ForstManager by Koch Aufforstung</pdf:Producer>
+    </rdf:Description>
+    <rdf:Description rdf:about=""
+        xmlns:xmp="http://ns.adobe.com/xap/1.0/">
+      <xmp:CreatorTool>ForstManager ZUGFeRD Export</xmp:CreatorTool>
+      <xmp:CreateDate>${now.toISOString()}</xmp:CreateDate>
+      <xmp:ModifyDate>${now.toISOString()}</xmp:ModifyDate>
+      <xmp:MetadataDate>${now.toISOString()}</xmp:MetadataDate>
+    </rdf:Description>
+    <rdf:Description rdf:about=""
+        xmlns:pdfaExtension="http://www.aiim.org/pdfa/ns/extension/"
+        xmlns:pdfaSchema="http://www.aiim.org/pdfa/ns/schema#"
+        xmlns:pdfaProperty="http://www.aiim.org/pdfa/ns/property#">
+      <pdfaExtension:schemas>
+        <rdf:Bag>
+          <rdf:li rdf:parseType="Resource">
+            <pdfaSchema:schema>Factur-X PDFA Extension Schema</pdfaSchema:schema>
+            <pdfaSchema:namespaceURI>urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0#</pdfaSchema:namespaceURI>
+            <pdfaSchema:prefix>fx</pdfaSchema:prefix>
+            <pdfaSchema:property>
+              <rdf:Seq>
+                <rdf:li rdf:parseType="Resource">
+                  <pdfaProperty:name>DocumentFileName</pdfaProperty:name>
+                  <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                  <pdfaProperty:category>external</pdfaProperty:category>
+                  <pdfaProperty:description>The name of the embedded XML document</pdfaProperty:description>
+                </rdf:li>
+                <rdf:li rdf:parseType="Resource">
+                  <pdfaProperty:name>DocumentType</pdfaProperty:name>
+                  <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                  <pdfaProperty:category>external</pdfaProperty:category>
+                  <pdfaProperty:description>The type of the hybrid document in capital letters, e.g. INVOICE or ORDER</pdfaProperty:description>
+                </rdf:li>
+                <rdf:li rdf:parseType="Resource">
+                  <pdfaProperty:name>Version</pdfaProperty:name>
+                  <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                  <pdfaProperty:category>external</pdfaProperty:category>
+                  <pdfaProperty:description>The actual version of the standard applying to the embedded XML document</pdfaProperty:description>
+                </rdf:li>
+                <rdf:li rdf:parseType="Resource">
+                  <pdfaProperty:name>ConformanceLevel</pdfaProperty:name>
+                  <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                  <pdfaProperty:category>external</pdfaProperty:category>
+                  <pdfaProperty:description>The conformance level of the embedded XML document</pdfaProperty:description>
+                </rdf:li>
+              </rdf:Seq>
+            </pdfaSchema:property>
+          </rdf:li>
+        </rdf:Bag>
+      </pdfaExtension:schemas>
+    </rdf:Description>
+    <rdf:Description rdf:about=""
+        xmlns:fx="urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0#">
       <fx:DocumentType>INVOICE</fx:DocumentType>
       <fx:DocumentFileName>factur-x.xml</fx:DocumentFileName>
       <fx:Version>1.0</fx:Version>
       <fx:ConformanceLevel>EN 16931</fx:ConformanceLevel>
     </rdf:Description>
-    <rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/">
-      <dc:format>application/pdf</dc:format>
-    </rdf:Description>
   </rdf:RDF>
 </x:xmpmeta>
 <?xpacket end="w"?>`
+
   const xmpBytes = new TextEncoder().encode(xmpXml)
   const metadataStream = pdfDoc.context.stream(xmpBytes, {
     Type: 'Metadata',
@@ -365,7 +574,6 @@ export async function embedZUGFeRDXml(
   const metadataRef = pdfDoc.context.register(metadataStream)
   pdfDoc.catalog.set(PDFName.of('Metadata'), metadataRef)
 
-  // PDF mit Anhang speichern
   return await pdfDoc.save()
 }
 
