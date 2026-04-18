@@ -78,25 +78,30 @@ export interface ZUGFeRDRechnungData {
 
 /**
  * Formatiert Datum nach ZUGFeRD (YYYYMMDD)
+ * Defensive: handles invalid dates
  */
-function formatZUGFeRDDate(date: Date): string {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
+function formatZUGFeRDDate(date: Date | null | undefined): string {
+  const d = date && !isNaN(date.getTime()) ? date : new Date()
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
   return `${year}${month}${day}`
 }
 
 /**
  * Formatiert Betrag (2 Dezimalstellen, Punkt als Trenner)
+ * Defensive: handles null/undefined/NaN
  */
-function formatAmount(amount: number): string {
+function formatAmount(amount: number | null | undefined): string {
+  if (amount === null || amount === undefined || isNaN(amount)) return '0.00'
   return amount.toFixed(2)
 }
 
 /**
- * Escapt XML-Sonderzeichen
+ * Escapt XML-Sonderzeichen (defensive: handles null/undefined)
  */
-function escapeXml(str: string): string {
+function escapeXml(str: string | null | undefined): string {
+  if (!str) return ''
   return str
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -590,36 +595,40 @@ export function rechnungToZUGFeRDData(
   }
 ): ZUGFeRDRechnungData {
   const mwstSatz = rechnung.mwst ?? 19
-  const netto = rechnung.nettoBetrag ?? rechnung.betrag
+  const netto = rechnung.nettoBetrag ?? rechnung.betrag ?? 0
   const rabattAbsolut = rechnung.rabattBetrag ?? ((rechnung.rabatt ?? 0) * netto / 100)
   const nettoNachRabatt = netto - rabattAbsolut
   const mwstBetrag = (nettoNachRabatt * mwstSatz) / 100
   const brutto = rechnung.bruttoBetrag ?? nettoNachRabatt + mwstBetrag
-  
+
+  // Helper: sanitize text for XML (strip newlines that could break descriptions)
+  const sanitize = (text: string | null | undefined): string =>
+    (text ?? '').replace(/[\r\n]+/g, ' ').replace(/\s{2,}/g, ' ').trim()
+
   // Positionen konvertieren
   const positionen: ZUGFeRDPosition[] = rechnung.positionen?.length
     ? rechnung.positionen.map((pos, idx) => ({
         nummer: idx + 1,
-        beschreibung: pos.beschreibung,
-        menge: pos.menge,
-        einheit: pos.einheit,
-        einzelpreis: pos.preisProEinheit,
-        gesamtpreis: pos.gesamt,
+        beschreibung: sanitize(pos.beschreibung) || 'Position',
+        menge: pos.menge ?? 1,
+        einheit: pos.einheit || 'Stk',
+        einzelpreis: pos.preisProEinheit ?? 0,
+        gesamtpreis: pos.gesamt ?? 0,
         mwstSatz: mwstSatz,
       }))
     : [{
         nummer: 1,
-        beschreibung: rechnung.notizen ?? rechnung.auftrag?.titel ?? 'Forstdienstleistung',
+        beschreibung: sanitize(rechnung.notizen) || sanitize(rechnung.auftrag?.titel) || 'Forstdienstleistung',
         menge: 1,
         einheit: 'pauschal',
         einzelpreis: netto,
         gesamtpreis: netto,
         mwstSatz: mwstSatz,
       }]
-  
+
   return {
-    rechnungsNummer: rechnung.nummer,
-    rechnungsDatum: new Date(rechnung.rechnungsDatum),
+    rechnungsNummer: rechnung.nummer ?? 'OHNE-NR',
+    rechnungsDatum: new Date(rechnung.rechnungsDatum || new Date()),
     faelligkeitsDatum: rechnung.faelligAm ? new Date(rechnung.faelligAm) : undefined,
     
     verkaeufer: {

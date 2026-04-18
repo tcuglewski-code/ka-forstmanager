@@ -44,16 +44,31 @@ interface RouteParams {
   params: Promise<{ id: string }>
 }
 
-function formatEuro(n: number): string {
-  return n.toFixed(2)
+function formatEuro(n: number | null | undefined): string {
+  return (n ?? 0).toFixed(2)
 }
 
-function formatDatum(d: Date | string): string {
+function formatDatum(d: Date | string | null | undefined): string {
+  if (!d) return new Date().toISOString().slice(0, 10).split('-').reverse().join('.')
   const date = new Date(d)
+  if (isNaN(date.getTime())) return new Date().toISOString().slice(0, 10).split('-').reverse().join('.')
   const day = String(date.getDate()).padStart(2, '0')
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const year = date.getFullYear()
   return `${day}.${month}.${year}`
+}
+
+/**
+ * Sanitizes text for PDF rendering: strips newlines and control characters.
+ * pdf-lib's drawText() crashes on newline characters with standard fonts.
+ */
+function sanitizeText(text: string | null | undefined): string {
+  if (!text) return ''
+  return text
+    .replace(/[\r\n]+/g, ' ')
+    .replace(/\t/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
 }
 
 export async function GET(
@@ -158,25 +173,25 @@ export async function GET(
     })
     const zugferdXml = generateZUGFeRDXml(zugferdData)
 
-    // Calculate amounts for PDF display
+    // Calculate amounts for PDF display (with defensive null guards)
     const mwstSatz = rechnung.mwst ?? 19
-    const netto = rechnung.nettoBetrag ?? rechnung.betrag
+    const netto = rechnung.nettoBetrag ?? rechnung.betrag ?? 0
     const rabattAbsolut = rechnung.rabattBetrag ?? ((rechnung.rabatt ?? 0) * netto / 100)
     const nettoNachRabatt = netto - rabattAbsolut
     const mwstBetrag = (nettoNachRabatt * mwstSatz) / 100
     const brutto = rechnung.bruttoBetrag ?? nettoNachRabatt + mwstBetrag
 
-    // Build positions for PDF
+    // Build positions for PDF — sanitize all text to prevent drawText crashes from newlines
     const positionen = rechnung.positionen.length > 0
       ? rechnung.positionen.map(pos => ({
-          beschreibung: pos.beschreibung,
-          menge: pos.menge.toFixed(2),
-          einheit: pos.einheit,
+          beschreibung: sanitizeText(pos.beschreibung) || 'Position',
+          menge: (pos.menge ?? 1).toFixed(2),
+          einheit: sanitizeText(pos.einheit) || 'Stk',
           einzelpreis: formatEuro(pos.preisProEinheit),
           gesamt: formatEuro(pos.gesamt),
         }))
       : [{
-          beschreibung: rechnung.notizen ?? rechnung.auftrag?.titel ?? 'Forstdienstleistung',
+          beschreibung: sanitizeText(rechnung.notizen) || sanitizeText(rechnung.auftrag?.titel) || 'Forstdienstleistung',
           menge: '1.00',
           einheit: 'pauschal',
           einzelpreis: formatEuro(netto),
@@ -185,9 +200,9 @@ export async function GET(
 
     // Generate PDF/A-3b with embedded ZUGFeRD XML
     const pdfBytes = await generateZUGFeRDPdf(zugferdXml, {
-      rechnungsNummer: rechnung.nummer,
+      rechnungsNummer: rechnung.nummer ?? 'OHNE-NR',
       rechnungsDatum: formatDatum(rechnung.rechnungsDatum),
-      empfaenger: rechnung.auftrag?.waldbesitzer ?? 'Kunde',
+      empfaenger: sanitizeText(rechnung.auftrag?.waldbesitzer) || 'Kunde',
       nettoBetrag: formatEuro(nettoNachRabatt),
       mwstBetrag: formatEuro(mwstBetrag),
       bruttoBetrag: formatEuro(brutto),
@@ -221,9 +236,12 @@ export async function GET(
       },
     })
   } catch (error) {
-    console.error('[XRechnung] Export-Fehler:', error)
+    const errMsg = error instanceof Error ? error.message : String(error)
+    const errStack = error instanceof Error ? error.stack : undefined
+    console.error('[XRechnung] Export-Fehler:', errMsg)
+    if (errStack) console.error('[XRechnung] Stack:', errStack)
     return NextResponse.json(
-      { error: 'Interner Serverfehler beim Export' },
+      { error: 'Interner Serverfehler beim Export', details: errMsg },
       { status: 500 }
     )
   }

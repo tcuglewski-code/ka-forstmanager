@@ -49,6 +49,21 @@ interface ZUGFeRDPdfOptions {
 }
 
 /**
+ * Sanitizes text for use with pdf-lib's drawText():
+ * - Replaces newlines with spaces (drawText does NOT support multi-line)
+ * - Replaces characters outside WinAnsiEncoding with '?'
+ * - Trims and collapses multiple spaces
+ */
+function sanitizeForPdf(text: string | null | undefined): string {
+  if (!text) return ''
+  return text
+    .replace(/[\r\n]+/g, ' ')   // newlines → space
+    .replace(/\t/g, ' ')         // tabs → space
+    .replace(/\s{2,}/g, ' ')     // collapse multiple spaces
+    .trim()
+}
+
+/**
  * Fetches the sRGB ICC profile
  */
 // sRGB ICC profile embedded directly (avoids HTTP fetch in serverless)
@@ -108,25 +123,42 @@ export async function generateZUGFeRDPdf(
     })
   }
 
+  // Sanitize all string options to prevent drawText crashes from newlines/special chars
+  const firmaName = sanitizeForPdf(options.firma.name) || 'Koch Aufforstung GmbH'
+  const firmaStrasse = sanitizeForPdf(options.firma.strasse)
+  const firmaPlz = sanitizeForPdf(options.firma.plz)
+  const firmaOrt = sanitizeForPdf(options.firma.ort)
+  const firmaIban = sanitizeForPdf(options.firma.iban)
+  const firmaBic = sanitizeForPdf(options.firma.bic)
+  const firmaSteuer = sanitizeForPdf(options.firma.steuernummer)
+  const firmaUst = sanitizeForPdf(options.firma.ustIdNr)
+  const rechnungsNummer = sanitizeForPdf(options.rechnungsNummer) || 'OHNE-NR'
+  const rechnungsDatum = sanitizeForPdf(options.rechnungsDatum) || 'unbekannt'
+  const empfaenger = sanitizeForPdf(options.empfaenger) || 'Kunde'
+  const nettoBetragStr = sanitizeForPdf(options.nettoBetrag) || '0.00'
+  const mwstBetragStr = sanitizeForPdf(options.mwstBetrag) || '0.00'
+  const bruttoBetragStr = sanitizeForPdf(options.bruttoBetrag) || '0.00'
+  const mwstSatz = options.mwstSatz ?? 19
+
   // ── Header ──
-  drawText(options.firma.name, margin, y, 14, true)
+  drawText(firmaName, margin, y, 14, true)
   y -= 16
-  drawText(`${options.firma.strasse}, ${options.firma.plz} ${options.firma.ort}`, margin, y, 8)
+  drawText(`${firmaStrasse}, ${firmaPlz} ${firmaOrt}`, margin, y, 8)
   y -= 11
-  drawText(`St.-Nr.: ${options.firma.steuernummer} | USt-IdNr.: ${options.firma.ustIdNr}`, margin, y, 8)
+  drawText(`St.-Nr.: ${firmaSteuer} | USt-IdNr.: ${firmaUst}`, margin, y, 8)
   y -= 30
 
   // ── Invoice title ──
   drawText('RECHNUNG', margin, y, 18, true)
-  drawTextRight(`Nr. ${options.rechnungsNummer}`, width - margin, y, 12, true)
+  drawTextRight(`Nr. ${rechnungsNummer}`, width - margin, y, 12, true)
   y -= 16
-  drawTextRight(`Datum: ${options.rechnungsDatum}`, width - margin, y, 9)
+  drawTextRight(`Datum: ${rechnungsDatum}`, width - margin, y, 9)
   y -= 30
 
   // ── Recipient ──
   drawText('Rechnungsempfaenger:', margin, y, 8)
   y -= 14
-  drawText(options.empfaenger, margin, y, 11, true)
+  drawText(empfaenger, margin, y, 11, true)
   y -= 30
 
   // ── Line separator ──
@@ -156,20 +188,29 @@ export async function generateZUGFeRDPdf(
   y -= 14
 
   // ── Positions ──
-  options.positionen.forEach((pos, i) => {
-    // Truncate description to fit
+  const safePositionen = (options.positionen && options.positionen.length > 0)
+    ? options.positionen
+    : [{ beschreibung: 'Forstdienstleistung', menge: '1.00', einheit: 'pauschal', einzelpreis: nettoBetragStr, gesamt: nettoBetragStr }]
+
+  safePositionen.forEach((pos, i) => {
+    // Sanitize all position text to prevent drawText crashes
     const maxDescWidth = colX.menge - colX.desc - 10
-    let desc = pos.beschreibung
+    let desc = sanitizeForPdf(pos.beschreibung) || 'Position'
+    const menge = sanitizeForPdf(pos.menge) || '1.00'
+    const einheit = sanitizeForPdf(pos.einheit) || 'Stk'
+    const einzelpreis = sanitizeForPdf(pos.einzelpreis) || '0.00'
+    const gesamt = sanitizeForPdf(pos.gesamt) || '0.00'
+
     while (helvetica.widthOfTextAtSize(desc, 9) > maxDescWidth && desc.length > 3) {
       desc = desc.slice(0, -4) + '...'
     }
 
     drawText(`${i + 1}`, colX.pos, y, 9)
     drawText(desc, colX.desc, y, 9)
-    drawText(pos.menge, colX.menge, y, 9)
-    drawText(pos.einheit, colX.einheit, y, 9)
-    drawTextRight(pos.einzelpreis, colX.preis + 50, y, 9)
-    drawTextRight(pos.gesamt, colX.gesamt, y, 9)
+    drawText(menge, colX.menge, y, 9)
+    drawText(einheit, colX.einheit, y, 9)
+    drawTextRight(einzelpreis, colX.preis + 50, y, 9)
+    drawTextRight(gesamt, colX.gesamt, y, 9)
     y -= 16
   })
 
@@ -184,10 +225,10 @@ export async function generateZUGFeRDPdf(
 
   // ── Totals ──
   drawText('Nettobetrag:', 300, y, 9)
-  drawTextRight(`${options.nettoBetrag} EUR`, width - margin, y, 9)
+  drawTextRight(`${nettoBetragStr} EUR`, width - margin, y, 9)
   y -= 14
-  drawText(`MwSt. (${options.mwstSatz}%):`, 300, y, 9)
-  drawTextRight(`${options.mwstBetrag} EUR`, width - margin, y, 9)
+  drawText(`MwSt. (${mwstSatz}%):`, 300, y, 9)
+  drawTextRight(`${mwstBetragStr} EUR`, width - margin, y, 9)
   y -= 4
   page.drawLine({
     start: { x: 300, y },
@@ -197,17 +238,17 @@ export async function generateZUGFeRDPdf(
   })
   y -= 16
   drawText('Gesamtbetrag:', 300, y, 11, true)
-  drawTextRight(`${options.bruttoBetrag} EUR`, width - margin, y, 11, true)
+  drawTextRight(`${bruttoBetragStr} EUR`, width - margin, y, 11, true)
   y -= 30
 
   // ── Payment info ──
   drawText('Zahlungsinformationen:', margin, y, 9, true)
   y -= 14
-  drawText(`IBAN: ${options.firma.iban}`, margin, y, 9)
+  drawText(`IBAN: ${firmaIban}`, margin, y, 9)
   y -= 12
-  drawText(`BIC: ${options.firma.bic}`, margin, y, 9)
+  drawText(`BIC: ${firmaBic}`, margin, y, 9)
   y -= 12
-  drawText(`Verwendungszweck: Rechnung ${options.rechnungsNummer}`, margin, y, 9)
+  drawText(`Verwendungszweck: Rechnung ${rechnungsNummer}`, margin, y, 9)
   y -= 30
 
   // ── ZUGFeRD notice ──
