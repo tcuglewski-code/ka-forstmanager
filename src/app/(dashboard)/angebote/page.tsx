@@ -66,14 +66,14 @@ function formatDatum(iso: string | null | undefined): string {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; farbe: string }> = {
-  entwurf: { label: "Entwurf", farbe: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30" },
-  versendet: { label: "Versendet", farbe: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
-  angenommen: { label: "Angenommen", farbe: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
-  abgelehnt: { label: "Abgelehnt", farbe: "bg-red-500/20 text-red-400 border-red-500/30" },
+  entwurf: { label: "Entwurf", farbe: "bg-gray-100 text-gray-700 border-zinc-500/30" },
+  versendet: { label: "Versendet", farbe: "bg-blue-100 text-blue-800 border-blue-500/30" },
+  angenommen: { label: "Angenommen", farbe: "bg-emerald-100 text-emerald-800 border-emerald-500/30" },
+  abgelehnt: { label: "Abgelehnt", farbe: "bg-red-100 text-red-800 border-red-500/30" },
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const cfg = STATUS_CONFIG[status] ?? { label: status, farbe: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30" }
+  const cfg = STATUS_CONFIG[status] ?? { label: status, farbe: "bg-gray-100 text-gray-700 border-zinc-500/30" }
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border ${cfg.farbe}`}>
       {cfg.label}
@@ -324,7 +324,7 @@ export default function AngebotePage() {
                   {a.status === "entwurf" && (
                     <button
                       onClick={() => statusAendern(a.id, "versendet")}
-                      className="px-3 py-1.5 bg-blue-500/20 border border-blue-500/40 text-blue-400 rounded-lg text-xs hover:bg-blue-500/30 transition-colors"
+                      className="px-3 py-1.5 bg-blue-100 border border-blue-200 text-blue-800 rounded-lg text-xs hover:bg-blue-200 transition-colors"
                     >
                       📤 Versendet markieren
                     </button>

@@ -65,8 +65,8 @@ export function FoerderungWidget() {
                 <span
                   className={`flex-shrink-0 px-1.5 py-0.5 rounded text-xs ${
                     p.ebene === "bund"
-                      ? "bg-blue-500/20 text-blue-400"
-                      : "bg-violet-500/20 text-violet-400"
+                      ? "bg-blue-100 text-blue-800"
+                      : "bg-violet-100 text-violet-800"
                   }`}
                 >
                   {p.ebene === "bund" ? "Bund" : p.bundesland?.slice(0, 3) || "–"}

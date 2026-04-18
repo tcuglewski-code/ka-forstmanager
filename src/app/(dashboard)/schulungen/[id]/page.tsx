@@ -29,9 +29,9 @@ interface Mitarbeiter {
 }
 
 const statusBadge: Record<string, string> = {
-  angemeldet: "bg-blue-500/20 text-blue-400",
-  abgeschlossen: "bg-emerald-500/20 text-emerald-400",
-  abgebrochen: "bg-red-500/20 text-red-400",
+  angemeldet: "bg-blue-100 text-blue-800",
+  abgeschlossen: "bg-emerald-100 text-emerald-800",
+  abgebrochen: "bg-red-100 text-red-800",
 }
 
 export default function SchulungDetailPage() {

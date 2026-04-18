@@ -57,10 +57,10 @@ interface AbnahmeFormularProps {
 
 function StatusBadge({ status }: { status: string }) {
   const cfg: Record<string, { label: string; classes: string; icon: React.ReactNode }> = {
-    offen:      { label: "Offen",      classes: "bg-amber-500/20 text-amber-400 border-amber-500/30",    icon: <Clock className="w-3 h-3" /> },
-    "bestätigt": { label: "Bestätigt", classes: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30", icon: <CheckCircle className="w-3 h-3" /> },
-    "mängel":   { label: "Mängel",     classes: "bg-red-500/20 text-red-400 border-red-500/30",           icon: <AlertTriangle className="w-3 h-3" /> },
-    abgelehnt:  { label: "Abgelehnt",  classes: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30",        icon: <XCircle className="w-3 h-3" /> },
+    offen:      { label: "Offen",      classes: "bg-amber-100 text-amber-800 border-amber-200",    icon: <Clock className="w-3 h-3" /> },
+    "bestätigt": { label: "Bestätigt", classes: "bg-emerald-100 text-emerald-800 border-emerald-200", icon: <CheckCircle className="w-3 h-3" /> },
+    "mängel":   { label: "Mängel",     classes: "bg-red-100 text-red-800 border-red-200",           icon: <AlertTriangle className="w-3 h-3" /> },
+    abgelehnt:  { label: "Abgelehnt",  classes: "bg-gray-100 text-gray-700 border-gray-200",        icon: <XCircle className="w-3 h-3" /> },
   }
   const c = cfg[status] ?? cfg.offen
   return (
@@ -75,9 +75,9 @@ function StatusBadge({ status }: { status: string }) {
 
 function PrioBadge({ p }: { p: string }) {
   const map: Record<string, string> = {
-    hoch:    "bg-red-500/20 text-red-400 border-red-500/30",
-    mittel:  "bg-amber-500/20 text-amber-400 border-amber-500/30",
-    niedrig: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+    hoch:    "bg-red-100 text-red-800 border-red-200",
+    mittel:  "bg-amber-100 text-amber-800 border-amber-200",
+    niedrig: "bg-blue-100 text-blue-800 border-blue-200",
   }
   return (
     <span className={`text-xs px-2 py-0.5 rounded border ${map[p] ?? map.niedrig}`}>{p}</span>
@@ -337,7 +337,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
             disabled={loadingGps}
             className={`w-full flex items-center justify-center gap-2 text-xs px-3 py-2 rounded-lg border transition-all ${
               form.gpsLat
-                ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400"
+                ? "bg-emerald-100 border-emerald-200 text-emerald-800"
                 : "bg-[#0f0f0f] border-[#2a2a2a] text-zinc-400 hover:border-zinc-600"
             }`}
           >
@@ -465,7 +465,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
             <span className="text-sm text-white font-medium">
               Mängelliste
               {form.maengel.length > 0 && (
-                <span className="ml-2 text-xs bg-red-500/20 text-red-400 border border-red-500/30 px-1.5 py-0.5 rounded-full">
+                <span className="ml-2 text-xs bg-red-100 text-red-800 border border-red-200 px-1.5 py-0.5 rounded-full">
                   {form.maengel.length}
                 </span>
               )}
@@ -564,7 +564,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
           type="button"
           onClick={maengelMelden}
           disabled={saving}
-          className="flex items-center gap-1.5 text-xs px-3 py-2 bg-amber-500/20 border border-amber-500/40 rounded-lg text-amber-400 hover:bg-amber-500/30 transition-all disabled:opacity-50"
+          className="flex items-center gap-1.5 text-xs px-3 py-2 bg-amber-100 border border-amber-200 rounded-lg text-amber-800 hover:bg-amber-200 transition-all disabled:opacity-50"
         >
           <AlertTriangle className="w-3.5 h-3.5" />
           Mängel melden
@@ -574,7 +574,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
           type="button"
           onClick={() => speichern("abgelehnt")}
           disabled={saving}
-          className="flex items-center gap-1.5 text-xs px-3 py-2 bg-zinc-500/20 border border-zinc-500/40 rounded-lg text-zinc-400 hover:bg-zinc-500/30 transition-all disabled:opacity-50"
+          className="flex items-center gap-1.5 text-xs px-3 py-2 bg-gray-100 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-200 transition-all disabled:opacity-50"
         >
           <XCircle className="w-3.5 h-3.5" />
           Ablehnen
@@ -599,7 +599,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
               type="button"
               onClick={schnellBestaetigen}
               disabled={saving}
-              className="flex items-center gap-1.5 text-xs px-4 py-2 bg-emerald-500/20 border border-emerald-500/40 rounded-lg text-emerald-400 hover:bg-emerald-500/30 font-medium transition-all disabled:opacity-50"
+              className="flex items-center gap-1.5 text-xs px-4 py-2 bg-emerald-100 border border-emerald-200 rounded-lg text-emerald-800 hover:bg-emerald-200 font-medium transition-all disabled:opacity-50"
             >
               <CheckCircle className="w-3.5 h-3.5" />
               Bestätigen ✓

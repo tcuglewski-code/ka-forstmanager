@@ -26,8 +26,8 @@ const typLabel: Record<string, string> = {
 }
 
 const statusBadge: Record<string, string> = {
-  planung: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  aktiv: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+  planung: "bg-blue-100 text-blue-800 border-blue-500/30",
+  aktiv: "bg-emerald-100 text-emerald-800 border-emerald-500/30",
   abgeschlossen: "bg-zinc-700/50 text-zinc-400 border-zinc-600/30",
 }
 

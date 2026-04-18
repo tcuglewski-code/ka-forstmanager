@@ -18,10 +18,10 @@ interface Kontakt {
 
 const TYP_FARBEN: Record<string, string> = {
   foerster: "bg-[#2C3A1C] text-emerald-400",
-  waldbesitzer: "bg-blue-500/20 text-blue-400",
-  behoerde: "bg-amber-500/20 text-amber-400",
-  lieferant: "bg-violet-500/20 text-violet-400",
-  sonstig: "bg-zinc-500/20 text-zinc-400",
+  waldbesitzer: "bg-blue-100 text-blue-800",
+  behoerde: "bg-amber-100 text-amber-800",
+  lieferant: "bg-violet-100 text-violet-800",
+  sonstig: "bg-gray-100 text-gray-700",
 }
 
 const TYPEN = ["foerster", "waldbesitzer", "behoerde", "lieferant", "sonstig"]
@@ -269,7 +269,7 @@ export default function KontaktePage() {
             >
               <div className="flex items-start justify-between mb-3">
                 <h3 className="font-semibold text-white leading-tight">{k.name}</h3>
-                <span className={`ml-2 flex-shrink-0 px-2 py-0.5 rounded-full text-xs ${TYP_FARBEN[k.typ] ?? "bg-zinc-500/20 text-zinc-400"}`}>
+                <span className={`ml-2 flex-shrink-0 px-2 py-0.5 rounded-full text-xs ${TYP_FARBEN[k.typ] ?? "bg-gray-100 text-gray-700"}`}>
                   {k.typ}
                 </span>
               </div>

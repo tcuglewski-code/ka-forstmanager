@@ -259,8 +259,8 @@ export default function BenutzerVerwaltungPage() {
           className={cn(
             "px-4 py-3 rounded-lg text-sm flex items-center gap-2",
             message.type === "success"
-              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-              : "bg-red-500/20 text-red-400 border border-red-500/30"
+              ? "bg-emerald-100 text-emerald-800 border border-emerald-500/30"
+              : "bg-red-100 text-red-800 border border-red-500/30"
           )}
         >
           {message.type === "success" ? <Check className="w-4 h-4" /> : null}
@@ -303,9 +303,9 @@ export default function BenutzerVerwaltungPage() {
                     className={cn(
                       "px-2 py-1 rounded text-xs",
                       user.role === "ka_admin"
-                        ? "bg-emerald-500/20 text-emerald-400"
+                        ? "bg-emerald-100 text-emerald-800"
                         : user.role === "ka_gruppenführer"
-                        ? "bg-blue-500/20 text-blue-400"
+                        ? "bg-blue-100 text-blue-800"
                         : "bg-zinc-700 text-zinc-300"
                     )}
                   >
@@ -318,7 +318,7 @@ export default function BenutzerVerwaltungPage() {
                       "px-2 py-1 rounded text-xs",
                       user.active
                         ? "bg-green-500/20 text-green-400"
-                        : "bg-red-500/20 text-red-400"
+                        : "bg-red-100 text-red-800"
                     )}
                   >
                     {user.active ? "Aktiv" : "Inaktiv"}

@@ -116,14 +116,14 @@ interface Props {
 // ─── Hilfsfunktionen ─────────────────────────────────────────────────────────
 
 const auftragStatusBadge: Record<string, string> = {
-  anfrage: "bg-blue-500/20 text-blue-400",
+  anfrage: "bg-blue-100 text-blue-800",
   geprueft: "bg-sky-500/20 text-sky-400",
-  angebot: "bg-violet-500/20 text-violet-400",
-  bestaetigt: "bg-amber-500/20 text-amber-400",
-  in_ausfuehrung: "bg-emerald-500/20 text-emerald-400",
-  abgeschlossen: "bg-zinc-500/20 text-zinc-400",
-  storniert: "bg-red-500/20 text-red-400",
-  laufend: "bg-emerald-500/20 text-emerald-400",
+  angebot: "bg-violet-100 text-violet-800",
+  bestaetigt: "bg-amber-100 text-amber-800",
+  in_ausfuehrung: "bg-emerald-100 text-emerald-800",
+  abgeschlossen: "bg-gray-100 text-gray-700",
+  storniert: "bg-red-100 text-red-800",
+  laufend: "bg-emerald-100 text-emerald-800",
 }
 
 const auftragStatusLabel: Record<string, string> = {
@@ -685,7 +685,7 @@ export default function SaisonDetailClient({
                               updateAnmeldung(ma.id, "bestaetigt")
                             }
                             disabled={anmeldungLoading === ma.id}
-                            className="flex items-center gap-1 px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded text-xs hover:bg-emerald-500/30 transition-colors"
+                            className="flex items-center gap-1 px-2 py-1 bg-emerald-100 text-emerald-800 rounded text-xs hover:bg-emerald-500/30 transition-colors"
                           >
                             <Check className="w-3 h-3" /> Bestätigen
                           </button>
@@ -694,7 +694,7 @@ export default function SaisonDetailClient({
                               updateAnmeldung(ma.id, "abgelehnt")
                             }
                             disabled={anmeldungLoading === ma.id}
-                            className="flex items-center gap-1 px-2 py-1 bg-red-500/20 text-red-400 rounded text-xs hover:bg-red-500/30 transition-colors"
+                            className="flex items-center gap-1 px-2 py-1 bg-red-100 text-red-800 rounded text-xs hover:bg-red-500/30 transition-colors"
                           >
                             <X className="w-3 h-3" /> Ablehnen
                           </button>

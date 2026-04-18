@@ -20,11 +20,11 @@ interface Auftrag { id: string; titel: string }
 interface Saison { id: string; name: string }
 
 const typBadge: Record<string, string> = {
-  foto: "bg-purple-500/20 text-purple-400",
-  karte: "bg-blue-500/20 text-blue-400",
-  protokoll: "bg-amber-500/20 text-amber-400",
-  foerderantrag: "bg-emerald-500/20 text-emerald-400",
-  rechnung: "bg-red-500/20 text-red-400",
+  foto: "bg-purple-100 text-purple-800",
+  karte: "bg-blue-100 text-blue-800",
+  protokoll: "bg-amber-100 text-amber-800",
+  foerderantrag: "bg-emerald-100 text-emerald-800",
+  rechnung: "bg-red-100 text-red-800",
   sonstiges: "bg-zinc-700/50 text-zinc-400",
 }
 

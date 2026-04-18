@@ -17,14 +17,14 @@ interface Schulung {
 }
 
 const typBadge: Record<string, string> = {
-  pflicht: "bg-red-500/20 text-red-400",
-  freiwillig: "bg-blue-500/20 text-blue-400",
-  auffrischung: "bg-amber-500/20 text-amber-400",
+  pflicht: "bg-red-100 text-red-800",
+  freiwillig: "bg-blue-100 text-blue-800",
+  auffrischung: "bg-amber-100 text-amber-800",
 }
 
 const statusBadge: Record<string, string> = {
-  geplant: "bg-blue-500/20 text-blue-400",
-  aktiv: "bg-emerald-500/20 text-emerald-400",
+  geplant: "bg-blue-100 text-blue-800",
+  aktiv: "bg-emerald-100 text-emerald-800",
   abgeschlossen: "bg-zinc-700/50 text-zinc-400",
 }
 

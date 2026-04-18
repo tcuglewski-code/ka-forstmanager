@@ -261,7 +261,7 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
                 className={cn(
                   "w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0",
                   globalIndex === selectedIndex
-                    ? "bg-emerald-500/20 text-emerald-400"
+                    ? "bg-emerald-100 text-emerald-800"
                     : "bg-[#2a2a2a] text-zinc-500"
                 )}
               >

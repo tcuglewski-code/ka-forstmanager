@@ -47,9 +47,9 @@ async function getSaison(id: string) {
 }
 
 const statusBadge: Record<string, string> = {
-  planung: "bg-blue-500/20 text-blue-400",
-  aktiv: "bg-emerald-500/20 text-emerald-400",
-  abgeschlossen: "bg-zinc-500/20 text-zinc-400",
+  planung: "bg-blue-100 text-blue-800",
+  aktiv: "bg-emerald-100 text-emerald-800",
+  abgeschlossen: "bg-gray-100 text-gray-700",
   archiviert: "bg-zinc-700/50 text-zinc-600",
 }
 

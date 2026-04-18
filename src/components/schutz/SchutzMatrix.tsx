@@ -95,16 +95,16 @@ function getCurrentSeason(): "sommer" | "winter" {
 
 // Prio-Farben
 const PRIO_COLORS = {
-  hoch: "text-red-400 bg-red-500/10",
-  mittel: "text-amber-400 bg-amber-500/10",
-  niedrig: "text-emerald-400 bg-emerald-500/10",
+  hoch: "text-red-700 bg-red-100",
+  mittel: "text-amber-800 bg-amber-100",
+  niedrig: "text-emerald-700 bg-emerald-100",
 }
 
 // Status-Farben
 const STATUS_COLORS = {
-  geplant: "bg-blue-500/20 text-blue-400",
-  aktiv: "bg-emerald-500/20 text-emerald-400",
-  abgeschlossen: "bg-zinc-500/20 text-zinc-400",
+  geplant: "bg-blue-100 text-blue-800",
+  aktiv: "bg-emerald-100 text-emerald-800",
+  abgeschlossen: "bg-gray-100 text-gray-700",
   nicht_erforderlich: "bg-zinc-700/20 text-zinc-500",
 }
 
@@ -186,7 +186,7 @@ export function SchutzMatrix({
           {/* Aktuelle Saison */}
           <div
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${
-              currentSeason === "sommer" ? "bg-amber-500/10 text-amber-400" : "bg-blue-500/10 text-blue-400"
+              currentSeason === "sommer" ? "bg-amber-100 text-amber-800" : "bg-blue-100 text-blue-800"
             }`}
           >
             {currentSeason === "sommer" ? (

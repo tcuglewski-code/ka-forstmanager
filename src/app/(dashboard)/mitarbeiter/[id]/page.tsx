@@ -10,26 +10,26 @@ import { AbwesenheitenSection } from "./AbwesenheitenSection"
 // Sprint Q: RolleBadge Komponente
 function RolleBadge({ rolle }: { rolle: string }) {
   if (rolle === "gf_senior" || rolle === "ka_admin") {
-    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/40">🏅 Senior GF</span>
+    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-500/40">🏅 Senior GF</span>
   }
   if (rolle === "gf_standard" || rolle === "gruppenführer" || rolle === "ka_gruppenführer" || rolle === "gruppenfuehrer") {
-    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-zinc-500/20 text-zinc-300 border border-zinc-500/40">👷 Gruppenführer</span>
+    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-200 text-gray-700 border border-gray-300">👷 Gruppenführer</span>
   }
   if (rolle === "admin") {
     return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-400 border border-purple-500/30">Admin</span>
   }
   if (rolle === "buero") {
-    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-400 border border-blue-500/30">Büro</span>
+    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-500/30">Büro</span>
   }
   if (rolle === "ka_mitarbeiter" || rolle === "mitarbeiter") {
-    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">Mitarbeiter</span>
+    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-500/20">Mitarbeiter</span>
   }
   return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs text-zinc-500 border border-zinc-700">{rolle}</span>
 }
 
 const statusBadge: Record<string, string> = {
-  aktiv: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-  inaktiv: "bg-red-500/20 text-red-400 border-red-500/30",
+  aktiv: "bg-emerald-100 text-emerald-800 border-emerald-500/30",
+  inaktiv: "bg-red-100 text-red-800 border-red-500/30",
   beurlaubt: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
 }
 
@@ -193,7 +193,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
                     <p className="text-sm text-white">{s.schulung.titel}</p>
                     <p className="text-xs text-zinc-500">{s.schulung.typ} • {s.schulung.datum ? new Date(s.schulung.datum).toLocaleDateString("de-DE") : "—"}</p>
                   </div>
-                  <span className={`px-2 py-0.5 rounded-full text-xs ${s.status === "abgeschlossen" ? "bg-emerald-500/20 text-emerald-400" : s.status === "abgebrochen" ? "bg-red-500/20 text-red-400" : "bg-blue-500/20 text-blue-400"}`}>
+                  <span className={`px-2 py-0.5 rounded-full text-xs ${s.status === "abgeschlossen" ? "bg-emerald-100 text-emerald-800" : s.status === "abgebrochen" ? "bg-red-100 text-red-800" : "bg-blue-100 text-blue-800"}`}>
                     {s.status}
                   </span>
                 </div>

@@ -157,7 +157,7 @@ export default function AuditLogSection({ rechnungId }: AuditLogSectionProps) {
             {data.totalEntries} Einträge
           </span>
         </div>
-        <div className="flex items-center gap-1 px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded text-emerald-400 text-xs">
+        <div className="flex items-center gap-1 px-2 py-1 bg-emerald-50 border border-emerald-200 rounded text-emerald-700 text-xs">
           <Shield className="w-3 h-3" />
           GoBD-konform
         </div>

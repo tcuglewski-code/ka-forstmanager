@@ -107,14 +107,14 @@ export default async function FlaecheDetailPage({
         <span
           className={`mt-1 ml-3 px-2.5 py-1 rounded-full text-xs font-medium ${
             flaeche.zugelassen
-              ? "bg-emerald-500/20 text-emerald-400"
-              : "bg-red-500/20 text-red-400"
+              ? "bg-emerald-100 text-emerald-800"
+              : "bg-red-100 text-red-800"
           }`}
         >
           {flaeche.zugelassen ? "Zugelassen" : "Widerruf/Abgelaufen"}
         </span>
         {flaeche.sonderherkunft && (
-          <span className="mt-1 ml-2 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+          <span className="mt-1 ml-2 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-500/30">
             ⭐ Sonderherkunft
           </span>
         )}

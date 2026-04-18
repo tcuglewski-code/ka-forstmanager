@@ -95,13 +95,13 @@ export function AbwesenheitenSection({ mitarbeiterId, initialAbwesenheiten }: Pr
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <span className={`px-2 py-0.5 rounded-full text-xs ${a.genehmigt ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400"}`}>
+                <span className={`px-2 py-0.5 rounded-full text-xs ${a.genehmigt ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
                   {a.genehmigt ? "Genehmigt" : "Ausstehend"}
                 </span>
                 {!a.genehmigt && (
                   <button
                     onClick={() => genehmigen(a.id, a.genehmigt)}
-                    className="text-xs px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded hover:bg-emerald-500/30 transition-colors"
+                    className="text-xs px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded hover:bg-emerald-500/30 transition-colors"
                   >
                     Genehmigen
                   </button>

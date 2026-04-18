@@ -346,7 +346,7 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
               <Sparkles className="w-4 h-4 text-[#C5A55A]" />
               KI-Empfehlungen
             </h3>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-500/10 text-blue-400 text-xs font-medium rounded-full border border-blue-500/20">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-full border border-blue-500/20">
               KI-generiert
             </span>
           </div>

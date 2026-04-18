@@ -332,7 +332,7 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
         <Camera className="w-5 h-5 text-emerald-400" />
         <h2 className="text-lg font-semibold text-white">Medien &amp; Drohnenaufnahmen</h2>
         {medien.length > 0 && (
-          <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded-full text-xs font-medium">
+          <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-xs font-medium">
             {medien.length}
           </span>
         )}

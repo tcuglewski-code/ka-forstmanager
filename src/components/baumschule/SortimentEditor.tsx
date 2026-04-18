@@ -336,7 +336,7 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
                   <button
                     onClick={() => toggleVerfuegbar(eintrag)}
                     className={`px-2 py-0.5 text-xs rounded-full transition-colors ${
-                      eintrag.verfuegbar ? "bg-emerald-500/20 text-emerald-400" : "bg-zinc-700 text-zinc-500"
+                      eintrag.verfuegbar ? "bg-emerald-100 text-emerald-800" : "bg-zinc-700 text-zinc-500"
                     }`}
                   >
                     {eintrag.verfuegbar ? "Ja" : "Nein"}

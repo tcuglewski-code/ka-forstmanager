@@ -102,9 +102,9 @@ export default function ProtokolleSeite() {
 
   const statusColor: Record<string, string> = {
     entwurf: "text-zinc-400 bg-zinc-800 border-zinc-700",
-    eingereicht: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
-    genehmigt: "text-blue-400 bg-blue-500/10 border-blue-500/30",
-    abgelehnt: "text-red-400 bg-red-500/10 border-red-500/30",
+    eingereicht: "text-emerald-700 bg-emerald-50 border-emerald-500/30",
+    genehmigt: "text-blue-800 bg-blue-100 border-blue-200",
+    abgelehnt: "text-red-700 bg-red-50 border-red-500/30",
   }
 
   return (

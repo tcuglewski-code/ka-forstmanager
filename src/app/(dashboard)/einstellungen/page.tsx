@@ -17,8 +17,8 @@ interface User {
 
 const rolleBadge: Record<string, string> = {
   admin: "bg-purple-500/20 text-purple-400",
-  buero: "bg-blue-500/20 text-blue-400",
-  gruppenfuehrer: "bg-amber-500/20 text-amber-400",
+  buero: "bg-blue-100 text-blue-800",
+  gruppenfuehrer: "bg-amber-100 text-amber-800",
   mitarbeiter: "bg-zinc-700/50 text-zinc-400",
 }
 
@@ -478,19 +478,19 @@ export default function EinstellungenPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between p-3 bg-[#111] rounded-lg border border-[#333]">
                 <span className="text-xs font-mono text-zinc-400">POST /api/app/auth</span>
-                <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">Aktiv</span>
+                <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">Aktiv</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-[#111] rounded-lg border border-[#333]">
                 <span className="text-xs font-mono text-zinc-400">GET /api/app/me</span>
-                <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">Aktiv</span>
+                <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">Aktiv</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-[#111] rounded-lg border border-[#333]">
                 <span className="text-xs font-mono text-zinc-400">POST /api/app/protokolle</span>
-                <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">Aktiv</span>
+                <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">Aktiv</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-[#111] rounded-lg border border-[#333]">
                 <span className="text-xs font-mono text-zinc-400">POST /api/app/stunden</span>
-                <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">Aktiv</span>
+                <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">Aktiv</span>
               </div>
             </div>
           </div>

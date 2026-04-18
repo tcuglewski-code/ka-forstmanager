@@ -31,10 +31,10 @@ function formatEur(value: number): string {
 function MargeChip({ marge }: { marge: number }) {
   const color =
     marge > 30
-      ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+      ? "bg-emerald-100 text-emerald-800 border-emerald-500/30"
       : marge > 10
-      ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
-      : "bg-red-500/20 text-red-400 border-red-500/30"
+      ? "bg-amber-100 text-amber-800 border-amber-500/30"
+      : "bg-red-100 text-red-800 border-red-500/30"
   return (
     <span className={`px-2 py-0.5 rounded-full text-xs border font-semibold ${color}`}>
       {marge.toFixed(1)} %
@@ -189,7 +189,7 @@ export default function JahresuebersichtPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-white font-medium">{s.saison.name}</span>
                         {s.saison.aktiv && (
-                          <span className="px-1.5 py-0.5 rounded-full text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                          <span className="px-1.5 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-800 border border-emerald-500/30">
                             aktiv
                           </span>
                         )}

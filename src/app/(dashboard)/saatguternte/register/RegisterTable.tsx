@@ -41,10 +41,10 @@ interface Props {
 }
 
 const QUELLEFARBEN: Record<string, string> = {
-  BY: "bg-blue-500/20 text-blue-400",
-  "NW-FVA": "bg-violet-500/20 text-violet-400",
-  RLP: "bg-amber-500/20 text-amber-400",
-  BW: "bg-emerald-500/20 text-emerald-400",
+  BY: "bg-blue-100 text-blue-800",
+  "NW-FVA": "bg-violet-100 text-violet-800",
+  RLP: "bg-amber-100 text-amber-800",
+  BW: "bg-emerald-100 text-emerald-800",
   NI: "bg-cyan-500/20 text-cyan-400",
   HE: "bg-orange-500/20 text-orange-400",
   TH: "bg-rose-500/20 text-rose-400",
@@ -265,7 +265,7 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
                           title={`${f._count!.medien} Medien anzeigen`}
                         >
                           <Camera className="w-3.5 h-3.5 text-zinc-600 group-hover:text-emerald-400 transition-colors" />
-                          <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 rounded-full text-xs font-medium">
+                          <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-xs font-medium">
                             {f._count!.medien}
                           </span>
                         </Link>

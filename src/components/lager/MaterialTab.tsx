@@ -91,21 +91,21 @@ export function MaterialTab({ auftragId }: MaterialTabProps) {
     switch (status) {
       case "RESERVIERT":
         return (
-          <span className="px-2 py-0.5 rounded text-xs bg-blue-500/20 text-blue-400 flex items-center gap-1">
+          <span className="px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-800 flex items-center gap-1">
             <Package className="w-3 h-3" />
             Reserviert
           </span>
         )
       case "VERBRAUCHT":
         return (
-          <span className="px-2 py-0.5 rounded text-xs bg-emerald-500/20 text-emerald-400 flex items-center gap-1">
+          <span className="px-2 py-0.5 rounded text-xs bg-emerald-100 text-emerald-800 flex items-center gap-1">
             <Check className="w-3 h-3" />
             Verbraucht
           </span>
         )
       case "ZURUECK":
         return (
-          <span className="px-2 py-0.5 rounded text-xs bg-amber-500/20 text-amber-400 flex items-center gap-1">
+          <span className="px-2 py-0.5 rounded text-xs bg-amber-100 text-amber-800 flex items-center gap-1">
             <Undo2 className="w-3 h-3" />
             Zurückgegeben
           </span>
@@ -191,7 +191,7 @@ export function MaterialTab({ auftragId }: MaterialTabProps) {
                         <button
                           onClick={() => handleVerbrauchen(r.id)}
                           disabled={actionLoading === r.id}
-                          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 disabled:opacity-50 transition-colors"
+                          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs bg-emerald-100 text-emerald-800 hover:bg-emerald-200 disabled:opacity-50 transition-colors"
                         >
                           {actionLoading === r.id ? (
                             <Loader2 className="w-3 h-3 animate-spin" />
@@ -203,7 +203,7 @@ export function MaterialTab({ auftragId }: MaterialTabProps) {
                         <button
                           onClick={() => handleZurueckgeben(r.id)}
                           disabled={actionLoading === r.id}
-                          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 disabled:opacity-50 transition-colors"
+                          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs bg-amber-100 text-amber-800 hover:bg-amber-200 disabled:opacity-50 transition-colors"
                         >
                           {actionLoading === r.id ? (
                             <Loader2 className="w-3 h-3 animate-spin" />
@@ -229,7 +229,7 @@ export function MaterialTab({ auftragId }: MaterialTabProps) {
 
       {/* Hinweis wenn Artikel unter Mindestbestand */}
       {reservierungen.some(r => r.artikel.bestand <= r.artikel.mindestbestand) && (
-        <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm">
+        <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-amber-100 border border-amber-200 text-amber-800 text-sm">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>Einige reservierte Artikel sind unter Mindestbestand. Bitte Nachbestellung prüfen.</span>
         </div>

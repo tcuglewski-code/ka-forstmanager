@@ -128,17 +128,17 @@ export default function FeatureFlagsPage() {
       case "ki":
         return "bg-purple-500/20 text-purple-400"
       case "sync":
-        return "bg-blue-500/20 text-blue-400"
+        return "bg-blue-100 text-blue-800"
       case "billing":
-        return "bg-amber-500/20 text-amber-400"
+        return "bg-amber-100 text-amber-800"
       case "safety":
-        return "bg-red-500/20 text-red-400"
+        return "bg-red-100 text-red-800"
       case "compliance":
         return "bg-green-500/20 text-green-400"
       case "security":
         return "bg-orange-500/20 text-orange-400"
       case "admin":
-        return "bg-zinc-500/20 text-zinc-400"
+        return "bg-gray-100 text-gray-700"
       default:
         return "bg-zinc-700 text-zinc-300"
     }
@@ -184,8 +184,8 @@ export default function FeatureFlagsPage() {
           className={cn(
             "px-4 py-3 rounded-lg text-sm",
             message.type === "success"
-              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-              : "bg-red-500/20 text-red-400 border border-red-500/30"
+              ? "bg-emerald-100 text-emerald-800 border border-emerald-500/30"
+              : "bg-red-100 text-red-800 border border-red-500/30"
           )}
         >
           {message.text}
@@ -227,7 +227,7 @@ export default function FeatureFlagsPage() {
                 className="border-b border-[#2a2a2a] last:border-0 hover:bg-[#222]"
               >
                 <td className="px-4 py-3">
-                  <code className="text-sm text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
+                  <code className="text-sm text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
                     {flag.key}
                   </code>
                 </td>

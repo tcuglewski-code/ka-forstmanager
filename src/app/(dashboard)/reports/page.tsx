@@ -323,9 +323,9 @@ export default function ReportsPage() {
                       <td className="px-6 py-3 text-sm text-zinc-400">{l.mindestbestand}</td>
                       <td className="px-6 py-3">
                         {l.bestand < l.mindestbestand ? (
-                          <span className="px-2 py-0.5 rounded-full text-xs bg-red-500/20 text-red-400">Kritisch</span>
+                          <span className="px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-800">Kritisch</span>
                         ) : (
-                          <span className="px-2 py-0.5 rounded-full text-xs bg-emerald-500/20 text-emerald-400">OK</span>
+                          <span className="px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-800">OK</span>
                         )}
                       </td>
                     </tr>

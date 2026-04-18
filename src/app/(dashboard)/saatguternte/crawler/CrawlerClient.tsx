@@ -29,10 +29,10 @@ interface Props {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; icon: React.ElementType; className: string }> = {
-  idle: { label: "Bereit", icon: Clock, className: "bg-zinc-500/20 text-zinc-400" },
-  running: { label: "Läuft...", icon: Loader2, className: "bg-blue-500/20 text-blue-400" },
-  success: { label: "Erfolgreich", icon: CheckCircle, className: "bg-emerald-500/20 text-emerald-400" },
-  error: { label: "Fehler", icon: XCircle, className: "bg-red-500/20 text-red-400" },
+  idle: { label: "Bereit", icon: Clock, className: "bg-gray-100 text-gray-700" },
+  running: { label: "Läuft...", icon: Loader2, className: "bg-blue-100 text-blue-800" },
+  success: { label: "Erfolgreich", icon: CheckCircle, className: "bg-emerald-100 text-emerald-800" },
+  error: { label: "Fehler", icon: XCircle, className: "bg-red-100 text-red-800" },
 }
 
 export function CrawlerClient({ initialQuellen }: Props) {
@@ -154,10 +154,10 @@ export function CrawlerClient({ initialQuellen }: Props) {
                 <span className="px-2 py-0.5 bg-orange-500/20 text-orange-400 rounded text-xs font-medium">HE</span>
                 {hessenStatus && (
                   <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                    hessenStatus.crawlStatus === "success" ? "bg-emerald-500/20 text-emerald-400" :
-                    hessenStatus.crawlStatus === "manual_required" ? "bg-amber-500/20 text-amber-400" :
-                    hessenStatus.crawlStatus === "error" ? "bg-red-500/20 text-red-400" :
-                    "bg-zinc-500/20 text-zinc-400"
+                    hessenStatus.crawlStatus === "success" ? "bg-emerald-100 text-emerald-800" :
+                    hessenStatus.crawlStatus === "manual_required" ? "bg-amber-100 text-amber-800" :
+                    hessenStatus.crawlStatus === "error" ? "bg-red-100 text-red-800" :
+                    "bg-gray-100 text-gray-700"
                   }`}>
                     {hessenStatus.crawlStatus === "manual_required" ? "⚠️ Manuell erforderlich" :
                      hessenStatus.crawlStatus === "success" ? "✅ Erfolgreich" :
@@ -279,7 +279,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-1">
                     <h3 className="text-white font-semibold">{quelle.name}</h3>
-                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-xs font-medium">
+                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-xs font-medium">
                       {quelle.kuerzel}
                     </span>
                     <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusConf.className}`}>

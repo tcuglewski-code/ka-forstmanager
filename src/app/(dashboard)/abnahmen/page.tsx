@@ -17,9 +17,9 @@ interface Abnahme {
 interface Auftrag { id: string; titel: string }
 
 const statusBadge: Record<string, string> = {
-  offen: "bg-blue-500/20 text-blue-400",
-  bestanden: "bg-emerald-500/20 text-emerald-400",
-  nicht_bestanden: "bg-red-500/20 text-red-400",
+  offen: "bg-blue-100 text-blue-800",
+  bestanden: "bg-emerald-100 text-emerald-800",
+  nicht_bestanden: "bg-red-100 text-red-800",
 }
 
 const statusLabel: Record<string, string> = {

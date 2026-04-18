@@ -191,15 +191,15 @@ const STATUS_FARBEN: Record<string, string> = {
   anfrage: "bg-[#dedad0] text-[#4b6457]",
   geprueft: "bg-[#cde9d9] text-[#026c47]",
   angebot: "bg-[#e6e2d8] text-[#3f4942]",
-  bestaetigt: "bg-[#f2eee3] text-[#865300]",
+  bestaetigt: "bg-amber-100 text-amber-800",
   in_ausfuehrung: "bg-[#cde9d9] text-[#026c47]",
-  abgeschlossen: "bg-[#e6e2d8] text-[#6f7a72]",
+  abgeschlossen: "bg-gray-200 text-gray-700",
 }
 
 const SCHULUNG_TYP: Record<string, string> = {
-  pflicht: "bg-red-500/20 text-red-400",
-  freiwillig: "bg-blue-500/20 text-blue-400",
-  auffrischung: "bg-amber-500/20 text-amber-400",
+  pflicht: "bg-red-100 text-red-800",
+  freiwillig: "bg-blue-100 text-blue-800",
+  auffrischung: "bg-amber-100 text-amber-800",
 }
 
 export default async function DashboardPage() {

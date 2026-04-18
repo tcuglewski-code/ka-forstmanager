@@ -96,7 +96,7 @@ export function BaumschulePortal({ baumschule, sortiment, ernteanfragen }: Props
                   {tab.count != null && tab.count > 0 && (
                     <span
                       className={`ml-2 px-1.5 py-0.5 text-xs rounded-full ${
-                        activeTab === tab.key ? "bg-emerald-500/20 text-emerald-400" : "bg-zinc-700 text-zinc-400"
+                        activeTab === tab.key ? "bg-emerald-100 text-emerald-800" : "bg-zinc-700 text-zinc-400"
                       }`}
                     >
                       {tab.count}

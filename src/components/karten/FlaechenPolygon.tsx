@@ -347,7 +347,7 @@ export function FlaechenPolygon({
             Auftragsfläche
           </span>
           {flaeche && (
-            <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-xs">
+            <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-xs">
               {flaeche}
             </span>
           )}

@@ -416,8 +416,8 @@ export default function ProfilPage() {
           className={cn(
             "px-4 py-3 rounded-lg text-sm flex items-center gap-2",
             message.type === "success"
-              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-              : "bg-red-500/20 text-red-400 border border-red-500/30"
+              ? "bg-emerald-100 text-emerald-800 border border-emerald-500/30"
+              : "bg-red-100 text-red-800 border border-red-500/30"
           )}
         >
           {message.type === "success" ? (

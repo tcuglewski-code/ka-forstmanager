@@ -67,9 +67,9 @@ function hasValue(v: unknown): boolean {
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
     entwurf: "bg-zinc-700 text-zinc-300 border-zinc-600",
-    eingereicht: "bg-emerald-500/20 text-emerald-400 border-emerald-500/40",
-    genehmigt: "bg-blue-500/20 text-blue-400 border-blue-500/40",
-    abgelehnt: "bg-red-500/20 text-red-400 border-red-500/40",
+    eingereicht: "bg-emerald-100 text-emerald-800 border-emerald-500/40",
+    genehmigt: "bg-blue-100 text-blue-800 border-blue-500/40",
+    abgelehnt: "bg-red-100 text-red-800 border-red-500/40",
   }
   const labelMap: Record<string, string> = {
     entwurf: "Entwurf",

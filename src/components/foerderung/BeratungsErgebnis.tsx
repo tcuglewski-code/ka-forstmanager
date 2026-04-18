@@ -429,7 +429,7 @@ export function BeratungsErgebnis({
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      <span className="text-xs px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
                         #{idx + 1}
                       </span>
                       <h4 className="text-sm font-medium text-white truncate group-hover:text-emerald-100 transition-colors">

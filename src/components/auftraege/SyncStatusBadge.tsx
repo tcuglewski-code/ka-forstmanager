@@ -27,25 +27,25 @@ export function SyncStatusBadge({
     synced: {
       icon: Cloud,
       label: "Synchronisiert",
-      color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+      color: "bg-emerald-100 text-emerald-800 border-emerald-200",
       description: "Daten stimmen mit WordPress überein",
     },
     local_changes: {
       icon: CloudOff,
       label: "Lokale Änderungen",
-      color: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+      color: "bg-amber-100 text-amber-800 border-amber-200",
       description: "Lokale Änderungen noch nicht zu WP gepusht",
     },
     conflict: {
       icon: AlertTriangle,
       label: "Konflikt",
-      color: "bg-red-500/10 text-red-400 border-red-500/20",
+      color: "bg-red-100 text-red-800 border-red-200",
       description: "Änderungen in WP und FM — manuelles Auflösen nötig",
     },
     pending: {
       icon: RefreshCw,
       label: "Wird synchronisiert",
-      color: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+      color: "bg-blue-100 text-blue-800 border-blue-200",
       description: "Synchronisation läuft...",
     },
   }

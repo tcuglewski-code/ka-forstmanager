@@ -29,9 +29,9 @@ interface Mitarbeiter {
 }
 
 const typBadge: Record<string, string> = {
-  fuehrerschein: "bg-blue-500/20 text-blue-400",
-  sicherheit: "bg-red-500/20 text-red-400",
-  zertifikat: "bg-emerald-500/20 text-emerald-400",
+  fuehrerschein: "bg-blue-100 text-blue-800",
+  sicherheit: "bg-red-100 text-red-800",
+  zertifikat: "bg-emerald-100 text-emerald-800",
   sonstiges: "bg-zinc-700/50 text-zinc-400",
 }
 
@@ -194,7 +194,7 @@ export default function QualifikationenPage() {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${filter === f ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-[#161616] text-zinc-400 border border-[#2a2a2a] hover:border-zinc-600"}`}
+                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${filter === f ? "bg-emerald-100 text-emerald-800 border border-emerald-500/30" : "bg-[#161616] text-zinc-400 border border-[#2a2a2a] hover:border-zinc-600"}`}
               >
                 {f === "" ? "Alle" : `Ablauf in ${f} Tagen`}
               </button>
@@ -225,9 +225,9 @@ export default function QualifikationenPage() {
                       <td className="px-6 py-4 text-sm text-zinc-400">{mq.erworbenAm ? new Date(mq.erworbenAm).toLocaleDateString("de-DE") : "—"}</td>
                       <td className="px-6 py-4 text-sm text-zinc-400">{mq.ablaufDatum ? new Date(mq.ablaufDatum).toLocaleDateString("de-DE") : "—"}</td>
                       <td className="px-6 py-4">
-                        {st === "abgelaufen" && <span className="px-2 py-0.5 rounded-full text-xs bg-red-500/20 text-red-400">Abgelaufen</span>}
-                        {st === "kritisch" && <span className="px-2 py-0.5 rounded-full text-xs bg-amber-500/20 text-amber-400">&lt; 30 Tage</span>}
-                        {st === "ok" && <span className="px-2 py-0.5 rounded-full text-xs bg-emerald-500/20 text-emerald-400">Gültig</span>}
+                        {st === "abgelaufen" && <span className="px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-800">Abgelaufen</span>}
+                        {st === "kritisch" && <span className="px-2 py-0.5 rounded-full text-xs bg-amber-100 text-amber-800">&lt; 30 Tage</span>}
+                        {st === "ok" && <span className="px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-800">Gültig</span>}
                         {st === "none" && <span className="text-zinc-600 text-xs">—</span>}
                       </td>
                       <td className="px-6 py-4 text-right">

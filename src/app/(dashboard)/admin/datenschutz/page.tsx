@@ -56,11 +56,11 @@ interface Stats {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
-  EINGEGANGEN: { label: "Eingegangen", color: "bg-blue-500/20 text-blue-400 border-blue-500/30", icon: Mail },
-  IN_PRUEFUNG: { label: "In Prüfung", color: "bg-amber-500/20 text-amber-400 border-amber-500/30", icon: Clock },
-  UMGESETZT: { label: "Umgesetzt", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30", icon: CheckCircle },
-  ABGELEHNT: { label: "Abgelehnt", color: "bg-red-500/20 text-red-400 border-red-500/30", icon: XCircle },
-  ARCHIVIERT: { label: "Archiviert", color: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30", icon: FileText },
+  EINGEGANGEN: { label: "Eingegangen", color: "bg-blue-100 text-blue-800 border-blue-500/30", icon: Mail },
+  IN_PRUEFUNG: { label: "In Prüfung", color: "bg-amber-100 text-amber-800 border-amber-500/30", icon: Clock },
+  UMGESETZT: { label: "Umgesetzt", color: "bg-emerald-100 text-emerald-800 border-emerald-500/30", icon: CheckCircle },
+  ABGELEHNT: { label: "Abgelehnt", color: "bg-red-100 text-red-800 border-red-500/30", icon: XCircle },
+  ARCHIVIERT: { label: "Archiviert", color: "bg-gray-100 text-gray-700 border-zinc-500/30", icon: FileText },
 }
 
 const REQUEST_TYPES: Record<string, string> = {
@@ -306,8 +306,8 @@ export default function DatenschutzVerwaltungPage() {
           className={cn(
             "px-4 py-3 rounded-lg text-sm flex items-center gap-2",
             message.type === "success"
-              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-              : "bg-red-500/20 text-red-400 border border-red-500/30"
+              ? "bg-emerald-100 text-emerald-800 border border-emerald-500/30"
+              : "bg-red-100 text-red-800 border border-red-500/30"
           )}
         >
           {message.type === "success" ? <CheckCircle className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
@@ -403,12 +403,12 @@ export default function DatenschutzVerwaltungPage() {
                     <td className="px-4 py-3">
                       <div className="flex gap-1">
                         {request.gobdConflict && (
-                          <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 rounded text-xs" title="GoBD-Konflikt">
+                          <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-xs" title="GoBD-Konflikt">
                             GoBD
                           </span>
                         )}
                         {request.restrictionApplied && (
-                          <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs flex items-center gap-1" title="Einschränkung angewandt">
+                          <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded text-xs flex items-center gap-1" title="Einschränkung angewandt">
                             <Lock className="w-3 h-3" /> Art.18
                           </span>
                         )}
@@ -627,11 +627,11 @@ export default function DatenschutzVerwaltungPage() {
                                   <div className="flex items-center gap-2">
                                     <span className="text-zinc-400">{r.betrag.toFixed(2)} €</span>
                                     {r.gdprRestricted ? (
-                                      <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs flex items-center gap-1">
+                                      <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded text-xs flex items-center gap-1">
                                         <Lock className="w-3 h-3" /> Eingeschränkt
                                       </span>
                                     ) : (
-                                      <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-xs flex items-center gap-1">
+                                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-xs flex items-center gap-1">
                                         <Unlock className="w-3 h-3" /> Aktiv
                                       </span>
                                     )}

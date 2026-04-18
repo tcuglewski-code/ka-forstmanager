@@ -388,7 +388,7 @@ export default function BestellungenPage() {
                       {b.status === "ENTWURF" && (
                         <button
                           onClick={() => updateStatus(b.id, "BESTELLT")}
-                          className="px-2 py-1 rounded text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30"
+                          className="px-2 py-1 rounded text-xs bg-blue-100 text-blue-800 hover:bg-blue-500/30"
                         >
                           → Bestellt
                         </button>
@@ -396,7 +396,7 @@ export default function BestellungenPage() {
                       {b.status === "BESTELLT" && (
                         <button
                           onClick={() => updateStatus(b.id, "GELIEFERT")}
-                          className="px-2 py-1 rounded text-xs bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
+                          className="px-2 py-1 rounded text-xs bg-emerald-100 text-emerald-800 hover:bg-emerald-500/30"
                         >
                           → Geliefert
                         </button>

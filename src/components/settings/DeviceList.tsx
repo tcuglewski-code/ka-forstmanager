@@ -133,7 +133,7 @@ export function DeviceList() {
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-white">{session.deviceName}</span>
                       {session.isCurrent && (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-400 font-medium">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-medium">
                           Dieses Gerät
                         </span>
                       )}

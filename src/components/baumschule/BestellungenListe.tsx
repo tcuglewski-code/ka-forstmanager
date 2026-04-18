@@ -22,9 +22,9 @@ interface Props {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  anfrage: { label: "Anfrage", color: "bg-yellow-500/20 text-yellow-400" },
-  geplant: { label: "Geplant", color: "bg-blue-500/20 text-blue-400" },
-  aktiv: { label: "Aktiv", color: "bg-emerald-500/20 text-emerald-400" },
+  anfrage: { label: "Anfrage", color: "bg-yellow-100 text-yellow-800" },
+  geplant: { label: "Geplant", color: "bg-blue-100 text-blue-800" },
+  aktiv: { label: "Aktiv", color: "bg-emerald-100 text-emerald-800" },
   abgeschlossen: { label: "Abgeschlossen", color: "bg-zinc-600/30 text-zinc-400" },
   storniert: { label: "Storniert", color: "bg-zinc-600/30 text-zinc-500" },
 }

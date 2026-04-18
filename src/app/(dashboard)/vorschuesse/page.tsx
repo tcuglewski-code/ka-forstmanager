@@ -94,7 +94,7 @@ export default function VorschuessePage() {
                   <td className="px-6 py-4 text-sm text-zinc-400">{new Date(v.datum).toLocaleDateString("de-DE")}</td>
                   <td className="px-6 py-4 text-sm text-zinc-400">{v.grund ?? "—"}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${v.genehmigt ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400"}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-xs ${v.genehmigt ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
                       {v.genehmigt ? "Ja" : "Ausstehend"}
                     </span>
                   </td>
@@ -103,7 +103,7 @@ export default function VorschuessePage() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     {!v.genehmigt && (
-                      <button onClick={() => patch(v.id, { genehmigt: true })} className="flex items-center gap-1 px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded text-xs hover:bg-emerald-500/30 ml-auto">
+                      <button onClick={() => patch(v.id, { genehmigt: true })} className="flex items-center gap-1 px-2 py-1 bg-emerald-100 text-emerald-800 rounded text-xs hover:bg-emerald-500/30 ml-auto">
                         <Check className="w-3 h-3" /> Genehmigen
                       </button>
                     )}

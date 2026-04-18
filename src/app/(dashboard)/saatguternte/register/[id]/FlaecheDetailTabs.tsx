@@ -473,7 +473,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
                 <div>
                   <dt className="text-zinc-600 text-xs">Kürzel</dt>
                   <dd>
-                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-xs font-medium">
+                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-xs font-medium">
                       {flaeche.quelle.kuerzel}
                     </span>
                   </dd>

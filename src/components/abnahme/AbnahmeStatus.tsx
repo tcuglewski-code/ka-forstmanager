@@ -29,10 +29,10 @@ function StatusIcon({ status }: { status: string }) {
 
 function StatusLabel({ status }: { status: string }) {
   const map: Record<string, { label: string; classes: string }> = {
-    offen:       { label: "Offen",      classes: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
-    "bestätigt": { label: "Bestätigt",  classes: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
-    "mängel":    { label: "Mängel",     classes: "bg-red-500/20 text-red-400 border-red-500/30" },
-    abgelehnt:   { label: "Abgelehnt",  classes: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30" },
+    offen:       { label: "Offen",      classes: "bg-amber-100 text-amber-800 border-amber-200" },
+    "bestätigt": { label: "Bestätigt",  classes: "bg-emerald-100 text-emerald-800 border-emerald-200" },
+    "mängel":    { label: "Mängel",     classes: "bg-red-100 text-red-800 border-red-200" },
+    abgelehnt:   { label: "Abgelehnt",  classes: "bg-gray-100 text-gray-700 border-gray-200" },
   }
   const c = map[status] ?? map.offen
   return (
@@ -98,7 +98,7 @@ export function AbnahmeStatus({ auftragId }: AbnahmeStatusProps) {
         </h3>
         <button
           onClick={() => { setEditId(undefined); setFormOpen(true) }}
-          className="flex items-center gap-1 text-xs px-3 py-1.5 bg-emerald-500/20 border border-emerald-500/40 rounded-lg text-emerald-400 hover:bg-emerald-500/30 transition-all"
+          className="flex items-center gap-1 text-xs px-3 py-1.5 bg-emerald-100 border border-emerald-200 rounded-lg text-emerald-800 hover:bg-emerald-200 transition-all"
         >
           <Plus className="w-3.5 h-3.5" />
           Abnahme starten

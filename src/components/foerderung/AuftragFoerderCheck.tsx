@@ -163,19 +163,19 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
       {/* Vorausgefüllte Auftragsdaten */}
       <div className="flex flex-wrap gap-2">
         {bundesland && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-violet-500/20 text-violet-400 border border-violet-500/30">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-violet-100 text-violet-800 border border-violet-200">
             <MapPin className="w-3 h-3" />
             {bundesland}
           </span>
         )}
         {flaeche_ha != null && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-emerald-100 text-emerald-800 border border-emerald-200">
             <Ruler className="w-3 h-3" />
             {flaeche_ha} ha
           </span>
         )}
         {baumarten && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-amber-100 text-amber-800 border border-amber-200">
             <TreePine className="w-3 h-3" />
             {baumarten}
           </span>
@@ -206,7 +206,7 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
           <button
             onClick={handlePruefen}
             disabled={loading || !bundesland}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500/20 border border-emerald-500/40 rounded-lg text-emerald-400 text-sm font-medium hover:bg-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-100 border border-emerald-200 rounded-lg text-emerald-800 text-sm font-medium hover:bg-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {loading ? (
               <>
@@ -240,7 +240,7 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
                 </span>
               </div>
               {result.meta.ki_synthese && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-500/10 text-blue-400 text-xs font-medium rounded-full border border-blue-500/20">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-medium rounded-full border border-blue-200">
                   KI-generiert
                 </span>
               )}

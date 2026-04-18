@@ -37,10 +37,10 @@ interface Rechnung {
 }
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-  offen: { label: "Offen", color: "bg-blue-500/20 text-blue-400 border-blue-500/30", icon: Clock },
-  freigegeben: { label: "Freigegeben", color: "bg-amber-500/20 text-amber-400 border-amber-500/30", icon: AlertCircle },
-  bezahlt: { label: "Bezahlt", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30", icon: CheckCircle },
-  storniert: { label: "Storniert", color: "bg-red-500/20 text-red-400 border-red-500/30", icon: XCircle },
+  offen: { label: "Offen", color: "bg-blue-100 text-blue-800 border-blue-500/30", icon: Clock },
+  freigegeben: { label: "Freigegeben", color: "bg-amber-100 text-amber-800 border-amber-500/30", icon: AlertCircle },
+  bezahlt: { label: "Bezahlt", color: "bg-emerald-100 text-emerald-800 border-emerald-500/30", icon: CheckCircle },
+  storniert: { label: "Storniert", color: "bg-red-100 text-red-800 border-red-500/30", icon: XCircle },
 }
 
 export default function RechnungDetailPage() {

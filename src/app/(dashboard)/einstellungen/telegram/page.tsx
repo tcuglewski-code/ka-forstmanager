@@ -287,7 +287,7 @@ export default function TelegramEinstellungenPage() {
                     <td className="px-6 py-4">
                       <span className={`px-2 py-0.5 rounded-full text-xs ${
                         reg.aktiv
-                          ? "bg-emerald-500/20 text-emerald-400"
+                          ? "bg-emerald-100 text-emerald-800"
                           : "bg-zinc-700/50 text-zinc-400"
                       }`}>
                         {reg.aktiv ? "Aktiv" : "Inaktiv"}

@@ -229,7 +229,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
           onClick={() => setShowDiff(!showDiff)}
           className={`flex items-center gap-1.5 px-2 py-1 text-xs rounded transition-colors ${
             showDiff 
-              ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400' 
+              ? 'bg-blue-50 border border-blue-200 text-blue-700' 
               : 'bg-[#222] border border-[#333] text-zinc-400 hover:text-white'
           }`}
         >

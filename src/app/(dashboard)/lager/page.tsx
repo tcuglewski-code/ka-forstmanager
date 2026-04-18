@@ -642,9 +642,9 @@ function LagerPageInner() {
                     <td className="px-4 py-3 text-right text-white">{r.menge} {r.artikel.einheit}</td>
                     <td className="px-4 py-3 text-center">
                       <span className={`px-2 py-0.5 rounded text-xs ${
-                        r.status === "RESERVIERT" ? "bg-blue-500/20 text-blue-400" :
-                        r.status === "VERBRAUCHT" ? "bg-emerald-500/20 text-emerald-400" :
-                        "bg-amber-500/20 text-amber-400"
+                        r.status === "RESERVIERT" ? "bg-blue-100 text-blue-800" :
+                        r.status === "VERBRAUCHT" ? "bg-emerald-100 text-emerald-800" :
+                        "bg-amber-100 text-amber-800"
                       }`}>{r.status}</span>
                     </td>
                   </tr>
@@ -684,9 +684,9 @@ function LagerPageInner() {
                       <td className="px-4 py-3 text-white">{b.lieferant.name}</td>
                       <td className="px-4 py-3 text-center">
                         <span className={`px-2 py-0.5 rounded text-xs ${
-                          b.status === "ENTWURF" ? "bg-zinc-500/20 text-zinc-400" :
-                          b.status === "BESTELLT" ? "bg-blue-500/20 text-blue-400" :
-                          "bg-emerald-500/20 text-emerald-400"
+                          b.status === "ENTWURF" ? "bg-gray-100 text-gray-700" :
+                          b.status === "BESTELLT" ? "bg-blue-100 text-blue-800" :
+                          "bg-emerald-100 text-emerald-800"
                         }`}>{b.status}</span>
                       </td>
                       <td className="px-4 py-3 text-right font-medium" style={{ color: GOLD }}>{Number(b.gesamtbetrag).toFixed(2)} €</td>

@@ -79,7 +79,7 @@ export function KritischeBestaendeWidget({ artikel }: KritischeBestaendeWidgetPr
           <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
           <h3 className="text-sm font-medium text-white">Kritische Bestände</h3>
         </div>
-        <span className="px-2 py-0.5 rounded text-xs bg-red-500/20 text-red-400">
+        <span className="px-2 py-0.5 rounded text-xs bg-red-100 text-red-800">
           {kritisch.length} Artikel
         </span>
       </div>

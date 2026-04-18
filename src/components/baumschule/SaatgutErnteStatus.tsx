@@ -18,9 +18,9 @@ interface Props {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  offen: { label: "Offen", color: "bg-yellow-500/20 text-yellow-400" },
-  in_bearbeitung: { label: "In Bearbeitung", color: "bg-blue-500/20 text-blue-400" },
-  abgeschlossen: { label: "Abgeschlossen", color: "bg-emerald-500/20 text-emerald-400" },
+  offen: { label: "Offen", color: "bg-yellow-100 text-yellow-800" },
+  in_bearbeitung: { label: "In Bearbeitung", color: "bg-blue-100 text-blue-800" },
+  abgeschlossen: { label: "Abgeschlossen", color: "bg-emerald-100 text-emerald-800" },
   storniert: { label: "Storniert", color: "bg-zinc-600/30 text-zinc-500" },
 }
 

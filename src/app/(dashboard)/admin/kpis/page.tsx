@@ -58,7 +58,7 @@ function KpiCard({
           <Icon className="w-5 h-5" style={{ color }} />
         </div>
         {trend && (
-          <span className="text-xs text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full">
+          <span className="text-xs text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full">
             {trend}
           </span>
         )}

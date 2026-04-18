@@ -37,18 +37,18 @@ interface Saison {
 }
 
 const STATUS_FARBEN: Record<string, string> = {
-  anfrage: "bg-blue-500/20 text-blue-400",
+  anfrage: "bg-blue-100 text-blue-800",
   geplant: "bg-cyan-500/20 text-cyan-400",  // QA-01: Neuer Status
   aktiv: "bg-lime-500/20 text-lime-400",  // QA-01: Neuer Status
   geprueft: "bg-sky-500/20 text-sky-400",
-  angebot: "bg-violet-500/20 text-violet-400",
-  bestaetigt: "bg-amber-500/20 text-amber-400",
+  angebot: "bg-violet-100 text-violet-800",
+  bestaetigt: "bg-amber-100 text-amber-800",
   angenommen: "bg-green-500/20 text-green-400",  // Sprint FP (A2)
-  in_ausfuehrung: "bg-emerald-500/20 text-emerald-400",
+  in_ausfuehrung: "bg-emerald-100 text-emerald-800",
   abgeschlossen: "bg-green-600/30 text-green-300",  // Sprint FP (A2): grüner Badge
-  laufend: "bg-emerald-500/20 text-emerald-400",
-  auftrag: "bg-amber-500/20 text-amber-400",
-  maengel_offen: "bg-red-500/20 text-red-400",  // Sprint FV
+  laufend: "bg-emerald-100 text-emerald-800",
+  auftrag: "bg-amber-100 text-amber-800",
+  maengel_offen: "bg-red-100 text-red-800",  // Sprint FV
   abnahme: "bg-purple-500/20 text-purple-400",  // Sprint FV
 }
 
@@ -69,13 +69,13 @@ const STATUS_LABELS: Record<string, string> = {
 }
 
 const TYP_FARBEN: Record<string, string> = {
-  pflanzung: "bg-emerald-500/20 text-emerald-400",
-  flaechenvorbereitung: "bg-blue-500/20 text-blue-400",
-  flachenvorbereitung: "bg-blue-500/20 text-blue-400",
+  pflanzung: "bg-emerald-100 text-emerald-800",
+  flaechenvorbereitung: "bg-blue-100 text-blue-800",
+  flachenvorbereitung: "bg-blue-100 text-blue-800",
   foerderberatung: "bg-purple-500/20 text-purple-400",
   foerdermittelberatung: "bg-purple-500/20 text-purple-400",
   zaunbau: "bg-orange-500/20 text-orange-400",
-  kulturschutz: "bg-amber-500/20 text-amber-400",
+  kulturschutz: "bg-amber-100 text-amber-800",
   kulturpflege: "bg-yellow-500/20 text-yellow-400",
   saatguternte: "bg-cyan-500/20 text-cyan-400",
   pflanzenbeschaffung: "bg-teal-500/20 text-teal-400",
@@ -308,7 +308,7 @@ export default function AuftraegePage() {
           <p className="text-zinc-500 text-sm mt-0.5">
             {auftraege.length} Aufträge gesamt
             {neuCount > 0 && (
-              <span className="ml-2 px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-xs font-medium">
+              <span className="ml-2 px-1.5 py-0.5 bg-emerald-100 text-emerald-800 rounded text-xs font-medium">
                 {neuCount} neu
               </span>
             )}
@@ -593,7 +593,7 @@ export default function AuftraegePage() {
           {/* CSV Export */}
           <button
             onClick={handleBulkExportCSV}
-            className="flex items-center gap-2 px-3 py-1.5 bg-blue-500/20 border border-blue-500/40 rounded-lg text-sm text-blue-400 hover:bg-blue-500/30 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 border border-blue-200 rounded-lg text-sm text-blue-800 hover:bg-blue-200 transition-colors"
           >
             <Download className="w-4 h-4" />
             CSV Export

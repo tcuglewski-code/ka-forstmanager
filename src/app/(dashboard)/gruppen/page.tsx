@@ -90,7 +90,7 @@ export default function GruppenPage() {
                     </span>
                   )}
                 </div>
-                <span className={`px-2 py-0.5 rounded-full text-xs ${g.status === "aktiv" ? "bg-emerald-500/20 text-emerald-400" : "bg-zinc-500/20 text-zinc-400"}`}>
+                <span className={`px-2 py-0.5 rounded-full text-xs ${g.status === "aktiv" ? "bg-emerald-100 text-emerald-800" : "bg-gray-100 text-gray-700"}`}>
                   {g.status}
                 </span>
               </div>

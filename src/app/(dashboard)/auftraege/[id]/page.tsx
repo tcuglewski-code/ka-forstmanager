@@ -104,19 +104,19 @@ interface Auftrag {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const STATUS_LIST = [
-  { value: "anfrage", label: "Anfrage", color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
+  { value: "anfrage", label: "Anfrage", color: "bg-blue-100 text-blue-800 border-blue-500/30" },
   { value: "geplant", label: "Geplant", color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" },  // QA-01
   { value: "aktiv", label: "Aktiv", color: "bg-lime-500/20 text-lime-400 border-lime-500/30" },  // QA-01
   { value: "geprueft", label: "Geprüft", color: "bg-sky-500/20 text-sky-400 border-sky-500/30" },
-  { value: "angebot", label: "Angebot", color: "bg-violet-500/20 text-violet-400 border-violet-500/30" },
-  { value: "bestaetigt", label: "Bestätigt", color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
+  { value: "angebot", label: "Angebot", color: "bg-violet-100 text-violet-800 border-violet-500/30" },
+  { value: "bestaetigt", label: "Bestätigt", color: "bg-amber-100 text-amber-800 border-amber-500/30" },
   { value: "angenommen", label: "Angenommen", color: "bg-green-500/20 text-green-400 border-green-500/30" },
-  { value: "auftrag", label: "Auftrag", color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
-  { value: "in_ausfuehrung", label: "In Ausführung", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
-  { value: "laufend", label: "Laufend", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
-  { value: "maengel_offen", label: "Mängel offen", color: "bg-red-500/20 text-red-400 border-red-500/30" },
+  { value: "auftrag", label: "Auftrag", color: "bg-amber-100 text-amber-800 border-amber-500/30" },
+  { value: "in_ausfuehrung", label: "In Ausführung", color: "bg-emerald-100 text-emerald-800 border-emerald-500/30" },
+  { value: "laufend", label: "Laufend", color: "bg-emerald-100 text-emerald-800 border-emerald-500/30" },
+  { value: "maengel_offen", label: "Mängel offen", color: "bg-red-100 text-red-800 border-red-500/30" },
   { value: "abnahme", label: "Abnahme", color: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
-  { value: "abgeschlossen", label: "Abgeschlossen", color: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30" },
+  { value: "abgeschlossen", label: "Abgeschlossen", color: "bg-gray-100 text-gray-700 border-zinc-500/30" },
 ]
 
 const TYP_LABEL: Record<string, string> = {
@@ -134,13 +134,13 @@ const TYP_LABEL: Record<string, string> = {
 }
 
 const TYP_FARBEN: Record<string, string> = {
-  pflanzung: "bg-emerald-500/20 text-emerald-400",
-  flaechenvorbereitung: "bg-blue-500/20 text-blue-400",
-  flachenvorbereitung: "bg-blue-500/20 text-blue-400",
+  pflanzung: "bg-emerald-100 text-emerald-800",
+  flaechenvorbereitung: "bg-blue-100 text-blue-800",
+  flachenvorbereitung: "bg-blue-100 text-blue-800",
   foerderberatung: "bg-purple-500/20 text-purple-400",
   foerdermittelberatung: "bg-purple-500/20 text-purple-400",
   zaunbau: "bg-orange-500/20 text-orange-400",
-  kulturschutz: "bg-amber-500/20 text-amber-400",
+  kulturschutz: "bg-amber-100 text-amber-800",
   kulturpflege: "bg-yellow-500/20 text-yellow-400",
   saatguternte: "bg-lime-500/20 text-lime-400",
 }
@@ -361,7 +361,7 @@ function WizardFlaechenvorbereitung({ w }: { w: WizardDaten }) {
           {flaechen.map((f, i) => (
             <div key={i} className="bg-[#1a1a1a] border border-[#2e2e2e] rounded-lg p-4">
               <div className="flex items-center gap-2 mb-3">
-                <span className="w-6 h-6 bg-blue-500/20 text-blue-400 rounded-full text-xs flex items-center justify-center font-bold">{f.nr ?? i + 1}</span>
+                <span className="w-6 h-6 bg-blue-100 text-blue-800 rounded-full text-xs flex items-center justify-center font-bold">{f.nr ?? i + 1}</span>
                 <span className="text-white text-sm font-medium">{f.ha ? `${f.ha} ha` : "—"}</span>
               </div>
               <Grid2>
@@ -813,7 +813,7 @@ export default function AuftragDetailPage() {
               </span>
               {/* Telegram Badge */}
               {auftrag.telegramChatId ? (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-blue-500/20 text-blue-400 border border-blue-500/30 flex items-center gap-1" title={`Chat-ID: ${auftrag.telegramChatId}`}>
+                <span className="px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-800 border border-blue-500/30 flex items-center gap-1" title={`Chat-ID: ${auftrag.telegramChatId}`}>
                   <MessageCircle className="w-3 h-3" /> Telegram verbunden
                 </span>
               ) : (
@@ -874,7 +874,7 @@ export default function AuftragDetailPage() {
                     toast.error("Fehler beim Erstellen des Angebots")
                   }
                 }}
-                className="px-4 py-2 bg-blue-500/20 border border-blue-500/40 text-blue-400 rounded-lg text-sm hover:bg-blue-500/30 transition-colors"
+                className="px-4 py-2 bg-blue-100 border border-blue-200 text-blue-800 rounded-lg text-sm hover:bg-blue-200 transition-colors"
               >
                 📋 Angebot erstellen
               </button>
@@ -1104,9 +1104,9 @@ export default function AuftragDetailPage() {
                 {tagesprotokolle.map(p => {
                   const statusColors: Record<string, string> = {
                     entwurf: "bg-zinc-700 text-zinc-300 border-zinc-600",
-                    eingereicht: "bg-emerald-500/20 text-emerald-400 border-emerald-500/40",
-                    genehmigt: "bg-blue-500/20 text-blue-400 border-blue-500/40",
-                    abgelehnt: "bg-red-500/20 text-red-400 border-red-500/40",
+                    eingereicht: "bg-emerald-100 text-emerald-800 border-emerald-500/40",
+                    genehmigt: "bg-blue-100 text-blue-800 border-blue-500/40",
+                    abgelehnt: "bg-red-100 text-red-800 border-red-500/40",
                   }
                   const statusLabels: Record<string, string> = {
                     entwurf: "Entwurf", eingereicht: "Eingereicht",
@@ -1207,9 +1207,9 @@ export default function AuftragDetailPage() {
                       </div>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full border ${
-                      abnahme.status === "bestanden" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" :
-                      abnahme.status === "offen" ? "bg-amber-500/20 text-amber-400 border-amber-500/30" :
-                      "bg-red-500/20 text-red-400 border-red-500/30"
+                      abnahme.status === "bestanden" ? "bg-emerald-100 text-emerald-800 border-emerald-500/30" :
+                      abnahme.status === "offen" ? "bg-amber-100 text-amber-800 border-amber-500/30" :
+                      "bg-red-100 text-red-800 border-red-500/30"
                     }`}>
                       {abnahme.status}
                     </span>
@@ -1254,7 +1254,7 @@ export default function AuftragDetailPage() {
                         </td>
                         <td className="py-2.5 pl-3">
                           {b.mitarbeiter ? (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-violet-500/20 text-violet-400">
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-violet-100 text-violet-800">
                               {b.mitarbeiter.vorname} {b.mitarbeiter.nachname}
                             </span>
                           ) : (
@@ -1414,9 +1414,9 @@ export default function AuftragDetailPage() {
                     <div className="flex items-center gap-2">
                       <span className="text-white font-medium">{r.betrag.toFixed(2)} €</span>
                       <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-                        r.status === "bezahlt" ? "bg-emerald-500/20 text-emerald-400" :
-                        r.status === "offen" ? "bg-amber-500/20 text-amber-400" :
-                        "bg-zinc-500/20 text-zinc-400"
+                        r.status === "bezahlt" ? "bg-emerald-100 text-emerald-800" :
+                        r.status === "offen" ? "bg-amber-100 text-amber-800" :
+                        "bg-gray-100 text-gray-700"
                       }`}>{r.status}</span>
                     </div>
                   </div>

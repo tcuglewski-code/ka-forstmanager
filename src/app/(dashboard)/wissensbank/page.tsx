@@ -119,17 +119,17 @@ type TabId = (typeof TAB_LIST)[number]["id"]
 // ──────────────── Betriebsart Badge ────────────────
 
 const BETRIEBSART_COLORS: Record<string, string> = {
-  "Baumschule": "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+  "Baumschule": "bg-emerald-100 text-emerald-800 border-emerald-500/30",
   "Waldbesitzer": "bg-green-500/20 text-green-400 border-green-500/30",
-  "Ernter": "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  "Reiner Händler": "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  "Saat- und Pflanzgutbetrieb": "bg-violet-500/20 text-violet-400 border-violet-500/30",
+  "Ernter": "bg-amber-100 text-amber-800 border-amber-500/30",
+  "Reiner Händler": "bg-blue-100 text-blue-800 border-blue-500/30",
+  "Saat- und Pflanzgutbetrieb": "bg-violet-100 text-violet-800 border-violet-500/30",
   "Klenge": "bg-orange-500/20 text-orange-400 border-orange-500/30",
 }
 
 function BetriebsartBadge({ betriebsart }: { betriebsart: string | null }) {
   if (!betriebsart) return <span className="text-zinc-600 text-xs">—</span>
-  const cls = BETRIEBSART_COLORS[betriebsart] ?? "bg-zinc-500/20 text-zinc-400 border-zinc-500/30"
+  const cls = BETRIEBSART_COLORS[betriebsart] ?? "bg-gray-100 text-gray-700 border-zinc-500/30"
   return (
     <span className={`px-2 py-0.5 rounded border text-xs font-medium ${cls}`}>
       {betriebsart}
@@ -523,7 +523,7 @@ function BetriebeTab() {
                     <td className="px-4 py-3 text-xs text-zinc-500 font-mono">{b.betriebsnummer || "—"}</td>
                     <td className="px-4 py-3">
                       {b.ist_partner ? (
-                        <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded text-xs font-medium">
+                        <span className="px-2 py-0.5 bg-amber-100 text-amber-800 border border-amber-500/30 rounded text-xs font-medium">
                           ⭐ Partner
                         </span>
                       ) : (
@@ -571,8 +571,8 @@ function FoerderprogrammeCard({ prog }: { prog: Foerderprogramm }) {
 
   const statusColor =
     prog.status === "OFFEN"
-      ? "bg-emerald-500/20 text-emerald-400"
-      : "bg-zinc-500/20 text-zinc-400"
+      ? "bg-emerald-100 text-emerald-800"
+      : "bg-gray-100 text-gray-700"
 
   return (
     <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
@@ -587,7 +587,7 @@ function FoerderprogrammeCard({ prog }: { prog: Foerderprogramm }) {
                 {prog.status || "Unbekannt"}
               </span>
               {prog.ebene && (
-                <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-full text-xs">
+                <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs">
                   {prog.ebene}
                 </span>
               )}
@@ -597,7 +597,7 @@ function FoerderprogrammeCard({ prog }: { prog: Foerderprogramm }) {
                 </span>
               )}
               {prog.kategorie && (
-                <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 rounded-full text-xs">
+                <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-xs">
                   {prog.kategorie}
                 </span>
               )}
@@ -664,7 +664,7 @@ function FoerderprogrammeCard({ prog }: { prog: Foerderprogramm }) {
               href={prog.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-3 py-2 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-xs hover:bg-blue-500/30 transition-colors"
+              className="inline-flex items-center gap-2 px-3 py-2 bg-blue-100 text-blue-800 border border-blue-200 rounded-lg text-xs hover:bg-blue-200 transition-colors"
             >
               <ExternalLink className="w-3 h-3" />
               Weitere Informationen
@@ -994,7 +994,7 @@ function WissenTab() {
                         </span>
                       )}
                       {chunk.topic_kategorie && (
-                        <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 rounded text-xs">
+                        <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-xs">
                           {chunk.topic_kategorie}
                         </span>
                       )}

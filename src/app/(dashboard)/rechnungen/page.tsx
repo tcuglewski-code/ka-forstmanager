@@ -27,10 +27,10 @@ interface Rechnung {
 interface Auftrag { id: string; titel: string }
 
 const statusBadge: Record<string, string> = {
-  offen: "bg-blue-500/20 text-blue-400",
-  freigegeben: "bg-amber-500/20 text-amber-400",
-  bezahlt: "bg-emerald-500/20 text-emerald-400",
-  storniert: "bg-red-500/20 text-red-400",
+  offen: "bg-blue-100 text-blue-800",
+  freigegeben: "bg-amber-100 text-amber-800",
+  bezahlt: "bg-emerald-100 text-emerald-800",
+  storniert: "bg-red-100 text-red-800",
 }
 
 const statusLabel: Record<string, string> = {
@@ -292,12 +292,12 @@ export default function RechnungenPage() {
                             />
                           )}
                           {r.status === "offen" && (
-                            <button onClick={() => patch(r.id, { status: "freigegeben" })} className="px-2 py-1 bg-amber-500/20 text-amber-400 rounded text-xs hover:bg-amber-500/30">
+                            <button onClick={() => patch(r.id, { status: "freigegeben" })} className="px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs hover:bg-amber-200">
                               Freigeben
                             </button>
                           )}
                           {(r.status === "offen" || r.status === "freigegeben") && (
-                            <button onClick={() => patch(r.id, { status: "bezahlt" })} className="flex items-center gap-1 px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded text-xs hover:bg-emerald-500/30">
+                            <button onClick={() => patch(r.id, { status: "bezahlt" })} className="flex items-center gap-1 px-2 py-1 bg-emerald-100 text-emerald-800 rounded text-xs hover:bg-emerald-500/30">
                               <CheckCircle className="w-3 h-3" /> Bezahlt
                             </button>
                           )}
