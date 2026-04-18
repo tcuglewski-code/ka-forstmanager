@@ -103,7 +103,7 @@ export default function DokumentePage() {
     <div className="max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold flex items-center gap-2" style={{ color: "var(--color-on-surface)" }}>
             <FileText className="w-6 h-6 text-emerald-400" /> Dokumente
           </h1>
           <p className="text-zinc-500 text-sm mt-1">Fotos, Karten, Protokolle und Förderanträge</p>
@@ -115,15 +115,15 @@ export default function DokumentePage() {
 
       {/* Filter */}
       <div className="flex flex-wrap gap-3 mb-4">
-        <select value={filterTyp} onChange={(e) => setFilterTyp(e.target.value)} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white">
+        <select value={filterTyp} onChange={(e) => setFilterTyp(e.target.value)} className="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }}>
           <option value="">Alle Typen</option>
           {Object.keys(typLabel).map((t) => <option key={t} value={t}>{typLabel[t]}</option>)}
         </select>
-        <select value={filterAuftrag} onChange={(e) => setFilterAuftrag(e.target.value)} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white">
+        <select value={filterAuftrag} onChange={(e) => setFilterAuftrag(e.target.value)} className="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }}>
           <option value="">Alle Aufträge</option>
           {auftraege.map((a) => <option key={a.id} value={a.id}>{a.titel}</option>)}
         </select>
-        <select value={filterSaison} onChange={(e) => setFilterSaison(e.target.value)} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white">
+        <select value={filterSaison} onChange={(e) => setFilterSaison(e.target.value)} className="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }}>
           <option value="">Alle Saisons</option>
           {saisons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select>
@@ -150,7 +150,7 @@ export default function DokumentePage() {
                 <tr><td colSpan={6} className="px-6 py-12 text-center text-zinc-600">Keine Dokumente</td></tr>
               ) : dokumente.map((d) => (
                 <tr key={d.id} className="hover:bg-[#1c1c1c]">
-                  <td className="px-6 py-4 text-sm text-white">{d.name}</td>
+                  <td className="px-6 py-4 text-sm" style={{ color: "var(--color-on-surface)" }}>{d.name}</td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-0.5 rounded-full text-xs ${typBadge[d.typ] ?? "bg-zinc-700 text-zinc-400"}`}>
                       {typLabel[d.typ] ?? d.typ}
@@ -184,32 +184,32 @@ export default function DokumentePage() {
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto">
-            <h2 className="text-lg font-bold text-white mb-4">Dokument hochladen</h2>
+            <h2 className="text-lg font-bold mb-4" style={{ color: "var(--color-on-surface)" }}>Dokument hochladen</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-zinc-400 mb-1">Name</label>
-                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
+                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }} />
               </div>
               <div>
                 <label className="block text-xs text-zinc-400 mb-1">Typ</label>
-                <select value={form.typ} onChange={(e) => setForm({ ...form, typ: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
+                <select value={form.typ} onChange={(e) => setForm({ ...form, typ: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }}>
                   {Object.entries(typLabel).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-xs text-zinc-400 mb-1">URL / Link</label>
-                <input value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" placeholder="https://..." />
+                <input value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }} placeholder="https://..." />
               </div>
               <div>
                 <label className="block text-xs text-zinc-400 mb-1">Auftrag (optional)</label>
-                <select value={form.auftragId} onChange={(e) => setForm({ ...form, auftragId: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
+                <select value={form.auftragId} onChange={(e) => setForm({ ...form, auftragId: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }}>
                   <option value="">— kein Auftrag —</option>
                   {auftraege.map((a) => <option key={a.id} value={a.id}>{a.titel}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-xs text-zinc-400 mb-1">Saison (optional)</label>
-                <select value={form.saisonId} onChange={(e) => setForm({ ...form, saisonId: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
+                <select value={form.saisonId} onChange={(e) => setForm({ ...form, saisonId: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }}>
                   <option value="">— keine Saison —</option>
                   {saisons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>

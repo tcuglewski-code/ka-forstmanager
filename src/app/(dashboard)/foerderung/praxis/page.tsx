@@ -88,7 +88,7 @@ export default function FoerderungPraxisPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Unsere Erfahrungen</h1>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Unsere Erfahrungen</h1>
           <p className="text-zinc-500 text-sm mt-1">
             Dokumentierte Förderanträge und Praxis-Hinweise
           </p>

@@ -408,7 +408,7 @@ export default function ProfilPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-white">Mein Profil</h1>
+      <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Mein Profil</h1>
 
       {/* Message */}
       {message && (
@@ -615,7 +615,7 @@ export default function ProfilPage() {
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-[#0f0f0f] rounded-lg p-4 text-center">
               <p className="text-sm text-zinc-500 mb-1">Soll-Stunden</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>
                 {profile.arbeitszeitkonto.sollStunden}h
               </p>
             </div>
@@ -681,7 +681,7 @@ export default function ProfilPage() {
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-[#0f0f0f] rounded-lg p-4 text-center">
               <p className="text-sm text-zinc-500 mb-1">Anspruch</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>
                 {profile.urlaubstage.anspruch} Tage
               </p>
             </div>

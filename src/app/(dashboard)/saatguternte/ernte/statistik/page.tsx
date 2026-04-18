@@ -166,7 +166,7 @@ export default async function StatistikPage({
             <BarChart3 className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">Ernte-Statistiken</h1>
+            <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Ernte-Statistiken</h1>
             <p className="text-zinc-500 text-sm">
               {saison ? `Saison ${saison}` : "Alle Saisons"}
             </p>
@@ -227,7 +227,7 @@ export default async function StatistikPage({
               <Icon className="w-4 h-4 text-emerald-400" />
               <span className="text-zinc-400 text-sm">{label}</span>
             </div>
-            <p className="text-2xl font-bold text-white">{value}</p>
+            <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{value}</p>
           </div>
         ))}
       </div>

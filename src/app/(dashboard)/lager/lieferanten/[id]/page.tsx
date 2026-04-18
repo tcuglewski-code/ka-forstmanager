@@ -125,7 +125,7 @@ Koch Aufforstung GmbH`
             <ArrowLeft className="w-5 h-5 text-zinc-400" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-white">{lieferant.name}</h1>
+            <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{lieferant.name}</h1>
             <div className="flex items-center gap-2 mt-1">
               <span className={`px-2 py-0.5 rounded text-xs ${lieferant.aktiv ? "bg-emerald-100 text-emerald-800" : "bg-gray-100 text-gray-700"}`}>
                 {lieferant.aktiv ? "Aktiv" : "Inaktiv"}

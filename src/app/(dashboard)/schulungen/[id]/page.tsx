@@ -109,7 +109,7 @@ export default function SchulungDetailPage() {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <BookOpen className="w-5 h-5 text-emerald-400" />
-              <h1 className="text-xl font-bold text-white">{schulung.titel}</h1>
+              <h1 className="text-xl font-bold" style={{ color: "var(--color-on-surface)" }}>{schulung.titel}</h1>
             </div>
             {schulung.beschreibung && <p className="text-zinc-400 text-sm mb-3">{schulung.beschreibung}</p>}
             <div className="flex gap-4 text-sm text-zinc-400">

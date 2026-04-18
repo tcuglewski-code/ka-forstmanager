@@ -304,7 +304,7 @@ export default function AuftraegePage() {
       {ConfirmDialogElement}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Aufträge</h1>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Aufträge</h1>
           <p className="text-zinc-500 text-sm mt-0.5">
             {auftraege.length} Aufträge gesamt
             {neuCount > 0 && (

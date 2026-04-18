@@ -64,7 +64,7 @@ function KpiCard({
         )}
       </div>
       <p className="text-sm text-zinc-500 mb-1">{title}</p>
-      <p className="text-2xl font-bold text-white">{value}</p>
+      <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{value}</p>
     </div>
   )
 }
@@ -82,7 +82,7 @@ export default function KpiDashboardPage() {
             <BarChart3 className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">KPI Dashboard</h1>
+            <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>KPI Dashboard</h1>
             <p className="text-sm text-zinc-500">Business Metriken</p>
           </div>
         </div>

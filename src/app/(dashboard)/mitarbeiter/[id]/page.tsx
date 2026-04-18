@@ -81,7 +81,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2 flex-wrap">
-              <h1 className="text-2xl font-bold text-white">{ma.vorname} {ma.nachname}</h1>
+              <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{ma.vorname} {ma.nachname}</h1>
               <RolleBadge rolle={ma.rolle} />
               <span className={`px-2 py-0.5 rounded-full text-xs border ${statusBadge[ma.status] ?? "bg-zinc-700 text-zinc-400"}`}>{ma.status}</span>
             </div>

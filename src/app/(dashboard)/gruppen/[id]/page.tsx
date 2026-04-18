@@ -78,7 +78,7 @@ export default function GruppeDetailPage() {
 
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">{gruppe.name}</h1>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{gruppe.name}</h1>
           <div className="flex items-center gap-2 mt-1">
             {gruppe.saison && (
               <span className="px-2 py-0.5 rounded-full text-xs bg-[#2C3A1C] text-emerald-400">

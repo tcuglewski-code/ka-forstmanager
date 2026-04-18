@@ -48,7 +48,7 @@ export default async function LieferantenPreislistePage({ params }: Props) {
       />
       
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Preisliste: {lieferant.name}</h1>
+        <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Preisliste: {lieferant.name}</h1>
         <p className="text-sm text-zinc-400 mt-1">
           Verwalte Artikel und Preise für diesen Lieferanten
         </p>

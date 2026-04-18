@@ -207,7 +207,7 @@ export default function MitarbeiterPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Mitarbeiter</h1>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Mitarbeiter</h1>
           <p className="text-zinc-500 text-sm mt-0.5">
             {mitarbeiter.length} Einträge
           </p>

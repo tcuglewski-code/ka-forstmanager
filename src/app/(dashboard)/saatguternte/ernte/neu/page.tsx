@@ -188,7 +188,7 @@ export default function NeueErnteSeite() {
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-white">Neue Ernte erfassen</h1>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Neue Ernte erfassen</h1>
           <p className="text-zinc-500 text-sm">Erntedaten eingeben und Sammler zuordnen</p>
         </div>
       </div>

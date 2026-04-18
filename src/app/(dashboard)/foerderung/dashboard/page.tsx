@@ -82,7 +82,7 @@ export default function FoerderungDashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Erfolgsquoten Dashboard</h1>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Erfolgsquoten Dashboard</h1>
           <p className="text-zinc-500 text-sm mt-1">
             Übersicht unserer Fördererfahrungen und Statistiken
           </p>
@@ -120,7 +120,7 @@ export default function FoerderungDashboardPage() {
             </div>
             <p className="text-zinc-500 text-sm">Programme in DB</p>
           </div>
-          <p className="text-3xl font-bold text-white">{kpis.gesamt_programme}</p>
+          <p className="text-3xl font-bold" style={{ color: "var(--color-on-surface)" }}>{kpis.gesamt_programme}</p>
         </div>
 
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">

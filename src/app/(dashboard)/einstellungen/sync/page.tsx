@@ -153,7 +153,7 @@ export default function SyncSettingsPage() {
       <div className="grid grid-cols-4 gap-4 mb-6">
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
           <p className="text-zinc-500 text-xs mb-1">Gesamt</p>
-          <p className="text-2xl font-bold text-white">{stats.total}</p>
+          <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{stats.total}</p>
         </div>
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
           <p className="text-zinc-500 text-xs mb-1">Erfolgreich</p>

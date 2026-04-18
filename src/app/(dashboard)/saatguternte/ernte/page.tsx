@@ -111,7 +111,7 @@ export default async function ErnteHistoriePage({
             <History className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">Erntehistorie</h1>
+            <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Erntehistorie</h1>
             <p className="text-zinc-500 text-sm">{total} Einträge{saison ? ` · Saison ${saison}` : ""}</p>
           </div>
         </div>
@@ -162,7 +162,7 @@ export default async function ErnteHistoriePage({
             <Package className="w-4 h-4 text-emerald-400" />
             <span className="text-zinc-400 text-sm">Gesamternte {saisonLabel}</span>
           </div>
-          <p className="text-2xl font-bold text-white">
+          <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>
             {gesamtKg.toLocaleString("de-DE", { maximumFractionDigits: 1 })} kg
           </p>
         </div>
@@ -171,7 +171,7 @@ export default async function ErnteHistoriePage({
             <TreeDeciduous className="w-4 h-4 text-emerald-400" />
             <span className="text-zinc-400 text-sm">Baumarten</span>
           </div>
-          <p className="text-2xl font-bold text-white">
+          <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>
             {baumartCount.length} <span className="text-sm font-normal text-zinc-500">verschiedene</span>
           </p>
         </div>
@@ -180,14 +180,14 @@ export default async function ErnteHistoriePage({
             <MapPin className="w-4 h-4 text-emerald-400" />
             <span className="text-zinc-400 text-sm">Flächen beerntet</span>
           </div>
-          <p className="text-2xl font-bold text-white">{flaechenCount.length}</p>
+          <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{flaechenCount.length}</p>
         </div>
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2">
             <Users className="w-4 h-4 text-emerald-400" />
             <span className="text-zinc-400 text-sm">Aktive Sammler</span>
           </div>
-          <p className="text-2xl font-bold text-white">{sammlerRaw.length}</p>
+          <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{sammlerRaw.length}</p>
         </div>
       </div>
 

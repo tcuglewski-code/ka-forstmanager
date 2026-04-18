@@ -264,7 +264,7 @@ export default function WochenplanungPage() {
         /* Kein Plan vorhanden */
         <div className="bg-zinc-800/50 border border-dashed border-zinc-600 rounded-2xl p-12 text-center">
           <div className="text-4xl mb-4">📋</div>
-          <h2 className="text-xl font-bold text-white mb-2">
+          <h2 className="text-xl font-bold mb-2" style={{ color: "var(--color-on-surface)" }}>
             Kein Wochenplan für KW {kw}/{jahr}
           </h2>
           <p className="text-zinc-400 text-sm mb-6">

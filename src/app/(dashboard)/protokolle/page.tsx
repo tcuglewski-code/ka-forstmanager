@@ -111,7 +111,7 @@ export default function ProtokolleSeite() {
     <div className="max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold flex items-center gap-2" style={{ color: "var(--color-on-surface)" }}>
             <ClipboardList className="w-6 h-6 text-emerald-400" /> Tagesprotokolle
           </h1>
           <p className="text-zinc-500 text-sm mt-1">Tagesberichte und Arbeitsprotokolle</p>

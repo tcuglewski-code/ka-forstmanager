@@ -278,7 +278,7 @@ export default function DatenschutzVerwaltungPage() {
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4">
-            <div className="text-2xl font-bold text-white">{stats.total}</div>
+            <div className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{stats.total}</div>
             <div className="text-sm text-zinc-500">Gesamt</div>
           </div>
           <div className="bg-[#1a1a1a] border border-blue-500/30 rounded-xl p-4">

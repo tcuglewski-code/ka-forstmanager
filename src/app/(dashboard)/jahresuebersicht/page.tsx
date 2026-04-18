@@ -115,7 +115,7 @@ export default function JahresuebersichtPage() {
     <div className="max-w-6xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+        <h1 className="text-2xl font-bold flex items-center gap-2" style={{ color: "var(--color-on-surface)" }}>
           <BarChart3 className="w-6 h-6 text-emerald-400" />
           Jahresübersicht
         </h1>

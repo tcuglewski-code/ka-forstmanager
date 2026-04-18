@@ -154,7 +154,7 @@ export default function SaisonsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Saisons</h1>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Saisons</h1>
           <p className="text-zinc-500 text-sm mt-0.5">{saisons.length} Saisons</p>
         </div>
         <button

@@ -475,7 +475,7 @@ function LagerPageInner() {
       {/* Header mit Stats-Banner */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold text-white">Lager</h1>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Lager</h1>
           <button
             onClick={() => setShowArtikelModal(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all"

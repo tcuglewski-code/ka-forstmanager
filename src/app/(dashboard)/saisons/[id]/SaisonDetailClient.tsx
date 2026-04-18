@@ -363,7 +363,7 @@ export default function SaisonDetailClient({
                 key={kpi.label}
                 className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4 text-center"
               >
-                <p className="text-2xl font-bold text-white">
+                <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>
                   {kpi.value}
                   <span className="text-sm text-zinc-400">{kpi.unit}</span>
                 </p>
@@ -727,7 +727,7 @@ export default function SaisonDetailClient({
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
                   <p className="text-xs text-zinc-500 mb-1">Ø Pflanzen / Stunde</p>
-                  <p className="text-3xl font-bold text-white">
+                  <p className="text-3xl font-bold" style={{ color: "var(--color-on-surface)" }}>
                     {gesamtStunden > 0
                       ? (gesamtPflanzen / gesamtStunden).toFixed(1)
                       : "–"}
@@ -735,7 +735,7 @@ export default function SaisonDetailClient({
                 </div>
                 <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
                   <p className="text-xs text-zinc-500 mb-1">Pflanzen / Hektar</p>
-                  <p className="text-3xl font-bold text-white">
+                  <p className="text-3xl font-bold" style={{ color: "var(--color-on-surface)" }}>
                     {gesamtFlaeche > 0
                       ? Math.round(gesamtPflanzen / gesamtFlaeche).toLocaleString(
                           "de-DE"

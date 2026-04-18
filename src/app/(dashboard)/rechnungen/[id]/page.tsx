@@ -130,7 +130,7 @@ export default function RechnungDetailPage() {
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+          <h1 className="text-2xl font-bold flex items-center gap-3" style={{ color: "var(--color-on-surface)" }}>
             <Receipt className="w-6 h-6 text-emerald-400" />
             Rechnung {rechnung.nummer}
           </h1>

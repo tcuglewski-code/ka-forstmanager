@@ -96,7 +96,7 @@ export default async function SaisonDetailPage({
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold text-white">{saison.name}</h1>
+              <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{saison.name}</h1>
               <span
                 className={`px-2 py-0.5 rounded-full text-xs ${statusBadge[saison.status] ?? "bg-zinc-700 text-zinc-400"}`}
               >

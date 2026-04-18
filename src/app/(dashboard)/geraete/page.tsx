@@ -334,7 +334,7 @@ export default function GeraetePage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Geräte</h1>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Geräte</h1>
           <p className="text-zinc-500 text-sm mt-0.5">{geraete.length} Geräte</p>
         </div>
         <button
