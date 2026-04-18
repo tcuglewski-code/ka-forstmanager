@@ -94,11 +94,16 @@ export default function RechnungDetailPage() {
     return (
       <div className="max-w-2xl mx-auto py-20 text-center">
         <XCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-        <h2 className="text-xl font-bold text-white mb-2">Rechnung nicht gefunden</h2>
-        <p className="text-zinc-400 mb-6">{error || "Die angeforderte Rechnung existiert nicht."}</p>
+        <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--color-on-surface)' }}>Rechnung nicht gefunden</h2>
+        <p className="mb-6" style={{ color: 'var(--color-on-surface-variant)' }}>{error || "Die angeforderte Rechnung existiert nicht."}</p>
         <button
           onClick={() => router.push("/rechnungen")}
-          className="px-4 py-2 bg-[#222] border border-[#333] text-white rounded-lg hover:bg-[#2a2a2a]"
+          className="px-4 py-2 rounded-lg transition-colors"
+          style={{
+            backgroundColor: 'var(--color-surface-container)',
+            border: '1px solid var(--color-outline-variant)',
+            color: 'var(--color-on-surface)'
+          }}
         >
           Zurück zu Rechnungen
         </button>
