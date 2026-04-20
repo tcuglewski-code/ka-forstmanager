@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { Plus, X, QrCode, Printer, Package, ShoppingCart, Truck, Users, Search, Filter, ChevronDown, Pencil } from "lucide-react"
+import { Plus, X, QrCode, Printer, Package, ShoppingCart, Truck, Users, Search, Filter, ChevronDown, Pencil, Trash2 } from "lucide-react"
 import QRCode from "react-qr-code"
 import { toast } from "sonner"
 import { BestandsAmpel } from "@/components/lager/BestandsAmpel"
@@ -413,6 +413,23 @@ function LagerPageInner() {
   
   const [filterKategorie, setFilterKategorie] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
+  const [deleteArtikel, setDeleteArtikel] = useState<LagerArtikel | null>(null)
+  const [deleting, setDeleting] = useState(false)
+
+  const handleDelete = async (artikel: LagerArtikel) => {
+    setDeleting(true)
+    try {
+      const res = await fetch(`/api/lager/${artikel.id}`, { method: "DELETE" })
+      if (!res.ok) throw new Error()
+      toast.success(`"${artikel.name}" gelöscht`)
+      load()
+    } catch {
+      toast.error("Fehler beim Löschen")
+    } finally {
+      setDeleting(false)
+      setDeleteArtikel(null)
+    }
+  }
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -606,6 +623,13 @@ function LagerPageInner() {
                             <QrCode className="w-4 h-4" />
                           </button>
                           <button
+                            onClick={() => setDeleteArtikel(a)}
+                            className="p-1.5 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-[#2a2a2a] transition-all"
+                            title="Löschen"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                          <button
                             onClick={() => setBuchungArtikel(a)}
                             className="px-3 py-1 rounded-lg text-xs bg-[#1e1e1e] text-zinc-400 hover:text-white hover:bg-[#2a2a2a] transition-all"
                           >
@@ -736,6 +760,42 @@ function LagerPageInner() {
       )}
       {qrArtikel && (
         <QrPrintModal artikel={qrArtikel} onClose={() => setQrArtikel(null)} />
+      )}
+      {deleteArtikel && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-sm">
+            <div className="flex items-center justify-between p-5 border-b border-[#2a2a2a]">
+              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                <Trash2 className="w-5 h-5 text-red-400" />
+                Artikel löschen
+              </h2>
+              <button onClick={() => setDeleteArtikel(null)} className="p-2 -m-2"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+            </div>
+            <div className="p-6">
+              <p className="text-zinc-300 mb-1">Möchten Sie diesen Artikel wirklich löschen?</p>
+              <p className="text-white font-semibold text-lg">{deleteArtikel.name}</p>
+              {deleteArtikel.artikelnummer && <p className="text-zinc-500 text-sm">Art.-Nr.: {deleteArtikel.artikelnummer}</p>}
+              {deleteArtikel.bestand > 0 && (
+                <p className="text-amber-400 text-sm mt-3">Achtung: Dieser Artikel hat noch {deleteArtikel.bestand} {deleteArtikel.einheit} auf Lager.</p>
+              )}
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setDeleteArtikel(null)}
+                  className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium bg-[#2a2a2a] text-zinc-300 hover:bg-[#333] transition-all"
+                >
+                  Abbrechen
+                </button>
+                <button
+                  onClick={() => handleDelete(deleteArtikel)}
+                  disabled={deleting}
+                  className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium bg-red-600 text-white hover:bg-red-700 transition-all disabled:opacity-50"
+                >
+                  {deleting ? "Löschen..." : "Löschen"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

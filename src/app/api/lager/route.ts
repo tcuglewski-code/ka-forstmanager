@@ -12,13 +12,15 @@ export async function GET(req: NextRequest) {
   const take = Math.min(parseInt(searchParams.get("limit") ?? "100"), 200)
   const skip = parseInt(searchParams.get("offset") ?? "0")
 
+  const where = { deletedAt: null }
   const [artikel, total] = await Promise.all([
     prisma.lagerArtikel.findMany({
+      where,
       orderBy: { name: "asc" },
       take,
       skip,
     }),
-    prisma.lagerArtikel.count(),
+    prisma.lagerArtikel.count({ where }),
   ])
 
   return NextResponse.json(artikel, {

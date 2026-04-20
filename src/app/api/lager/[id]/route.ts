@@ -30,7 +30,7 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
 
   try {
     const { id } = await params
-    await prisma.lagerArtikel.delete({ where: { id } })
+    await prisma.lagerArtikel.update({ where: { id }, data: { deletedAt: new Date() } })
     return NextResponse.json({ ok: true })
   } catch (error) {
     console.error("[Lager DELETE]", error)

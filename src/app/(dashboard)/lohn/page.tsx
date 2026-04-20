@@ -484,11 +484,12 @@ export default function LohnPage() {
     const [e, ma, sai] = await Promise.all([
       fetch(`/api/lohn?monat=${monat}&jahr=${jahr}`).then(r => r.json()),
       fetch("/api/mitarbeiter").then(r => r.json()),
-      fetch("/api/saisons").then(r => r.json()).catch(() => []),
+      fetch("/api/saisons").then(r => r.json()).catch(() => ({ items: [] })),
     ])
-    setEintraege(e)
-    setMitarbeiter(ma)
-    setSaisons(Array.isArray(sai) ? sai : [])
+    // /api/lohn returns { items, total, page, totalPages }
+    setEintraege(Array.isArray(e) ? e : (e.items ?? []))
+    setMitarbeiter(Array.isArray(ma) ? ma : (ma.items ?? []))
+    setSaisons(Array.isArray(sai) ? sai : (sai.items ?? []))
     setLoading(false)
   }, [monat, jahr])
 
@@ -501,8 +502,8 @@ export default function LohnPage() {
         fetch("/api/vorschuesse").then(r => r.json()),
         fetch("/api/gruppen").then(r => r.json()),
       ])
-      setVorschuesse(Array.isArray(vs) ? vs : [])
-      setGruppen(Array.isArray(gr) ? gr : [])
+      setVorschuesse(Array.isArray(vs) ? vs : (vs.items ?? []))
+      setGruppen(Array.isArray(gr) ? gr : (gr.items ?? []))
     } catch {
       setVorschuesse([])
     } finally {
