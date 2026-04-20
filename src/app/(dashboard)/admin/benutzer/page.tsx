@@ -26,6 +26,7 @@ interface UserData {
   id: string
   name: string
   email: string
+  username?: string
   role: string
   active: boolean
   avatar?: string
@@ -55,6 +56,7 @@ export default function BenutzerVerwaltungPage() {
   // Form States
   const [formName, setFormName] = useState("")
   const [formEmail, setFormEmail] = useState("")
+  const [formUsername, setFormUsername] = useState("")
   const [formRole, setFormRole] = useState("ka_mitarbeiter")
   const [formPassword, setFormPassword] = useState("")
   const [formActive, setFormActive] = useState(true)
@@ -95,6 +97,7 @@ export default function BenutzerVerwaltungPage() {
     setEditingUser(null)
     setFormName("")
     setFormEmail("")
+    setFormUsername("")
     setFormRole("ka_mitarbeiter")
     setFormPassword("")
     setFormActive(true)
@@ -106,6 +109,7 @@ export default function BenutzerVerwaltungPage() {
     setEditingUser(user)
     setFormName(user.name)
     setFormEmail(user.email)
+    setFormUsername(user.username || "")
     setFormRole(user.role)
     setFormPassword("")
     setFormActive(user.active)
@@ -148,6 +152,7 @@ export default function BenutzerVerwaltungPage() {
       const body: Record<string, unknown> = {
         name: formName,
         email: formEmail,
+        username: formUsername || undefined,
         role: formRole,
         active: formActive,
         permissions: formPermissions,
@@ -406,6 +411,22 @@ export default function BenutzerVerwaltungPage() {
                         placeholder="max@beispiel.de"
                       />
                     </div>
+                  </div>
+                </div>
+
+                {/* Benutzername (optional) */}
+                <div>
+                  <label className="block text-sm text-zinc-400 mb-1">Benutzername (optional, für App-Login)</label>
+                  <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg">
+                    <User className="w-4 h-4 text-zinc-500" />
+                    <input
+                      type="text"
+                      value={formUsername}
+                      onChange={(e) => setFormUsername(e.target.value)}
+                      className="flex-1 bg-transparent text-white outline-none"
+                      placeholder="z.B. mmustermann"
+                      autoCapitalize="none"
+                    />
                   </div>
                 </div>
 

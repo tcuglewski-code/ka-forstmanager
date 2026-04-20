@@ -13,7 +13,7 @@ export const GET = withErrorHandler(async () => {
     return NextResponse.json({ error: "Forbidden – nur Admins dürfen Users verwalten" }, { status: 403 })
   }
   const users = await prisma.user.findMany({
-    select: { id: true, name: true, email: true, role: true, active: true, createdAt: true },
+    select: { id: true, name: true, email: true, username: true, role: true, active: true, createdAt: true },
     orderBy: { name: "asc" },
   })
   return NextResponse.json(users)
@@ -34,11 +34,12 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
     data: {
       name: body.name,
       email: body.email,
+      username: body.username || undefined,
       password: hashedPassword,
       role: body.role ?? "mitarbeiter",
       active: true,
     },
-    select: { id: true, name: true, email: true, role: true, active: true, createdAt: true },
+    select: { id: true, name: true, email: true, username: true, role: true, active: true, createdAt: true },
   })
   return NextResponse.json(user, { status: 201 })
 })

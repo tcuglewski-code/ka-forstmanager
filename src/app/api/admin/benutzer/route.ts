@@ -17,6 +17,7 @@ export async function GET() {
         id: true,
         name: true,
         email: true,
+        username: true,
         role: true,
         active: true,
         avatar: true,
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json()
-    const { name, email, role, password, permissions = [], active = true } = body
+    const { name, email, username, role, password, permissions = [], active = true } = body
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -66,6 +67,7 @@ export async function POST(req: NextRequest) {
       data: {
         name,
         email,
+        username: username || undefined,
         password: hashedPassword,
         role: role || "ka_mitarbeiter",
         permissions,
@@ -75,6 +77,7 @@ export async function POST(req: NextRequest) {
         id: true,
         name: true,
         email: true,
+        username: true,
         role: true,
         active: true,
         permissions: true,
@@ -98,7 +101,7 @@ export async function PUT(req: NextRequest) {
 
   try {
     const body = await req.json()
-    const { id, name, email, role, permissions, active, password } = body
+    const { id, name, email, username, role, permissions, active, password } = body
 
     if (!id) {
       return NextResponse.json({ error: "User-ID erforderlich" }, { status: 400 })
@@ -122,6 +125,7 @@ export async function PUT(req: NextRequest) {
     const updateData: Record<string, unknown> = {}
     if (name !== undefined) updateData.name = name
     if (email !== undefined) updateData.email = email
+    if (username !== undefined) updateData.username = username || null
     if (role !== undefined) updateData.role = role
     if (permissions !== undefined) updateData.permissions = permissions
     if (active !== undefined) updateData.active = active
@@ -138,6 +142,7 @@ export async function PUT(req: NextRequest) {
         id: true,
         name: true,
         email: true,
+        username: true,
         role: true,
         active: true,
         permissions: true,

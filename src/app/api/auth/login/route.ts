@@ -10,15 +10,16 @@ export async function POST(req: NextRequest) {
 
     if (!username || !password) {
       return NextResponse.json(
-        { error: "Email und Passwort erforderlich" },
+        { error: "Benutzername/E-Mail und Passwort erforderlich" },
         { status: 400 }
       )
     }
 
-    // username = email in the mobile app
-    const user = await prisma.user.findUnique({
-      where: { email: username },
-    })
+    // Support login via email or username
+    const isEmail = username.includes("@")
+    const user = isEmail
+      ? await prisma.user.findUnique({ where: { email: username } })
+      : await prisma.user.findUnique({ where: { username: username } })
 
     if (!user || !user.active) {
       return NextResponse.json(
