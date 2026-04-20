@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     id: user.id,
-    name: user.name || mitarbeiter?.vorname ? `${mitarbeiter?.vorname} ${mitarbeiter?.nachname}` : user.name,
+    name: mitarbeiter ? `${mitarbeiter.vorname} ${mitarbeiter.nachname}` : (user.name || user.email),
     username: user.email,
     email: user.email,
     role: user.role,
