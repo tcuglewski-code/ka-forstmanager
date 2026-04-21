@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { ClipboardList, Plus, Loader2, ChevronDown, ChevronUp, X } from "lucide-react"
+import { ClipboardList, Plus, Loader2, ChevronDown, ChevronUp, X, Pencil, Trash2 } from "lucide-react"
+import { toast } from "sonner"
 import TagesprotokollFormular from "@/components/tagesprotokoll/TagesprotokollFormular"
 import TagesprotokollDetail, { type TagesprotokollFull } from "@/components/tagesprotokoll/TagesprotokollDetail"
 
@@ -53,6 +54,13 @@ export default function ProtokolleSeite() {
   const [detailLoading, setDetailLoading] = useState(false)
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
+  // Edit Modal
+  const [editProtokoll, setEditProtokoll] = useState<TagesprotokollFull | null>(null)
+  const [showEditForm, setShowEditForm] = useState(false)
+
+  // Delete
+  const [deleting, setDeleting] = useState<string | null>(null)
+
   const fetchAll = useCallback(async () => {
     setLoading(true)
     const params = new URLSearchParams()
@@ -91,6 +99,41 @@ export default function ProtokolleSeite() {
     const a = auftraege.find((x) => x.id === auftragId) ?? null
     setSelectedAuftrag(a)
     setShowForm(true)
+  }
+
+  async function handleDelete(id: string, datum: string) {
+    const dateStr = new Date(datum).toLocaleDateString("de-DE")
+    if (!confirm(`Protokoll vom ${dateStr} löschen?`)) return
+    setDeleting(id)
+    try {
+      const res = await fetch(`/api/tagesprotokoll/${id}`, { method: 'DELETE' })
+      if (!res.ok) {
+        const data = await res.json()
+        toast.error(data.error || 'Fehler beim Löschen')
+        return
+      }
+      setProtokolle((prev) => prev.filter((p) => p.id !== id))
+      if (expandedId === id) {
+        setExpandedId(null)
+        setDetailProtokoll(null)
+      }
+      toast.success('Protokoll gelöscht')
+    } catch {
+      toast.error('Netzwerkfehler')
+    } finally {
+      setDeleting(null)
+    }
+  }
+
+  function openEdit(protokoll: TagesprotokollFull) {
+    const a = auftraege.find((x) => x.id === (protokoll as Record<string, unknown>).auftragId) ?? null
+    setSelectedAuftrag(a)
+    setEditProtokoll(protokoll)
+    setShowEditForm(true)
+  }
+
+  function handleStatusChange(id: string, newStatus: string) {
+    setProtokolle((prev) => prev.map((p) => p.id === id ? { ...p, status: newStatus } : p))
   }
 
   const statusLabel: Record<string, string> = {
@@ -242,18 +285,42 @@ export default function ProtokolleSeite() {
                     </div>
                   ) : detailProtokoll ? (
                     <div className="flex flex-col gap-4">
-                      <TagesprotokollDetail protokoll={detailProtokoll} />
-                      {/* Neues Protokoll für gleichen Auftrag */}
-                      {p.auftrag && (
-                        <div className="flex justify-end">
+                      <TagesprotokollDetail protokoll={detailProtokoll} onStatusChange={handleStatusChange} />
+                      {/* Action Buttons */}
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex gap-2">
+                          {p.status === 'entwurf' ? (
+                            <>
+                              <button
+                                onClick={() => openEdit(detailProtokoll)}
+                                className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white border border-border px-3 py-1.5 rounded-lg hover:bg-[#222] transition-colors"
+                              >
+                                <Pencil className="w-3.5 h-3.5" /> Bearbeiten
+                              </button>
+                              <button
+                                onClick={() => handleDelete(p.id, p.datum)}
+                                disabled={deleting === p.id}
+                                className="flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 border border-red-500/30 px-3 py-1.5 rounded-lg hover:bg-red-500/10 transition-colors disabled:opacity-50"
+                              >
+                                {deleting === p.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                                Löschen
+                              </button>
+                            </>
+                          ) : (
+                            <span className="text-xs text-zinc-600" title="Eingereichte/genehmigte Protokolle können nicht bearbeitet werden">
+                              <Pencil className="w-3.5 h-3.5 inline mr-1" />Bearbeitung gesperrt
+                            </span>
+                          )}
+                        </div>
+                        {p.auftrag && (
                           <button
                             onClick={() => openFormForAuftrag(p.auftrag!.id)}
                             className="text-xs text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-lg hover:bg-emerald-500/10 transition-colors"
                           >
                             + Neues Protokoll für diesen Auftrag
                           </button>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                   ) : null}
                 </div>
@@ -309,6 +376,40 @@ export default function ProtokolleSeite() {
                 defaultGpsLon={selectedAuftrag?.lng ?? undefined}
                 onSaved={async () => {
                   setShowForm(false)
+                  await fetchAll()
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Protokoll bearbeiten */}
+      {showEditForm && editProtokoll && selectedAuftrag && (
+        <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-2xl my-8">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+              <h2 className="text-base font-bold text-white">Protokoll bearbeiten</h2>
+              <button
+                onClick={() => { setShowEditForm(false); setEditProtokoll(null) }}
+                className="text-zinc-500 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="px-6 py-4">
+              <TagesprotokollFormular
+                auftragId={selectedAuftrag?.id ?? ""}
+                auftragTitel={selectedAuftrag?.titel}
+                waldbesitzer={selectedAuftrag?.waldbesitzer ?? undefined}
+                gruppeId={selectedAuftrag?.gruppe?.id}
+                editId={editProtokoll.id}
+                initialData={editProtokoll as unknown as Record<string, unknown>}
+                onSaved={async () => {
+                  setShowEditForm(false)
+                  setEditProtokoll(null)
+                  setExpandedId(null)
+                  setDetailProtokoll(null)
                   await fetchAll()
                 }}
               />

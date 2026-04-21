@@ -67,6 +67,8 @@ export const POST = withErrorHandler(async (req: NextRequest,
       data: {
         status: 'eingereicht',
         eingereichtAm: new Date(),
+        lockedAt: new Date(),
+        lockedBy: (session.user as { id?: string })?.id ?? null,
       },
     }),
   ])

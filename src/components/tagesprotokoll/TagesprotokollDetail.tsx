@@ -1,9 +1,13 @@
 "use client"
 
-import { Clock, MapPin, Leaf, Drill, Scissors, Shield, Fence, Wrench, Cloud, MessageSquare } from "lucide-react"
+import { useState } from "react"
+import { useSession } from "next-auth/react"
+import { Clock, MapPin, Leaf, Drill, Scissors, Shield, Fence, Wrench, Cloud, MessageSquare, CheckCircle, XCircle, Loader2, Bot } from "lucide-react"
+import { toast } from "sonner"
 
 interface TagesprotokollDetailProps {
   protokoll: TagesprotokollFull
+  onStatusChange?: (id: string, newStatus: string) => void
 }
 
 export interface TagesprotokollFull {
@@ -55,6 +59,8 @@ export interface TagesprotokollFull {
   bericht?: string | null
   // meta
   eingereichtAm?: string | null
+  genehmigungsKommentar?: string | null
+  lockedAt?: string | null
 }
 
 function hasValue(v: unknown): boolean {
@@ -137,7 +143,96 @@ function fmt(dt: string) {
   }
 }
 
-export default function TagesprotokollDetail({ protokoll: p }: TagesprotokollDetailProps) {
+export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: TagesprotokollDetailProps) {
+  const { data: session } = useSession()
+  const userRole = (session?.user as { role?: string })?.role
+  const canApprove = userRole === 'admin' || userRole === 'ka_admin' || userRole === 'supervisor'
+
+  // Genehmigungs-Workflow State
+  const [approving, setApproving] = useState(false)
+  const [rejecting, setRejecting] = useState(false)
+  const [showRejectModal, setShowRejectModal] = useState(false)
+  const [rejectComment, setRejectComment] = useState("")
+  const [localStatus, setLocalStatus] = useState(p.status)
+  const [localKommentar, setLocalKommentar] = useState(p.genehmigungsKommentar ?? null)
+
+  // KI-Zusammenfassung State
+  const [zusammenfassung, setZusammenfassung] = useState<string | null>(null)
+  const [loadingZf, setLoadingZf] = useState(false)
+
+  async function handleGenehmigen() {
+    if (!confirm('Protokoll genehmigen?')) return
+    setApproving(true)
+    try {
+      const res = await fetch(`/api/tagesprotokoll/${p.id}/genehmigen`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        toast.error(data.error || 'Fehler beim Genehmigen')
+        return
+      }
+      setLocalStatus('genehmigt')
+      toast.success('Protokoll genehmigt')
+      onStatusChange?.(p.id, 'genehmigt')
+    } catch {
+      toast.error('Netzwerkfehler')
+    } finally {
+      setApproving(false)
+    }
+  }
+
+  async function handleAblehnen() {
+    if (!rejectComment.trim()) {
+      toast.error('Bitte Ablehnungsgrund angeben')
+      return
+    }
+    setRejecting(true)
+    try {
+      const res = await fetch(`/api/tagesprotokoll/${p.id}/ablehnen`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ kommentar: rejectComment.trim() }),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        toast.error(data.error || 'Fehler beim Ablehnen')
+        return
+      }
+      setLocalStatus('abgelehnt')
+      setLocalKommentar(rejectComment.trim())
+      setShowRejectModal(false)
+      setRejectComment("")
+      toast.success('Protokoll abgelehnt')
+      onStatusChange?.(p.id, 'abgelehnt')
+    } catch {
+      toast.error('Netzwerkfehler')
+    } finally {
+      setRejecting(false)
+    }
+  }
+
+  async function handleZusammenfassung() {
+    if (zusammenfassung) return
+    setLoadingZf(true)
+    try {
+      const res = await fetch(`/api/protokoll/${p.id}/zusammenfassung`)
+      if (!res.ok) {
+        const data = await res.json()
+        toast.error(data.error || 'KI-Zusammenfassung fehlgeschlagen')
+        return
+      }
+      const data = await res.json()
+      setZusammenfassung(data.zusammenfassung)
+    } catch {
+      toast.error('Netzwerkfehler')
+    } finally {
+      setLoadingZf(false)
+    }
+  }
+
   // Gesamtstunden
   const stdFields = [
     p.std_einschlag,
@@ -182,7 +277,7 @@ export default function TagesprotokollDetail({ protokoll: p }: TagesprotokollDet
             })}
           </p>
         </div>
-        <StatusBadge status={p.status} />
+        <StatusBadge status={localStatus} />
       </div>
       {p.ersteller && (
         <p className="text-xs text-zinc-500">Gruppenführer: <span className="text-zinc-300">{p.ersteller}</span></p>
@@ -294,6 +389,93 @@ export default function TagesprotokollDetail({ protokoll: p }: TagesprotokollDet
         <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-4 py-3 flex items-center justify-between">
           <span className="text-sm text-emerald-400 font-medium">Gesamtstunden</span>
           <span className="text-lg font-bold text-emerald-400">{gesamtStd.toFixed(2)} Std.</span>
+        </div>
+      )}
+
+      {/* Genehmigungs-Kommentar anzeigen */}
+      {localKommentar && (
+        <div className={`rounded-lg px-4 py-3 border ${localStatus === 'abgelehnt' ? 'bg-red-500/10 border-red-500/30' : 'bg-blue-500/10 border-blue-500/30'}`}>
+          <p className="text-xs text-zinc-500 mb-1">Genehmigungs-Kommentar</p>
+          <p className={`text-sm whitespace-pre-wrap ${localStatus === 'abgelehnt' ? 'text-red-300' : 'text-blue-300'}`}>{localKommentar}</p>
+        </div>
+      )}
+
+      {/* Genehmigungs-Buttons (nur Admin/Supervisor, nur bei 'eingereicht') */}
+      {canApprove && localStatus === 'eingereicht' && (
+        <div className="flex gap-3">
+          <button
+            onClick={handleGenehmigen}
+            disabled={approving}
+            className="flex-1 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
+          >
+            {approving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+            Genehmigen
+          </button>
+          <button
+            onClick={() => setShowRejectModal(true)}
+            className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
+          >
+            <XCircle className="w-4 h-4" />
+            Ablehnen
+          </button>
+        </div>
+      )}
+
+      {/* KI-Zusammenfassung (bei eingereicht oder genehmigt) */}
+      {(localStatus === 'eingereicht' || localStatus === 'genehmigt') && (
+        <div>
+          {!zusammenfassung ? (
+            <button
+              onClick={handleZusammenfassung}
+              disabled={loadingZf}
+              className="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 px-4 py-2 rounded-lg hover:bg-emerald-500/10 transition-colors disabled:opacity-50"
+            >
+              {loadingZf ? <Loader2 className="w-4 h-4 animate-spin" /> : <Bot className="w-4 h-4" />}
+              {loadingZf ? 'Generiere...' : 'KI-Zusammenfassung generieren'}
+            </button>
+          ) : (
+            <div className="border border-emerald-500/30 bg-emerald-500/5 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Bot className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">KI-Zusammenfassung</span>
+              </div>
+              <p className="text-sm text-zinc-300 whitespace-pre-wrap">{zusammenfassung}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Ablehnen-Modal */}
+      {showRejectModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setShowRejectModal(false)}>
+          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-base font-bold text-white mb-3">Protokoll ablehnen</h3>
+            <p className="text-sm text-zinc-400 mb-3">Bitte geben Sie einen Grund für die Ablehnung an (Pflicht):</p>
+            <textarea
+              value={rejectComment}
+              onChange={(e) => setRejectComment(e.target.value)}
+              rows={3}
+              className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+              placeholder="Ablehnungsgrund..."
+              autoFocus
+            />
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => { setShowRejectModal(false); setRejectComment("") }}
+                className="flex-1 px-4 py-2 rounded-lg text-sm text-zinc-400 border border-border hover:bg-[#222] transition-colors"
+              >
+                Abbrechen
+              </button>
+              <button
+                onClick={handleAblehnen}
+                disabled={rejecting || !rejectComment.trim()}
+                className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                {rejecting ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />}
+                Ablehnen
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

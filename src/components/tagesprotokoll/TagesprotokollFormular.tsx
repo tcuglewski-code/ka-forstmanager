@@ -24,6 +24,9 @@ interface Props {
   // FIX 5: Rollenabhängiges Gruppenführer-Feld
   userRole?: string
   userName?: string
+  // Edit mode
+  editId?: string
+  initialData?: Record<string, unknown>
 }
 
 interface TeamMitglied {
@@ -68,6 +71,8 @@ export default function TagesprotokollFormular({
   defaultGpsLon,
   userRole = 'mitarbeiter',
   userName = '',
+  editId,
+  initialData,
 }: Props) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -89,40 +94,55 @@ export default function TagesprotokollFormular({
   // ──────────────────────────────────────────────────────────────────────────
   // Formular-State (FIX 1: initial values aus Auftrag)
   // ──────────────────────────────────────────────────────────────────────────
+  // Helper to prefill from initialData (edit mode)
+  const d = initialData ?? {}
+  const s = (key: string, fallback: string) => d[key] != null ? String(d[key]) : fallback
+  const sDate = (key: string) => {
+    if (!d[key]) return ''
+    try { return new Date(d[key] as string).toISOString().split('T')[0] } catch { return '' }
+  }
+  const sDateTime = (key: string) => {
+    if (!d[key]) return ''
+    try {
+      const dt = new Date(d[key] as string)
+      return dt.toISOString().slice(0, 16)
+    } catch { return '' }
+  }
+
   const [form, setForm] = useState({
-    datum: new Date().toISOString().split('T')[0],
-    ersteller: isAdmin ? '' : userName,
+    datum: editId ? sDate('datum') || new Date().toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+    ersteller: editId ? s('ersteller', '') : (isAdmin ? '' : userName),
     // Revier & Gruppe
-    forstamt: defaultFoerstamt,
-    revier: defaultRevier,
-    revierleiter: defaultRevierleiter,
-    abteilung: defaultAbteilung,
-    waldbesitzerName: waldbesitzer || '',
+    forstamt: s('forstamt', defaultFoerstamt),
+    revier: s('revier', defaultRevier),
+    revierleiter: s('revierleiter', defaultRevierleiter),
+    abteilung: s('abteilung', defaultAbteilung),
+    waldbesitzerName: s('waldbesitzerName', waldbesitzer || ''),
     gruppe: '',
     // Arbeitszeit
-    zeitBeginn: '',
-    zeitEnde: '',
-    pausezeit: '',
+    zeitBeginn: editId ? sDateTime('zeitBeginn') : '',
+    zeitEnde: editId ? sDateTime('zeitEnde') : '',
+    pausezeit: s('pausezeit', ''),
     // Pflanzung Hand
-    std_einschlag: '', std_handpflanzung: '', stk_pflanzung: '',
+    std_einschlag: s('std_einschlag', ''), std_handpflanzung: s('std_handpflanzung', ''), stk_pflanzung: s('stk_pflanzung', ''),
     // Pflanzung Bohrer
-    std_zum_bohrer: '', std_mit_bohrer: '', stk_pflanzung_mit_bohrer: '',
+    std_zum_bohrer: s('std_zum_bohrer', ''), std_mit_bohrer: s('std_mit_bohrer', ''), stk_pflanzung_mit_bohrer: s('stk_pflanzung_mit_bohrer', ''),
     // Freischneider/Motorsäge
-    std_freischneider: '', std_motorsaege: '',
+    std_freischneider: s('std_freischneider', ''), std_motorsaege: s('std_motorsaege', ''),
     // Pflanzenschutz
-    std_wuchshuellen: '', stk_wuchshuellen: '', std_netze_staebe_spiralen: '', stk_netze_staebe_spiralen: '',
+    std_wuchshuellen: s('std_wuchshuellen', ''), stk_wuchshuellen: s('stk_wuchshuellen', ''), std_netze_staebe_spiralen: s('std_netze_staebe_spiralen', ''), stk_netze_staebe_spiralen: s('stk_netze_staebe_spiralen', ''),
     // Zaunbau
-    std_zaunbau: '', stk_drahtverbinder: '', lfm_zaunbau: '',
+    std_zaunbau: s('std_zaunbau', ''), stk_drahtverbinder: s('stk_drahtverbinder', ''), lfm_zaunbau: s('lfm_zaunbau', ''),
     // Nachbesserung
-    std_nachbesserung: '', stk_nachbesserung: '', std_sonstige_arbeiten: '',
+    std_nachbesserung: s('std_nachbesserung', ''), stk_nachbesserung: s('stk_nachbesserung', ''), std_sonstige_arbeiten: s('std_sonstige_arbeiten', ''),
     // Witterung
-    witterung: 'sonnig',
+    witterung: s('witterung', 'sonnig'),
     // GPS (FIX 1: Vorausfüllen)
-    gpsStartLat: defaultGpsLat?.toFixed(7) ?? '',
-    gpsStartLon: defaultGpsLon?.toFixed(7) ?? '',
+    gpsStartLat: s('gpsStartLat', defaultGpsLat?.toFixed(7) ?? ''),
+    gpsStartLon: s('gpsStartLon', defaultGpsLon?.toFixed(7) ?? ''),
     // Kommentar
-    kommentar: '',
-    bericht: '',
+    kommentar: s('kommentar', ''),
+    bericht: s('bericht', ''),
   })
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -363,8 +383,9 @@ export default function TagesprotokollFormular({
         bericht: form.bericht || '',
       }
 
-      const res = await fetch('/api/tagesprotokoll', {
-        method: 'POST',
+      const url = editId ? `/api/tagesprotokoll/${editId}` : '/api/tagesprotokoll'
+      const res = await fetch(url, {
+        method: editId ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
@@ -749,8 +770,9 @@ export default function TagesprotokollFormular({
           disabled={loading}
           className="flex-1 border border-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-50 disabled:opacity-50"
         >
-          {loading ? '…' : 'Entwurf speichern'}
+          {loading ? '…' : editId ? 'Änderungen speichern' : 'Entwurf speichern'}
         </button>
+        {!editId && (
         <button
           onClick={() => handleSubmit('eingereicht')}
           disabled={loading}
@@ -758,6 +780,7 @@ export default function TagesprotokollFormular({
         >
           {loading ? '…' : 'Einreichen ✓'}
         </button>
+        )}
       </div>
     </div>
   )

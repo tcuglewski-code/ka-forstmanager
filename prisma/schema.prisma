@@ -777,9 +777,12 @@ model Tagesprotokoll {
   stk_nachbesserung         Int?
   std_sonstige_arbeiten     Float?
 
-  // ── Status ────────────────────────────────────────────────────
-  status        String    @default("entwurf")
-  eingereichtAm DateTime?
+  // ── Status & Genehmigung ───────────────────────────────────────
+  status                String    @default("entwurf")
+  eingereichtAm         DateTime?
+  genehmigungsKommentar String?
+  lockedAt              DateTime?
+  lockedBy              String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

@@ -38,6 +38,14 @@ export const PUT = withErrorHandler(async (req: NextRequest,
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
+
+  // Lock-Guard: gesperrte Protokolle können nicht bearbeitet werden
+  const existing = await prisma.tagesprotokoll.findUnique({ where: { id }, select: { lockedAt: true, status: true } })
+  if (!existing) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
+  if (existing.lockedAt) {
+    return NextResponse.json({ error: 'Protokoll ist gesperrt (eingereicht/genehmigt)' }, { status: 423 })
+  }
+
   const data = await req.json()
 
   // Automatisch eingereichtAm setzen wenn Status auf 'eingereicht' wechselt
