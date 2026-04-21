@@ -784,6 +784,9 @@ model Tagesprotokoll {
   lockedAt              DateTime?
   lockedBy              String?
 
+  // Sprint P2-1: Protokoll ↔ Rechnung Verknüpfung
+  rechnungLinks     RechnungProtokollLink[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -870,9 +873,25 @@ model Rechnung {
   versionen         RechnungVersion[]
   gdprRequest       GdprRequest?       @relation(fields: [gdprRequestId], references: [id])
   paymentRecords    PaymentRecord[]
+  // Sprint P2-1: Protokoll ↔ Rechnung Verknüpfung
+  protokollLinks    RechnungProtokollLink[]
 
   @@index([deletedAt]) // Index für effiziente Filterung aktiver Rechnungen
   @@index([stripePaymentIntentId])
+}
+
+// Sprint P2-1: Protokoll ↔ Rechnung Verknüpfung (Many-to-Many)
+model RechnungProtokollLink {
+  id          String         @id @default(cuid())
+  rechnungId  String
+  protokollId String
+  rechnung    Rechnung       @relation(fields: [rechnungId], references: [id], onDelete: Cascade)
+  protokoll   Tagesprotokoll @relation(fields: [protokollId], references: [id], onDelete: Cascade)
+  createdAt   DateTime       @default(now())
+
+  @@unique([rechnungId, protokollId])
+  @@index([rechnungId])
+  @@index([protokollId])
 }
 
 // RECHNUNGS-AUDIT-LOG (Sprint GB-01: GoBD-Compliance)

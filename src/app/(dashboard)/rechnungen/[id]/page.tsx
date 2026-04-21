@@ -10,6 +10,7 @@ import {
 import ZipayoButton from "@/components/payments/ZipayoButton"
 import AuditLogSection from "@/components/rechnung/AuditLogSection"
 import VersionsSection from "@/components/rechnung/VersionsSection"
+import ProtokolleSection from "@/components/rechnung/ProtokolleSection"
 
 interface Rechnung {
   id: string
@@ -327,6 +328,11 @@ export default function RechnungDetailPage() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Sprint P2-1: Zugehörige Protokolle */}
+      <div className="mt-8">
+        <ProtokolleSection rechnungId={rechnung.id} auftragId={rechnung.auftrag?.id} />
       </div>
 
       {/* Sprint GB-03: Versions-Section - GoBD-Compliance */}
