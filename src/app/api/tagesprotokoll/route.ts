@@ -37,21 +37,48 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
   const data = await req.json()
 
   // Plausibilitätschecks (Warnings, nicht blockierend)
+  // Forstwirtschaftliche Richtwerte (Tomek bestätigt)
   const warnings: string[] = []
+  const mitarbeiterAnzahl = data.mitarbeiterAnzahl || 0
 
+  // Arbeitszeit: max 10h/Person/Tag
   if (data.arbeitsbeginn && data.arbeitsende) {
     const beginn = new Date(`1970-01-01T${data.arbeitsbeginn}`)
     const ende = new Date(`1970-01-01T${data.arbeitsende}`)
     const stundenGesamt = (ende.getTime() - beginn.getTime()) / (1000 * 60 * 60)
-    if (stundenGesamt > 16) warnings.push('Arbeitszeit über 16h — bitte prüfen')
+    if (stundenGesamt > 10) warnings.push('Arbeitszeit über 10h — bitte prüfen')
   }
 
-  if (data.gepflanztGesamt && data.gepflanztGesamt > 2000) {
-    warnings.push('Mehr als 2000 Bäume — bitte prüfen')
+  // Pflanzung: max 70 Pflanzen/h/Person → dynamisches Limit
+  if (data.gepflanztGesamt) {
+    const pflanzLimit = mitarbeiterAnzahl > 0
+      ? mitarbeiterAnzahl * 10 * 70
+      : 700
+    if (data.gepflanztGesamt > pflanzLimit) {
+      warnings.push(`Mehr als ${pflanzLimit} Pflanzen (${mitarbeiterAnzahl || 1} MA × 10h × 70/h) — bitte prüfen`)
+    }
   }
 
-  if (data.flaecheBearbeitetHa && data.flaecheBearbeitetHa > 10) {
-    warnings.push('Mehr als 10ha — bitte prüfen')
+  // Fläche: dynamisch basierend auf Team-Größe
+  if (data.flaecheBearbeitetHa) {
+    let flaecheLimit: number
+    if (mitarbeiterAnzahl > 10) flaecheLimit = 5
+    else if (mitarbeiterAnzahl >= 5) flaecheLimit = 2
+    else if (mitarbeiterAnzahl >= 1) flaecheLimit = 0.8
+    else flaecheLimit = 3 // Fallback ohne MA-Zahl
+    if (data.flaecheBearbeitetHa > flaecheLimit) {
+      warnings.push(`Mehr als ${flaecheLimit} ha für ${mitarbeiterAnzahl || '?'} Mitarbeiter — bitte prüfen`)
+    }
+  }
+
+  // Freischneider: max 8h/Person/Tag (ArbSchG)
+  if (data.stdFreischneider && data.stdFreischneider > 8) {
+    warnings.push('Freischneider über 8h/Person — ArbSchG-Limit überschritten')
+  }
+
+  // Motorsäge: max 6h/Person/Tag (Vibration/Lärm-Grenzwerte)
+  if (data.stdMotorsaege && data.stdMotorsaege > 6) {
+    warnings.push('Motorsäge über 6h/Person — Vibrations-/Lärmgrenzwert überschritten')
   }
 
   // Doppeleintrag-Check
