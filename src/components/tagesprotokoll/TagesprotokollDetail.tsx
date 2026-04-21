@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useSession } from "next-auth/react"
-import { Clock, MapPin, Leaf, Drill, Scissors, Shield, Fence, Wrench, Cloud, MessageSquare, CheckCircle, XCircle, Loader2, Bot } from "lucide-react"
+import { Clock, MapPin, Leaf, Drill, Scissors, Shield, Fence, Wrench, Cloud, MessageSquare, CheckCircle, XCircle, Loader2, Bot, FileText } from "lucide-react"
 import { toast } from "sonner"
 
 interface TagesprotokollDetailProps {
@@ -419,6 +419,17 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
             Ablehnen
           </button>
         </div>
+      )}
+
+      {/* PDF-Export (bei eingereicht oder genehmigt) */}
+      {(localStatus === 'eingereicht' || localStatus === 'genehmigt') && (
+        <button
+          onClick={() => window.open(`/api/tagesprotokoll/${p.id}/pdf`, '_blank')}
+          className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white border border-border px-4 py-2 rounded-lg hover:bg-[#1a1a1a] transition-colors"
+        >
+          <FileText className="w-4 h-4" />
+          PDF exportieren
+        </button>
       )}
 
       {/* KI-Zusammenfassung (bei eingereicht oder genehmigt) */}
