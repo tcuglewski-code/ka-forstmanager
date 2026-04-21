@@ -204,7 +204,7 @@ export default function WochenplanungPage() {
       {/* Steuerleiste */}
       <div className="flex flex-wrap items-center gap-4">
         {/* KW-Navigation */}
-        <div className="flex items-center gap-2 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2">
+        <div className="flex items-center gap-2 bg-zinc-800 border border-border rounded-xl px-4 py-2">
           <button
             onClick={() => kWNavigieren(-1)}
             className="p-1 hover:text-white text-zinc-400 transition-colors"
@@ -227,7 +227,7 @@ export default function WochenplanungPage() {
         <select
           value={aktGruppeId ?? ""}
           onChange={(e) => setAktGruppeId(e.target.value || null)}
-          className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white text-sm min-w-[160px]"
+          className="bg-zinc-800 border border-border rounded-lg px-3 py-2 text-white text-sm min-w-[160px]"
         >
           <option value="">Alle Gruppen</option>
           {gruppen.map((g) => (
@@ -284,7 +284,7 @@ export default function WochenplanungPage() {
         /* Plan vorhanden */
         <div className="space-y-6">
           {/* Plan-Header */}
-          <div className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-4 flex items-center justify-between">
+          <div className="bg-zinc-800/50 border border-border rounded-xl p-4 flex items-center justify-between">
             <div>
               <h2 className="font-bold text-white">
                 Wochenplan KW {wochenplan.kalenderwoche}/{wochenplan.jahr}
@@ -404,7 +404,7 @@ export default function WochenplanungPage() {
                     {posFuerTyp.map((pos) => (
                       <div
                         key={pos.id}
-                        className="flex items-start gap-3 p-3 bg-zinc-800/40 border border-zinc-700/50 rounded-lg hover:bg-zinc-800/60 group transition-colors"
+                        className="flex items-start gap-3 p-3 bg-zinc-800/40 border border-border/50 rounded-lg hover:bg-zinc-800/60 group transition-colors"
                       >
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3 flex-wrap">

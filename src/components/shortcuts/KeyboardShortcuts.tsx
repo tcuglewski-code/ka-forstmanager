@@ -150,7 +150,7 @@ export function KeyboardShortcuts({ onOpenSearch }: KeyboardShortcutsProps) {
     <>
       {/* G-Mode Indicator */}
       {gMode && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-[#2C3A1C] text-emerald-400 rounded-lg shadow-xl text-sm font-medium animate-pulse">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-forest text-emerald-400 rounded-lg shadow-xl text-sm font-medium animate-pulse">
           G-Modus aktiv – Drücke D, A, M, L, P oder R
         </div>
       )}
@@ -163,9 +163,9 @@ export function KeyboardShortcuts({ onOpenSearch }: KeyboardShortcutsProps) {
             onClick={() => setIsHelpOpen(false)}
           />
           <div className="fixed inset-x-0 top-[15%] mx-auto max-w-md z-50 px-4">
-            <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl shadow-2xl overflow-hidden">
+            <div className="bg-[#1a1a1a] border border-border rounded-xl shadow-2xl overflow-hidden">
               {/* Header */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-[#2a2a2a]">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border">
                 <div className="flex items-center gap-2 text-white">
                   <Keyboard className="w-5 h-5 text-emerald-400" />
                   <span className="font-medium">Tastenkürzel</span>
@@ -194,7 +194,7 @@ export function KeyboardShortcuts({ onOpenSearch }: KeyboardShortcutsProps) {
                             "px-2 py-1 rounded text-xs font-mono",
                             key === "→"
                               ? "text-zinc-500"
-                              : "bg-[#2a2a2a] text-zinc-300"
+                              : "bg-surface-container-highest text-zinc-300"
                           )}
                         >
                           {key}
@@ -206,7 +206,7 @@ export function KeyboardShortcuts({ onOpenSearch }: KeyboardShortcutsProps) {
               </div>
 
               {/* Footer */}
-              <div className="px-4 py-3 border-t border-[#2a2a2a] text-xs text-zinc-600">
+              <div className="px-4 py-3 border-t border-border text-xs text-zinc-600">
                 <span className="flex items-center gap-1">
                   Auf Windows/Linux: Ctrl statt{" "}
                   <Command className="w-3 h-3" /> verwenden
@@ -243,7 +243,7 @@ export function ShortcutsButton({ onClick }: { onClick?: () => void }) {
     >
       <Keyboard className="w-4 h-4" />
       <span className="flex-1 text-left">Tastenkürzel</span>
-      <kbd className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[#2a2a2a] rounded text-[10px] text-zinc-500">
+      <kbd className="flex items-center gap-0.5 px-1.5 py-0.5 bg-surface-container-highest rounded text-[10px] text-zinc-500">
         <Command className="w-2.5 h-2.5" />/
       </kbd>
     </button>

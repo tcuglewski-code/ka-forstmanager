@@ -125,7 +125,7 @@ export default function RechnungDetailPage() {
       <div className="flex items-center gap-4 mb-8">
         <button
           onClick={() => router.push("/rechnungen")}
-          className="p-2 rounded-lg bg-[#1e1e1e] border border-[#2a2a2a] text-zinc-400 hover:text-white hover:bg-[#252525] transition-colors"
+          className="p-2 rounded-lg bg-[#1e1e1e] border border-border text-zinc-400 hover:text-white hover:bg-[#252525] transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -145,7 +145,7 @@ export default function RechnungDetailPage() {
         {/* Left: Details */}
         <div className="md:col-span-2 space-y-6">
           {/* Status Card */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#161616] border border-border rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${statusInfo.color.split(" ")[0]}`}>
@@ -191,7 +191,7 @@ export default function RechnungDetailPage() {
           )}
 
           {/* Betrag Card */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#161616] border border-border rounded-xl p-6">
             <h3 className="text-sm text-zinc-500 uppercase tracking-wider mb-4">Beträge</h3>
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
@@ -202,7 +202,7 @@ export default function RechnungDetailPage() {
                 <span className="text-zinc-400">MwSt. {rechnung.mwst || 19}%</span>
                 <span className="text-white">{mwstBetrag.toFixed(2)} €</span>
               </div>
-              <div className="border-t border-[#2a2a2a] pt-3 flex justify-between">
+              <div className="border-t border-border pt-3 flex justify-between">
                 <span className="text-white font-semibold">Gesamt (Brutto)</span>
                 <span className="text-2xl font-bold text-emerald-400">{bruttoBetrag.toFixed(2)} €</span>
               </div>
@@ -211,7 +211,7 @@ export default function RechnungDetailPage() {
 
           {/* Auftrag Card */}
           {rechnung.auftrag && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+            <div className="bg-[#161616] border border-border rounded-xl p-6">
               <h3 className="text-sm text-zinc-500 uppercase tracking-wider mb-4">Verknüpfter Auftrag</h3>
               <div className="space-y-2">
                 <a
@@ -233,7 +233,7 @@ export default function RechnungDetailPage() {
 
           {/* Notizen */}
           {rechnung.notizen && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+            <div className="bg-[#161616] border border-border rounded-xl p-6">
               <h3 className="text-sm text-zinc-500 uppercase tracking-wider mb-4">Notizen</h3>
               <p className="text-zinc-300 text-sm whitespace-pre-wrap">{rechnung.notizen}</p>
             </div>
@@ -283,7 +283,7 @@ export default function RechnungDetailPage() {
           )}
 
           {/* Actions */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4 space-y-3">
+          <div className="bg-[#161616] border border-border rounded-xl p-4 space-y-3">
             {/* ZUGFeRD E-Rechnung Download */}
             <div className="relative">
               <a
@@ -303,11 +303,11 @@ export default function RechnungDetailPage() {
               </div>
             </div>
             
-            <div className="border-t border-[#2a2a2a] pt-3">
+            <div className="border-t border-border pt-3">
               <a
                 href={`/rechnungen/${rechnung.id}/drucken`}
                 target="_blank"
-                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#222] border border-[#333] text-white rounded-lg hover:bg-[#2a2a2a] transition-colors"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#222] border border-[#333] text-white rounded-lg hover:bg-surface-container-highest transition-colors"
               >
                 <Printer className="w-4 h-4" />
                 Druckansicht
@@ -319,7 +319,7 @@ export default function RechnungDetailPage() {
                 href={rechnung.pdfUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#222] border border-[#333] text-white rounded-lg hover:bg-[#2a2a2a] transition-colors"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#222] border border-[#333] text-white rounded-lg hover:bg-surface-container-highest transition-colors"
               >
                 <FileText className="w-4 h-4" />
                 Altes PDF

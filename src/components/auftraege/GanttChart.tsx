@@ -121,7 +121,7 @@ function DraggableBar({ auftrag, barStyle, statusColor, isMobile, onMobileMove }
 
       {/* Hover Tooltip */}
       <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block z-10 pointer-events-none">
-        <div className="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 shadow-xl whitespace-nowrap">
+        <div className="bg-zinc-900 border border-border rounded-lg px-3 py-2 shadow-xl whitespace-nowrap">
           <p className="text-xs font-medium text-white">{auftrag.titel}</p>
           <p className="text-xs text-zinc-400 mt-0.5">
             {new Date(auftrag.startDatum!).toLocaleDateString("de-DE")}
@@ -194,7 +194,7 @@ function MobileDateModal({ auftrag, onClose, onSave }: MobileDateModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
       <div
-        className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-xl p-6 w-80 max-w-[90vw]"
+        className="bg-[#1e1e1e] border border-border rounded-xl p-6 w-80 max-w-[90vw]"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-white font-medium mb-2">Auftrag verschieben</h3>
@@ -205,7 +205,7 @@ function MobileDateModal({ auftrag, onClose, onSave }: MobileDateModalProps) {
           type="date"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
-          className="w-full bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-white mb-4"
+          className="w-full bg-[#161616] border border-border rounded-lg px-3 py-2 text-white mb-4"
         />
         
         <div className="flex gap-2">
@@ -402,9 +402,9 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
         {/* Toolbar */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-[#2a2a2a] flex-wrap gap-2">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-zinc-500" />
             <span className="text-sm text-zinc-400">
@@ -420,20 +420,20 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
             {/* Navigation */}
             <button
               onClick={() => setViewOffset((o) => o - (viewMode === "month" ? 1 : 3))}
-              className="p-1.5 rounded-lg hover:bg-[#2a2a2a] text-zinc-400 hover:text-white transition-colors"
+              className="p-1.5 rounded-lg hover:bg-surface-container-highest text-zinc-400 hover:text-white transition-colors"
               title="Zurück"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => setViewOffset(0)}
-              className="px-2 py-1 text-xs rounded-lg hover:bg-[#2a2a2a] text-zinc-400 hover:text-white transition-colors"
+              className="px-2 py-1 text-xs rounded-lg hover:bg-surface-container-highest text-zinc-400 hover:text-white transition-colors"
             >
               Heute
             </button>
             <button
               onClick={() => setViewOffset((o) => o + (viewMode === "month" ? 1 : 3))}
-              className="p-1.5 rounded-lg hover:bg-[#2a2a2a] text-zinc-400 hover:text-white transition-colors"
+              className="p-1.5 rounded-lg hover:bg-surface-container-highest text-zinc-400 hover:text-white transition-colors"
               title="Vorwärts"
             >
               <ChevronRight className="w-4 h-4" />
@@ -467,9 +467,9 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
         <div className="overflow-x-auto">
           <div style={{ minWidth: "900px" }}>
             {/* Header Row */}
-            <div className="flex border-b border-[#2a2a2a]" style={{ height: HEADER_HEIGHT }}>
+            <div className="flex border-b border-border" style={{ height: HEADER_HEIGHT }}>
               <div
-                className="flex-shrink-0 flex items-center px-4 bg-[#1a1a1a] border-r border-[#2a2a2a]"
+                className="flex-shrink-0 flex items-center px-4 bg-[#1a1a1a] border-r border-border"
                 style={{ width: LABEL_WIDTH }}
               >
                 <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
@@ -480,7 +480,7 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
                 {columns.map((col, i) => (
                   <div
                     key={i}
-                    className="flex items-center justify-center border-r border-[#2a2a2a] last:border-r-0"
+                    className="flex items-center justify-center border-r border-border last:border-r-0"
                     style={{ width: `${col.width}%` }}
                   >
                     <span className="text-xs font-medium text-zinc-400">{col.label}</span>
@@ -513,7 +513,7 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
                   >
                     {/* Label Column */}
                     <div
-                      className="flex-shrink-0 flex items-center gap-3 px-4 border-r border-[#2a2a2a] bg-[#161616] cursor-pointer"
+                      className="flex-shrink-0 flex items-center gap-3 px-4 border-r border-border bg-[#161616] cursor-pointer"
                       style={{ width: LABEL_WIDTH }}
                       onClick={() => onAuftragClick?.(auftrag.id)}
                     >
@@ -591,7 +591,7 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
         </div>
 
         {/* Legend */}
-        <div className="px-4 py-3 border-t border-[#2a2a2a] bg-[#1a1a1a]">
+        <div className="px-4 py-3 border-t border-border bg-[#1a1a1a]">
           <div className="flex items-center gap-4 flex-wrap">
             <span className="text-xs text-zinc-600">Legende:</span>
             {[

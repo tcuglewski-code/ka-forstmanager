@@ -315,14 +315,14 @@ export default function SaisonDetailClient({
   return (
     <>
       {/* Tab-Leiste */}
-      <div className="flex gap-1 mb-6 bg-[#161616] border border-[#2a2a2a] rounded-lg p-1 w-fit overflow-x-auto">
+      <div className="flex gap-1 mb-6 bg-[#161616] border border-border rounded-lg p-1 w-fit overflow-x-auto">
         {tabs.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
               tab === t.key
-                ? "bg-[#2C3A1C] text-emerald-400"
+                ? "bg-forest text-emerald-400"
                 : "text-zinc-400 hover:text-white"
             }`}
           >
@@ -361,7 +361,7 @@ export default function SaisonDetailClient({
             ].map((kpi) => (
               <div
                 key={kpi.label}
-                className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4 text-center"
+                className="bg-[#161616] border border-border rounded-xl p-4 text-center"
               >
                 <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>
                   {kpi.value}
@@ -374,7 +374,7 @@ export default function SaisonDetailClient({
 
           {/* Auftrags-Status-Verteilung */}
           {saison.auftraege.length > 0 && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+            <div className="bg-[#161616] border border-border rounded-xl p-5">
               <h3 className="text-sm font-medium text-zinc-400 mb-4">
                 Auftrags-Status-Verteilung
               </h3>
@@ -407,7 +407,7 @@ export default function SaisonDetailClient({
 
           {/* Gruppen-Übersicht */}
           {saison.gruppen.length > 0 && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+            <div className="bg-[#161616] border border-border rounded-xl p-5">
               <h3 className="text-sm font-medium text-zinc-400 mb-4">
                 Gruppen
               </h3>
@@ -415,7 +415,7 @@ export default function SaisonDetailClient({
                 {saison.gruppen.map((g) => (
                   <div
                     key={g.id}
-                    className="bg-[#1e1e1e] rounded-lg p-3 border border-[#2a2a2a]"
+                    className="bg-[#1e1e1e] rounded-lg p-3 border border-border"
                   >
                     <p className="font-medium text-white text-sm mb-1">
                       {g.name}
@@ -427,7 +427,7 @@ export default function SaisonDetailClient({
                       {g.mitglieder.slice(0, 4).map((m) => (
                         <span
                           key={m.id}
-                          className="text-xs bg-[#2a2a2a] text-zinc-400 px-2 py-0.5 rounded"
+                          className="text-xs bg-surface-container-highest text-zinc-400 px-2 py-0.5 rounded"
                         >
                           {m.mitarbeiter.vorname} {m.mitarbeiter.nachname}
                         </span>
@@ -448,9 +448,9 @@ export default function SaisonDetailClient({
 
       {/* ─── Tab 2: Aufträge ─────────────────────────────────────────────── */}
       {tab === "auftraege" && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
           {/* KJ-1: Quick Add Button */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-[#2a2a2a]">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <span className="text-sm font-medium text-zinc-400">
               {saison.auftraege.length} Aufträge
             </span>
@@ -464,7 +464,7 @@ export default function SaisonDetailClient({
           </div>
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="w-8 px-3 py-3" />
                 <th className="text-left px-4 py-3 text-xs text-zinc-500">Nr.</th>
                 <th className="text-left px-4 py-3 text-xs text-zinc-500">Titel</th>
@@ -627,10 +627,10 @@ export default function SaisonDetailClient({
 
       {/* ─── Tab 3: Mitarbeiter ──────────────────────────────────────────── */}
       {tab === "mitarbeiter" && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="text-left px-6 py-3 text-xs text-zinc-500">Name</th>
                 <th className="text-left px-6 py-3 text-xs text-zinc-500">Rolle</th>
                 <th className="text-right px-6 py-3 text-xs text-zinc-500">Stundenlohn</th>
@@ -639,7 +639,7 @@ export default function SaisonDetailClient({
                 <th className="px-6 py-3" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#2a2a2a]">
+            <tbody className="divide-y divide-border">
               {anmeldungen.length === 0 ? (
                 <tr>
                   <td
@@ -713,7 +713,7 @@ export default function SaisonDetailClient({
       {tab === "statistiken" && (
         <div className="space-y-6">
           {gesamtPflanzen === 0 && gesamtStunden === 0 ? (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-8 text-center">
+            <div className="bg-[#161616] border border-border rounded-xl p-8 text-center">
               <AlertTriangle className="w-8 h-8 text-zinc-600 mx-auto mb-3" />
               <p className="text-zinc-400 font-medium">Keine Protokolldaten vorhanden</p>
               <p className="text-zinc-600 text-sm mt-1">
@@ -725,7 +725,7 @@ export default function SaisonDetailClient({
             <>
               {/* Gesamt-KPIs */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+                <div className="bg-[#161616] border border-border rounded-xl p-5">
                   <p className="text-xs text-zinc-500 mb-1">Ø Pflanzen / Stunde</p>
                   <p className="text-3xl font-bold" style={{ color: "var(--color-on-surface)" }}>
                     {gesamtStunden > 0
@@ -733,7 +733,7 @@ export default function SaisonDetailClient({
                       : "–"}
                   </p>
                 </div>
-                <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+                <div className="bg-[#161616] border border-border rounded-xl p-5">
                   <p className="text-xs text-zinc-500 mb-1">Pflanzen / Hektar</p>
                   <p className="text-3xl font-bold" style={{ color: "var(--color-on-surface)" }}>
                     {gesamtFlaeche > 0
@@ -743,7 +743,7 @@ export default function SaisonDetailClient({
                       : "–"}
                   </p>
                 </div>
-                <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+                <div className="bg-[#161616] border border-border rounded-xl p-5">
                   <p className="text-xs text-zinc-500 mb-1">Pflanzen gesamt</p>
                   <p className="text-3xl font-bold text-emerald-400">
                     {gesamtPflanzen.toLocaleString("de-DE")}
@@ -753,15 +753,15 @@ export default function SaisonDetailClient({
 
               {/* Pro-Gruppe-Tabelle */}
               {gruppenStats.length > 0 && (
-                <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-                  <div className="px-5 py-4 border-b border-[#2a2a2a]">
+                <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+                  <div className="px-5 py-4 border-b border-border">
                     <h3 className="text-sm font-medium text-zinc-300">
                       Gruppen-Vergleich
                     </h3>
                   </div>
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-[#2a2a2a]">
+                      <tr className="border-b border-border">
                         <th className="text-left px-5 py-3 text-xs text-zinc-500">Gruppe</th>
                         <th className="text-right px-5 py-3 text-xs text-zinc-500">Aufträge</th>
                         <th className="text-right px-5 py-3 text-xs text-zinc-500">Pflanzen</th>
@@ -801,7 +801,7 @@ export default function SaisonDetailClient({
       {/* ─── Tab 5: Abschluss ────────────────────────────────────────────── */}
       {tab === "abschluss" && saison.status !== "abgeschlossen" && (
         <div className="space-y-6">
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#161616] border border-border rounded-xl p-6">
             <h3 className="text-base font-semibold text-white mb-5">
               Abschluss-Checkliste
             </h3>
@@ -863,7 +863,7 @@ export default function SaisonDetailClient({
                 className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
                   checkGeraete
                     ? "bg-emerald-500/10 border border-emerald-500/20"
-                    : "bg-[#1e1e1e] border border-[#2a2a2a] hover:border-zinc-600"
+                    : "bg-[#1e1e1e] border border-border hover:border-zinc-600"
                 }`}
               >
                 <input
@@ -887,7 +887,7 @@ export default function SaisonDetailClient({
                 className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
                   checkFahrzeuge
                     ? "bg-emerald-500/10 border border-emerald-500/20"
-                    : "bg-[#1e1e1e] border border-[#2a2a2a] hover:border-zinc-600"
+                    : "bg-[#1e1e1e] border border-border hover:border-zinc-600"
                 }`}
               >
                 <input
@@ -911,7 +911,7 @@ export default function SaisonDetailClient({
                 className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
                   checkBericht
                     ? "bg-emerald-500/10 border border-emerald-500/20"
-                    : "bg-[#1e1e1e] border border-[#2a2a2a] hover:border-zinc-600"
+                    : "bg-[#1e1e1e] border border-border hover:border-zinc-600"
                 }`}
               >
                 <input
@@ -932,7 +932,7 @@ export default function SaisonDetailClient({
             </div>
 
             {/* Abschluss-Button */}
-            <div className="mt-6 pt-5 border-t border-[#2a2a2a]">
+            <div className="mt-6 pt-5 border-t border-border">
               {!alleChecksOK && (
                 <p className="text-xs text-zinc-600 mb-3 flex items-center gap-1.5">
                   <AlertTriangle className="w-3 h-3" />

@@ -270,7 +270,7 @@ export function PflanzverbandVorschau({
   const pflanzNum = pflanzenzahl ?? null
 
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5 mt-4">
+    <div className="bg-[#161616] border border-border rounded-xl p-5 mt-4">
       {/* Header */}
       <h3 className="text-xs font-semibold tracking-widest text-emerald-400 uppercase mb-1 flex items-center gap-2">
         🌲 Pflanzverband-Vorschau

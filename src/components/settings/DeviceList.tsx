@@ -102,7 +102,7 @@ export function DeviceList() {
       </div>
 
       {/* Info */}
-      <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg p-4 text-sm text-zinc-400">
+      <div className="bg-[#1a1a1a] border border-border rounded-lg p-4 text-sm text-zinc-400">
         <p>
           Hier sehen Sie alle Geräte, auf denen Sie derzeit angemeldet sind. 
           Sie können einzelne Sitzungen beenden, um den Zugriff auf Ihr Konto zu widerrufen.
@@ -110,7 +110,7 @@ export function DeviceList() {
       </div>
 
       {/* Session List */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden divide-y divide-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden divide-y divide-border">
         {sessions.length === 0 ? (
           <div className="px-6 py-12 text-center text-zinc-600">
             Keine aktiven Sitzungen gefunden
@@ -126,7 +126,7 @@ export function DeviceList() {
                 }`}
               >
                 <div className="flex items-center gap-4">
-                  <div className={`p-2 rounded-lg ${session.isCurrent ? "bg-emerald-500/20" : "bg-[#2a2a2a]"}`}>
+                  <div className={`p-2 rounded-lg ${session.isCurrent ? "bg-emerald-500/20" : "bg-surface-container-highest"}`}>
                     <Icon className={`w-5 h-5 ${session.isCurrent ? "text-emerald-400" : "text-zinc-400"}`} />
                   </div>
                   <div>

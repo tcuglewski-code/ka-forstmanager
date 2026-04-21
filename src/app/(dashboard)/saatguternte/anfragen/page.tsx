@@ -104,7 +104,7 @@ function BaumartGruppe({ baumart, items, collapsed, onToggle }: {
     <>
       {/* Subheader */}
       <tr
-        className="bg-[#1a2a1a] border-b border-[#2a2a2a] cursor-pointer hover:bg-[#1e2e1e] transition"
+        className="bg-[#1a2a1a] border-b border-border cursor-pointer hover:bg-[#1e2e1e] transition"
         onClick={onToggle}
       >
         <td colSpan={9} className="px-4 py-2">
@@ -282,7 +282,7 @@ export default function ErnteanfragenPage() {
         <select
           value={filterSaison}
           onChange={(e) => setFilterSaison(e.target.value)}
-          className="bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+          className="bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
         >
           <option value="">Alle Saisons</option>
           {saisons.map((s) => (
@@ -293,7 +293,7 @@ export default function ErnteanfragenPage() {
         <select
           value={filterBaumart}
           onChange={(e) => setFilterBaumart(e.target.value)}
-          className="bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+          className="bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
         >
           <option value="">Alle Baumarten</option>
           {BAUMARTEN.map((b) => (
@@ -306,7 +306,7 @@ export default function ErnteanfragenPage() {
           value={filterHerkunft}
           onChange={(e) => setFilterHerkunft(e.target.value)}
           placeholder="Herkunft-Code…"
-          className="bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2 w-36"
+          className="bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2 w-36"
         />
 
         <label className="flex items-center gap-2 cursor-pointer select-none text-sm text-zinc-300">
@@ -322,7 +322,7 @@ export default function ErnteanfragenPage() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+          className="bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
         >
           <option value="">Alle Status</option>
           {Object.entries(STATUS_CONFIG).map(([k, v]) => (
@@ -339,7 +339,7 @@ export default function ErnteanfragenPage() {
               setFilterHerkunft("")
               setFilterNurSHK(false)
             }}
-            className="flex items-center gap-1 px-3 py-2 text-xs text-zinc-400 hover:text-white border border-[#2a2a2a] rounded-lg"
+            className="flex items-center gap-1 px-3 py-2 text-xs text-zinc-400 hover:text-white border border-border rounded-lg"
           >
             <X className="w-3 h-3" /> Filter zurücksetzen
           </button>
@@ -347,7 +347,7 @@ export default function ErnteanfragenPage() {
       </div>
 
       {/* Tabelle */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="w-6 h-6 text-emerald-500 animate-spin" />
@@ -360,7 +360,7 @@ export default function ErnteanfragenPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[#2a2a2a] text-zinc-400 text-xs uppercase tracking-wide">
+                <tr className="border-b border-border text-zinc-400 text-xs uppercase tracking-wide">
                   <th className="text-left px-4 py-3">Baumschule</th>
                   <th className="text-left px-4 py-3">Baumart</th>
                   <th className="text-left px-4 py-3">Herkunft</th>
@@ -397,7 +397,7 @@ export default function ErnteanfragenPage() {
             { label: "Gesamt Gesammelt", value: `${anfragen.reduce((s, a) => s + a.gesammelteKg, 0).toLocaleString("de-DE")} kg` },
             { label: "Sonderherkünfte", value: anfragen.filter((a) => a.sonderherkunft).length },
           ].map((stat) => (
-            <div key={stat.label} className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+            <div key={stat.label} className="bg-[#161616] border border-border rounded-xl p-4">
               <p className="text-xs text-zinc-500 mb-1">{stat.label}</p>
               <p className="text-xl font-bold" style={{ color: "var(--color-on-surface)" }}>{stat.value}</p>
             </div>
@@ -408,8 +408,8 @@ export default function ErnteanfragenPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
+          <div className="bg-[#161616] border border-border rounded-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-border">
               <h2 className="text-lg font-semibold text-white">Neue Ernteanfrage</h2>
               <button onClick={() => setShowModal(false)} className="text-zinc-400 hover:text-white">
                 <X className="w-5 h-5" />
@@ -424,7 +424,7 @@ export default function ErnteanfragenPage() {
                   required
                   value={form.baumschuleId}
                   onChange={(e) => setForm({ ...form, baumschuleId: e.target.value })}
-                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+                  className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
                 >
                   <option value="">Baumschule wählen…</option>
                   {baumschulen.map((b) => (
@@ -439,7 +439,7 @@ export default function ErnteanfragenPage() {
                 <select
                   value={form.saisonId}
                   onChange={(e) => setForm({ ...form, saisonId: e.target.value })}
-                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+                  className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
                 >
                   <option value="">Saison wählen…</option>
                   {saisons.map((s) => (
@@ -455,7 +455,7 @@ export default function ErnteanfragenPage() {
                   required
                   value={form.baumart}
                   onChange={(e) => setForm({ ...form, baumart: e.target.value })}
-                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+                  className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
                 >
                   <option value="">Baumart wählen…</option>
                   {BAUMARTEN.map((b) => (
@@ -473,7 +473,7 @@ export default function ErnteanfragenPage() {
                     value={form.herkunftCode}
                     onChange={(e) => setForm({ ...form, herkunftCode: e.target.value })}
                     placeholder="z.B. 06, 818 07"
-                    className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
                   />
                 </div>
                 <div>
@@ -483,13 +483,13 @@ export default function ErnteanfragenPage() {
                     value={form.herkunftName}
                     onChange={(e) => setForm({ ...form, herkunftName: e.target.value })}
                     placeholder="optional"
-                    className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
                   />
                 </div>
               </div>
 
               {/* Sonderherkunft */}
-              <div className="border border-[#2a2a2a] rounded-lg p-4 space-y-3">
+              <div className="border border-border rounded-lg p-4 space-y-3">
                 <label className="flex items-center gap-2 cursor-pointer select-none">
                   <input
                     type="checkbox"
@@ -508,7 +508,7 @@ export default function ErnteanfragenPage() {
                         value={form.sonderherkunftCode}
                         onChange={(e) => setForm({ ...form, sonderherkunftCode: e.target.value })}
                         placeholder="z.B. DKV-818-001"
-                        className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+                        className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
                       />
                     </div>
                     <div>
@@ -518,7 +518,7 @@ export default function ErnteanfragenPage() {
                         value={form.sonderherkunftName}
                         onChange={(e) => setForm({ ...form, sonderherkunftName: e.target.value })}
                         placeholder="optional"
-                        className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+                        className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
                       />
                     </div>
                   </div>
@@ -536,7 +536,7 @@ export default function ErnteanfragenPage() {
                     step="0.1"
                     value={form.zielmenge}
                     onChange={(e) => setForm({ ...form, zielmenge: e.target.value })}
-                    className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
                   />
                 </div>
                 <div>
@@ -545,7 +545,7 @@ export default function ErnteanfragenPage() {
                     type="date"
                     value={form.deadline}
                     onChange={(e) => setForm({ ...form, deadline: e.target.value })}
-                    className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
                   />
                 </div>
               </div>
@@ -557,7 +557,7 @@ export default function ErnteanfragenPage() {
                   value={form.notizen}
                   onChange={(e) => setForm({ ...form, notizen: e.target.value })}
                   rows={3}
-                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] text-white text-sm rounded-lg px-3 py-2 resize-none"
+                  className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2 resize-none"
                 />
               </div>
 
@@ -565,7 +565,7 @@ export default function ErnteanfragenPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 border border-[#2a2a2a] text-zinc-400 hover:text-white rounded-lg text-sm"
+                  className="flex-1 px-4 py-2 border border-border text-zinc-400 hover:text-white rounded-lg text-sm"
                 >
                   Abbrechen
                 </button>

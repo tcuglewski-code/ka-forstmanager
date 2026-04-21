@@ -104,7 +104,7 @@ export default function SchulungDetailPage() {
         <ArrowLeft className="w-4 h-4" /> Zurück zu Schulungen
       </Link>
 
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 mb-6">
+      <div className="bg-[#161616] border border-border rounded-xl p-6 mb-6">
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -128,7 +128,7 @@ export default function SchulungDetailPage() {
 
       {/* Mitarbeiter anmelden */}
       {schulung.status !== "abgeschlossen" && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5 mb-6">
+        <div className="bg-[#161616] border border-border rounded-xl p-5 mb-6">
           <h2 className="font-semibold text-white mb-3">Mitarbeiter anmelden</h2>
           <div className="flex gap-3">
             <select value={selectedMitarbeiter} onChange={(e) => setSelectedMitarbeiter(e.target.value)} className="flex-1 bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
@@ -143,21 +143,21 @@ export default function SchulungDetailPage() {
       )}
 
       {/* Teilnehmerliste */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
           <h2 className="font-semibold text-white">Teilnehmer ({schulung.teilnehmer.length})</h2>
         </div>
         <div className="overflow-x-auto">
         <table className="min-w-full">
           <thead>
-            <tr className="border-b border-[#2a2a2a]">
+            <tr className="border-b border-border">
               <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Name</th>
               <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Rolle</th>
               <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Status</th>
               <th className="px-6 py-3"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#2a2a2a]">
+          <tbody className="divide-y divide-border">
             {schulung.teilnehmer.length === 0 ? (
               <tr><td colSpan={4} className="px-6 py-12 text-center text-zinc-600">Keine Teilnehmer</td></tr>
             ) : schulung.teilnehmer.map((t) => (

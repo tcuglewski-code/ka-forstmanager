@@ -123,6 +123,7 @@ export function AppShell({ children, title }: AppShellProps) {
 
         {/* Main Content */}
         <main
+          data-theme="dark"
           className="flex-1 p-6 md:p-8"
           style={{ backgroundColor: "var(--color-background)" }}
         >

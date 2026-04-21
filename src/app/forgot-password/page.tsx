@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#2C3A1C] mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-forest mb-4">
             <TreePine className="w-8 h-8 text-emerald-400" />
           </div>
           <h1 className="text-2xl font-bold text-white">ForstManager</h1>
@@ -46,7 +46,7 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Form Card */}
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-2xl p-8">
+        <div className="bg-[#161616] border border-border rounded-2xl p-8">
           {submitted ? (
             <>
               <h2 className="text-lg font-semibold text-white mb-1">E-Mail gesendet</h2>
@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
               </p>
               <a
                 href="/login"
-                className="mt-6 w-full py-2.5 px-4 bg-[#2C3A1C] hover:bg-[#3a4d26] text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2"
+                className="mt-6 w-full py-2.5 px-4 bg-forest hover:bg-[#3a4d26] text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Zurück zur Anmeldung
@@ -91,14 +91,14 @@ export default function ForgotPasswordPage() {
                     autoComplete="email"
                     autoFocus
                     placeholder="name@koch-aufforstung.de"
-                    className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-2.5 px-4 bg-[#2C3A1C] hover:bg-[#3a4d26] text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full py-2.5 px-4 bg-forest hover:bg-[#3a4d26] text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>

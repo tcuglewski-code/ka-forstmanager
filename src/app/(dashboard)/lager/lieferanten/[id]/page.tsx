@@ -120,7 +120,7 @@ Koch Aufforstung GmbH`
         <div className="flex items-center gap-4">
           <button 
             onClick={() => router.back()}
-            className="p-2 rounded-lg bg-[#1e1e1e] hover:bg-[#2a2a2a] transition-colors"
+            className="p-2 rounded-lg bg-[#1e1e1e] hover:bg-surface-container-highest transition-colors"
           >
             <ArrowLeft className="w-5 h-5 text-zinc-400" />
           </button>
@@ -137,7 +137,7 @@ Koch Aufforstung GmbH`
         
         <button
           onClick={generateBestellEmail}
-          className="flex items-center gap-2 px-4 py-2 bg-[#C5A55A] hover:bg-[#D4B56A] text-[#2C3A1C] rounded-lg text-sm font-medium transition-all"
+          className="flex items-center gap-2 px-4 py-2 bg-gold hover:bg-[#D4B56A] text-forest rounded-lg text-sm font-medium transition-all"
         >
           <ShoppingCart className="w-4 h-4" />
           Neu bestellen
@@ -146,7 +146,7 @@ Koch Aufforstung GmbH`
 
       {/* Kontaktdaten */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+        <div className="bg-[#161616] border border-border rounded-xl p-5">
           <h2 className="text-sm font-medium text-zinc-400 mb-4">Kontakt</h2>
           <div className="space-y-3">
             {lieferant.email && (
@@ -171,7 +171,7 @@ Koch Aufforstung GmbH`
           </div>
         </div>
 
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+        <div className="bg-[#161616] border border-border rounded-xl p-5">
           <h2 className="text-sm font-medium text-zinc-400 mb-4">Adresse</h2>
           {lieferant.adresse || lieferant.plz || lieferant.ort ? (
             <div className="flex items-start gap-3">
@@ -209,8 +209,8 @@ Koch Aufforstung GmbH`
       )}
 
       {/* Artikel-Liste */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-        <div className="px-5 py-4 border-b border-[#2a2a2a] flex items-center justify-between">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
           <h2 className="text-sm font-medium text-white flex items-center gap-2">
             <Package className="w-4 h-4 text-emerald-400" />
             Artikel von diesem Lieferanten
@@ -225,7 +225,7 @@ Koch Aufforstung GmbH`
           <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="text-left px-5 py-3 text-zinc-500 font-medium"></th>
                 <th className="text-left px-5 py-3 text-zinc-500 font-medium">Artikel</th>
                 <th className="text-left px-5 py-3 text-zinc-500 font-medium">Lieferant-Nr.</th>
@@ -244,7 +244,7 @@ Koch Aufforstung GmbH`
                     <a href={`/lager?item=${a.id}`} className="text-white hover:text-emerald-400 transition-colors">
                       {a.name}
                     </a>
-                    <span className="ml-2 px-1.5 py-0.5 rounded text-xs bg-[#2a2a2a] text-zinc-500">
+                    <span className="ml-2 px-1.5 py-0.5 rounded text-xs bg-surface-container-highest text-zinc-500">
                       {a.kategorie}
                     </span>
                   </td>
@@ -273,7 +273,7 @@ Koch Aufforstung GmbH`
 
       {/* Notizen */}
       {lieferant.notizen && (
-        <div className="mt-6 bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+        <div className="mt-6 bg-[#161616] border border-border rounded-xl p-5">
           <h2 className="text-sm font-medium text-zinc-400 mb-2">Notizen</h2>
           <p className="text-white whitespace-pre-wrap">{lieferant.notizen}</p>
         </div>

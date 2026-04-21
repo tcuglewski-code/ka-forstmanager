@@ -206,7 +206,7 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
 
       {/* Add Modal */}
       {showAdd && (
-        <div className="bg-zinc-800 border border-zinc-700 rounded-lg p-4 space-y-3">
+        <div className="bg-zinc-800 border border-border rounded-lg p-4 space-y-3">
           <h3 className="font-medium">Neue Baumart hinzufügen</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="relative">
@@ -278,7 +278,7 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-zinc-700 text-zinc-400 text-left">
+            <tr className="border-b border-border text-zinc-400 text-left">
               <th className="py-2 pr-4">Baumart</th>
               <th className="py-2 pr-4">Preis</th>
               <th className="py-2 pr-4">Einheit</th>
@@ -289,7 +289,7 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
           </thead>
           <tbody>
             {sortiment.map((eintrag) => (
-              <tr key={eintrag.id} className="border-b border-zinc-800 hover:bg-zinc-900/50">
+              <tr key={eintrag.id} className="border-b border-border hover:bg-zinc-900/50">
                 <td className="py-2.5 pr-4 font-medium">{eintrag.baumart}</td>
                 <td className="py-2.5 pr-4">
                   {editId === eintrag.id ? (

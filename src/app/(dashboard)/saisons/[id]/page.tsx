@@ -92,7 +92,7 @@ export default async function SaisonDetailPage({
       </Link>
 
       {/* Header */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 mb-6">
+      <div className="bg-[#161616] border border-border rounded-xl p-6 mb-6">
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3 mb-2">

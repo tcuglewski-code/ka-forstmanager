@@ -159,11 +159,11 @@ export function UnterkunftKarte({ zentrum, unterkuenfte, auftragsName }: Props) 
   return (
     <div className="flex gap-4 h-[600px]">
       {/* Karte */}
-      <div ref={mapRef} className="flex-1 rounded-xl overflow-hidden border border-[#2a2a2a]" />
+      <div ref={mapRef} className="flex-1 rounded-xl overflow-hidden border border-border" />
       
       {/* Seitenleiste */}
-      <div className="w-80 bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden flex flex-col">
-        <div className="p-4 border-b border-[#2a2a2a]">
+      <div className="w-80 bg-[#161616] border border-border rounded-xl overflow-hidden flex flex-col">
+        <div className="p-4 border-b border-border">
           <h3 className="text-sm font-medium text-white flex items-center gap-2">
             <Hotel className="w-4 h-4" />
             {unterkuenfte.length} Unterkünfte gefunden
@@ -179,7 +179,7 @@ export function UnterkunftKarte({ zentrum, unterkuenfte, auftragsName }: Props) 
                 mapInstance.current?.setView([u.lat, u.lng], 14)
               }}
               className={`w-full p-3 text-left hover:bg-[#1c1c1c] transition-colors ${
-                selectedUnterkunft?.id === u.id ? "bg-[#1c1c1c] border-l-2 border-[#C5A55A]" : ""
+                selectedUnterkunft?.id === u.id ? "bg-[#1c1c1c] border-l-2 border-gold" : ""
               }`}
             >
               <div className="flex items-start justify-between">
@@ -197,7 +197,7 @@ export function UnterkunftKarte({ zentrum, unterkuenfte, auftragsName }: Props) 
                     <p className="text-xs text-zinc-600 mt-1 truncate">{u.adresse}</p>
                   )}
                 </div>
-                <span className="text-xs text-[#C5A55A] font-medium whitespace-nowrap ml-2">
+                <span className="text-xs text-gold font-medium whitespace-nowrap ml-2">
                   {u.entfernung} km
                 </span>
               </div>
@@ -207,7 +207,7 @@ export function UnterkunftKarte({ zentrum, unterkuenfte, auftragsName }: Props) 
         
         {/* Detail-Panel */}
         {selectedUnterkunft && (
-          <div className="p-4 border-t border-[#2a2a2a] bg-[#0f0f0f]">
+          <div className="p-4 border-t border-border bg-[#0f0f0f]">
             <h4 className="text-sm font-medium text-white mb-2">{selectedUnterkunft.name}</h4>
             <div className="space-y-2 text-xs">
               {selectedUnterkunft.adresse && (
@@ -238,7 +238,7 @@ export function UnterkunftKarte({ zentrum, unterkuenfte, auftragsName }: Props) 
                   href={selectedUnterkunft.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-[#C5A55A] text-[#0f0f0f] rounded text-xs font-medium hover:bg-[#d4b86b] transition-colors"
+                  className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-gold text-[#0f0f0f] rounded text-xs font-medium hover:bg-[#d4b86b] transition-colors"
                 >
                   <ExternalLink className="w-3 h-3" />
                   Website
@@ -248,7 +248,7 @@ export function UnterkunftKarte({ zentrum, unterkuenfte, auftragsName }: Props) 
                 href={selectedUnterkunft.osmUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-[#2a2a2a] text-zinc-300 rounded text-xs hover:bg-[#3a3a3a] transition-colors"
+                className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-surface-container-highest text-zinc-300 rounded text-xs hover:bg-[#3a3a3a] transition-colors"
               >
                 <MapPin className="w-3 h-3" />
                 OpenStreetMap
@@ -265,10 +265,10 @@ export function UnterkunftKarte({ zentrum, unterkuenfte, auftragsName }: Props) 
 export function UnterkunftKarteSkeleton() {
   return (
     <div className="flex gap-4 h-[600px]">
-      <div className="flex-1 rounded-xl bg-[#161616] border border-[#2a2a2a] flex items-center justify-center">
+      <div className="flex-1 rounded-xl bg-[#161616] border border-border flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-zinc-600 animate-spin" />
       </div>
-      <div className="w-80 bg-[#161616] border border-[#2a2a2a] rounded-xl" />
+      <div className="w-80 bg-[#161616] border border-border rounded-xl" />
     </div>
   )
 }

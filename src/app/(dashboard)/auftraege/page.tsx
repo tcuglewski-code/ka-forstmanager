@@ -343,7 +343,7 @@ export default function AuftraegePage() {
           <button
             onClick={() => sync(false)}
             disabled={syncing}
-            className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] hover:bg-[#333] text-zinc-300 rounded-lg text-sm font-medium transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest hover:bg-[#333] text-zinc-300 rounded-lg text-sm font-medium transition-all disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} />
             {syncing ? "Sync..." : "Synchronisieren"}
@@ -383,12 +383,12 @@ export default function AuftraegePage() {
           placeholder="Suche nach Titel, Waldbesitzer, Bundesland..."
           value={suche}
           onChange={(e) => setSuche(e.target.value)}
-          className="px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 w-64"
+          className="px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 w-64"
         />
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Status</option>
           <option value="anfrage">Anfrage</option>
@@ -403,7 +403,7 @@ export default function AuftraegePage() {
         <select
           value={filterTyp}
           onChange={(e) => setFilterTyp(e.target.value)}
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Typen</option>
           <option value="pflanzung">Pflanzung</option>
@@ -418,7 +418,7 @@ export default function AuftraegePage() {
         <select
           value={filterSaison}
           onChange={(e) => setFilterSaison(e.target.value)}
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Saisons</option>
           {saisons.map((s) => (
@@ -432,7 +432,7 @@ export default function AuftraegePage() {
         <select
           value={filterGruppe}
           onChange={(e) => setFilterGruppe(e.target.value)}
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Gruppen</option>
           {gruppen.map((g) => (
@@ -484,7 +484,7 @@ export default function AuftraegePage() {
             URL.revokeObjectURL(url)
             toast.success(`${filtered.length} Aufträge als CSV exportiert`)
           }}
-          className="flex items-center gap-2 px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-zinc-400 hover:text-zinc-200 hover:border-zinc-500 transition-colors ml-auto"
+          className="flex items-center gap-2 px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-sm text-zinc-400 hover:text-zinc-200 hover:border-zinc-500 transition-colors ml-auto"
         >
           <Download className="w-4 h-4" />
           Alle exportieren ({filtered.length})
@@ -503,7 +503,7 @@ export default function AuftraegePage() {
             <select
               value={bulkSaisonId}
               onChange={(e) => setBulkSaisonId(e.target.value)}
-              className="px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white"
+              className="px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white"
             >
               <option value="">Saison zuweisen...</option>
               {/* X5: Nur nicht-abgeschlossene Saisons anzeigen */}
@@ -547,7 +547,7 @@ export default function AuftraegePage() {
                 toast.success(`${count} Aufträge aktualisiert`)
               }
             }}
-            className="px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white"
+            className="px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white"
           >
             <option value="">Gruppe zuweisen...</option>
             {gruppen.map((g) => (
@@ -580,7 +580,7 @@ export default function AuftraegePage() {
                 toast.success(`${count} Aufträge aktualisiert`)
               }
             }}
-            className="px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white"
+            className="px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white"
           >
             <option value="">Status setzen...</option>
             <option value="anfrage">Anfrage</option>
@@ -639,11 +639,11 @@ export default function AuftraegePage() {
       {/* Q048: Conditional View - Liste oder Gantt */}
       {viewMode === "liste" ? (
         /* Tabelle */
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="px-4 py-3">
                   <input
                     type="checkbox"

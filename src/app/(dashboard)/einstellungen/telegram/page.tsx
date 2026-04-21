@@ -144,7 +144,7 @@ export default function TelegramEinstellungenPage() {
       </div>
 
       {/* Interne Gruppe */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 mb-6">
+      <div className="bg-[#161616] border border-border rounded-xl p-6 mb-6">
         <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
           <Users className="w-4 h-4 text-blue-400" />
           Interne Gruppe
@@ -174,7 +174,7 @@ export default function TelegramEinstellungenPage() {
       </div>
 
       {/* Bot Info Card */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 mb-6">
+      <div className="bg-[#161616] border border-border rounded-xl p-6 mb-6">
         <h3 className="font-semibold text-white mb-3">Bot-Konfiguration</h3>
         <div className="flex items-center gap-4 mb-4">
           <span className="text-sm text-zinc-400">Bot-Username:</span>
@@ -191,7 +191,7 @@ export default function TelegramEinstellungenPage() {
         </div>
 
         {/* Deep-Link Generator */}
-        <div className="border-t border-[#2a2a2a] pt-4 mt-4">
+        <div className="border-t border-border pt-4 mt-4">
           <h4 className="font-medium text-white mb-2">Deep-Link Generator</h4>
           <p className="text-sm text-zinc-500 mb-3">
             Generieren Sie einen Link für Kunden. Beim Klick wird der Bot geöffnet und der Kunde automatisch für Updates registriert.
@@ -232,8 +232,8 @@ export default function TelegramEinstellungenPage() {
       </div>
 
       {/* Waldbesitzer Registrierungen */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
           <h3 className="font-semibold text-white">Waldbesitzer-Übersicht</h3>
           <p className="text-xs text-zinc-500 mt-1">Kunden, die Telegram-Benachrichtigungen aktiviert haben</p>
         </div>
@@ -250,7 +250,7 @@ export default function TelegramEinstellungenPage() {
           <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Waldbesitzer</th>
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Chat-ID</th>
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Auftrag</th>
@@ -259,7 +259,7 @@ export default function TelegramEinstellungenPage() {
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Aktionen</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#2a2a2a]">
+            <tbody className="divide-y divide-border">
               {registrierungen.map((reg) => {
                 const auftrag = auftraege.find((a) => a.id === reg.auftragId)
                 return (
@@ -328,7 +328,7 @@ export default function TelegramEinstellungenPage() {
       </div>
 
       {/* Anleitung */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 mt-6">
+      <div className="bg-[#161616] border border-border rounded-xl p-6 mt-6">
         <h3 className="font-semibold text-white mb-3">So funktioniert es</h3>
         <ol className="list-decimal list-inside space-y-2 text-sm text-zinc-400">
           <li><strong className="text-white">Deep-Link generieren:</strong> Wählen Sie oben einen Auftrag aus und kopieren Sie den Link.</li>

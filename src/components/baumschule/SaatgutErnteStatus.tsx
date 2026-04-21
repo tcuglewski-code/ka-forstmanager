@@ -46,7 +46,7 @@ export function SaatgutErnteStatus({ ernteanfragen }: Props) {
           const progress = ea.zielmenge > 0 ? Math.min(100, (ea.gesammelteKg / ea.zielmenge) * 100) : 0
 
           return (
-            <div key={ea.id} className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-4 space-y-3">
+            <div key={ea.id} className="bg-zinc-800/50 border border-border rounded-lg p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-3">

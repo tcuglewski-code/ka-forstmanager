@@ -101,7 +101,7 @@ export default function ProtokolleSeite() {
   }
 
   const statusColor: Record<string, string> = {
-    entwurf: "text-zinc-400 bg-zinc-800 border-zinc-700",
+    entwurf: "text-zinc-400 bg-zinc-800 border-border",
     eingereicht: "text-emerald-700 bg-emerald-50 border-emerald-500/30",
     genehmigt: "text-blue-800 bg-blue-100 border-blue-200",
     abgelehnt: "text-red-700 bg-red-50 border-red-500/30",
@@ -132,7 +132,7 @@ export default function ProtokolleSeite() {
         <select
           value={filterAuftrag}
           onChange={(e) => setFilterAuftrag(e.target.value)}
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+          className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white"
         >
           <option value="">Alle Aufträge</option>
           {auftraege.map((a) => (
@@ -144,7 +144,7 @@ export default function ProtokolleSeite() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+          className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white"
         >
           <option value="">Alle Status</option>
           <option value="entwurf">Entwurf</option>
@@ -157,14 +157,14 @@ export default function ProtokolleSeite() {
           value={filterVon}
           onChange={(e) => setFilterVon(e.target.value)}
           placeholder="Von"
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+          className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white"
         />
         <input
           type="date"
           value={filterBis}
           onChange={(e) => setFilterBis(e.target.value)}
           placeholder="Bis"
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+          className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white"
         />
       </div>
 
@@ -174,7 +174,7 @@ export default function ProtokolleSeite() {
           <Loader2 className="w-6 h-6 text-emerald-400 animate-spin" />
         </div>
       ) : protokolle.length === 0 ? (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-12 text-center">
+        <div className="bg-[#161616] border border-border rounded-xl p-12 text-center">
           <ClipboardList className="w-8 h-8 text-zinc-600 mx-auto mb-3" />
           <p className="text-zinc-500">Noch keine Protokolle vorhanden.</p>
           {auftraege.length > 0 && (
@@ -189,7 +189,7 @@ export default function ProtokolleSeite() {
       ) : (
         <div className="space-y-2">
           {protokolle.map((p) => (
-            <div key={p.id} className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+            <div key={p.id} className="bg-[#161616] border border-border rounded-xl overflow-hidden">
               {/* Row */}
               <button
                 className="w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-[#1c1c1c] transition-colors"
@@ -222,7 +222,7 @@ export default function ProtokolleSeite() {
                       {((p.stk_pflanzung ?? 0) + (p.stk_pflanzung_mit_bohrer ?? 0)).toLocaleString()} Stk.
                     </span>
                   )}
-                  <span className={`text-xs px-2 py-0.5 rounded-full border ${statusColor[p.status] ?? "text-zinc-400 bg-zinc-800 border-zinc-700"}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full border ${statusColor[p.status] ?? "text-zinc-400 bg-zinc-800 border-border"}`}>
                     {statusLabel[p.status] ?? p.status}
                   </span>
                   {expandedId === p.id ? (
@@ -235,7 +235,7 @@ export default function ProtokolleSeite() {
 
               {/* Detail-Panel */}
               {expandedId === p.id && (
-                <div className="border-t border-[#2a2a2a] p-5">
+                <div className="border-t border-border p-5">
                   {detailLoading ? (
                     <div className="flex items-center justify-center py-8">
                       <Loader2 className="w-5 h-5 text-emerald-400 animate-spin" />
@@ -266,8 +266,8 @@ export default function ProtokolleSeite() {
       {/* Modal: Neues Protokoll */}
       {showForm && selectedAuftrag && (
         <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl w-full max-w-2xl my-8">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2a2a]">
+          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-2xl my-8">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
               <h2 className="text-base font-bold text-white">Tagesprotokoll erstellen</h2>
               <button
                 onClick={() => setShowForm(false)}

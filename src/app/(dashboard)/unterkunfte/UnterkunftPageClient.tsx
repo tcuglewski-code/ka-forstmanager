@@ -13,10 +13,10 @@ const UnterkunftKarte = dynamic(
     ssr: false,
     loading: () => (
       <div className="flex gap-4 h-[600px]">
-        <div className="flex-1 rounded-xl bg-[#161616] border border-[#2a2a2a] flex items-center justify-center">
+        <div className="flex-1 rounded-xl bg-[#161616] border border-border flex items-center justify-center">
           <Loader2 className="w-8 h-8 text-zinc-600 animate-spin" />
         </div>
-        <div className="w-80 bg-[#161616] border border-[#2a2a2a] rounded-xl" />
+        <div className="w-80 bg-[#161616] border border-border rounded-xl" />
       </div>
     ),
   }
@@ -232,7 +232,7 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
   return (
     <div className="space-y-6">
       {/* Auftrag-Auswahl */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+      <div className="bg-[#161616] border border-border rounded-xl p-4">
         <label className="block text-sm font-medium text-zinc-400 mb-3">
           Auftrag auswählen
         </label>
@@ -252,8 +252,8 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
                 onClick={() => setSelectedAuftrag(a)}
                 className={`p-3 rounded-lg border text-left transition-all ${
                   selectedAuftrag?.id === a.id
-                    ? "border-[#C5A55A] bg-[#C5A55A]/10"
-                    : "border-[#2a2a2a] hover:border-zinc-600 bg-[#0f0f0f]"
+                    ? "border-gold bg-gold/10"
+                    : "border-border hover:border-zinc-600 bg-[#0f0f0f]"
                 }`}
               >
                 <div className="flex items-start justify-between">
@@ -284,14 +284,14 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
 
       {/* Radius-Einstellung + KI-Analyse Button */}
       {selectedAuftrag && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+        <div className="bg-[#161616] border border-border rounded-xl p-4">
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-3">
               <label className="text-sm text-zinc-400">Suchradius:</label>
               <select
                 value={radius}
                 onChange={(e) => setRadius(parseInt(e.target.value))}
-                className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-white"
+                className="bg-[#0f0f0f] border border-border rounded-lg px-3 py-1.5 text-sm text-white"
               >
                 <option value={10}>10 km</option>
                 <option value={20}>20 km</option>
@@ -311,8 +311,8 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
                 kiVerfuegbar === false
                   ? "bg-zinc-700 text-zinc-500 cursor-not-allowed"
                   : kiLoading
-                    ? "bg-[#C5A55A]/50 text-[#0f0f0f]"
-                    : "bg-[#C5A55A] text-[#0f0f0f] hover:bg-[#d4b86b]"
+                    ? "bg-gold/50 text-[#0f0f0f]"
+                    : "bg-gold text-[#0f0f0f] hover:bg-[#d4b86b]"
               }`}
             >
               {kiLoading ? (
@@ -340,10 +340,10 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
 
       {/* KI-Empfehlungen anzeigen */}
       {kiEmpfehlungen.length > 0 && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+        <div className="bg-[#161616] border border-border rounded-xl p-4">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-white flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#C5A55A]" />
+              <Sparkles className="w-4 h-4 text-gold" />
               KI-Empfehlungen
             </h3>
             <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-full border border-blue-500/20">
@@ -354,7 +354,7 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
             {kiEmpfehlungen.map((emp, idx) => (
               <div 
                 key={idx}
-                className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-4"
+                className="bg-[#0f0f0f] border border-border rounded-lg p-4"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div>
@@ -362,15 +362,15 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
                     <p className="text-xs text-zinc-500">{emp.distanzKm} km entfernt · {emp.typ}</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-lg font-bold text-[#C5A55A]">{emp.empfehlungsScore}</div>
+                    <div className="text-lg font-bold text-gold">{emp.empfehlungsScore}</div>
                     <div className="text-xs text-zinc-500">Score</div>
                   </div>
                 </div>
                 
                 {/* Score-Balken */}
-                <div className="w-full h-2 bg-[#2a2a2a] rounded-full mb-3 overflow-hidden">
+                <div className="w-full h-2 bg-surface-container-highest rounded-full mb-3 overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-[#C5A55A] to-[#e8d5a3] rounded-full transition-all"
+                    className="h-full bg-gradient-to-r from-gold to-[#e8d5a3] rounded-full transition-all"
                     style={{ width: `${emp.empfehlungsScore}%` }}
                   />
                 </div>
@@ -384,7 +384,7 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
                   </div>
                   <button
                     onClick={() => generiereEmail(emp)}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded text-zinc-300 transition-colors"
+                    className="flex items-center gap-1 px-3 py-1.5 bg-surface-container-highest hover:bg-[#3a3a3a] rounded text-zinc-300 transition-colors"
                   >
                     <Mail className="w-3 h-3" />
                     Anfrage generieren
@@ -430,7 +430,7 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
 
       {/* Leere State */}
       {selectedAuftrag && !loading && unterkuenfte.length === 0 && !error && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-8 text-center">
+        <div className="bg-[#161616] border border-border rounded-xl p-8 text-center">
           <Search className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
           <p className="text-zinc-400">Keine Unterkünfte im Umkreis von {radius} km gefunden</p>
           <p className="text-zinc-600 text-sm mt-1">Versuche einen größeren Suchradius</p>
@@ -439,7 +439,7 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
 
       {/* Initial State */}
       {!selectedAuftrag && auftraege.length > 0 && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-8 text-center">
+        <div className="bg-[#161616] border border-border rounded-xl p-8 text-center">
           <MapPin className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
           <p className="text-zinc-400">Wähle einen Auftrag aus um Unterkünfte in der Nähe zu suchen</p>
         </div>
@@ -448,14 +448,14 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
       {/* E-Mail Modal */}
       {emailModal.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-2xl mx-4 max-h-[80vh] flex flex-col">
-            <div className="p-4 border-b border-[#2a2a2a] flex items-center justify-between">
+          <div className="bg-[#161616] border border-border rounded-xl w-full max-w-2xl mx-4 max-h-[80vh] flex flex-col">
+            <div className="p-4 border-b border-border flex items-center justify-between">
               <h3 className="text-lg font-medium text-white">
                 Anfrage an: {emailModal.unterkunft?.name}
               </h3>
               <button 
                 onClick={() => setEmailModal({ open: false, unterkunft: null, emailText: "" })}
-                className="p-1 hover:bg-[#2a2a2a] rounded"
+                className="p-1 hover:bg-surface-container-highest rounded"
               >
                 <X className="w-5 h-5 text-zinc-400" />
               </button>
@@ -464,7 +464,7 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
             <div className="flex-1 p-4 overflow-y-auto">
               {emailLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 text-[#C5A55A] animate-spin" />
+                  <Loader2 className="w-6 h-6 text-gold animate-spin" />
                 </div>
               ) : (
                 <pre className="whitespace-pre-wrap text-sm text-zinc-300 font-sans leading-relaxed">
@@ -473,17 +473,17 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
               )}
             </div>
             
-            <div className="p-4 border-t border-[#2a2a2a] flex gap-3">
+            <div className="p-4 border-t border-border flex gap-3">
               <button
                 onClick={copyToClipboard}
-                className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] hover:bg-[#3a3a3a] rounded-lg text-sm text-zinc-300 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest hover:bg-[#3a3a3a] rounded-lg text-sm text-zinc-300 transition-colors"
               >
                 {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
                 {copied ? "Kopiert!" : "Kopieren"}
               </button>
               <a
                 href={`mailto:?subject=Unterkunftsanfrage Koch Aufforstung&body=${encodeURIComponent(emailModal.emailText)}`}
-                className="flex items-center gap-2 px-4 py-2 bg-[#C5A55A] hover:bg-[#d4b86b] rounded-lg text-sm font-medium text-[#0f0f0f] transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-gold hover:bg-[#d4b86b] rounded-lg text-sm font-medium text-[#0f0f0f] transition-colors"
               >
                 <Mail className="w-4 h-4" />
                 In E-Mail-Programm öffnen

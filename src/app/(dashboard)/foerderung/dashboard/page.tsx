@@ -97,7 +97,7 @@ export default function FoerderungDashboardPage() {
           </button>
           <Link
             href="/foerderung/praxis"
-            className="px-4 py-2 bg-[#2C3A1C] hover:bg-[#3a4a2a] text-emerald-400 text-sm font-medium rounded-lg flex items-center gap-2 transition"
+            className="px-4 py-2 bg-forest hover:bg-[#3a4a2a] text-emerald-400 text-sm font-medium rounded-lg flex items-center gap-2 transition"
           >
             <FileText className="w-4 h-4" />
             Erfahrungen erfassen
@@ -113,7 +113,7 @@ export default function FoerderungDashboardPage() {
 
       {/* KPI-Karten */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+        <div className="bg-[#161616] border border-border rounded-xl p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
               <FileText className="w-5 h-5 text-blue-400" />
@@ -123,7 +123,7 @@ export default function FoerderungDashboardPage() {
           <p className="text-3xl font-bold" style={{ color: "var(--color-on-surface)" }}>{kpis.gesamt_programme}</p>
         </div>
 
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+        <div className="bg-[#161616] border border-border rounded-xl p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-emerald-400" />
@@ -142,7 +142,7 @@ export default function FoerderungDashboardPage() {
           </div>
         </div>
 
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+        <div className="bg-[#161616] border border-border rounded-xl p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-yellow-500/10 rounded-lg flex items-center justify-center">
               <Clock className="w-5 h-5 text-yellow-400" />
@@ -152,7 +152,7 @@ export default function FoerderungDashboardPage() {
           <p className="text-3xl font-bold text-yellow-400">{kpis.laufende_antraege}</p>
         </div>
 
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+        <div className="bg-[#161616] border border-border rounded-xl p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center">
               <Euro className="w-5 h-5 text-purple-400" />
@@ -166,8 +166,8 @@ export default function FoerderungDashboardPage() {
       </div>
 
       {/* Erfahrungs-Tabelle */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-        <div className="px-5 py-4 border-b border-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="px-5 py-4 border-b border-border">
           <h2 className="text-lg font-semibold text-white">Unsere Erfahrungen pro Programm</h2>
           <p className="text-zinc-500 text-sm">
             Programme mit dokumentierten Anträgen
@@ -177,7 +177,7 @@ export default function FoerderungDashboardPage() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#2a2a2a] text-left">
+              <tr className="border-b border-border text-left">
                 <th className="px-5 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">
                   Programm
                 </th>
@@ -201,7 +201,7 @@ export default function FoerderungDashboardPage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#2a2a2a]">
+            <tbody className="divide-y divide-border">
               {loading ? (
                 <tr>
                   <td colSpan={7} className="px-5 py-8 text-center text-zinc-500">

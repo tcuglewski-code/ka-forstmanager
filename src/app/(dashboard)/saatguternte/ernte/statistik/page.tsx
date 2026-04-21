@@ -162,7 +162,7 @@ export default async function StatistikPage({
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div className="w-10 h-10 rounded-xl bg-[#2C3A1C] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-forest flex items-center justify-center">
             <BarChart3 className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
@@ -181,7 +181,7 @@ export default async function StatistikPage({
               className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
                 saison === s
                   ? "bg-emerald-700 text-white"
-                  : "bg-[#1e1e1e] border border-[#2a2a2a] text-zinc-400 hover:text-white"
+                  : "bg-[#1e1e1e] border border-border text-zinc-400 hover:text-white"
               }`}
             >
               {s}
@@ -190,7 +190,7 @@ export default async function StatistikPage({
           {saison && (
             <Link
               href="/saatguternte/ernte/statistik"
-              className="px-3 py-1.5 rounded-lg text-sm bg-[#1e1e1e] border border-[#2a2a2a] text-zinc-400 hover:text-white transition-colors"
+              className="px-3 py-1.5 rounded-lg text-sm bg-[#1e1e1e] border border-border text-zinc-400 hover:text-white transition-colors"
             >
               Gesamt
             </Link>
@@ -222,7 +222,7 @@ export default async function StatistikPage({
             value: sammlerDistinct.length,
           },
         ].map(({ icon: Icon, label, value }) => (
-          <div key={label} className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+          <div key={label} className="bg-[#161616] border border-border rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
               <Icon className="w-4 h-4 text-emerald-400" />
               <span className="text-zinc-400 text-sm">{label}</span>
@@ -234,7 +234,7 @@ export default async function StatistikPage({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* B) Sammler-Ranking */}
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#161616] border border-border rounded-xl p-6">
           <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
             <Users className="w-4 h-4 text-emerald-400" />
             Sammler-Ranking
@@ -288,19 +288,19 @@ export default async function StatistikPage({
         </div>
 
         {/* E) Durchschnitte */}
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#161616] border border-border rounded-xl p-6">
           <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-emerald-400" />
             Durchschnitts-Statistiken
           </h2>
           <div className="space-y-4">
-            <div className="flex items-center justify-between py-3 border-b border-[#2a2a2a]">
+            <div className="flex items-center justify-between py-3 border-b border-border">
               <span className="text-zinc-400 text-sm">∅ kg pro Sammler / Saison</span>
               <span className="text-white font-semibold">
                 {avgKgSammler.toLocaleString("de-DE")} kg
               </span>
             </div>
-            <div className="flex items-center justify-between py-3 border-b border-[#2a2a2a]">
+            <div className="flex items-center justify-between py-3 border-b border-border">
               <span className="text-zinc-400 text-sm">∅ kg pro Sammler / Tag</span>
               <span className="text-white font-semibold">
                 {avgKgTag !== null ? `${avgKgTag.toLocaleString("de-DE")} kg` : "keine Stunden erfasst"}
@@ -317,14 +317,14 @@ export default async function StatistikPage({
       </div>
 
       {/* C) Ertrag pro Baumart */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
           <h2 className="text-white font-semibold">Ertrag pro Baumart</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#2a2a2a] bg-[#111]">
+              <tr className="border-b border-border bg-[#111]">
                 <th className="px-4 py-3 text-left text-zinc-400 font-medium">Baumart</th>
                 <th className="px-4 py-3 text-right text-zinc-400 font-medium">Gesamtmenge kg</th>
                 <th className="px-4 py-3 text-right text-zinc-400 font-medium">Ernten</th>
@@ -352,7 +352,7 @@ export default async function StatistikPage({
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <div className="w-16 bg-[#2a2a2a] rounded-full h-1.5">
+                        <div className="w-16 bg-surface-container-highest rounded-full h-1.5">
                           <div
                             className="bg-emerald-500 h-1.5 rounded-full"
                             style={{ width: `${Math.min(100, b.anteilProzent)}%` }}
@@ -372,14 +372,14 @@ export default async function StatistikPage({
       </div>
 
       {/* D) Ertrag pro Bundesland */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
           <h2 className="text-white font-semibold">Ertrag pro Bundesland</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#2a2a2a] bg-[#111]">
+              <tr className="border-b border-border bg-[#111]">
                 <th className="px-4 py-3 text-left text-zinc-400 font-medium">Bundesland</th>
                 <th className="px-4 py-3 text-right text-zinc-400 font-medium">Gesamtmenge kg</th>
                 <th className="px-4 py-3 text-right text-zinc-400 font-medium">Flächen</th>

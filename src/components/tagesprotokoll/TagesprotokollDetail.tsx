@@ -94,7 +94,7 @@ function DetailSection({
   children: React.ReactNode
 }) {
   return (
-    <div className="border border-[#2a2a2a] rounded-lg overflow-hidden">
+    <div className="border border-border rounded-lg overflow-hidden">
       <div className="flex items-center gap-2 px-4 py-2.5 bg-[#111]">
         <span className="text-zinc-500">{icon}</span>
         <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">{title}</span>

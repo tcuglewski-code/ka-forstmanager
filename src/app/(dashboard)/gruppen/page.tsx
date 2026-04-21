@@ -79,13 +79,13 @@ export default function GruppenPage() {
           {gruppen.map(g => (
             <div
               key={g.id}
-              className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5 hover:border-zinc-600 transition-all"
+              className="bg-[#161616] border border-border rounded-xl p-5 hover:border-zinc-600 transition-all"
             >
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <h3 className="font-semibold text-white">{g.name}</h3>
                   {g.saison && (
-                    <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-xs bg-[#2C3A1C] text-emerald-400">
+                    <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-xs bg-forest text-emerald-400">
                       {g.saison.name}
                     </span>
                   )}

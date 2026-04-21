@@ -126,15 +126,15 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[#2a2a2a]">
+        <div className="flex items-center justify-between p-4 border-b border-border">
           <h2 className="text-lg font-semibold text-white">
             {editData ? "Antrag bearbeiten" : "Neuen Antrag dokumentieren"}
           </h2>
           <button
             onClick={onClose}
-            className="p-1 text-zinc-400 hover:text-white rounded-lg hover:bg-[#2a2a2a]"
+            className="p-1 text-zinc-400 hover:text-white rounded-lg hover:bg-surface-container-highest"
           >
             <X className="w-5 h-5" />
           </button>
@@ -160,7 +160,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
                 required
                 value={formData.programm_id}
                 onChange={(e) => setFormData({ ...formData, programm_id: Number(e.target.value) })}
-                className="w-full h-10 px-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full h-10 px-3 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               >
                 <option value={0}>Programm auswählen...</option>
                 {programme.map((p) => (
@@ -178,7 +178,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
             <select
               value={formData.bundesland}
               onChange={(e) => setFormData({ ...formData, bundesland: e.target.value })}
-              className="w-full h-10 px-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              className="w-full h-10 px-3 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
             >
               <option value="">Bundesland auswählen...</option>
               {BUNDESLAENDER.map((bl) => (
@@ -197,7 +197,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
                 type="date"
                 value={formData.antrag_datum}
                 onChange={(e) => setFormData({ ...formData, antrag_datum: e.target.value })}
-                className="w-full h-10 px-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full h-10 px-3 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
@@ -206,7 +206,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
                 type="date"
                 value={formData.bewilligung_datum}
                 onChange={(e) => setFormData({ ...formData, bewilligung_datum: e.target.value })}
-                className="w-full h-10 px-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full h-10 px-3 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
           </div>
@@ -224,7 +224,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
               onChange={(e) =>
                 setFormData({ ...formData, bewilligungsdauer_wochen: e.target.value })
               }
-              className="w-full h-10 px-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              className="w-full h-10 px-3 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
             />
           </div>
 
@@ -240,7 +240,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
                 onChange={(e) =>
                   setFormData({ ...formData, beantragter_betrag_eur: e.target.value })
                 }
-                className="w-full h-10 px-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full h-10 px-3 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
                 placeholder="0.00"
               />
             </div>
@@ -254,7 +254,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
                 onChange={(e) =>
                   setFormData({ ...formData, bewilligter_betrag_eur: e.target.value })
                 }
-                className="w-full h-10 px-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full h-10 px-3 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
                 placeholder="0.00"
               />
             </div>
@@ -269,7 +269,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
                 onChange={(e) => setFormData({ ...formData, erfolgreich: e.target.checked })}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-[#2a2a2a] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+              <div className="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
             </label>
             <span className="text-sm text-zinc-300">Erfolgreich bewilligt</span>
           </div>
@@ -281,7 +281,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
               rows={3}
               value={formData.hinweis}
               onChange={(e) => setFormData({ ...formData, hinweis: e.target.value })}
-              className="w-full px-3 py-2 bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none resize-none"
+              className="w-full px-3 py-2 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none resize-none"
               placeholder="Was hat gut funktioniert? Worauf sollte man achten?"
             />
           </div>
@@ -293,13 +293,13 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
               rows={3}
               value={formData.fallstricke}
               onChange={(e) => setFormData({ ...formData, fallstricke: e.target.value })}
-              className="w-full px-3 py-2 bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none resize-none"
+              className="w-full px-3 py-2 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none resize-none"
               placeholder="Welche Probleme gab es? Was sollte man vermeiden?"
             />
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-[#2a2a2a]">
+          <div className="flex justify-end gap-3 pt-4 border-t border-border">
             <button
               type="button"
               onClick={onClose}

@@ -159,11 +159,11 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
 
   return (
     <div>
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="px-4 py-3 text-zinc-500 font-medium w-10">
                   <input
                     type="checkbox"
@@ -320,7 +320,7 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
           <div className="flex items-center gap-2">
             <Link
               href={buildUrl({ page: page - 1 })}
-              className={`p-2 rounded-lg border border-[#2a2a2a] text-zinc-400 hover:text-white hover:bg-[#2a2a2a] transition-colors ${page <= 1 ? "pointer-events-none opacity-30" : ""}`}
+              className={`p-2 rounded-lg border border-border text-zinc-400 hover:text-white hover:bg-surface-container-highest transition-colors ${page <= 1 ? "pointer-events-none opacity-30" : ""}`}
             >
               <ChevronLeft className="w-4 h-4" />
             </Link>
@@ -329,7 +329,7 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
             </span>
             <Link
               href={buildUrl({ page: page + 1 })}
-              className={`p-2 rounded-lg border border-[#2a2a2a] text-zinc-400 hover:text-white hover:bg-[#2a2a2a] transition-colors ${page >= totalPages ? "pointer-events-none opacity-30" : ""}`}
+              className={`p-2 rounded-lg border border-border text-zinc-400 hover:text-white hover:bg-surface-container-highest transition-colors ${page >= totalPages ? "pointer-events-none opacity-30" : ""}`}
             >
               <ChevronRight className="w-4 h-4" />
             </Link>

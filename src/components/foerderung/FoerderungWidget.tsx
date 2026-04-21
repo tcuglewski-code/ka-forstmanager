@@ -29,7 +29,7 @@ export function FoerderungWidget() {
   }, [])
 
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+    <div className="bg-[#161616] border border-border rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <TreePine className="w-4 h-4 text-emerald-400" />

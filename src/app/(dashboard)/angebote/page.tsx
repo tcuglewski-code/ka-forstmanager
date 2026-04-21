@@ -249,7 +249,7 @@ export default function AngebotePage() {
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
               filterStatus === f.value
                 ? "bg-emerald-600 text-white border-emerald-600"
-                : "bg-[#1e1e1e] text-zinc-400 border-[#2a2a2a] hover:border-zinc-500"
+                : "bg-[#1e1e1e] text-zinc-400 border-border hover:border-zinc-500"
             }`}
           >
             {f.label}
@@ -261,7 +261,7 @@ export default function AngebotePage() {
       {loading ? (
         <div className="text-zinc-500 text-sm py-8 text-center">Lade Angebote…</div>
       ) : angebote.length === 0 ? (
-        <div className="text-zinc-500 text-sm py-16 text-center bg-[#161616] rounded-xl border border-[#2a2a2a]">
+        <div className="text-zinc-500 text-sm py-16 text-center bg-[#161616] rounded-xl border border-border">
           Noch keine Angebote vorhanden.
         </div>
       ) : (
@@ -269,7 +269,7 @@ export default function AngebotePage() {
           {angebote.map((a) => (
             <div
               key={a.id}
-              className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5 hover:border-[#3a3a3a] transition-colors"
+              className="bg-[#161616] border border-border rounded-xl p-5 hover:border-[#3a3a3a] transition-colors"
             >
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 {/* Links: Infos */}
@@ -366,8 +366,8 @@ export default function AngebotePage() {
       {/* ─── Modal: Neues Angebot ──────────────────────────────────────────────── */}
       {modalOffen && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between">
+          <div className="bg-[#161616] border border-border rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-border flex items-center justify-between">
               <h2 className="text-white font-semibold text-lg">Neues Angebot erstellen</h2>
               <button
                 onClick={() => setModalOffen(false)}
@@ -389,7 +389,7 @@ export default function AngebotePage() {
                       value={form.waldbesitzerName}
                       onChange={f("waldbesitzerName")}
                       placeholder="Max Mustermann"
-                      className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
+                      className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
                     />
                   </div>
                   <div>
@@ -399,7 +399,7 @@ export default function AngebotePage() {
                       value={form.waldbesitzerEmail}
                       onChange={f("waldbesitzerEmail")}
                       placeholder="max@beispiel.de"
-                      className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
+                      className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
                     />
                   </div>
                 </div>
@@ -421,7 +421,7 @@ export default function AngebotePage() {
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
                         form.kalkulationTyp === typ.value
                           ? "bg-emerald-600 text-white border-emerald-600"
-                          : "bg-[#1e1e1e] text-zinc-400 border-[#2a2a2a] hover:border-zinc-500"
+                          : "bg-[#1e1e1e] text-zinc-400 border-border hover:border-zinc-500"
                       }`}
                     >
                       {typ.label}
@@ -439,7 +439,7 @@ export default function AngebotePage() {
                       value={form.flaeche_ha}
                       onChange={f("flaeche_ha")}
                       placeholder="z.B. 2.5"
-                      className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
+                      className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
                     />
                     <p className="text-xs text-zinc-600 mt-1">
                       Preis/ha: {parseFloat(config.preis_pro_ha ?? "1800").toLocaleString("de-DE")} €
@@ -457,7 +457,7 @@ export default function AngebotePage() {
                         value={form.baumanzahl}
                         onChange={f("baumanzahl")}
                         placeholder="z.B. 500"
-                        className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
+                        className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
                       />
                     </div>
                     <div>
@@ -469,7 +469,7 @@ export default function AngebotePage() {
                         value={form.preisProBaum}
                         onChange={f("preisProBaum")}
                         placeholder="z.B. 3.50"
-                        className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
+                        className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
                       />
                     </div>
                   </div>
@@ -485,7 +485,7 @@ export default function AngebotePage() {
                       value={form.stundenSchaetzung}
                       onChange={f("stundenSchaetzung")}
                       placeholder="z.B. 40"
-                      className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
+                      className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
                     />
                     <p className="text-xs text-zinc-600 mt-1">
                       Vollkosten/h: {parseFloat(config.vollkosten_pro_stunde ?? "43.50").toLocaleString("de-DE")} €
@@ -510,7 +510,7 @@ export default function AngebotePage() {
                     type="date"
                     value={form.gueltigBis}
                     onChange={f("gueltigBis")}
-                    className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500/50"
+                    className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500/50"
                   />
                 </div>
               </div>
@@ -522,7 +522,7 @@ export default function AngebotePage() {
                   onChange={f("beschreibung")}
                   rows={3}
                   placeholder="Beschreibung der geplanten Leistungen…"
-                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 resize-none"
+                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 resize-none"
                 />
               </div>
 
@@ -533,7 +533,7 @@ export default function AngebotePage() {
                   onChange={f("notizen")}
                   rows={2}
                   placeholder="Interne Anmerkungen…"
-                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 resize-none"
+                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 resize-none"
                 />
               </div>
 
@@ -542,7 +542,7 @@ export default function AngebotePage() {
                 <button
                   type="button"
                   onClick={() => setModalOffen(false)}
-                  className="flex-1 px-4 py-2.5 bg-[#1e1e1e] border border-[#2a2a2a] text-zinc-400 rounded-lg text-sm hover:text-white transition-colors"
+                  className="flex-1 px-4 py-2.5 bg-[#1e1e1e] border border-border text-zinc-400 rounded-lg text-sm hover:text-white transition-colors"
                 >
                   Abbrechen
                 </button>

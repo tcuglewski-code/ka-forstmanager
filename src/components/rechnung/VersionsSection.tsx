@@ -173,7 +173,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
 
   if (loading) {
     return (
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+      <div className="bg-[#161616] border border-border rounded-xl p-6">
         <div className="flex items-center gap-3 text-zinc-400">
           <Loader2 className="w-5 h-5 animate-spin" />
           <span>Lade Versionshistorie...</span>
@@ -184,7 +184,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
 
   if (error) {
     return (
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+      <div className="bg-[#161616] border border-border rounded-xl p-6">
         <div className="flex items-center gap-3 text-red-400">
           <GitBranch className="w-5 h-5" />
           <span>{error}</span>
@@ -195,7 +195,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
 
   if (!data || data.versions.length === 0) {
     return (
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+      <div className="bg-[#161616] border border-border rounded-xl p-6">
         <div className="flex items-center gap-3">
           <GitBranch className="w-5 h-5 text-zinc-500" />
           <h3 className="text-sm text-zinc-500 uppercase tracking-wider">Versionshistorie</h3>
@@ -213,7 +213,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
     : null
 
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+    <div className="bg-[#161616] border border-border rounded-xl p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -241,7 +241,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
       {/* Version Timeline */}
       <div className="relative">
         {/* Timeline Line */}
-        <div className="absolute left-[11px] top-0 bottom-0 w-0.5 bg-[#2a2a2a]" />
+        <div className="absolute left-[11px] top-0 bottom-0 w-0.5 bg-surface-container-highest" />
         
         <div className="space-y-4">
           {displayVersions.map((version, index) => {
@@ -307,7 +307,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                   
                   {/* Diff Anzeige */}
                   {showDiff && diffs.length > 0 && (
-                    <div className="mt-3 pt-3 border-t border-[#2a2a2a]">
+                    <div className="mt-3 pt-3 border-t border-border">
                       <div className="text-xs text-zinc-500 mb-2">Änderungen:</div>
                       <div className="space-y-1.5">
                         {diffs.map((diff, i) => (
@@ -324,7 +324,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                   
                   {/* Expanded Details */}
                   {isSelected && (
-                    <div className="mt-4 pt-4 border-t border-[#2a2a2a]">
+                    <div className="mt-4 pt-4 border-t border-border">
                       <div className="grid grid-cols-2 gap-3 text-sm">
                         <div>
                           <span className="text-zinc-500">Rechnungsnr.:</span>

@@ -89,13 +89,13 @@ export default function AbnahmenPage() {
 
       {/* Filter */}
       <div className="flex flex-wrap gap-3 mb-4">
-        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white">
+        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white">
           <option value="">Alle Status</option>
           <option value="offen">Offen</option>
           <option value="bestanden">Bestanden</option>
           <option value="nicht_bestanden">Nicht bestanden</option>
         </select>
-        <select value={filterAuftrag} onChange={(e) => setFilterAuftrag(e.target.value)} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white">
+        <select value={filterAuftrag} onChange={(e) => setFilterAuftrag(e.target.value)} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white">
           <option value="">Alle Aufträge</option>
           {auftraege.map((a) => <option key={a.id} value={a.id}>{a.titel}</option>)}
         </select>
@@ -104,11 +104,11 @@ export default function AbnahmenPage() {
       {loading ? (
         <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
       ) : (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Auftrag</th>
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Datum</th>
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Förster</th>
@@ -116,7 +116,7 @@ export default function AbnahmenPage() {
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Signatur</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#2a2a2a]">
+            <tbody className="divide-y divide-border">
               {abnahmen.length === 0 ? (
                 <tr><td colSpan={5} className="px-6 py-12 text-center text-zinc-600">Keine Abnahmen</td></tr>
               ) : abnahmen.map((a) => (
@@ -144,7 +144,7 @@ export default function AbnahmenPage() {
 
       {/* Detail Panel */}
       {selectedAbnahme && (
-        <div className="mt-4 bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="mt-4 bg-[#161616] border border-border rounded-xl p-6">
           <h3 className="font-semibold text-white mb-3">Details: {selectedAbnahme.auftrag.titel}</h3>
           <p className="text-sm text-zinc-400 mb-2"><span className="text-zinc-500">Notizen:</span> {selectedAbnahme.notizen ?? "—"}</p>
           {selectedAbnahme.signaturUrl && (
@@ -158,7 +158,7 @@ export default function AbnahmenPage() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto">
+          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto">
             <h2 className="text-lg font-bold text-white mb-4">Abnahme erstellen</h2>
             <div className="space-y-4">
               <div>

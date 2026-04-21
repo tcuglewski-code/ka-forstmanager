@@ -255,7 +255,7 @@ export default function DatenschutzVerwaltungPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#2C3A1C] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-forest flex items-center justify-center">
             <Shield className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
@@ -277,7 +277,7 @@ export default function DatenschutzVerwaltungPage() {
       {/* Stats Cards */}
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4">
+          <div className="bg-[#1a1a1a] border border-border rounded-xl p-4">
             <div className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{stats.total}</div>
             <div className="text-sm text-zinc-500">Gesamt</div>
           </div>
@@ -321,7 +321,7 @@ export default function DatenschutzVerwaltungPage() {
           onClick={() => setStatusFilter("")}
           className={cn(
             "px-3 py-1.5 rounded-lg text-sm",
-            statusFilter === "" ? "bg-emerald-600 text-white" : "bg-[#2a2a2a] text-zinc-400 hover:text-white"
+            statusFilter === "" ? "bg-emerald-600 text-white" : "bg-surface-container-highest text-zinc-400 hover:text-white"
           )}
         >
           Alle
@@ -332,7 +332,7 @@ export default function DatenschutzVerwaltungPage() {
             onClick={() => setStatusFilter(key)}
             className={cn(
               "px-3 py-1.5 rounded-lg text-sm flex items-center gap-1",
-              statusFilter === key ? "bg-emerald-600 text-white" : "bg-[#2a2a2a] text-zinc-400 hover:text-white"
+              statusFilter === key ? "bg-emerald-600 text-white" : "bg-surface-container-highest text-zinc-400 hover:text-white"
             )}
           >
             {config.label}
@@ -341,10 +341,10 @@ export default function DatenschutzVerwaltungPage() {
       </div>
 
       {/* Requests Table */}
-      <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl overflow-hidden">
+      <div className="bg-[#1a1a1a] border border-border rounded-xl overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-[#2a2a2a]">
+            <tr className="border-b border-border">
               <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">Antragsteller</th>
               <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">Typ</th>
               <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">Status</th>
@@ -367,7 +367,7 @@ export default function DatenschutzVerwaltungPage() {
                 const daysLeft = getDaysRemaining(request)
 
                 return (
-                  <tr key={request.id} className="border-b border-[#2a2a2a] last:border-0 hover:bg-[#222]">
+                  <tr key={request.id} className="border-b border-border last:border-0 hover:bg-[#222]">
                     <td className="px-4 py-3">
                       <div>
                         <div className="text-white font-medium">{request.requesterName}</div>
@@ -417,7 +417,7 @@ export default function DatenschutzVerwaltungPage() {
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => openDetailModal(request)}
-                        className="p-2 text-zinc-500 hover:text-white hover:bg-[#2a2a2a] rounded-lg"
+                        className="p-2 text-zinc-500 hover:text-white hover:bg-surface-container-highest rounded-lg"
                         title="Details anzeigen"
                       >
                         <Eye className="w-4 h-4" />
@@ -436,8 +436,8 @@ export default function DatenschutzVerwaltungPage() {
         <>
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" onClick={() => setModalOpen(false)} />
           <div className="fixed inset-x-0 top-[10%] mx-auto max-w-lg z-50 px-4">
-            <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl shadow-2xl">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2a2a]">
+            <div className="bg-[#1a1a1a] border border-border rounded-xl shadow-2xl">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border">
                 <h2 className="text-lg font-semibold text-white">Neue DSGVO-Anfrage erfassen</h2>
                 <button onClick={() => setModalOpen(false)} className="p-1 text-zinc-500 hover:text-white">
                   <X className="w-5 h-5" />
@@ -447,7 +447,7 @@ export default function DatenschutzVerwaltungPage() {
               <div className="p-6 space-y-4">
                 <div>
                   <label className="block text-sm text-zinc-400 mb-1">Name des Betroffenen *</label>
-                  <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg">
                     <User className="w-4 h-4 text-zinc-500" />
                     <input
                       type="text"
@@ -461,7 +461,7 @@ export default function DatenschutzVerwaltungPage() {
 
                 <div>
                   <label className="block text-sm text-zinc-400 mb-1">E-Mail *</label>
-                  <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg">
                     <Mail className="w-4 h-4 text-zinc-500" />
                     <input
                       type="email"
@@ -478,7 +478,7 @@ export default function DatenschutzVerwaltungPage() {
                   <select
                     value={formType}
                     onChange={(e) => setFormType(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white outline-none"
+                    className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white outline-none"
                   >
                     {Object.entries(REQUEST_TYPES).map(([value, label]) => (
                       <option key={value} value={value}>{label}</option>
@@ -491,7 +491,7 @@ export default function DatenschutzVerwaltungPage() {
                   <textarea
                     value={formReason}
                     onChange={(e) => setFormReason(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white outline-none resize-none h-24"
+                    className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white outline-none resize-none h-24"
                     placeholder="Optionale Details zur Anfrage..."
                   />
                 </div>
@@ -506,10 +506,10 @@ export default function DatenschutzVerwaltungPage() {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 px-6 py-4 border-t border-[#2a2a2a]">
+              <div className="flex justify-end gap-3 px-6 py-4 border-t border-border">
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg hover:bg-[#333]"
+                  className="px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333]"
                 >
                   Abbrechen
                 </button>
@@ -534,8 +534,8 @@ export default function DatenschutzVerwaltungPage() {
         <>
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" onClick={() => setDetailModalOpen(false)} />
           <div className="fixed inset-x-0 top-[5%] mx-auto max-w-2xl z-50 px-4 max-h-[90vh] overflow-y-auto">
-            <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl shadow-2xl">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2a2a]">
+            <div className="bg-[#1a1a1a] border border-border rounded-xl shadow-2xl">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border">
                 <div>
                   <h2 className="text-lg font-semibold text-white">{selectedRequest.requesterName}</h2>
                   <p className="text-sm text-zinc-500">{REQUEST_TYPES[selectedRequest.requestType]}</p>
@@ -559,7 +559,7 @@ export default function DatenschutzVerwaltungPage() {
                           "px-3 py-1.5 rounded-lg text-sm border transition-colors",
                           selectedRequest.status === key
                             ? config.color
-                            : "bg-[#2a2a2a] text-zinc-400 border-[#3a3a3a] hover:text-white"
+                            : "bg-surface-container-highest text-zinc-400 border-[#3a3a3a] hover:text-white"
                         )}
                       >
                         {config.label}
@@ -685,10 +685,10 @@ export default function DatenschutzVerwaltungPage() {
                 )}
               </div>
 
-              <div className="flex justify-end gap-3 px-6 py-4 border-t border-[#2a2a2a]">
+              <div className="flex justify-end gap-3 px-6 py-4 border-t border-border">
                 <button
                   onClick={() => setDetailModalOpen(false)}
-                  className="px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg hover:bg-[#333]"
+                  className="px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333]"
                 >
                   Schließen
                 </button>

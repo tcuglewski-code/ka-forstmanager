@@ -127,7 +127,7 @@ export default function JahresuebersichtPage() {
         {kacheln.map(k => (
           <div
             key={k.label}
-            className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5"
+            className="bg-[#161616] border border-border rounded-xl p-5"
           >
             <div className="flex items-center gap-2 mb-2">
               {k.icon}
@@ -141,15 +141,15 @@ export default function JahresuebersichtPage() {
       {/* Weitere Gesamt-Zahlen */}
       {gesamt && (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+          <div className="bg-[#161616] border border-border rounded-xl p-4">
             <p className="text-xs text-zinc-500 mb-1">Gesamtstunden</p>
             <p className="text-lg font-bold text-white">{gesamt.gesamtStunden.toLocaleString("de-DE")} h</p>
           </div>
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+          <div className="bg-[#161616] border border-border rounded-xl p-4">
             <p className="text-xs text-zinc-500 mb-1">Aufträge gesamt</p>
             <p className="text-lg font-bold text-white">{gesamt.auftraege}</p>
           </div>
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+          <div className="bg-[#161616] border border-border rounded-xl p-4">
             <p className="text-xs text-zinc-500 mb-1">Saisons</p>
             <p className="text-lg font-bold text-white">{saisons.length}</p>
           </div>
@@ -158,19 +158,19 @@ export default function JahresuebersichtPage() {
 
       {/* Tabelle per Saison */}
       {saisons.length === 0 ? (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-12 text-center text-zinc-600 text-sm">
+        <div className="bg-[#161616] border border-border rounded-xl p-12 text-center text-zinc-600 text-sm">
           Keine Saisons gefunden
         </div>
       ) : (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#2a2a2a] flex items-center gap-2">
+        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+          <div className="px-6 py-4 border-b border-border flex items-center gap-2">
             <ClipboardList className="w-4 h-4 text-zinc-500" />
             <h2 className="font-semibold text-white text-sm uppercase tracking-wider">Auswertung nach Saison</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[#2a2a2a]">
+                <tr className="border-b border-border">
                   <th className="text-left px-4 py-3 text-xs text-zinc-500 font-medium">Saison</th>
                   <th className="text-right px-4 py-3 text-xs text-zinc-500 font-medium">Aufträge</th>
                   <th className="text-right px-4 py-3 text-xs text-zinc-500 font-medium">Abgeschl.</th>
@@ -182,7 +182,7 @@ export default function JahresuebersichtPage() {
                   <th className="text-right px-4 py-3 text-xs text-zinc-500 font-medium">Marge</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#2a2a2a]">
+              <tbody className="divide-y divide-border">
                 {saisons.map(s => (
                   <tr key={s.saison.id} className="hover:bg-[#1c1c1c] transition-colors">
                     <td className="px-4 py-3">

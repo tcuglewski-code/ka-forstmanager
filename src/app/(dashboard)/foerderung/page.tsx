@@ -110,7 +110,7 @@ function parseKategorien(kat: string | null): string[] {
 function KategorieBadge({ kat }: { kat: string }) {
   const label = KATEGORIE_LABELS[kat] || kat
   return (
-    <span className="px-2 py-0.5 bg-[#2C3A1C]/60 text-emerald-300 rounded text-xs border border-emerald-900/40">
+    <span className="px-2 py-0.5 bg-forest/60 text-emerald-300 rounded text-xs border border-emerald-900/40">
       {label}
     </span>
   )
@@ -166,9 +166,9 @@ function DetailModal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-[#111111] border border-[#2a2a2a] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div className="bg-[#111111] border border-border rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
         {/* Header */}
-        <div className="sticky top-0 bg-[#111111] border-b border-[#2a2a2a] px-6 py-4 flex items-start justify-between gap-4 rounded-t-2xl">
+        <div className="sticky top-0 bg-[#111111] border-b border-border px-6 py-4 flex items-start justify-between gap-4 rounded-t-2xl">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span
@@ -191,7 +191,7 @@ function DetailModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[#2a2a2a] rounded-lg text-zinc-400 hover:text-white transition-colors flex-shrink-0"
+            className="p-2 hover:bg-surface-container-highest rounded-lg text-zinc-400 hover:text-white transition-colors flex-shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
@@ -220,7 +220,7 @@ function DetailModal({
           {prog.foerdergegenstand && (
             <div>
               <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Fördergegenstand</h3>
-              <p className="text-sm text-zinc-300 leading-relaxed bg-[#161616] rounded-lg p-3 border border-[#2a2a2a]">
+              <p className="text-sm text-zinc-300 leading-relaxed bg-[#161616] rounded-lg p-3 border border-border">
                 {prog.foerdergegenstand}
               </p>
             </div>
@@ -229,7 +229,7 @@ function DetailModal({
           {prog.zielgruppe && (
             <div>
               <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Zielgruppe / Voraussetzungen</h3>
-              <p className="text-sm text-zinc-300 leading-relaxed bg-[#161616] rounded-lg p-3 border border-[#2a2a2a]">
+              <p className="text-sm text-zinc-300 leading-relaxed bg-[#161616] rounded-lg p-3 border border-border">
                 {prog.zielgruppe}
               </p>
             </div>
@@ -238,7 +238,7 @@ function DetailModal({
           {prog.foerderkulisse && (
             <div>
               <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Förderkulisse</h3>
-              <p className="text-sm text-zinc-300 leading-relaxed bg-[#161616] rounded-lg p-3 border border-[#2a2a2a]">
+              <p className="text-sm text-zinc-300 leading-relaxed bg-[#161616] rounded-lg p-3 border border-border">
                 {prog.foerderkulisse}
               </p>
             </div>
@@ -280,7 +280,7 @@ function DetailModal({
           )}
 
           {/* Empfehlung in Kundenakte */}
-          <div className="border-t border-[#2a2a2a] pt-4">
+          <div className="border-t border-border pt-4">
             <h3 className="text-sm font-medium text-white mb-3 flex items-center gap-2">
               <Save className="w-4 h-4 text-emerald-400" />
               Als Empfehlung in Kundenakte speichern
@@ -365,7 +365,7 @@ function ProgrammKarte({
   return (
     <button
       onClick={onKlick}
-      className="w-full text-left bg-[#161616] border border-[#2a2a2a] rounded-xl p-4 hover:border-emerald-900/60 hover:bg-[#1a1a1a] transition-all group"
+      className="w-full text-left bg-[#161616] border border-border rounded-xl p-4 hover:border-emerald-900/60 hover:bg-[#1a1a1a] transition-all group"
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-3 mb-2">
@@ -557,7 +557,7 @@ export default function FoerderungPage() {
             value={beratungsFrage}
             onChange={(e) => setBeratungsFrage(e.target.value)}
             placeholder="z.B. Welche Förderung gibt es für Wiederbewaldung nach Borkenkäfer in Bayern? Oder: Wie kombiniere ich GAK und ELER-Förderung?"
-            className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-700/60 resize-none"
+            className="w-full bg-[#0f0f0f] border border-border rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-700/60 resize-none"
             rows={3}
             onKeyDown={(e) => { if (e.key === "Enter" && e.metaKey) starteBeratung() }}
           />
@@ -568,7 +568,7 @@ export default function FoerderungPage() {
               <select
                 value={beratungsBundesland}
                 onChange={(e) => setBeratungsBundesland(e.target.value)}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-700/60"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-700/60"
               >
                 <option value="">Alle Bundesländer</option>
                 {BUNDESLAENDER.map((bl) => (
@@ -584,7 +584,7 @@ export default function FoerderungPage() {
                 value={beratungsFlaeche}
                 onChange={(e) => setBeratungsFlaeche(e.target.value)}
                 placeholder="z.B. 5.5"
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-700/60"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-700/60"
               />
             </div>
 
@@ -593,7 +593,7 @@ export default function FoerderungPage() {
                 type="checkbox"
                 checked={beratungsKalamitaet}
                 onChange={(e) => setBeratungsKalamitaet(e.target.checked)}
-                className="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-emerald-500"
+                className="w-4 h-4 rounded border-border bg-zinc-900 text-emerald-500"
               />
               <span className="text-sm text-zinc-300">Kalamität / Schaden</span>
             </label>
@@ -650,7 +650,7 @@ export default function FoerderungPage() {
       </div>
 
       {/* Suchleiste + Filter */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4 mb-6 space-y-3">
+      <div className="bg-[#161616] border border-border rounded-xl p-4 mb-6 space-y-3">
         {/* Suchfeld */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />

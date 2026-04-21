@@ -135,10 +135,10 @@ function NeueBestellungModal({
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-        <div className="flex items-center justify-between p-5 border-b border-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between p-5 border-b border-border">
           <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-            <ShoppingCart className="w-5 h-5 text-[#C5A55A]" />
+            <ShoppingCart className="w-5 h-5 text-gold" />
             Neue Bestellung
           </h2>
           <button onClick={onClose}>
@@ -152,7 +152,7 @@ function NeueBestellungModal({
             <select
               value={selectedLieferant}
               onChange={e => setSelectedLieferant(e.target.value)}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#C5A55A]"
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold"
             >
               <option value="">Lieferant wählen...</option>
               {lieferanten.map(l => (
@@ -189,7 +189,7 @@ function NeueBestellungModal({
                         updated[idx].menge = parseInt(e.target.value) || 1
                         setPositionen(updated)
                       }}
-                      className="w-20 bg-[#0f0f0f] border border-[#2a2a2a] rounded px-2 py-1 text-sm text-white text-right"
+                      className="w-20 bg-[#0f0f0f] border border-border rounded px-2 py-1 text-sm text-white text-right"
                     />
                     <span className="text-zinc-500 text-xs">{artikel?.einheit}</span>
                     <span className="text-white text-sm">
@@ -198,9 +198,9 @@ function NeueBestellungModal({
                   </div>
                 )
               })}
-              <div className="text-right pt-2 border-t border-[#2a2a2a]">
+              <div className="text-right pt-2 border-t border-border">
                 <span className="text-zinc-400 text-sm">Gesamt: </span>
-                <span className="text-[#C5A55A] font-bold">
+                <span className="text-gold font-bold">
                   {positionen.reduce((sum, p) => sum + p.menge * p.einzelpreis, 0).toFixed(2)} €
                 </span>
               </div>
@@ -213,7 +213,7 @@ function NeueBestellungModal({
               value={notizen}
               onChange={e => setNotizen(e.target.value)}
               rows={2}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#C5A55A]"
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold"
               placeholder="Optionale Notizen..."
             />
           </div>
@@ -222,14 +222,14 @@ function NeueBestellungModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white transition-all"
+              className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all"
             >
               Abbrechen
             </button>
             <button
               type="submit"
               disabled={loading || !selectedLieferant || positionen.length === 0}
-              className="flex-1 px-4 py-2 rounded-lg bg-[#C5A55A] hover:bg-[#D4B56A] text-[#2C3A1C] text-sm font-medium disabled:opacity-50 transition-all"
+              className="flex-1 px-4 py-2 rounded-lg bg-gold hover:bg-[#D4B56A] text-forest text-sm font-medium disabled:opacity-50 transition-all"
             >
               {loading ? "Erstellen..." : "Bestellung erstellen"}
             </button>
@@ -309,7 +309,7 @@ export default function BestellungenPage() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[#C5A55A] hover:bg-[#D4B56A] text-[#2C3A1C] rounded-lg text-sm font-medium transition-all"
+          className="flex items-center gap-2 px-4 py-2 bg-gold hover:bg-[#D4B56A] text-forest rounded-lg text-sm font-medium transition-all"
         >
           <Plus className="w-4 h-4" />
           Neue Bestellung
@@ -320,21 +320,21 @@ export default function BestellungenPage() {
       <div className="grid grid-cols-3 gap-4 mb-6">
         <button
           onClick={() => setFilter(filter === "ENTWURF" ? "alle" : "ENTWURF")}
-          className={`bg-[#161616] border rounded-xl p-4 text-center transition-all ${filter === "ENTWURF" ? "border-[#C5A55A]" : "border-[#2a2a2a] hover:border-zinc-600"}`}
+          className={`bg-[#161616] border rounded-xl p-4 text-center transition-all ${filter === "ENTWURF" ? "border-gold" : "border-border hover:border-zinc-600"}`}
         >
           <p className="text-2xl font-bold text-zinc-400">{stats.entwurf}</p>
           <p className="text-xs text-zinc-500">Entwürfe</p>
         </button>
         <button
           onClick={() => setFilter(filter === "BESTELLT" ? "alle" : "BESTELLT")}
-          className={`bg-[#161616] border rounded-xl p-4 text-center transition-all ${filter === "BESTELLT" ? "border-[#C5A55A]" : "border-[#2a2a2a] hover:border-zinc-600"}`}
+          className={`bg-[#161616] border rounded-xl p-4 text-center transition-all ${filter === "BESTELLT" ? "border-gold" : "border-border hover:border-zinc-600"}`}
         >
           <p className="text-2xl font-bold text-blue-400">{stats.bestellt}</p>
           <p className="text-xs text-zinc-500">Bestellt</p>
         </button>
         <button
           onClick={() => setFilter(filter === "GELIEFERT" ? "alle" : "GELIEFERT")}
-          className={`bg-[#161616] border rounded-xl p-4 text-center transition-all ${filter === "GELIEFERT" ? "border-[#C5A55A]" : "border-[#2a2a2a] hover:border-zinc-600"}`}
+          className={`bg-[#161616] border rounded-xl p-4 text-center transition-all ${filter === "GELIEFERT" ? "border-gold" : "border-border hover:border-zinc-600"}`}
         >
           <p className="text-2xl font-bold text-emerald-400">{stats.geliefert}</p>
           <p className="text-xs text-zinc-500">Geliefert</p>
@@ -342,7 +342,7 @@ export default function BestellungenPage() {
       </div>
 
       {/* Bestellungs-Liste */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
         {loading ? (
           <div className="text-center py-12 text-zinc-500">Laden...</div>
         ) : filteredBestellungen.length === 0 ? (
@@ -354,7 +354,7 @@ export default function BestellungenPage() {
           <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="text-left px-5 py-3 text-zinc-500 font-medium">Datum</th>
                 <th className="text-left px-5 py-3 text-zinc-500 font-medium">Lieferant</th>
                 <th className="text-center px-5 py-3 text-zinc-500 font-medium">Status</th>
@@ -380,7 +380,7 @@ export default function BestellungenPage() {
                   <td className="px-5 py-4 text-center text-zinc-400">
                     {b.positionen.length} Artikel
                   </td>
-                  <td className="px-5 py-4 text-right text-[#C5A55A] font-medium">
+                  <td className="px-5 py-4 text-right text-gold font-medium">
                     {Number(b.gesamtbetrag).toFixed(2)} €
                   </td>
                   <td className="px-5 py-4">

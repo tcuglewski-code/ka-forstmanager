@@ -138,7 +138,7 @@ export default function SyncSettingsPage() {
         <button
           onClick={handleSyncAll}
           disabled={syncing}
-          className="flex items-center gap-2 px-4 py-2 bg-[#C5A55A] hover:bg-[#D4B56A] text-[#2C3A1C] rounded-lg text-sm font-medium transition-all disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 bg-gold hover:bg-[#D4B56A] text-forest rounded-lg text-sm font-medium transition-all disabled:opacity-50"
         >
           {syncing ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -151,19 +151,19 @@ export default function SyncSettingsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4 mb-6">
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+        <div className="bg-[#161616] border border-border rounded-xl p-4">
           <p className="text-zinc-500 text-xs mb-1">Gesamt</p>
           <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{stats.total}</p>
         </div>
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+        <div className="bg-[#161616] border border-border rounded-xl p-4">
           <p className="text-zinc-500 text-xs mb-1">Erfolgreich</p>
           <p className="text-2xl font-bold text-emerald-400">{stats.ok}</p>
         </div>
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+        <div className="bg-[#161616] border border-border rounded-xl p-4">
           <p className="text-zinc-500 text-xs mb-1">Fehler</p>
           <p className="text-2xl font-bold text-red-400">{stats.error}</p>
         </div>
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+        <div className="bg-[#161616] border border-border rounded-xl p-4">
           <p className="text-zinc-500 text-xs mb-1">Letzte Sync</p>
           <p className="text-sm font-medium text-white">
             {stats.lastSync 
@@ -187,7 +187,7 @@ export default function SyncSettingsPage() {
             onClick={() => setFilter(f)}
             className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
               filter === f 
-                ? "bg-[#C5A55A]/20 text-[#C5A55A]" 
+                ? "bg-gold/20 text-gold" 
                 : "bg-[#1e1e1e] text-zinc-400 hover:text-white"
             }`}
           >
@@ -197,7 +197,7 @@ export default function SyncSettingsPage() {
       </div>
 
       {/* Log-Tabelle */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
         {loading ? (
           <div className="text-center py-12 text-zinc-500">Laden...</div>
         ) : filteredLogs.length === 0 ? (
@@ -209,7 +209,7 @@ export default function SyncSettingsPage() {
           <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="text-left px-4 py-3 text-zinc-500 font-medium">Zeitpunkt</th>
                 <th className="text-left px-4 py-3 text-zinc-500 font-medium">Typ</th>
                 <th className="text-left px-4 py-3 text-zinc-500 font-medium">Richtung</th>
@@ -254,7 +254,7 @@ export default function SyncSettingsPage() {
       </div>
 
       {/* Info-Box */}
-      <div className="mt-6 p-4 rounded-xl bg-[#161616] border border-[#2a2a2a]">
+      <div className="mt-6 p-4 rounded-xl bg-[#161616] border border-border">
         <h3 className="text-sm font-medium text-white mb-2">Sync-Konfiguration</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>

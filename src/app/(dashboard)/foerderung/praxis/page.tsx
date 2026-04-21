@@ -113,25 +113,25 @@ export default function FoerderungPraxisPage() {
 
       {/* Statistik-Karten */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+        <div className="bg-[#161616] border border-border rounded-xl p-4">
           <p className="text-zinc-500 text-sm">Gesamt</p>
           <p className="text-2xl font-bold text-white mt-1">{stats.gesamt}</p>
         </div>
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+        <div className="bg-[#161616] border border-border rounded-xl p-4">
           <div className="flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-emerald-500" />
             <p className="text-zinc-500 text-sm">Erfolgreich</p>
           </div>
           <p className="text-2xl font-bold text-emerald-500 mt-1">{stats.erfolgreich}</p>
         </div>
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+        <div className="bg-[#161616] border border-border rounded-xl p-4">
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-yellow-500" />
             <p className="text-zinc-500 text-sm">Laufend</p>
           </div>
           <p className="text-2xl font-bold text-yellow-500 mt-1">{stats.laufend}</p>
         </div>
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+        <div className="bg-[#161616] border border-border rounded-xl p-4">
           <div className="flex items-center gap-2">
             <XCircle className="w-4 h-4 text-red-500" />
             <p className="text-zinc-500 text-sm">Abgelehnt</p>
@@ -141,11 +141,11 @@ export default function FoerderungPraxisPage() {
       </div>
 
       {/* Tabelle */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#2a2a2a] text-left">
+              <tr className="border-b border-border text-left">
                 <th className="px-4 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">
                   Status
                 </th>
@@ -172,7 +172,7 @@ export default function FoerderungPraxisPage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#2a2a2a]">
+            <tbody className="divide-y divide-border">
               {loading ? (
                 <tr>
                   <td colSpan={8} className="px-4 py-8 text-center text-zinc-500">
@@ -237,7 +237,7 @@ export default function FoerderungPraxisPage() {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => handleEdit(e)}
-                        className="p-1.5 text-zinc-400 hover:text-white hover:bg-[#2a2a2a] rounded-lg transition"
+                        className="p-1.5 text-zinc-400 hover:text-white hover:bg-surface-container-highest rounded-lg transition"
                         title="Bearbeiten"
                       >
                         <Pencil className="w-4 h-4" />

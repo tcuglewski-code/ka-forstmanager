@@ -88,7 +88,7 @@ export default function LieferantenPage() {
       </div>
 
       {/* Liste */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
         {loading ? (
           <div className="p-8 text-center">
             <Loader2 className="w-8 h-8 text-zinc-600 animate-spin mx-auto" />
@@ -103,7 +103,7 @@ export default function LieferantenPage() {
           <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="text-left px-4 py-3 text-xs text-zinc-500">Name</th>
                 <th className="text-left px-4 py-3 text-xs text-zinc-500">Kontakt</th>
                 <th className="text-left px-4 py-3 text-xs text-zinc-500">Ort</th>
@@ -264,8 +264,8 @@ function LieferantModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-lg">
-        <div className="flex items-center justify-between p-4 border-b border-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-lg">
+        <div className="flex items-center justify-between p-4 border-b border-border">
           <h2 className="text-lg font-semibold text-white">
             {lieferant ? "Lieferant bearbeiten" : "Neuer Lieferant"}
           </h2>
@@ -281,7 +281,7 @@ function LieferantModal({
               type="text"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
               autoFocus
             />
           </div>
@@ -293,7 +293,7 @@ function LieferantModal({
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
             <div>
@@ -302,7 +302,7 @@ function LieferantModal({
                 type="tel"
                 value={form.telefon}
                 onChange={(e) => setForm((f) => ({ ...f, telefon: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
           </div>
@@ -314,7 +314,7 @@ function LieferantModal({
               value={form.website}
               onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))}
               placeholder="https://"
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
             />
           </div>
 
@@ -324,7 +324,7 @@ function LieferantModal({
               type="text"
               value={form.adresse}
               onChange={(e) => setForm((f) => ({ ...f, adresse: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
             />
           </div>
 
@@ -335,7 +335,7 @@ function LieferantModal({
                 type="text"
                 value={form.plz}
                 onChange={(e) => setForm((f) => ({ ...f, plz: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
             <div className="col-span-2">
@@ -344,7 +344,7 @@ function LieferantModal({
                 type="text"
                 value={form.ort}
                 onChange={(e) => setForm((f) => ({ ...f, ort: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
           </div>
@@ -355,7 +355,7 @@ function LieferantModal({
               value={form.notizen}
               onChange={(e) => setForm((f) => ({ ...f, notizen: e.target.value }))}
               rows={2}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white resize-none"
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white resize-none"
             />
           </div>
 
@@ -363,7 +363,7 @@ function LieferantModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-[#2a2a2a] rounded-lg text-zinc-400 hover:text-white text-sm"
+              className="flex-1 px-4 py-2 border border-border rounded-lg text-zinc-400 hover:text-white text-sm"
             >
               Abbrechen
             </button>

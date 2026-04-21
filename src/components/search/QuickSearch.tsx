@@ -253,7 +253,7 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-2 text-left transition-colors",
                 globalIndex === selectedIndex
-                  ? "bg-[#2C3A1C] text-white"
+                  ? "bg-forest text-white"
                   : "text-zinc-400 hover:bg-[#222]"
               )}
             >
@@ -262,7 +262,7 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
                   "w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0",
                   globalIndex === selectedIndex
                     ? "bg-emerald-100 text-emerald-800"
-                    : "bg-[#2a2a2a] text-zinc-500"
+                    : "bg-surface-container-highest text-zinc-500"
                 )}
               >
                 {getIcon(result.type)}
@@ -299,9 +299,9 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
 
       {/* Modal */}
       <div className="fixed inset-x-0 top-[12%] mx-auto max-w-xl z-50 px-4">
-        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl shadow-2xl overflow-hidden">
+        <div className="bg-[#1a1a1a] border border-border rounded-xl shadow-2xl overflow-hidden">
           {/* Search Input */}
-          <div className="flex items-center gap-3 px-4 py-3 border-b border-[#2a2a2a]">
+          <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
             <Search className="w-5 h-5 text-zinc-500 flex-shrink-0" />
             <input
               ref={inputRef}
@@ -324,7 +324,7 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
 
           {/* Fuzzy-Matching Hinweis */}
           {query.length >= 2 && hasResults && (
-            <div className="px-4 py-1.5 text-[10px] text-zinc-600 border-b border-[#2a2a2a] flex items-center gap-1">
+            <div className="px-4 py-1.5 text-[10px] text-zinc-600 border-b border-border flex items-center gap-1">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500/50"></span>
               Fuzzy-Suche aktiv · Tippfehler werden ignoriert
             </div>
@@ -347,7 +347,7 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
                 </p>
               </div>
             ) : hasResults ? (
-              <div className="divide-y divide-[#2a2a2a]">
+              <div className="divide-y divide-border">
                 {renderGroup("auftrag", groupedResults.auftraege, auftraegeStartIndex)}
                 {renderGroup("mitarbeiter", groupedResults.mitarbeiter, mitarbeiterStartIndex)}
                 {renderGroup("rechnung", groupedResults.rechnungen, rechnungenStartIndex)}
@@ -363,7 +363,7 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between px-4 py-2.5 border-t border-[#2a2a2a] text-xs text-zinc-600">
+          <div className="flex items-center justify-between px-4 py-2.5 border-t border-border text-xs text-zinc-600">
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
                 <ArrowUp className="w-3 h-3" />
@@ -376,7 +376,7 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
               </span>
             </div>
             <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 bg-[#2a2a2a] rounded text-[10px]">ESC</kbd>
+              <kbd className="px-1.5 py-0.5 bg-surface-container-highest rounded text-[10px]">ESC</kbd>
               Schließen
             </span>
           </div>
@@ -430,7 +430,7 @@ export function QuickSearchTrigger() {
     >
       <Search className="w-4 h-4" />
       <span className="flex-1 text-left">Suchen</span>
-      <kbd className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[#2a2a2a] rounded text-[10px] text-zinc-500">
+      <kbd className="flex items-center gap-0.5 px-1.5 py-0.5 bg-surface-container-highest rounded text-[10px] text-zinc-500">
         <Command className="w-2.5 h-2.5" />K
       </kbd>
     </button>

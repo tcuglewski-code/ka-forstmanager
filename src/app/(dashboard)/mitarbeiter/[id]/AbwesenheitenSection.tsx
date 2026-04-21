@@ -86,7 +86,7 @@ export function AbwesenheitenSection({ mitarbeiterId, initialAbwesenheiten }: Pr
       ) : (
         <div className="space-y-2">
           {abwesenheiten.map((a) => (
-            <div key={a.id} className="flex items-center justify-between py-2 border-b border-[#2a2a2a] last:border-0">
+            <div key={a.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
               <div>
                 <p className="text-sm text-white">{typLabel[a.typ] ?? a.typ}</p>
                 <p className="text-xs text-zinc-500">
@@ -115,7 +115,7 @@ export function AbwesenheitenSection({ mitarbeiterId, initialAbwesenheiten }: Pr
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl w-full max-w-sm p-6">
+          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-sm p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-bold text-white">Abwesenheit eintragen</h3>
               <button onClick={() => setShowModal(false)} className="text-zinc-500 hover:text-white">

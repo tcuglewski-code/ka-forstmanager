@@ -156,10 +156,10 @@ export function MaterialTab({ auftragId }: MaterialTabProps) {
       </div>
 
       {/* Reservierungsliste */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-[#2a2a2a]">
+            <tr className="border-b border-border">
               <th className="text-left px-4 py-3 text-zinc-500 font-medium">Artikel</th>
               <th className="text-right px-4 py-3 text-zinc-500 font-medium">Menge</th>
               <th className="text-center px-4 py-3 text-zinc-500 font-medium">Status</th>

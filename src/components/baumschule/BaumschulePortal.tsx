@@ -62,7 +62,7 @@ export function BaumschulePortal({ baumschule, sortiment, ernteanfragen }: Props
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
       {/* Header */}
-      <header className="border-b border-zinc-800 bg-zinc-900/50">
+      <header className="border-b border-border bg-zinc-900/50">
         <div className="max-w-6xl mx-auto px-4 py-5">
           <div className="flex items-center gap-3">
             <span className="text-3xl">🌲</span>
@@ -77,7 +77,7 @@ export function BaumschulePortal({ baumschule, sortiment, ernteanfragen }: Props
       </header>
 
       {/* Tabs */}
-      <div className="border-b border-zinc-800">
+      <div className="border-b border-border">
         <div className="max-w-6xl mx-auto px-4">
           <nav className="flex gap-1">
             {tabs

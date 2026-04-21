@@ -160,7 +160,7 @@ export default function EinstellungenPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-[#161616] border border-[#2a2a2a] rounded-lg p-1 w-fit flex-wrap">
+      <div className="flex gap-1 mb-6 bg-[#161616] border border-border rounded-lg p-1 w-fit flex-wrap">
         {([
           { key: "benutzer", label: "Benutzer", icon: Users },
           { key: "firma", label: "Firma", icon: Building2 },
@@ -170,7 +170,7 @@ export default function EinstellungenPage() {
         ] as const).map((t) => {
           const Icon = t.icon
           return (
-            <button key={t.key} onClick={() => setTab(t.key)} className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${tab === t.key ? "bg-[#2C3A1C] text-emerald-400" : "text-zinc-400 hover:text-white"}`}>
+            <button key={t.key} onClick={() => setTab(t.key)} className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${tab === t.key ? "bg-forest text-emerald-400" : "text-zinc-400 hover:text-white"}`}>
               <Icon className="w-4 h-4" /> {t.label}
             </button>
           )
@@ -188,10 +188,10 @@ export default function EinstellungenPage() {
           {loading ? (
             <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
           ) : (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-x-auto">
+            <div className="bg-[#161616] border border-border rounded-xl overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[#2a2a2a]">
+                  <tr className="border-b border-border">
                     <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Name</th>
                     <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">E-Mail</th>
                     <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Rolle</th>
@@ -199,7 +199,7 @@ export default function EinstellungenPage() {
                     <th className="px-6 py-3"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#2a2a2a]">
+                <tbody className="divide-y divide-border">
                   {users.length === 0 ? (
                     <tr><td colSpan={5} className="px-6 py-12 text-center text-zinc-600">Keine Benutzer</td></tr>
                   ) : users.map((u) => (
@@ -234,7 +234,7 @@ export default function EinstellungenPage() {
           {configLoading ? (
             <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
           ) : (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 space-y-4">
+            <div className="bg-[#161616] border border-border rounded-xl p-6 space-y-4">
               <div>
                 <label className="block text-xs text-zinc-400 mb-1">Firmenname</label>
                 <input
@@ -279,7 +279,7 @@ export default function EinstellungenPage() {
               </div>
 
               {/* Kalkulations-Einstellungen (Sprint Q + FQ B2) */}
-              <div className="space-y-4 mt-6 pt-4 border-t border-[#2a2a2a]">
+              <div className="space-y-4 mt-6 pt-4 border-t border-border">
                 <h3 className="text-sm font-semibold text-zinc-300">Kalkulations-Einstellungen</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -290,7 +290,7 @@ export default function EinstellungenPage() {
                       min="0"
                       value={config.preis_pro_ha ?? "1800"}
                       onChange={(e) => setConfig(prev => ({ ...prev, preis_pro_ha: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white"
                     />
                   </div>
                   <div>
@@ -301,7 +301,7 @@ export default function EinstellungenPage() {
                       min="0"
                       value={config.standard_stundenlohn ?? "12"}
                       onChange={(e) => setConfig(prev => ({ ...prev, standard_stundenlohn: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white"
                     />
                   </div>
                   <div>
@@ -312,7 +312,7 @@ export default function EinstellungenPage() {
                       min="0"
                       value={config.vollkosten_pro_stunde ?? "43.50"}
                       onChange={(e) => setConfig(prev => ({ ...prev, vollkosten_pro_stunde: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white"
                     />
                   </div>
                   {/* Sprint FQ (B2): Preis pro Baum + MwSt */}
@@ -324,7 +324,7 @@ export default function EinstellungenPage() {
                       min="0"
                       value={config.preis_pro_baum_default ?? "2.50"}
                       onChange={(e) => setConfig(prev => ({ ...prev, preis_pro_baum_default: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white"
                     />
                   </div>
                   <div>
@@ -336,7 +336,7 @@ export default function EinstellungenPage() {
                       max="100"
                       value={config.mwst_satz ?? "19"}
                       onChange={(e) => setConfig(prev => ({ ...prev, mwst_satz: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white"
                     />
                   </div>
                   <div>
@@ -347,7 +347,7 @@ export default function EinstellungenPage() {
                       min="0"
                       value={config.maschinenzuschlag_kunde ?? "6.00"}
                       onChange={(e) => setConfig(prev => ({ ...prev, maschinenzuschlag_kunde: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white"
                     />
                   </div>
                   <div>
@@ -358,7 +358,7 @@ export default function EinstellungenPage() {
                       min="0"
                       value={config.maschinenbonus_mitarbeiter ?? "1.00"}
                       onChange={(e) => setConfig(prev => ({ ...prev, maschinenbonus_mitarbeiter: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white"
                     />
                   </div>
                 </div>
@@ -366,7 +366,7 @@ export default function EinstellungenPage() {
               </div>
 
               {/* Notfall-Kontakte für App (BUG-001) */}
-              <div className="space-y-4 mt-6 pt-4 border-t border-[#2a2a2a]">
+              <div className="space-y-4 mt-6 pt-4 border-t border-border">
                 <h3 className="text-sm font-semibold text-zinc-300">Notfall-Kontakte (App)</h3>
                 <p className="text-xs text-zinc-500">Diese Nummern erscheinen in der Mitarbeiter-App unter "Notfall"</p>
                 <div className="grid grid-cols-2 gap-4">
@@ -376,7 +376,7 @@ export default function EinstellungenPage() {
                       value={config.notfall_buero_name ?? "Koch Aufforstung GmbH"}
                       onChange={(e) => setConfig(prev => ({ ...prev, notfall_buero_name: e.target.value }))}
                       placeholder="z.B. Koch Aufforstung GmbH"
-                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white"
                     />
                   </div>
                   <div>
@@ -386,7 +386,7 @@ export default function EinstellungenPage() {
                       value={config.notfall_buero_telefon ?? ""}
                       onChange={(e) => setConfig(prev => ({ ...prev, notfall_buero_telefon: e.target.value }))}
                       placeholder="+49 6052 ..."
-                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white"
                     />
                   </div>
                   <div>
@@ -395,7 +395,7 @@ export default function EinstellungenPage() {
                       value={config.notfall_hotline_name ?? ""}
                       onChange={(e) => setConfig(prev => ({ ...prev, notfall_hotline_name: e.target.value }))}
                       placeholder="z.B. Tomek Cuglewski (GF)"
-                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white"
                     />
                   </div>
                   <div>
@@ -405,7 +405,7 @@ export default function EinstellungenPage() {
                       value={config.notfall_hotline_telefon ?? ""}
                       onChange={(e) => setConfig(prev => ({ ...prev, notfall_hotline_telefon: e.target.value }))}
                       placeholder="+49 171 ..."
-                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white"
                     />
                   </div>
                 </div>
@@ -428,7 +428,7 @@ export default function EinstellungenPage() {
         <div className="space-y-4">
           <BillingPortalCard />
           
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#161616] border border-border rounded-xl p-6">
             <h3 className="font-semibold text-white mb-3">Abrechnungsdetails</h3>
             <p className="text-sm text-zinc-400 mb-4">
               Ihr aktuelles Abonnement und Abrechnungsinformationen.
@@ -472,7 +472,7 @@ export default function EinstellungenPage() {
       {/* System Tab */}
       {tab === "system" && (
         <div className="space-y-4">
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#161616] border border-border rounded-xl p-6">
             <h3 className="font-semibold text-white mb-3">App-API</h3>
             <p className="text-sm text-zinc-400 mb-4">REST API für die mobile App (ka-app). JWT-Token basierte Authentifizierung.</p>
             <div className="space-y-2">
@@ -494,7 +494,7 @@ export default function EinstellungenPage() {
               </div>
             </div>
           </div>
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#161616] border border-border rounded-xl p-6">
             <h3 className="font-semibold text-white mb-3">Webhooks</h3>
             <p className="text-sm text-zinc-400">Webhook-Integration für externe Systeme (z.B. ERP, Buchhaltung).</p>
             <div className="mt-4 p-4 bg-[#111] rounded-lg border border-[#333] text-sm text-zinc-600">
@@ -507,7 +507,7 @@ export default function EinstellungenPage() {
       {/* Create User Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl w-full max-w-md p-6">
+          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6">
             <h2 className="text-lg font-bold text-white mb-4">Benutzer anlegen</h2>
             <div className="space-y-4">
               <div>
@@ -547,7 +547,7 @@ export default function EinstellungenPage() {
       {/* Edit User Modal */}
       {editUser && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl w-full max-w-md p-6">
+          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6">
             <h2 className="text-lg font-bold text-white mb-4">Benutzer bearbeiten</h2>
             <div className="space-y-4">
               <div>

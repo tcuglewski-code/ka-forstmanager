@@ -53,7 +53,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
   // Nur für abgeschlossene Aufträge anzeigen
   if (auftragStatus !== "abgeschlossen") {
     return (
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 text-center">
+      <div className="bg-[#161616] border border-border rounded-xl p-6 text-center">
         <FileText className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
         <p className="text-zinc-400">Bewertungs-Workflow verfügbar nach Auftragsabschluss</p>
         <p className="text-zinc-600 text-sm mt-1">Status muss "abgeschlossen" sein</p>
@@ -127,16 +127,16 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
 
   if (loading) {
     return (
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 flex items-center justify-center">
-        <Loader2 className="w-6 h-6 text-[#C5A55A] animate-spin" />
+      <div className="bg-[#161616] border border-border rounded-xl p-6 flex items-center justify-center">
+        <Loader2 className="w-6 h-6 text-gold animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+    <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-[#2a2a2a]">
+      <div className="p-4 border-b border-border">
         <h3 className="text-sm font-medium text-white flex items-center gap-2">
           <FileText className="w-4 h-4" />
           Bewertung & Content
@@ -144,7 +144,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
       </div>
 
       {/* Workflow-Stepper */}
-      <div className="p-4 border-b border-[#2a2a2a]">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
           {STEPS.map((step, idx) => {
             const StepIcon = step.icon
@@ -155,14 +155,14 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
               <div key={step.key} className="flex items-center">
                 <div className={`flex flex-col items-center ${idx > 0 ? "flex-1" : ""}`}>
                   {idx > 0 && (
-                    <div className={`h-0.5 w-full mb-2 ${isCompleted ? "bg-[#C5A55A]" : "bg-[#2a2a2a]"}`} />
+                    <div className={`h-0.5 w-full mb-2 ${isCompleted ? "bg-gold" : "bg-surface-container-highest"}`} />
                   )}
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                     isCompleted 
-                      ? "bg-[#C5A55A] text-[#0f0f0f]" 
+                      ? "bg-gold text-[#0f0f0f]" 
                       : isCurrent 
-                        ? "bg-[#C5A55A]/20 border-2 border-[#C5A55A] text-[#C5A55A]"
-                        : "bg-[#2a2a2a] text-zinc-500"
+                        ? "bg-gold/20 border-2 border-gold text-gold"
+                        : "bg-surface-container-highest text-zinc-500"
                   }`}>
                     {isCompleted ? <Check className="w-4 h-4" /> : <StepIcon className="w-4 h-4" />}
                   </div>
@@ -210,7 +210,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
                 <button
                   onClick={() => executeAction("einwilligung_anfragen")}
                   disabled={actionLoading}
-                  className="flex items-center gap-2 px-4 py-2 bg-[#C5A55A] text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 bg-gold text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors disabled:opacity-50"
                 >
                   {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                   E-Mail senden
@@ -218,7 +218,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
                 <button
                   onClick={() => executeAction("einwilligung_setzen", { status: "ERTEILT" })}
                   disabled={actionLoading}
-                  className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg text-sm hover:bg-[#3a3a3a] transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg text-sm hover:bg-[#3a3a3a] transition-colors"
                 >
                   <Check className="w-4 h-4" />
                   Mündlich erteilt
@@ -245,7 +245,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
             <button
               onClick={() => executeAction("content_generieren")}
               disabled={actionLoading}
-              className="flex items-center gap-2 px-4 py-2 bg-[#C5A55A] text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 bg-gold text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors disabled:opacity-50"
             >
               {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
               Content mit KI generieren
@@ -263,7 +263,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
                 <textarea
                   value={editedContent || content?.contentVorschlag || ""}
                   onChange={(e) => setEditedContent(e.target.value)}
-                  className="w-full h-64 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-3 text-sm text-zinc-300 font-mono resize-none"
+                  className="w-full h-64 bg-[#0f0f0f] border border-border rounded-lg p-3 text-sm text-zinc-300 font-mono resize-none"
                 />
                 <div className="flex gap-3">
                   <button
@@ -272,7 +272,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
                       executeAction("freigeben", { contentFinal: editedContent })
                     }}
                     disabled={actionLoading}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#C5A55A] text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-gold text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors"
                   >
                     <Check className="w-4 h-4" />
                     Speichern & Freigeben
@@ -287,7 +287,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
               </div>
             ) : (
               <>
-                <div className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-4 max-h-64 overflow-y-auto">
+                <div className="bg-[#0f0f0f] border border-border rounded-lg p-4 max-h-64 overflow-y-auto">
                   <div className="prose prose-sm prose-invert">
                     {content?.contentVorschlag?.split("\n").map((line, i) => (
                       <p key={i} className="text-sm text-zinc-300">{line}</p>
@@ -298,7 +298,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
                   <button
                     onClick={() => executeAction("freigeben")}
                     disabled={actionLoading}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#C5A55A] text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-gold text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors"
                   >
                     {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                     Freigeben
@@ -308,7 +308,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
                       setEditedContent(content?.contentVorschlag || "")
                       setEditMode(true)
                     }}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg text-sm hover:bg-[#3a3a3a] transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg text-sm hover:bg-[#3a3a3a] transition-colors"
                   >
                     <Edit3 className="w-4 h-4" />
                     Bearbeiten
@@ -316,7 +316,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
                   <button
                     onClick={() => executeAction("content_generieren")}
                     disabled={actionLoading}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg text-sm hover:bg-[#3a3a3a] transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg text-sm hover:bg-[#3a3a3a] transition-colors"
                   >
                     <Sparkles className="w-4 h-4" />
                     Neu generieren
@@ -338,7 +338,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
             <button
               onClick={() => executeAction("veroeffentlichen")}
               disabled={actionLoading}
-              className="flex items-center gap-2 px-4 py-2 bg-[#C5A55A] text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 bg-gold text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors disabled:opacity-50"
             >
               {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
               In WordPress veröffentlichen (Draft)
@@ -365,7 +365,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
                 href={content.wpPostUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg text-sm hover:bg-[#3a3a3a] transition-colors w-fit"
+                className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg text-sm hover:bg-[#3a3a3a] transition-colors w-fit"
               >
                 <ExternalLink className="w-4 h-4" />
                 In WordPress öffnen

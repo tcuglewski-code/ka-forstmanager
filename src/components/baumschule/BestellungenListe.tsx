@@ -81,7 +81,7 @@ export function BestellungenListe({ baumschuleId }: Props) {
             const config = STATUS_CONFIG[a.status] || { label: a.status, color: "bg-zinc-700 text-zinc-400" }
 
             return (
-              <div key={a.id} className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-4">
+              <div key={a.id} className="bg-zinc-800/50 border border-border rounded-lg p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3">

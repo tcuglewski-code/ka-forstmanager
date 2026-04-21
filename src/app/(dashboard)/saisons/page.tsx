@@ -159,7 +159,7 @@ export default function SaisonsPage() {
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2.5 bg-[#2C3A1C] hover:bg-[#3a4d26] text-white text-sm font-medium rounded-lg transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 bg-forest hover:bg-[#3a4d26] text-white text-sm font-medium rounded-lg transition-all"
         >
           <Plus className="w-4 h-4" />
           Neue Saison
@@ -172,7 +172,7 @@ export default function SaisonsPage() {
           <Loader2 className="w-6 h-6 animate-spin text-emerald-400" />
         </div>
       ) : saisons.length === 0 ? (
-        <div className="text-center py-16 bg-[#161616] border border-[#2a2a2a] rounded-xl">
+        <div className="text-center py-16 bg-[#161616] border border-border rounded-xl">
           <Sprout className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
           <p className="text-zinc-400 font-medium">Noch keine Saisons angelegt</p>
           <p className="text-zinc-600 text-sm mt-1">Erstellen Sie die erste Saison</p>
@@ -184,7 +184,7 @@ export default function SaisonsPage() {
             <Link
               key={s.id}
               href={`/saisons/${s.id}`}
-              className="block bg-[#161616] border border-[#2a2a2a] rounded-xl p-5 hover:border-emerald-700/50 hover:bg-[#1a1a1a] transition-all cursor-pointer"
+              className="block bg-[#161616] border border-border rounded-xl p-5 hover:border-emerald-700/50 hover:bg-[#1a1a1a] transition-all cursor-pointer"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -224,10 +224,10 @@ export default function SaisonsPage() {
               )}
 
               {/* Buttons mit stopPropagation damit Klick nicht zur Detailseite navigiert */}
-              <div className="flex flex-wrap gap-2 pt-2 border-t border-[#2a2a2a]">
+              <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
                 <button
                   onClick={(e) => openEdit(e, s)}
-                  className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-white transition-colors px-2 py-1 rounded hover:bg-[#2a2a2a]"
+                  className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-white transition-colors px-2 py-1 rounded hover:bg-surface-container-highest"
                 >
                   <Pencil className="w-3 h-3" />
                   Bearbeiten
@@ -259,8 +259,8 @@ export default function SaisonsPage() {
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setModalOpen(false)}
           />
-          <div className="relative bg-[#161616] border border-[#2a2a2a] rounded-2xl w-full max-w-lg shadow-2xl">
-            <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
+          <div className="relative bg-[#161616] border border-border rounded-2xl w-full max-w-lg shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-border">
               <h2 className="text-lg font-semibold text-white">
                 {editItem ? "Saison bearbeiten" : "Neue Saison"}
               </h2>
@@ -283,7 +283,7 @@ export default function SaisonsPage() {
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                   placeholder="z.B. Pflanzung Frühjahr 2026"
-                  className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                  className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
                 />
               </div>
 
@@ -293,7 +293,7 @@ export default function SaisonsPage() {
                   <select
                     value={form.typ}
                     onChange={(e) => setForm((f) => ({ ...f, typ: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
                   >
                     <option value="pflanzung">Pflanzung</option>
                     <option value="ernte">Ernte</option>
@@ -306,7 +306,7 @@ export default function SaisonsPage() {
                   <select
                     value={form.status}
                     onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
                   >
                     <option value="planung">Planung</option>
                     <option value="aktiv">Aktiv</option>
@@ -322,7 +322,7 @@ export default function SaisonsPage() {
                     type="date"
                     value={form.startDatum}
                     onChange={(e) => setForm((f) => ({ ...f, startDatum: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
                   />
                 </div>
                 <div>
@@ -331,7 +331,7 @@ export default function SaisonsPage() {
                     type="date"
                     value={form.endDatum}
                     onChange={(e) => setForm((f) => ({ ...f, endDatum: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
                   />
                 </div>
               </div>
@@ -344,7 +344,7 @@ export default function SaisonsPage() {
                   rows={2}
                   value={form.beschreibung}
                   onChange={(e) => setForm((f) => ({ ...f, beschreibung: e.target.value }))}
-                  className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm resize-none"
+                  className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm resize-none"
                 />
               </div>
 
@@ -357,7 +357,7 @@ export default function SaisonsPage() {
                   value={form.ziel}
                   onChange={(e) => setForm((f) => ({ ...f, ziel: e.target.value }))}
                   placeholder="z.B. 50.000 Pflanzen"
-                  className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                  className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
                 />
               </div>
 
@@ -365,14 +365,14 @@ export default function SaisonsPage() {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="flex-1 py-2.5 px-4 bg-[#0f0f0f] border border-[#2a2a2a] text-zinc-400 hover:text-white rounded-lg text-sm transition-all"
+                  className="flex-1 py-2.5 px-4 bg-[#0f0f0f] border border-border text-zinc-400 hover:text-white rounded-lg text-sm transition-all"
                 >
                   Abbrechen
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 py-2.5 px-4 bg-[#2C3A1C] hover:bg-[#3a4d26] text-white rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+                  className="flex-1 py-2.5 px-4 bg-forest hover:bg-[#3a4d26] text-white rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                 >
                   {saving ? (
                     <>

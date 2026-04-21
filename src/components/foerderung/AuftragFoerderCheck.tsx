@@ -190,7 +190,7 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
             onChange={(e) => setFrage(e.target.value)}
             placeholder="z.B. Kalamitätsfläche nach Borkenkäfer"
             rows={2}
-            className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-300 placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 resize-none"
+            className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 resize-none"
           />
 
           <label className="flex items-center gap-2 text-sm text-zinc-400 cursor-pointer hover:text-zinc-300 transition-colors">
@@ -198,7 +198,7 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
               type="checkbox"
               checked={kalamitaet}
               onChange={(e) => setKalamitaet(e.target.checked)}
-              className="w-4 h-4 rounded border-[#2a2a2a] bg-[#0f0f0f] text-emerald-500 focus:ring-emerald-500/50 focus:ring-offset-0"
+              className="w-4 h-4 rounded border-border bg-[#0f0f0f] text-emerald-500 focus:ring-emerald-500/50 focus:ring-offset-0"
             />
             Kalamität / Schaden
           </label>
@@ -260,7 +260,7 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
                 {result.programme.map((p) => (
                   <div
                     key={p.id}
-                    className="flex items-start justify-between gap-3 p-3 bg-[#0f0f0f] rounded-lg border border-[#2a2a2a]"
+                    className="flex items-start justify-between gap-3 p-3 bg-[#0f0f0f] rounded-lg border border-border"
                   >
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-white font-medium truncate">{p.name}</p>
@@ -351,7 +351,7 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
                 setFrage("")
                 setKalamitaet(false)
               }}
-              className="px-4 py-2.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-zinc-400 text-sm hover:bg-[#252525] transition-all"
+              className="px-4 py-2.5 bg-[#1e1e1e] border border-border rounded-lg text-zinc-400 text-sm hover:bg-[#252525] transition-all"
             >
               Neue Prüfung
             </button>

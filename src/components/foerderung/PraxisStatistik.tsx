@@ -31,7 +31,7 @@ export function PraxisStatistik() {
 
   if (loading || statistiken.length === 0) {
     return (
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+      <div className="bg-[#161616] border border-border rounded-xl p-4">
         <div className="flex items-center gap-2 mb-2">
           <TrendingUp className="w-4 h-4 text-emerald-400" />
           <h3 className="text-sm font-semibold text-white">Betriebserfahrung</h3>
@@ -44,7 +44,7 @@ export function PraxisStatistik() {
   }
 
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+    <div className="bg-[#161616] border border-border rounded-xl p-4">
       <div className="flex items-center gap-2 mb-3">
         <div className="p-1.5 bg-emerald-500/15 rounded-lg">
           <TrendingUp className="w-4 h-4 text-emerald-400" />

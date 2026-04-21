@@ -255,7 +255,7 @@ export default function PreislisteClient({ lieferant }: Props) {
       <div className="flex gap-3 flex-wrap">
         <button
           onClick={() => setShowAddForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[#C5A55A] text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-gold text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors"
         >
           <Plus className="w-4 h-4" />
           Artikel hinzufügen
@@ -263,7 +263,7 @@ export default function PreislisteClient({ lieferant }: Props) {
         
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg text-sm hover:bg-[#3a3a3a] transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg text-sm hover:bg-[#3a3a3a] transition-colors"
         >
           <Upload className="w-4 h-4" />
           CSV importieren
@@ -279,7 +279,7 @@ export default function PreislisteClient({ lieferant }: Props) {
 
       {/* CSV-Import Vorschau */}
       {csvPreview && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+        <div className="bg-[#161616] border border-border rounded-xl p-4">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-white flex items-center gap-2">
               <FileSpreadsheet className="w-4 h-4" />
@@ -287,7 +287,7 @@ export default function PreislisteClient({ lieferant }: Props) {
             </h3>
             <button
               onClick={() => { setCsvPreview(null); setCsvMapping({}) }}
-              className="p-1 hover:bg-[#2a2a2a] rounded"
+              className="p-1 hover:bg-surface-container-highest rounded"
             >
               <X className="w-4 h-4 text-zinc-400" />
             </button>
@@ -314,7 +314,7 @@ export default function PreislisteClient({ lieferant }: Props) {
                       })
                     }
                   }}
-                  className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded px-2 py-1 text-xs text-white"
+                  className="w-full bg-[#0f0f0f] border border-border rounded px-2 py-1 text-xs text-white"
                 >
                   <option value="">-- ignorieren --</option>
                   <option value="name">Artikelname</option>
@@ -331,7 +331,7 @@ export default function PreislisteClient({ lieferant }: Props) {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-[#2a2a2a]">
+                <tr className="border-b border-border">
                   {csvPreview[0].map((h, i) => (
                     <th key={i} className="text-left py-2 px-2 text-zinc-400">{h || `Spalte ${i + 1}`}</th>
                   ))}
@@ -353,7 +353,7 @@ export default function PreislisteClient({ lieferant }: Props) {
             <button
               onClick={handleCSVImport}
               disabled={csvImporting}
-              className="flex items-center gap-2 px-4 py-2 bg-[#C5A55A] text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 bg-gold text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors disabled:opacity-50"
             >
               {csvImporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
               Import starten
@@ -364,7 +364,7 @@ export default function PreislisteClient({ lieferant }: Props) {
 
       {/* Manuelles Hinzufügen */}
       {showAddForm && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+        <div className="bg-[#161616] border border-border rounded-xl p-4">
           <h3 className="text-sm font-medium text-white mb-4">Neuen Artikel hinzufügen</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -374,7 +374,7 @@ export default function PreislisteClient({ lieferant }: Props) {
                 value={neuerArtikel.name}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, name: e.target.value }))}
                 placeholder="z.B. Eiche Traubeneiche 1+1"
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
             <div>
@@ -384,7 +384,7 @@ export default function PreislisteClient({ lieferant }: Props) {
                 value={neuerArtikel.baumartName}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, baumartName: e.target.value }))}
                 placeholder="z.B. Quercus petraea"
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
             <div>
@@ -392,7 +392,7 @@ export default function PreislisteClient({ lieferant }: Props) {
               <select
                 value={neuerArtikel.einheit}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, einheit: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
               >
                 <option value="Stück">Stück</option>
                 <option value="kg">kg</option>
@@ -407,7 +407,7 @@ export default function PreislisteClient({ lieferant }: Props) {
                 value={neuerArtikel.preis}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, preis: e.target.value }))}
                 placeholder="0,00"
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
             <div>
@@ -415,7 +415,7 @@ export default function PreislisteClient({ lieferant }: Props) {
               <select
                 value={neuerArtikel.verfuegbarkeit}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, verfuegbarkeit: e.target.value as "vorhanden" | "ausverkauft" | "auf_anfrage" }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
               >
                 <option value="vorhanden">Vorhanden</option>
                 <option value="ausverkauft">Ausverkauft</option>
@@ -428,7 +428,7 @@ export default function PreislisteClient({ lieferant }: Props) {
                 type="date"
                 value={neuerArtikel.gueltigBis}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, gueltigBis: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
           </div>
@@ -442,7 +442,7 @@ export default function PreislisteClient({ lieferant }: Props) {
             <button
               onClick={handleAddArtikel}
               disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 bg-[#C5A55A] text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 bg-gold text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#d4b86b] transition-colors disabled:opacity-50"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               Speichern
@@ -452,8 +452,8 @@ export default function PreislisteClient({ lieferant }: Props) {
       )}
 
       {/* Artikel-Liste */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-        <div className="p-4 border-b border-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="p-4 border-b border-border">
           <h3 className="text-sm font-medium text-white">
             {artikel.length} Artikel in der Preisliste
           </h3>
@@ -488,7 +488,7 @@ export default function PreislisteClient({ lieferant }: Props) {
                 </div>
                 
                 <div className="text-right">
-                  <p className="text-sm font-medium text-[#C5A55A]">
+                  <p className="text-sm font-medium text-gold">
                     {a.lieferantPreis?.toLocaleString("de-DE", { style: "currency", currency: "EUR" }) || 
                      a.einkaufspreis?.toLocaleString("de-DE", { style: "currency", currency: "EUR" }) ||
                      "–"}

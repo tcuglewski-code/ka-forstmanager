@@ -74,7 +74,7 @@ export function SyncStatusBadge({
       </div>
 
       {/* Tooltip */}
-      <div className="absolute z-50 bottom-full left-0 mb-2 w-64 p-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+      <div className="absolute z-50 bottom-full left-0 mb-2 w-64 p-3 bg-[#1a1a1a] border border-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
         <p className="text-xs text-zinc-400 mb-2">{status.description}</p>
         <div className="space-y-1 text-xs">
           {wpSyncedAt && (

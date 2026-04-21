@@ -148,7 +148,7 @@ function VertragPageInner() {
         <div className="no-print flex items-center gap-4 mb-6">
           <button
             onClick={() => router.back()}
-            className="p-2 rounded-lg border border-[#2a2a2a] hover:border-zinc-500 text-zinc-500 hover:text-zinc-300 transition-all"
+            className="p-2 rounded-lg border border-border hover:border-zinc-500 text-zinc-500 hover:text-zinc-300 transition-all"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
@@ -159,7 +159,7 @@ function VertragPageInner() {
           <div className="flex-1" />
           <button
             onClick={() => window.print()}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#2a2a2a] hover:border-blue-500 text-zinc-300 hover:text-blue-400 transition-all text-sm"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:border-blue-500 text-zinc-300 hover:text-blue-400 transition-all text-sm"
           >
             <Printer className="w-4 h-4" />
             Drucken / PDF
@@ -192,7 +192,7 @@ function VertragPageInner() {
                 className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${
                   aktivesForstamt === fa
                     ? "bg-emerald-600 border-emerald-500 text-white"
-                    : "bg-[#1e1e1e] border-[#2a2a2a] text-zinc-400 hover:border-zinc-500"
+                    : "bg-[#1e1e1e] border-border text-zinc-400 hover:border-zinc-500"
                 }`}
               >
                 {fa}
@@ -207,7 +207,7 @@ function VertragPageInner() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Formular */}
-          <div className="no-print lg:col-span-1 space-y-4 bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+          <div className="no-print lg:col-span-1 space-y-4 bg-[#161616] border border-border rounded-xl p-5">
             <h2 className="text-base font-semibold text-white mb-4">Vertragsparameter</h2>
 
             <div className="space-y-3">
@@ -217,7 +217,7 @@ function VertragPageInner() {
                   type="number"
                   value={erntejahr}
                   onChange={(e) => setErntejahr(Number(e.target.value))}
-                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <div>
@@ -228,7 +228,7 @@ function VertragPageInner() {
                   max={53}
                   value={ernteKw}
                   onChange={(e) => setErnteKw(Number(e.target.value))}
-                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <div>
@@ -239,7 +239,7 @@ function VertragPageInner() {
                   min={0}
                   value={entschaedigungKg}
                   onChange={(e) => setEntschaedigungKg(Number(e.target.value))}
-                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <div className="col-span-2">
@@ -253,18 +253,18 @@ function VertragPageInner() {
                     setVpName(v.name); setVpStrasse(v.strasse); setVpPlz(v.plz); setVpOrt(v.ort)
                     setOrtVertragspartei(v.ort)
                   }}
-                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 mb-2"
+                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 mb-2"
                 >
                   {VP_VORLAGEN.map((v, i) => <option key={i} value={i}>{v.label}</option>)}
                 </select>
                 {/* Manuelle Eingabe wenn "Andere" */}
                 {vpVorlageIdx === VP_VORLAGEN.length - 1 && (
                   <div className="grid grid-cols-2 gap-2 mt-1">
-                    <input placeholder="Firmenname" value={vpName} onChange={e => setVpName(e.target.value)} className="col-span-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
-                    <input placeholder="Straße" value={vpStrasse} onChange={e => setVpStrasse(e.target.value)} className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
+                    <input placeholder="Firmenname" value={vpName} onChange={e => setVpName(e.target.value)} className="col-span-2 bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
+                    <input placeholder="Straße" value={vpStrasse} onChange={e => setVpStrasse(e.target.value)} className="bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
                     <div className="flex gap-2">
-                      <input placeholder="PLZ" value={vpPlz} onChange={e => setVpPlz(e.target.value)} className="w-24 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
-                      <input placeholder="Ort" value={vpOrt} onChange={e => { setVpOrt(e.target.value); setOrtVertragspartei(e.target.value) }} className="flex-1 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
+                      <input placeholder="PLZ" value={vpPlz} onChange={e => setVpPlz(e.target.value)} className="w-24 bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
+                      <input placeholder="Ort" value={vpOrt} onChange={e => { setVpOrt(e.target.value); setOrtVertragspartei(e.target.value) }} className="flex-1 bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
                     </div>
                   </div>
                 )}
@@ -275,7 +275,7 @@ function VertragPageInner() {
                   type="text"
                   value={ortVertragspartei}
                   onChange={(e) => setOrtVertragspartei(e.target.value)}
-                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <div>
@@ -284,7 +284,7 @@ function VertragPageInner() {
                   type="text"
                   value={ortWaldbesitzer}
                   onChange={(e) => setOrtWaldbesitzer(e.target.value)}
-                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <div>
@@ -294,7 +294,7 @@ function VertragPageInner() {
                   value={datum}
                   onChange={(e) => setDatum(e.target.value)}
                   placeholder="z.B. 27.03.2026"
-                  className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
                 />
               </div>
             </div>

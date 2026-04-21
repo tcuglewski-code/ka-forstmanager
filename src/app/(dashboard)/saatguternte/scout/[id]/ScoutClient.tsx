@@ -92,7 +92,7 @@ export function ScoutClient({ flaeche }: { flaeche: Flaeche }) {
   return (
     <div className="min-h-screen bg-[#0f0f0f] flex flex-col" style={{ maxWidth: 480, margin: "0 auto" }}>
       {/* Top Bar */}
-      <div className="bg-[#161616] border-b border-[#2a2a2a] px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
+      <div className="bg-[#161616] border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
         <Link href={`/saatguternte/register/${flaeche.id}`} className="text-zinc-500 hover:text-zinc-300">
           <ArrowLeft className="w-5 h-5" />
         </Link>
@@ -114,7 +114,7 @@ export function ScoutClient({ flaeche }: { flaeche: Flaeche }) {
       </div>
 
       {/* Flächen-Info */}
-      <div className="bg-[#1a1a1a] border-b border-[#2a2a2a] px-4 py-4">
+      <div className="bg-[#1a1a1a] border-b border-border px-4 py-4">
         <div className="grid grid-cols-2 gap-3 text-sm">
           {[
             ["Forstamt", flaeche.forstamt ?? "–"],
@@ -184,14 +184,14 @@ export function ScoutClient({ flaeche }: { flaeche: Flaeche }) {
             onChange={(e) => setNotizen(e.target.value)}
             rows={6}
             placeholder="z.B. Reife des Saatguts, Zugangssituation, Wetterbeobachtung, Besonderheiten..."
-            className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-xl px-4 py-3 text-base text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
+            className="w-full bg-[#1e1e1e] border border-border rounded-xl px-4 py-3 text-base text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
             style={{ fontSize: 16 }}
           />
         </div>
       </div>
 
       {/* Bottom Actions */}
-      <div className="sticky bottom-0 bg-[#161616] border-t border-[#2a2a2a] px-4 py-4 space-y-3">
+      <div className="sticky bottom-0 bg-[#161616] border-t border-border px-4 py-4 space-y-3">
         {/* Toast messages */}
         {saved && (
           <div className="flex items-center gap-2 px-4 py-3 bg-emerald-900/50 border border-emerald-600/30 rounded-xl text-emerald-400 text-sm">

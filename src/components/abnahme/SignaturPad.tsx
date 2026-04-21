@@ -217,8 +217,8 @@ export function SignaturPad({
       <div
         className={`relative border rounded-lg overflow-hidden ${
           disabled
-            ? "border-zinc-700 opacity-60"
-            : "border-[#2a2a2a] hover:border-emerald-500/50"
+            ? "border-border opacity-60"
+            : "border-border hover:border-emerald-500/50"
         } transition-colors`}
       >
         <canvas

@@ -92,8 +92,8 @@ export function GruppeModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md flex flex-col max-h-[85vh]">
-        <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a] shrink-0">
+      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md flex flex-col max-h-[85vh]">
+        <div className="flex items-center justify-between p-6 border-b border-border shrink-0">
           <h2 className="text-lg font-semibold text-white">
             {gruppe?.id ? "Gruppe bearbeiten" : "Neue Gruppe"}
           </h2>
@@ -109,7 +109,7 @@ export function GruppeModal({
               <select
                 value={form.gruppenfuehrerId}
                 onChange={handleFuehrerChange}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
               >
                 <option value="">— keiner —</option>
                 {mitarbeiter.map(m => (
@@ -127,7 +127,7 @@ export function GruppeModal({
                 value={form.name}
                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                 placeholder="z.B. Gruppe Nord"
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
                 required
               />
               {!gruppe?.id && (
@@ -139,7 +139,7 @@ export function GruppeModal({
               <select
                 value={form.saisonId}
                 onChange={e => setForm(f => ({ ...f, saisonId: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
               >
                 <option value="">— keine —</option>
                 {saisons.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -147,11 +147,11 @@ export function GruppeModal({
             </div>
           </div>
 
-          <div className="shrink-0 flex gap-3 p-6 border-t border-[#2a2a2a]">
+          <div className="shrink-0 flex gap-3 p-6 border-t border-border">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white hover:border-zinc-500 transition-all"
+              className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white hover:border-zinc-500 transition-all"
             >
               Abbrechen
             </button>

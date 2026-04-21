@@ -132,11 +132,11 @@ export default function DokumentePage() {
       {loading ? (
         <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
       ) : (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Name</th>
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Typ</th>
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Zuordnung</th>
@@ -145,7 +145,7 @@ export default function DokumentePage() {
                 <th className="px-6 py-3"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#2a2a2a]">
+            <tbody className="divide-y divide-border">
               {dokumente.length === 0 ? (
                 <tr><td colSpan={6} className="px-6 py-12 text-center text-zinc-600">Keine Dokumente</td></tr>
               ) : dokumente.map((d) => (
@@ -183,7 +183,7 @@ export default function DokumentePage() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto">
+          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto">
             <h2 className="text-lg font-bold mb-4" style={{ color: "var(--color-on-surface)" }}>Dokument hochladen</h2>
             <div className="space-y-4">
               <div>

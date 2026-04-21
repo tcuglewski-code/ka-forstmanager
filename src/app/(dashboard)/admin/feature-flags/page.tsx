@@ -60,7 +60,7 @@ function FeatureFlagToggle({
       disabled={loading}
       className={cn(
         "relative w-11 h-6 rounded-full transition-colors",
-        enabled ? "bg-emerald-600" : "bg-[#2a2a2a]",
+        enabled ? "bg-emerald-600" : "bg-surface-container-highest",
         loading && "opacity-50 cursor-not-allowed"
       )}
     >
@@ -159,7 +159,7 @@ export default function FeatureFlagsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#2C3A1C] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-forest flex items-center justify-center">
             <ToggleLeft className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
@@ -171,7 +171,7 @@ export default function FeatureFlagsPage() {
         </div>
         <button
           onClick={loadFlags}
-          className="px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg hover:bg-[#333] flex items-center gap-2"
+          className="px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333] flex items-center gap-2"
         >
           <RefreshCw className="w-4 h-4" />
           Aktualisieren
@@ -193,10 +193,10 @@ export default function FeatureFlagsPage() {
       )}
 
       {/* Flags Table */}
-      <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl overflow-hidden">
+      <div className="bg-[#1a1a1a] border border-border rounded-xl overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-[#2a2a2a]">
+            <tr className="border-b border-border">
               <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">
                 Key
               </th>
@@ -224,7 +224,7 @@ export default function FeatureFlagsPage() {
             {flags.map((flag) => (
               <tr
                 key={flag.id}
-                className="border-b border-[#2a2a2a] last:border-0 hover:bg-[#222]"
+                className="border-b border-border last:border-0 hover:bg-[#222]"
               >
                 <td className="px-4 py-3">
                   <code className="text-sm text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">

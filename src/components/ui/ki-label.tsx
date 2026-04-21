@@ -70,7 +70,7 @@ export function KiOptOutToggle({
       <button
         onClick={() => onToggle(!enabled)}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          enabled ? 'bg-[#2C3A1C]' : 'bg-gray-200'
+          enabled ? 'bg-forest' : 'bg-gray-200'
         }`}
         role="switch"
         aria-checked={enabled}

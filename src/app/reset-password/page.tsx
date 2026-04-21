@@ -58,14 +58,14 @@ function ResetPasswordForm() {
 
   if (!token) {
     return (
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-2xl p-8">
+      <div className="bg-[#161616] border border-border rounded-2xl p-8">
         <h2 className="text-lg font-semibold text-white mb-1">Ungültiger Link</h2>
         <p className="text-sm text-zinc-400 mt-4">
           Der Link zum Zurücksetzen des Passworts ist ungültig oder fehlt.
         </p>
         <a
           href="/forgot-password"
-          className="mt-6 w-full py-2.5 px-4 bg-[#2C3A1C] hover:bg-[#3a4d26] text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2"
+          className="mt-6 w-full py-2.5 px-4 bg-forest hover:bg-[#3a4d26] text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2"
         >
           Neuen Link anfordern
         </a>
@@ -75,7 +75,7 @@ function ResetPasswordForm() {
 
   if (success) {
     return (
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-2xl p-8">
+      <div className="bg-[#161616] border border-border rounded-2xl p-8">
         <div className="flex items-center gap-3 mb-4">
           <CheckCircle className="w-6 h-6 text-emerald-400" />
           <h2 className="text-lg font-semibold text-white">Passwort zurückgesetzt</h2>
@@ -88,7 +88,7 @@ function ResetPasswordForm() {
   }
 
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-2xl p-8">
+    <div className="bg-[#161616] border border-border rounded-2xl p-8">
       <h2 className="text-lg font-semibold text-white mb-1">Neues Passwort vergeben</h2>
       <p className="text-sm text-zinc-500 mb-6">
         Gib dein neues Passwort ein (mindestens 8 Zeichen).
@@ -114,7 +114,7 @@ function ResetPasswordForm() {
             autoComplete="new-password"
             autoFocus
             placeholder="Mindestens 8 Zeichen"
-            className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+            className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
           />
         </div>
 
@@ -130,14 +130,14 @@ function ResetPasswordForm() {
             required
             autoComplete="new-password"
             placeholder="Passwort wiederholen"
-            className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+            className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2.5 px-4 bg-[#2C3A1C] hover:bg-[#3a4d26] text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full py-2.5 px-4 bg-forest hover:bg-[#3a4d26] text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {loading ? (
             <>
@@ -167,7 +167,7 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#2C3A1C] mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-forest mb-4">
             <TreePine className="w-8 h-8 text-emerald-400" />
           </div>
           <h1 className="text-2xl font-bold text-white">ForstManager</h1>
@@ -176,7 +176,7 @@ export default function ResetPasswordPage() {
 
         <Suspense
           fallback={
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-2xl p-8 flex items-center justify-center">
+            <div className="bg-[#161616] border border-border rounded-2xl p-8 flex items-center justify-center">
               <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
             </div>
           }

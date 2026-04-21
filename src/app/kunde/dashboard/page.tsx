@@ -189,7 +189,7 @@ export default async function KundeDashboard() {
                     href={dok.url} 
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#2C3A1C] hover:underline text-sm whitespace-nowrap"
+                    className="text-forest hover:underline text-sm whitespace-nowrap"
                   >
                     Download
                   </a>
@@ -249,7 +249,7 @@ export default async function KundeDashboard() {
                       href={rechnung.pdfUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-sm text-[#2C3A1C] hover:underline"
+                      className="inline-flex items-center gap-1 text-sm text-forest hover:underline"
                     >
                       <span>📥</span> PDF herunterladen
                     </a>
@@ -275,7 +275,7 @@ export default async function KundeDashboard() {
           <div className="space-y-2">
             <a 
               href="mailto:info@koch-aufforstung.de"
-              className="flex items-center gap-3 p-3 bg-[#2C3A1C] text-white rounded-lg hover:bg-[#3d4f29] transition-colors"
+              className="flex items-center gap-3 p-3 bg-forest text-white rounded-lg hover:bg-[#3d4f29] transition-colors"
             >
               <span className="text-xl">✉️</span>
               <div>

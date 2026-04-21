@@ -65,7 +65,7 @@ export function AbnahmeStatus({ auftragId }: AbnahmeStatusProps) {
 
   if (loading) {
     return (
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+      <div className="bg-[#161616] border border-border rounded-xl p-4">
         <p className="text-xs text-zinc-600">Lade Abnahmen...</p>
       </div>
     )
@@ -74,7 +74,7 @@ export function AbnahmeStatus({ auftragId }: AbnahmeStatusProps) {
   // ── Formular-Overlay ──────────────────────────────────────────────────────
   if (formOpen) {
     return (
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+      <div className="bg-[#161616] border border-border rounded-xl p-6">
         <AbnahmeFormular
           auftragId={auftragId}
           abnahmeId={editId}
@@ -87,7 +87,7 @@ export function AbnahmeStatus({ auftragId }: AbnahmeStatusProps) {
 
   // ── Status-Übersicht ──────────────────────────────────────────────────────
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+    <div className="bg-[#161616] border border-border rounded-xl p-5">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-white uppercase tracking-wide flex items-center gap-2">
           <CheckCircle className="w-4 h-4 text-zinc-500" />
@@ -114,7 +114,7 @@ export function AbnahmeStatus({ auftragId }: AbnahmeStatusProps) {
       ) : (
         <div className="space-y-2">
           {abnahmen.map(a => (
-            <div key={a.id} className="flex items-center justify-between p-3 bg-[#0f0f0f] rounded-lg border border-[#2a2a2a] group">
+            <div key={a.id} className="flex items-center justify-between p-3 bg-[#0f0f0f] rounded-lg border border-border group">
               <div className="flex items-center gap-3">
                 <StatusIcon status={a.status} />
                 <div>

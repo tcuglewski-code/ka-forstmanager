@@ -175,9 +175,9 @@ export default function ZipayoButton({
       {/* Payment Modal */}
       {modalOpen && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl w-full max-w-sm overflow-hidden">
+          <div className="bg-[#1a1a1a] border border-border rounded-2xl w-full max-w-sm overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#2a2a2a]">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] rounded-lg flex items-center justify-center">
                   <Smartphone className="w-4 h-4 text-white" />
@@ -310,7 +310,7 @@ export default function ZipayoButton({
             </div>
 
             {/* Footer */}
-            <div className="px-5 py-3 bg-[#111] border-t border-[#2a2a2a] text-center">
+            <div className="px-5 py-3 bg-[#111] border-t border-border text-center">
               <p className="text-xs text-zinc-600">
                 Powered by Zipayo • Sichere Zahlung via Stripe
               </p>

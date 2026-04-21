@@ -169,7 +169,7 @@ function Field({ label, value, className }: { label: string; value?: string | nu
 function FieldFull({ label, value, pre }: { label: string; value?: string | null; pre?: boolean }) {
   if (!value || value.trim() === "") return null
   return (
-    <div className="mt-4 pt-4 border-t border-[#2a2a2a]">
+    <div className="mt-4 pt-4 border-t border-border">
       <span className="text-zinc-500 text-xs block mb-1.5">{label}</span>
       {pre
         ? <pre className="text-zinc-200 text-sm leading-relaxed whitespace-pre-wrap font-sans">{value}</pre>
@@ -187,7 +187,7 @@ function Grid2({ children }: { children: React.ReactNode }) {
 
 function WizardPflanzung({ w }: { w: WizardDaten }) {
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 space-y-4">
+    <div className="bg-[#161616] border border-border rounded-xl p-6 space-y-4">
       <SectionHeading icon={<TreePine className="w-4 h-4" />} label="🌳 Pflanzung – Details" />
 
       {/* Baumarten */}
@@ -218,7 +218,7 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
                 {w.flaechen.length} Fläche{w.flaechen.length > 1 ? "n" : ""}
               </p>
               {(w.flaechen as FlaecheItem[]).map((fl, i) => (
-                <div key={i} className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-3 space-y-1">
+                <div key={i} className="bg-[#0f0f0f] border border-border rounded-lg p-3 space-y-1">
                   <p className="text-xs font-semibold text-zinc-200">
                     Fläche {i + 1} — {fl.ha} ha
                   </p>
@@ -251,7 +251,7 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
 
       {/* Pflanzverband */}
       {(w.pflanzabstand || w.reihenabstand || w.pflanzverband) && (
-        <div className="pt-3 border-t border-[#2a2a2a]">
+        <div className="pt-3 border-t border-border">
           <p className="text-xs text-zinc-500 mb-2 font-medium">Pflanzverband</p>
           <Grid2>
             <Field label="Pflanzabstand" value={w.pflanzabstand} />
@@ -306,7 +306,7 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
 
       {/* Bezugsquelle */}
       {(w.bezugsquelle || w.lieferant || w.lieferort || w.lieferAdresse) && (
-        <div className="pt-3 border-t border-[#2a2a2a]">
+        <div className="pt-3 border-t border-border">
           <p className="text-xs text-zinc-500 mb-2 font-medium">Bezugsquelle & Lieferung</p>
           <Grid2>
             <Field label="Bezugsquelle" value={w.bezugsquelle} />
@@ -324,14 +324,14 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
       )}
 
       {w.befahrbarkeit && (
-        <div className="pt-3 border-t border-[#2a2a2a]">
+        <div className="pt-3 border-t border-border">
           <Field label="Befahrbarkeit" value={w.befahrbarkeit} />
         </div>
       )}
 
       {/* Förderung */}
       {(w.foerderProgramme || w.foerderBeratungS2 || w.beratungsgespraech || w.darmstaedter_angebote) && (
-        <div className="pt-3 border-t border-[#2a2a2a]">
+        <div className="pt-3 border-t border-border">
           <p className="text-xs text-zinc-500 mb-2 font-medium">Förderung</p>
           <Grid2>
             <Field label="Förderprogramm" value={w.foerderProgramme} className="text-emerald-400" />
@@ -351,7 +351,7 @@ function WizardFlaechenvorbereitung({ w }: { w: WizardDaten }) {
   const flaechen: FlaecheVorbereitung[] = Array.isArray(w.flaechen) ? w.flaechen : []
 
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 space-y-4">
+    <div className="bg-[#161616] border border-border rounded-xl p-6 space-y-4">
       <SectionHeading icon={<Layers className="w-4 h-4" />} label="🌿 Flächenvorbereitung – Details" />
 
       {/* Flächen-Cards */}
@@ -379,7 +379,7 @@ function WizardFlaechenvorbereitung({ w }: { w: WizardDaten }) {
       )}
 
       {/* Allgemeine Infos */}
-      <div className="pt-3 border-t border-[#2a2a2a]">
+      <div className="pt-3 border-t border-border">
         <Grid2>
           <Field label="Zeitpunkt" value={w.zeitpunkt} />
           <Field label="Turnus" value={w.turnus} />
@@ -401,7 +401,7 @@ function WizardKulturschutz({ w }: { w: WizardDaten }) {
   const kosten = kostenMin && kostenMax ? `${Number(kostenMin).toLocaleString("de-DE")} – ${Number(kostenMax).toLocaleString("de-DE")} €` : null
 
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 space-y-4">
+    <div className="bg-[#161616] border border-border rounded-xl p-6 space-y-4">
       <SectionHeading icon={<Shield className="w-4 h-4" />} label="🛡 Kulturschutz – Details" />
 
       {/* Main info */}
@@ -425,7 +425,7 @@ function WizardKulturschutz({ w }: { w: WizardDaten }) {
       )}
 
       {/* Baumarten & Wildarten */}
-      <div className="pt-3 border-t border-[#2a2a2a]">
+      <div className="pt-3 border-t border-border">
         <Grid2>
           <Field label="Baumarten" value={w.baumarten} />
           <Field label="Alter der Kultur" value={w.alter_kultur} />
@@ -436,7 +436,7 @@ function WizardKulturschutz({ w }: { w: WizardDaten }) {
       </div>
 
       {/* Ausführung */}
-      <div className="pt-3 border-t border-[#2a2a2a]">
+      <div className="pt-3 border-t border-border">
         <Grid2>
           <Field label="Ausführungszeitraum" value={w.ausfuehrungszeitraum} />
           <Field label="Schutzdauer" value={w.schutzdauer} />
@@ -459,7 +459,7 @@ function WizardKulturschutz({ w }: { w: WizardDaten }) {
 
 function WizardKulturpflege({ w }: { w: WizardDaten }) {
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 space-y-4">
+    <div className="bg-[#161616] border border-border rounded-xl p-6 space-y-4">
       <SectionHeading icon={<Scissors className="w-4 h-4" />} label="✂️ Kulturpflege – Details" />
 
       {/* Maßnahme highlight */}
@@ -483,7 +483,7 @@ function WizardKulturpflege({ w }: { w: WizardDaten }) {
       </div>
 
       {/* Bestand */}
-      <div className="pt-3 border-t border-[#2a2a2a]">
+      <div className="pt-3 border-t border-border">
         <p className="text-xs text-zinc-500 mb-2 font-medium">Bestandsdaten</p>
         <Grid2>
           <Field label="Bestandsalter" value={w.bestandsalter} />
@@ -496,7 +496,7 @@ function WizardKulturpflege({ w }: { w: WizardDaten }) {
       </div>
 
       {/* Planung */}
-      <div className="pt-3 border-t border-[#2a2a2a]">
+      <div className="pt-3 border-t border-border">
         <p className="text-xs text-zinc-500 mb-2 font-medium">Planung</p>
         <Grid2>
           <Field label="Zeitpunkt" value={w.zeitpunkt} />
@@ -508,7 +508,7 @@ function WizardKulturpflege({ w }: { w: WizardDaten }) {
 
       {/* Förderung */}
       {(w.foerderberatung || w.foerderprogramme) && (
-        <div className="pt-3 border-t border-[#2a2a2a]">
+        <div className="pt-3 border-t border-border">
           <Grid2>
             <Field label="Betriebs-Assistent" value={w.foerderberatung} />
             {w.foerderprogramme && <Field label="Förderprogramm" value={w.foerderprogramme} className="text-emerald-400" />}
@@ -529,7 +529,7 @@ function WizardKulturpflege({ w }: { w: WizardDaten }) {
 
 function WizardSaatguternte({ w }: { w: WizardDaten }) {
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 space-y-4">
+    <div className="bg-[#161616] border border-border rounded-xl p-6 space-y-4">
       <SectionHeading icon={<Package className="w-4 h-4" />} label="🌰 Saatguternte – Details" />
 
       {/* Baumarten + Menge */}
@@ -585,7 +585,7 @@ function WizardDetails({ auftrag }: { auftrag: Auftrag }) {
 
   // Fallback: show raw data nicely
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+    <div className="bg-[#161616] border border-border rounded-xl p-6">
       <SectionHeading icon={<Info className="w-4 h-4" />} label="Wizard-Daten" />
       <div className="grid grid-cols-2 gap-3 text-sm">
         {Object.entries(w)
@@ -797,7 +797,7 @@ export default function AuftragDetailPage() {
       </Link>
 
       {/* ── Header ──────────────────────────────────────────────────────── */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 mb-6">
+      <div className="bg-[#161616] border border-border rounded-xl p-6 mb-6">
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-2 flex-wrap">
@@ -921,7 +921,7 @@ export default function AuftragDetailPage() {
                 href={wpAdminUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-1.5 px-3 py-2 bg-[#2a2a2a] hover:bg-[#333] text-zinc-400 hover:text-white rounded-lg text-xs transition-all"
+                className="flex items-center gap-1.5 px-3 py-2 bg-surface-container-highest hover:bg-[#333] text-zinc-400 hover:text-white rounded-lg text-xs transition-all"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
                 WP Admin
@@ -937,7 +937,7 @@ export default function AuftragDetailPage() {
               key={s.value}
               onClick={() => { if (s.value !== status) setPendingStatus(s.value) }}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                status === s.value ? s.color : "border-[#2a2a2a] text-zinc-500 hover:text-zinc-300 hover:border-zinc-500"
+                status === s.value ? s.color : "border-border text-zinc-500 hover:text-zinc-300 hover:border-zinc-500"
               }`}
             >
               {s.label}
@@ -966,7 +966,7 @@ export default function AuftragDetailPage() {
         <div className="lg:col-span-2 space-y-6">
 
           {/* Kontakt */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#161616] border border-border rounded-xl p-6">
             <SectionHeading icon={<User className="w-4 h-4" />} label="Kontakt" />
             {auftrag.waldbesitzer || auftrag.waldbesitzerEmail || auftrag.waldbesitzerTelefon ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
@@ -1011,7 +1011,7 @@ export default function AuftragDetailPage() {
           </div>
 
           {/* Projekt-Info */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#161616] border border-border rounded-xl p-6">
             <SectionHeading icon={<TreePine className="w-4 h-4" />} label="Projekt-Info" />
             <Grid2>
               <div>
@@ -1040,7 +1040,7 @@ export default function AuftragDetailPage() {
           </div>
 
           {/* Flächen-Polygon Karte (Sprint Q017) */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#161616] border border-border rounded-xl p-6">
             <SectionHeading icon={<MapPin className="w-4 h-4" />} label="Flächenkarte" />
             <FlaechenPolygon
               auftragId={auftrag.id}
@@ -1059,7 +1059,7 @@ export default function AuftragDetailPage() {
 
           {/* Wirtschaftlichkeits-Widget */}
           {wirtschaft && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 mb-0">
+            <div className="bg-[#161616] border border-border rounded-xl p-6 mb-0">
               <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-3">Wirtschaftlichkeit</h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
@@ -1068,7 +1068,7 @@ export default function AuftragDetailPage() {
                   { label: "Umsatz", value: wirtschaft.umsatz.toLocaleString("de-DE", { style: "currency", currency: "EUR" }), color: "text-emerald-400" },
                   { label: "Marge", value: `${wirtschaft.marge}%`, color: wirtschaft.marge > 20 ? "text-emerald-400" : wirtschaft.marge > 0 ? "text-amber-400" : "text-red-400" },
                 ].map(({ label, value, color }) => (
-                  <div key={label} className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-xl p-3">
+                  <div key={label} className="bg-[#0f0f0f] border border-border rounded-xl p-3">
                     <p className="text-xs text-zinc-500 mb-1">{label}</p>
                     <p className={`text-lg font-bold ${color}`}>{value}</p>
                   </div>
@@ -1086,7 +1086,7 @@ export default function AuftragDetailPage() {
           )}
 
           {/* Tagesprotokolle */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#161616] border border-border rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
               <SectionHeading icon={<FileText className="w-4 h-4" />} label={`Tagesprotokolle (${tagesprotokolle.length})`} />
               <Link
@@ -1114,7 +1114,7 @@ export default function AuftragDetailPage() {
                   }
                   const isExpanded = tagesprotokollExpanded === p.id
                   return (
-                    <div key={p.id} className="border border-[#2a2a2a] rounded-lg overflow-hidden">
+                    <div key={p.id} className="border border-border rounded-lg overflow-hidden">
                       <button
                         type="button"
                         onClick={() => setTagesprotokollExpanded(isExpanded ? null : p.id)}
@@ -1142,7 +1142,7 @@ export default function AuftragDetailPage() {
                             {(p.stk_pflanzung ?? 0) > 0 && <div><span className="text-zinc-600 block">Gepflanzt (Stk)</span>{p.stk_pflanzung?.toLocaleString()}</div>}
                           </div>
                           {p.kommentar && (
-                            <p className="mt-3 text-xs text-zinc-400 whitespace-pre-wrap border-t border-[#2a2a2a] pt-3">{p.kommentar}</p>
+                            <p className="mt-3 text-xs text-zinc-400 whitespace-pre-wrap border-t border-border pt-3">{p.kommentar}</p>
                           )}
                         </div>
                       )}
@@ -1155,7 +1155,7 @@ export default function AuftragDetailPage() {
 
           {/* ── Abnahmen ──────────────────────────────────────────── */}
           {auftrag.abnahmen && auftrag.abnahmen.length > 0 && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+            <div className="bg-[#161616] border border-border rounded-xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-semibold text-white flex items-center gap-2 text-sm uppercase tracking-wide">
                   <CheckSquare className="w-4 h-4 text-zinc-500" />
@@ -1195,7 +1195,7 @@ export default function AuftragDetailPage() {
               </div>
               <div className="space-y-2">
                 {auftrag.abnahmen.map(abnahme => (
-                  <div key={abnahme.id} className="flex items-center justify-between p-3 bg-[#0f0f0f] rounded-lg border border-[#2a2a2a]">
+                  <div key={abnahme.id} className="flex items-center justify-between p-3 bg-[#0f0f0f] rounded-lg border border-border">
                     <div className="flex items-center gap-3">
                       <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
                         abnahme.status === "bestanden" ? "bg-emerald-500" :
@@ -1223,7 +1223,7 @@ export default function AuftragDetailPage() {
           {auftrag && <AbnahmeStatus auftragId={auftrag.id} />}
 
           {/* ── Materialzuweisung ──────────────────────────────────── */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#161616] border border-border rounded-xl p-6">
             <SectionHeading icon={<Package className="w-4 h-4" />} label="Materialzuweisung" />
             {materialLoading ? (
               <p className="text-zinc-600 text-sm mt-2">Laden...</p>
@@ -1233,7 +1233,7 @@ export default function AuftragDetailPage() {
               <div className="overflow-x-auto mt-3">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-[#2a2a2a]">
+                    <tr className="border-b border-border">
                       <th className="text-left pb-2 text-zinc-500 font-medium text-xs">Datum</th>
                       <th className="text-left pb-2 text-zinc-500 font-medium text-xs">Artikel</th>
                       <th className="text-right pb-2 text-zinc-500 font-medium text-xs">Menge</th>
@@ -1250,7 +1250,7 @@ export default function AuftragDetailPage() {
                         <td className="py-2.5 text-white text-xs">{b.artikel.name}</td>
                         <td className="py-2.5 text-right text-white text-xs">{b.menge} {b.artikel.einheit}</td>
                         <td className="py-2.5 pl-3">
-                          <span className="text-xs px-1.5 py-0.5 rounded bg-[#2a2a2a] text-zinc-400">{b.typ}</span>
+                          <span className="text-xs px-1.5 py-0.5 rounded bg-surface-container-highest text-zinc-400">{b.typ}</span>
                         </td>
                         <td className="py-2.5 pl-3">
                           {b.mitarbeiter ? (
@@ -1275,7 +1275,7 @@ export default function AuftragDetailPage() {
         <div className="space-y-6">
 
           {/* Förderprüfung */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#161616] border border-border rounded-xl p-6">
             <SectionHeading icon={<TreePine className="w-4 h-4" />} label="Förderprogramm-Check" />
             <AuftragFoerderCheck
               auftragId={auftrag.id}
@@ -1286,7 +1286,7 @@ export default function AuftragDetailPage() {
           </div>
 
           {/* Interne Verwaltung */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+          <div className="bg-[#161616] border border-border rounded-xl p-6">
             <SectionHeading icon={<Sprout className="w-4 h-4" />} label="Interne Verwaltung" />
             <div className="space-y-4">
               <div>
@@ -1294,7 +1294,7 @@ export default function AuftragDetailPage() {
                 <select
                   value={saisonId}
                   onChange={e => setSaisonId(e.target.value)}
-                  className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
                 >
                   <option value="">Keine Saison</option>
                   {saisons.map(s => (
@@ -1307,7 +1307,7 @@ export default function AuftragDetailPage() {
                 <select
                   value={gruppeId}
                   onChange={e => setGruppeId(e.target.value)}
-                  className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
                 >
                   <option value="">Keine Gruppe</option>
                   {gruppen.map(g => (
@@ -1328,7 +1328,7 @@ export default function AuftragDetailPage() {
                       step="0.000001"
                       value={lat}
                       onChange={e => setLat(e.target.value)}
-                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
                       placeholder="z.B. 50.123456"
                     />
                   </div>
@@ -1339,7 +1339,7 @@ export default function AuftragDetailPage() {
                       step="0.000001"
                       value={lng}
                       onChange={e => setLng(e.target.value)}
-                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
                       placeholder="z.B. 8.654321"
                     />
                   </div>
@@ -1350,7 +1350,7 @@ export default function AuftragDetailPage() {
                     type="text"
                     value={plusCode}
                     onChange={e => setPlusCode(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
                     placeholder="z.B. 8FWH4HGW+QV"
                   />
                 </div>
@@ -1384,7 +1384,7 @@ export default function AuftragDetailPage() {
                   value={notizen}
                   onChange={e => setNotizen(e.target.value)}
                   rows={4}
-                  className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
+                  className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
                   placeholder="Interne Notizen..."
                 />
               </div>
@@ -1405,7 +1405,7 @@ export default function AuftragDetailPage() {
 
           {/* Rechnungen */}
           {auftrag.rechnungen && auftrag.rechnungen.length > 0 && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+            <div className="bg-[#161616] border border-border rounded-xl p-4">
               <p className="text-xs text-zinc-500 mb-2 uppercase tracking-wider">Rechnungen</p>
               <div className="space-y-1.5">
                 {auftrag.rechnungen.map(r => (
@@ -1427,7 +1427,7 @@ export default function AuftragDetailPage() {
 
           {/* WP Info */}
           {auftrag.wpProjektId && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+            <div className="bg-[#161616] border border-border rounded-xl p-4">
               <p className="text-xs text-zinc-500 mb-2">WordPress Post</p>
               <p className="text-xs font-mono text-zinc-400 mb-3">ID: {auftrag.wpProjektId}</p>
               {wpAdminUrl && (
@@ -1446,7 +1446,7 @@ export default function AuftragDetailPage() {
 
           {/* Kundenportal-Link */}
           {auftrag.waldbesitzerEmail && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+            <div className="bg-[#161616] border border-border rounded-xl p-4">
               <p className="text-xs text-zinc-500 mb-2">Kundenportal</p>
               <a
                 href={`https://peru-otter-113714.hostingersite.com/kundenportal/?auftrag=${auftrag.wpProjektId ?? auftrag.id}`}
@@ -1465,7 +1465,7 @@ export default function AuftragDetailPage() {
 
       {/* Audit-Log Timeline (Sprint S) */}
       {auftragLog.length > 0 && (
-        <div className="mt-6 bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+        <div className="mt-6 bg-[#161616] border border-border rounded-xl p-5">
           <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-3">Verlauf</h3>
           <div className="space-y-2">
             {auftragLog.map((l) => (

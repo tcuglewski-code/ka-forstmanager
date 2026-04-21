@@ -121,7 +121,7 @@ export function StatistikTab() {
 
       {/* ── Filter + Sub-Tabs ──────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="flex gap-1 border-b border-[#2a2a2a] overflow-x-auto pb-0 flex-1">
+        <div className="flex gap-1 border-b border-border overflow-x-auto pb-0 flex-1">
           {([
             { key: "uebersicht", label: "📊 Übersicht" },
             { key: "ranking",    label: "🏆 Sammler-Ranking" },
@@ -146,7 +146,7 @@ export function StatistikTab() {
           <select
             value={jahrFilter}
             onChange={(e) => setJahrFilter(e.target.value)}
-            className="text-sm border border-[#2a2a2a] rounded px-2 py-1 bg-[#1e1e1e] text-zinc-300"
+            className="text-sm border border-border rounded px-2 py-1 bg-[#1e1e1e] text-zinc-300"
           >
             <option value="alle">Alle</option>
             {saisons.map((s) => (
@@ -186,7 +186,7 @@ export function StatistikTab() {
                 color: "text-orange-400",
               },
             ].map((k) => (
-              <div key={k.label} className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4 space-y-1">
+              <div key={k.label} className="bg-[#161616] border border-border rounded-xl p-4 space-y-1">
                 <div className="flex items-center gap-1.5 text-xs text-zinc-500 uppercase tracking-wide">
                   {k.icon} {k.label}
                 </div>
@@ -199,7 +199,7 @@ export function StatistikTab() {
             {saisons.map((s) => {
               const kg = jahresvergleich.jahresSummen[String(s.jahr)] ?? 0
               return (
-                <div key={s.jahr} className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+                <div key={s.jahr} className="bg-[#161616] border border-border rounded-xl p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-semibold text-lg text-white">Saison {s.jahr}</span>
                     <span className="bg-emerald-900/40 text-emerald-400 text-sm font-medium px-2 py-0.5 rounded">
@@ -220,8 +220,8 @@ export function StatistikTab() {
 
       {/* ── Tab: Sammler-Ranking ─────────────────────────────────────────────── */}
       {tab === "ranking" && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-          <div className="px-4 py-3 border-b border-[#2a2a2a] flex items-center gap-2">
+        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+          <div className="px-4 py-3 border-b border-border flex items-center gap-2">
             <Users className="w-4 h-4 text-zinc-500" />
             <span className="font-medium text-sm text-zinc-300">
               Sammler-Ranking ({total} Personen)
@@ -242,7 +242,7 @@ export function StatistikTab() {
                   </div>
                   <span className="font-bold text-emerald-400 text-sm">{fmt(r.gesamtKg)} kg</span>
                 </div>
-                <div className="mt-2 h-1.5 bg-[#2a2a2a] rounded-full">
+                <div className="mt-2 h-1.5 bg-surface-container-highest rounded-full">
                   <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${(r.gesamtKg / maxKg) * 100}%` }} />
                 </div>
                 <div className="flex gap-3 mt-1.5 text-xs text-zinc-500">
@@ -276,7 +276,7 @@ export function StatistikTab() {
                     <td className="px-3 py-2">
                       <div>
                         <span className="font-medium">{r.name}</span>
-                        <div className="mt-1 h-1 bg-[#2a2a2a] rounded-full w-28">
+                        <div className="mt-1 h-1 bg-surface-container-highest rounded-full w-28">
                           <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${(r.gesamtKg / maxKg) * 100}%` }} />
                         </div>
                       </div>
@@ -297,7 +297,7 @@ export function StatistikTab() {
                     <td className="px-3 py-2">
                       <div className="flex gap-1 justify-center flex-wrap">
                         {r.jahre.map((j) => (
-                          <span key={j} className="text-xs bg-[#2a2a2a] text-zinc-400 px-1.5 py-0.5 rounded">{j}</span>
+                          <span key={j} className="text-xs bg-surface-container-highest text-zinc-400 px-1.5 py-0.5 rounded">{j}</span>
                         ))}
                       </div>
                     </td>
@@ -316,15 +316,15 @@ export function StatistikTab() {
             {Object.entries(jahresvergleich.jahresSummen)
               .sort(([a], [b]) => Number(b) - Number(a))
               .map(([jahr, kg]) => (
-                <div key={jahr} className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+                <div key={jahr} className="bg-[#161616] border border-border rounded-xl p-4">
                   <p className="text-sm text-zinc-500">Saison {jahr}</p>
                   <p className="text-2xl font-bold text-emerald-400">{fmt(kg, 0)} kg</p>
                 </div>
               ))}
           </div>
 
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-[#2a2a2a] font-medium text-sm flex items-center gap-2 text-zinc-300">
+          <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-border font-medium text-sm flex items-center gap-2 text-zinc-300">
               <BarChart3 className="w-4 h-4 text-zinc-500" />
               Baumarten 2024 vs 2025
             </div>
@@ -371,8 +371,8 @@ export function StatistikTab() {
 
       {/* ── Tab: Flächen-Performance ─────────────────────────────────────────── */}
       {tab === "flaechen" && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-          <div className="px-4 py-3 border-b border-[#2a2a2a] font-medium text-sm flex items-center gap-2 text-zinc-300">
+        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+          <div className="px-4 py-3 border-b border-border font-medium text-sm flex items-center gap-2 text-zinc-300">
             <MapPin className="w-4 h-4 text-zinc-500" />
             Flächen-Performance
             <span className="text-xs text-zinc-600 font-normal">(Top 25 nach kg)</span>

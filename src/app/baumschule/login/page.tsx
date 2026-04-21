@@ -57,7 +57,7 @@ function BaumschuleLoginForm() {
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
-      <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-8 max-w-md w-full text-center space-y-6">
+      <div className="bg-zinc-900 border border-border rounded-2xl p-8 max-w-md w-full text-center space-y-6">
         {/* Logo/Header */}
         <div>
           <div className="text-4xl mb-2">🌲</div>

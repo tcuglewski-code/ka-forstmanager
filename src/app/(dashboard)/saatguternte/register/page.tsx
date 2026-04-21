@@ -246,14 +246,14 @@ export default async function RegisterPage({
         <div className="flex items-center gap-2">
           <a
             href={`/api/saatguternte/register/export?${new URLSearchParams(params as Record<string, string>).toString()}`}
-            className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] hover:bg-[#333] text-zinc-300 rounded-lg text-sm font-medium transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest hover:bg-[#333] text-zinc-300 rounded-lg text-sm font-medium transition-all"
           >
             <Download className="w-4 h-4" />
             CSV Export
           </a>
           <Link
             href="/saatguternte/crawler"
-            className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] hover:bg-[#333] text-zinc-300 rounded-lg text-sm font-medium transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest hover:bg-[#333] text-zinc-300 rounded-lg text-sm font-medium transition-all"
           >
             <Bot className="w-4 h-4" />
             Crawler verwalten
@@ -263,13 +263,13 @@ export default async function RegisterPage({
 
       {/* Datenqualitäts-Übersicht */}
       <div className="mb-4 grid grid-cols-2 md:grid-cols-5 gap-3">
-        <div className="p-3 bg-[#1e1e1e] rounded-lg border border-[#2a2a2a]">
+        <div className="p-3 bg-[#1e1e1e] rounded-lg border border-border">
           <div className="text-xs text-zinc-500 mb-1">Qualitäts-Score</div>
           <div className={`text-xl font-bold ${qualityStats.qualityScore >= 70 ? 'text-emerald-400' : qualityStats.qualityScore >= 40 ? 'text-amber-400' : 'text-red-400'}`}>
             {qualityStats.qualityScore}%
           </div>
         </div>
-        <div className="p-3 bg-[#1e1e1e] rounded-lg border border-[#2a2a2a]">
+        <div className="p-3 bg-[#1e1e1e] rounded-lg border border-border">
           <div className="text-xs text-zinc-500 mb-1 flex items-center gap-1">
             <MapPin className="w-3 h-3" /> Mit GPS
           </div>
@@ -278,7 +278,7 @@ export default async function RegisterPage({
           </div>
           <div className="text-xs text-zinc-600">{Math.round(qualityStats.withGps / qualityStats.total * 100)}%</div>
         </div>
-        <div className="p-3 bg-[#1e1e1e] rounded-lg border border-[#2a2a2a]">
+        <div className="p-3 bg-[#1e1e1e] rounded-lg border border-border">
           <div className="text-xs text-zinc-500 mb-1 flex items-center gap-1">
             <CheckCircle className="w-3 h-3" /> Vollständig
           </div>
@@ -287,7 +287,7 @@ export default async function RegisterPage({
           </div>
           <div className="text-xs text-zinc-600">{Math.round(qualityStats.complete / qualityStats.total * 100)}%</div>
         </div>
-        <div className="p-3 bg-[#1e1e1e] rounded-lg border border-[#2a2a2a]">
+        <div className="p-3 bg-[#1e1e1e] rounded-lg border border-border">
           <div className="text-xs text-zinc-500 mb-1 flex items-center gap-1">
             <AlertTriangle className="w-3 h-3" /> Fehlerhaft
           </div>
@@ -296,7 +296,7 @@ export default async function RegisterPage({
           </div>
           <div className="text-xs text-zinc-600">{Math.round(qualityStats.corrupted / qualityStats.total * 100)}%</div>
         </div>
-        <div className="p-3 bg-[#1e1e1e] rounded-lg border border-[#2a2a2a] flex flex-col justify-between">
+        <div className="p-3 bg-[#1e1e1e] rounded-lg border border-border flex flex-col justify-between">
           <div className="text-xs text-zinc-500 mb-1 flex items-center gap-1">
             <RefreshCw className="w-3 h-3" /> Admin
           </div>
@@ -338,12 +338,12 @@ export default async function RegisterPage({
           name="search"
           defaultValue={params.search ?? ""}
           placeholder="Register-Nr, Forstamt, Revier..."
-          className="px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 w-56"
+          className="px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 w-56"
         />
         <select
           name="bundesland"
           defaultValue={params.bundesland ?? ""}
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Bundesländer</option>
           {bundeslaender.map((b) => (
@@ -355,7 +355,7 @@ export default async function RegisterPage({
         <select
           name="baumart"
           defaultValue={params.baumart ?? ""}
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Baumarten</option>
           {baumarten.map((b) => (
@@ -369,7 +369,7 @@ export default async function RegisterPage({
           <select
             name="herkunft"
             defaultValue={params.herkunft ?? ""}
-            className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+            className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
           >
             <option value="">Alle Herkünfte ({herkunftsOptionen.length})</option>
             {herkunftsOptionen.map((h) => (
@@ -380,7 +380,7 @@ export default async function RegisterPage({
         <select
           name="quelleId"
           defaultValue={params.quelleId ?? ""}
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Quellen</option>
           {quellen.map((q) => (
@@ -392,7 +392,7 @@ export default async function RegisterPage({
         <select
           name="status"
           defaultValue={params.status ?? ""}
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Status</option>
           <option value="zugelassen">Zugelassen</option>
@@ -401,7 +401,7 @@ export default async function RegisterPage({
         <select
           name="eigentumsart"
           defaultValue={params.eigentumsart ?? ""}
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Eigentumsarten</option>
           {eigentumsarten.map((e) => (
@@ -413,7 +413,7 @@ export default async function RegisterPage({
         <select
           name="gps"
           defaultValue={params.gps ?? ""}
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
         >
           <option value="">GPS: Alle</option>
           <option value="mit_gps">📍 Mit GPS</option>
@@ -422,14 +422,14 @@ export default async function RegisterPage({
         <select
           name="quality"
           defaultValue={params.quality ?? ""}
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
         >
           <option value="">Datenqualität: Alle</option>
           <option value="vollstaendig">✓ Vollständig (GPS + Fläche)</option>
           <option value="fehlerhaft">⚠️ Fehlerhaft (Parser-Bug)</option>
           <option value="unvollstaendig">○ Unvollständig</option>
         </select>
-        <label className="flex items-center gap-2 px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-zinc-300 cursor-pointer hover:border-amber-500/50 transition-all select-none">
+        <label className="flex items-center gap-2 px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-sm text-zinc-300 cursor-pointer hover:border-amber-500/50 transition-all select-none">
           <input
             type="checkbox"
             name="sonderherkunft"
@@ -448,7 +448,7 @@ export default async function RegisterPage({
         {hasFilter && (
           <Link
             href="/saatguternte/register"
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#2a2a2a] hover:bg-[#333] text-zinc-400 rounded-lg text-sm transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-highest hover:bg-[#333] text-zinc-400 rounded-lg text-sm transition-all"
           >
             <X className="w-3.5 h-3.5" />
             Zurücksetzen

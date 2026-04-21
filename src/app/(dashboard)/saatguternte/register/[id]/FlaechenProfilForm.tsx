@@ -38,7 +38,7 @@ export function FlaechenProfilForm({ flaecheId, initialStatus, initialNotizen }:
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
         >
           <option value="ungeprüft">Ungeprüft</option>
           <option value="interessant">Interessant</option>
@@ -56,7 +56,7 @@ export function FlaechenProfilForm({ flaecheId, initialStatus, initialNotizen }:
           onChange={(e) => setNotizen(e.target.value)}
           rows={4}
           placeholder="Interne Notizen zu dieser Fläche..."
-          className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
+          className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
         />
       </div>
       <button

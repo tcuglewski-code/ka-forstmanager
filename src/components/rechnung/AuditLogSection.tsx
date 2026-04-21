@@ -110,7 +110,7 @@ export default function AuditLogSection({ rechnungId }: AuditLogSectionProps) {
 
   if (loading) {
     return (
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+      <div className="bg-[#161616] border border-border rounded-xl p-6">
         <div className="flex items-center gap-3 text-zinc-400">
           <Loader2 className="w-5 h-5 animate-spin" />
           <span>Lade Änderungsprotokoll...</span>
@@ -121,7 +121,7 @@ export default function AuditLogSection({ rechnungId }: AuditLogSectionProps) {
 
   if (error) {
     return (
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+      <div className="bg-[#161616] border border-border rounded-xl p-6">
         <div className="flex items-center gap-3 text-zinc-500">
           <Shield className="w-5 h-5" />
           <span>{error}</span>
@@ -132,7 +132,7 @@ export default function AuditLogSection({ rechnungId }: AuditLogSectionProps) {
 
   if (!data || data.entries.length === 0) {
     return (
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+      <div className="bg-[#161616] border border-border rounded-xl p-6">
         <div className="flex items-center gap-3">
           <History className="w-5 h-5 text-zinc-500" />
           <h3 className="text-sm text-zinc-500 uppercase tracking-wider">Änderungsprotokoll</h3>
@@ -145,7 +145,7 @@ export default function AuditLogSection({ rechnungId }: AuditLogSectionProps) {
   const displayEntries = expanded ? data.entries : data.entries.slice(0, 5)
 
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+    <div className="bg-[#161616] border border-border rounded-xl p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">

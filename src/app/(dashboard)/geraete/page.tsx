@@ -67,8 +67,8 @@ function GeraetEditModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md">
-        <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <h2 className="text-lg font-semibold text-white">Gerät bearbeiten</h2>
           <button onClick={onClose}>
             <X className="w-5 h-5 text-zinc-500 hover:text-white" />
@@ -83,7 +83,7 @@ function GeraetEditModal({
                 required
                 value={form.typ}
                 onChange={(e) => setForm((f) => ({ ...f, typ: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
               />
             </div>
             <div>
@@ -91,7 +91,7 @@ function GeraetEditModal({
               <select
                 value={form.status}
                 onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
               >
                 {["verfuegbar", "im_einsatz", "in_wartung", "defekt"].map(
                   (s) => (
@@ -110,7 +110,7 @@ function GeraetEditModal({
               required
               value={form.bezeichnung}
               onChange={(e) => setForm((f) => ({ ...f, bezeichnung: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
             />
           </div>
           <div>
@@ -119,7 +119,7 @@ function GeraetEditModal({
               type="text"
               value={form.seriennummer}
               onChange={(e) => setForm((f) => ({ ...f, seriennummer: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
             />
           </div>
           <div>
@@ -128,7 +128,7 @@ function GeraetEditModal({
               type="date"
               value={form.naechsteWartung}
               onChange={(e) => setForm((f) => ({ ...f, naechsteWartung: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
             />
           </div>
           <div>
@@ -137,14 +137,14 @@ function GeraetEditModal({
               rows={2}
               value={form.notizen}
               onChange={(e) => setForm((f) => ({ ...f, notizen: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white resize-none focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white resize-none focus:outline-none focus:border-emerald-500"
             />
           </div>
           <div className="flex gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white transition-all"
+              className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all"
             >
               Abbrechen
             </button>
@@ -200,8 +200,8 @@ function GeraetNeuModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md">
-        <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <h2 className="text-lg font-semibold text-white">Neues Gerät</h2>
           <button onClick={onClose}>
             <X className="w-5 h-5 text-zinc-500 hover:text-white" />
@@ -221,7 +221,7 @@ function GeraetNeuModal({
                 type="text"
                 value={(form as Record<string, string>)[key]}
                 onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
               />
             </div>
           ))}
@@ -231,14 +231,14 @@ function GeraetNeuModal({
               type="date"
               value={form.naechsteWartung}
               onChange={(e) => setForm((f) => ({ ...f, naechsteWartung: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
             />
           </div>
           <div className="flex gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white transition-all"
+              className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all"
             >
               Abbrechen
             </button>
@@ -358,7 +358,7 @@ export default function GeraetePage() {
             <select
               value={bulkStatus}
               onChange={(e) => setBulkStatus(e.target.value)}
-              className="px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white"
+              className="px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white"
             >
               <option value="">Status setzen...</option>
               {["verfuegbar", "im_einsatz", "in_wartung", "defekt"].map(
@@ -396,11 +396,11 @@ export default function GeraetePage() {
       )}
 
       {/* Tabelle */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="border-b border-[#2a2a2a]">
+            <tr className="border-b border-border">
               {/* Y3: Header-Checkbox */}
               <th className="px-4 py-3 w-10">
                 <input
@@ -499,7 +499,7 @@ export default function GeraetePage() {
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => setEditGeraet(g)}
-                      className="text-zinc-500 hover:text-emerald-400 transition-colors text-xs px-2 py-1 rounded hover:bg-[#2a2a2a]"
+                      className="text-zinc-500 hover:text-emerald-400 transition-colors text-xs px-2 py-1 rounded hover:bg-surface-container-highest"
                     >
                       Bearbeiten
                     </button>

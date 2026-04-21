@@ -68,7 +68,7 @@ export default function UnternehmerCheckbox({
           type="checkbox"
           checked={checked}
           onChange={handleChange}
-          className="mt-0.5 h-5 w-5 rounded border-[#2a2a2a] bg-[#0f0f0f] text-emerald-500 focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-0 transition-colors flex-shrink-0"
+          className="mt-0.5 h-5 w-5 rounded border-border bg-[#0f0f0f] text-emerald-500 focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-0 transition-colors flex-shrink-0"
           aria-required="true"
           aria-invalid={!!displayError}
           aria-describedby={displayError ? "unternehmer-error" : undefined}

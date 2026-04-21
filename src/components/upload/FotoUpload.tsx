@@ -121,10 +121,10 @@ export function FotoUpload({
           disabled={disabled || uploading}
           className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed transition-all ${
             disabled
-              ? "border-zinc-700 text-zinc-600 cursor-not-allowed"
+              ? "border-border text-zinc-600 cursor-not-allowed"
               : uploading
                 ? "border-emerald-500/50 text-emerald-400 bg-emerald-500/10"
-                : "border-[#2a2a2a] text-zinc-400 hover:border-emerald-500/50 hover:text-emerald-400 hover:bg-emerald-500/5"
+                : "border-border text-zinc-400 hover:border-emerald-500/50 hover:text-emerald-400 hover:bg-emerald-500/5"
           }`}
         >
           {uploading ? (
@@ -149,7 +149,7 @@ export function FotoUpload({
             {uploadedFiles.map((file, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg"
+                className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg"
               >
                 <ImageIcon className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                 <span className="text-xs text-white truncate flex-1">{file.filename}</span>

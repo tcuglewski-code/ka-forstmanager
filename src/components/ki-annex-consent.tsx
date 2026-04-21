@@ -49,11 +49,11 @@ export function KiAnnexConsentCheckbox({ onConsent, className }: KiAnnexConsentP
         id="ki-annex-consent"
         checked={checked}
         onChange={handleChange}
-        className="mt-1 h-4 w-4 rounded border-gray-300 text-[#2C3A1C] focus:ring-[#2C3A1C]"
+        className="mt-1 h-4 w-4 rounded border-gray-300 text-forest focus:ring-forest"
       />
       <label htmlFor="ki-annex-consent" className="text-sm text-gray-700">
         Ich habe die{' '}
-        <a href="/agb#ki-annex" className="text-[#C5A55A] underline hover:text-[#2C3A1C]" target="_blank" rel="noopener noreferrer">
+        <a href="/agb#ki-annex" className="text-gold underline hover:text-forest" target="_blank" rel="noopener noreferrer">
           KI-Nutzungsbedingungen (Anlage 2 der AGB)
         </a>{' '}
         gelesen und akzeptiere diese.
@@ -76,7 +76,7 @@ export function KiAnnexConsentModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
-        <h2 className="text-lg font-bold text-[#2C3A1C] mb-4">KI-Nutzungsbedingungen</h2>
+        <h2 className="text-lg font-bold text-forest mb-4">KI-Nutzungsbedingungen</h2>
         <p className="text-sm text-gray-600 mb-4">
           Dieses Feature nutzt Künstliche Intelligenz (EU AI Act: Limited Risk).
           Bitte bestätigen Sie die KI-Nutzungsbedingungen vor der ersten Verwendung.
@@ -89,7 +89,7 @@ export function KiAnnexConsentModal({ onClose }: { onClose: () => void }) {
           <button
             onClick={handleAccept}
             disabled={!accepted}
-            className="px-4 py-2 text-sm bg-[#2C3A1C] text-white rounded-lg hover:bg-[#3d4f2a] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-sm bg-forest text-white rounded-lg hover:bg-[#3d4f2a] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Bestätigen
           </button>

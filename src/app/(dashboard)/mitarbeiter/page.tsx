@@ -38,7 +38,7 @@ function RolleBadge({ rolle }: { rolle: string }) {
   if (rolle === "ka_mitarbeiter" || rolle === "mitarbeiter") {
     return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-500/20">Mitarbeiter</span>
   }
-  return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs text-zinc-500 border border-zinc-700">{rolle}</span>
+  return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs text-zinc-500 border border-border">{rolle}</span>
 }
 
 const statusBadge: Record<string, string> = {
@@ -214,7 +214,7 @@ export default function MitarbeiterPage() {
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2.5 bg-[#2C3A1C] hover:bg-[#3a4d26] text-white text-sm font-medium rounded-lg transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 bg-forest hover:bg-[#3a4d26] text-white text-sm font-medium rounded-lg transition-all"
         >
           <UserPlus className="w-4 h-4" />
           Mitarbeiter hinzufügen
@@ -230,13 +230,13 @@ export default function MitarbeiterPage() {
             placeholder="Suchen..."
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 bg-[#161616] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+            className="w-full pl-9 pr-4 py-2.5 bg-[#161616] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
           />
         </div>
         <select
           value={rolleFilter}
           onChange={(e) => setRolleFilter(e.target.value)}
-          className="px-3 py-2.5 bg-[#161616] border border-[#2a2a2a] rounded-lg text-sm text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+          className="px-3 py-2.5 bg-[#161616] border border-border rounded-lg text-sm text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
         >
           <option value="">Alle Rollen</option>
           <option value="mitarbeiter">Mitarbeiter</option>
@@ -256,7 +256,7 @@ export default function MitarbeiterPage() {
             {selected.length} Mitarbeiter ausgewählt
           </span>
 
-          <div className="h-4 w-px bg-[#2a2a2a] hidden sm:block" />
+          <div className="h-4 w-px bg-surface-container-highest hidden sm:block" />
 
           {/* Status-Dropdown + Anwenden */}
           <div className="flex items-center gap-2">
@@ -264,7 +264,7 @@ export default function MitarbeiterPage() {
               <select
                 value={bulkStatus}
                 onChange={(e) => setBulkStatus(e.target.value)}
-                className="appearance-none pl-3 pr-8 py-1.5 bg-[#161616] border border-[#2a2a2a] rounded-lg text-sm text-zinc-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer"
+                className="appearance-none pl-3 pr-8 py-1.5 bg-[#161616] border border-border rounded-lg text-sm text-zinc-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer"
               >
                 <option value="">Status setzen…</option>
                 <option value="aktiv">✅ Aktiv</option>
@@ -283,7 +283,7 @@ export default function MitarbeiterPage() {
             </button>
           </div>
 
-          <div className="h-4 w-px bg-[#2a2a2a] hidden sm:block" />
+          <div className="h-4 w-px bg-surface-container-highest hidden sm:block" />
 
           {/* Löschen */}
           <button
@@ -298,7 +298,7 @@ export default function MitarbeiterPage() {
           {/* Auswahl aufheben */}
           <button
             onClick={() => setSelected([])}
-            className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-zinc-500 hover:text-zinc-300 text-sm rounded-lg hover:bg-[#2a2a2a] transition-all"
+            className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-zinc-500 hover:text-zinc-300 text-sm rounded-lg hover:bg-surface-container-highest transition-all"
           >
             <X className="w-3.5 h-3.5" />
             Auswahl aufheben
@@ -307,7 +307,7 @@ export default function MitarbeiterPage() {
       )}
 
       {/* Tabelle */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
         {loading ? (
           <div className="space-y-2 p-4">
             {[...Array(5)].map((_, i) => (
@@ -327,7 +327,7 @@ export default function MitarbeiterPage() {
           <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 {/* Header-Checkbox */}
                 <th className="px-4 py-3 w-10">
                   <input
@@ -356,7 +356,7 @@ export default function MitarbeiterPage() {
                     key={m.id}
                     onClick={() => router.push(`/mitarbeiter/${m.id}`)}
                     className={cn(
-                      "border-b border-[#2a2a2a] last:border-0 transition-colors cursor-pointer",
+                      "border-b border-border last:border-0 transition-colors cursor-pointer",
                       istAusgewaehlt
                         ? "bg-emerald-500/5 hover:bg-emerald-500/8"
                         : "hover:bg-[#1a1a1a]"
@@ -401,13 +401,13 @@ export default function MitarbeiterPage() {
                       <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                         <Link
                           href={`/mitarbeiter/${m.id}`}
-                          className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 hover:bg-[#2a2a2a] hover:text-emerald-400 transition-all"
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 hover:bg-surface-container-highest hover:text-emerald-400 transition-all"
                         >
                           <Eye className="w-3.5 h-3.5" />
                         </Link>
                         <button
                           onClick={() => openEdit(m)}
-                          className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 hover:bg-[#2a2a2a] hover:text-white transition-all"
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 hover:bg-surface-container-highest hover:text-white transition-all"
                         >
                           <Pencil className="w-3.5 h-3.5" />
                         </button>

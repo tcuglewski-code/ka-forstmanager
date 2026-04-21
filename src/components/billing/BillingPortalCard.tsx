@@ -67,7 +67,7 @@ export function BillingPortalCard() {
 
   if (loading) {
     return (
-      <div className="p-6 bg-zinc-800/50 rounded-lg border border-zinc-700">
+      <div className="p-6 bg-zinc-800/50 rounded-lg border border-border">
         <div className="flex items-center gap-3">
           <Loader2 className="h-5 w-5 text-zinc-500 animate-spin" />
           <span className="text-zinc-400">Lade Billing-Informationen...</span>
@@ -78,7 +78,7 @@ export function BillingPortalCard() {
 
   if (!status?.available) {
     return (
-      <div className="p-6 bg-zinc-800/50 rounded-lg border border-zinc-700">
+      <div className="p-6 bg-zinc-800/50 rounded-lg border border-border">
         <div className="flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-amber-500 mt-0.5" />
           <div>
@@ -96,7 +96,7 @@ export function BillingPortalCard() {
   }
 
   return (
-    <div className="p-6 bg-zinc-800/50 rounded-lg border border-zinc-700">
+    <div className="p-6 bg-zinc-800/50 rounded-lg border border-border">
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-4">
           <div className="p-3 bg-emerald-500/20 rounded-lg">

@@ -241,7 +241,7 @@ export default function BenutzerVerwaltungPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#2C3A1C] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-forest flex items-center justify-center">
             <Users className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
@@ -274,11 +274,11 @@ export default function BenutzerVerwaltungPage() {
       )}
 
       {/* Users Table */}
-      <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl overflow-hidden">
+      <div className="bg-[#1a1a1a] border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
         <table className="min-w-full">
           <thead>
-            <tr className="border-b border-[#2a2a2a]">
+            <tr className="border-b border-border">
               <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">Name</th>
               <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">E-Mail</th>
               <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">Rolle</th>
@@ -289,10 +289,10 @@ export default function BenutzerVerwaltungPage() {
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr key={user.id} className="border-b border-[#2a2a2a] last:border-0 hover:bg-[#222]">
+              <tr key={user.id} className="border-b border-border last:border-0 hover:bg-[#222]">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#2a2a2a] flex items-center justify-center overflow-hidden">
+                    <div className="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden">
                       {user.avatar ? (
                         <img src={user.avatar} alt="" className="w-full h-full object-cover" />
                       ) : (
@@ -338,7 +338,7 @@ export default function BenutzerVerwaltungPage() {
                   <div className="flex items-center justify-end gap-2">
                     <button
                       onClick={() => openEditModal(user)}
-                      className="p-2 text-zinc-500 hover:text-white hover:bg-[#2a2a2a] rounded-lg"
+                      className="p-2 text-zinc-500 hover:text-white hover:bg-surface-container-highest rounded-lg"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
@@ -368,9 +368,9 @@ export default function BenutzerVerwaltungPage() {
             onClick={() => setModalOpen(false)}
           />
           <div className="fixed inset-x-0 top-[5%] mx-auto max-w-2xl z-50 px-4 max-h-[90vh] overflow-y-auto">
-            <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl shadow-2xl">
+            <div className="bg-[#1a1a1a] border border-border rounded-xl shadow-2xl">
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2a2a]">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border">
                 <h2 className="text-lg font-semibold text-white">
                   {editingUser ? "Benutzer bearbeiten" : "Neuer Benutzer"}
                 </h2>
@@ -388,7 +388,7 @@ export default function BenutzerVerwaltungPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm text-zinc-400 mb-1">Name *</label>
-                    <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg">
+                    <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg">
                       <User className="w-4 h-4 text-zinc-500" />
                       <input
                         type="text"
@@ -401,7 +401,7 @@ export default function BenutzerVerwaltungPage() {
                   </div>
                   <div>
                     <label className="block text-sm text-zinc-400 mb-1">E-Mail *</label>
-                    <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg">
+                    <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg">
                       <Mail className="w-4 h-4 text-zinc-500" />
                       <input
                         type="email"
@@ -417,7 +417,7 @@ export default function BenutzerVerwaltungPage() {
                 {/* Benutzername (optional) */}
                 <div>
                   <label className="block text-sm text-zinc-400 mb-1">Benutzername (optional, für App-Login)</label>
-                  <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg">
                     <User className="w-4 h-4 text-zinc-500" />
                     <input
                       type="text"
@@ -438,7 +438,7 @@ export default function BenutzerVerwaltungPage() {
                       <select
                         value={formRole}
                         onChange={(e) => setFormRole(e.target.value)}
-                        className="flex-1 px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white outline-none"
+                        className="flex-1 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white outline-none"
                       >
                         {ROLES.map((r) => (
                           <option key={r.value} value={r.value}>
@@ -449,7 +449,7 @@ export default function BenutzerVerwaltungPage() {
                       <button
                         type="button"
                         onClick={applyRoleTemplate}
-                        className="px-3 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg hover:bg-[#333] text-sm"
+                        className="px-3 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333] text-sm"
                         title="Rollen-Vorlage anwenden"
                       >
                         <Shield className="w-4 h-4" />
@@ -458,13 +458,13 @@ export default function BenutzerVerwaltungPage() {
                   </div>
                   <div>
                     <label className="block text-sm text-zinc-400 mb-1">Status</label>
-                    <label className="flex items-center gap-3 px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg cursor-pointer">
+                    <label className="flex items-center gap-3 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg cursor-pointer">
                       <button
                         type="button"
                         onClick={() => setFormActive(!formActive)}
                         className={cn(
                           "w-11 h-6 rounded-full transition-colors",
-                          formActive ? "bg-emerald-600" : "bg-[#2a2a2a]"
+                          formActive ? "bg-emerald-600" : "bg-surface-container-highest"
                         )}
                       >
                         <div
@@ -484,7 +484,7 @@ export default function BenutzerVerwaltungPage() {
                   <label className="block text-sm text-zinc-400 mb-1">
                     {editingUser ? "Neues Passwort (leer = unverändert)" : "Passwort *"}
                   </label>
-                  <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg">
                     <Lock className="w-4 h-4 text-zinc-500" />
                     <input
                       type={showPassword ? "text" : "password"}
@@ -506,7 +506,7 @@ export default function BenutzerVerwaltungPage() {
                 {/* Permissions */}
                 <div>
                   <label className="block text-sm text-zinc-400 mb-3">Berechtigungen</label>
-                  <div className="space-y-4 max-h-64 overflow-y-auto p-3 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg">
+                  <div className="space-y-4 max-h-64 overflow-y-auto p-3 bg-[#0f0f0f] border border-border rounded-lg">
                     {Object.entries(PERMISSION_GROUPS).map(([groupKey, group]) => (
                       <div key={groupKey}>
                         <h4 className="text-sm font-medium text-white mb-2">{group.label}</h4>
@@ -520,7 +520,7 @@ export default function BenutzerVerwaltungPage() {
                                 type="checkbox"
                                 checked={formPermissions.includes(permission)}
                                 onChange={() => togglePermission(permission)}
-                                className="w-4 h-4 rounded bg-[#2a2a2a] border-[#3a3a3a] text-emerald-500 focus:ring-emerald-500"
+                                className="w-4 h-4 rounded bg-surface-container-highest border-[#3a3a3a] text-emerald-500 focus:ring-emerald-500"
                               />
                               {ALL_PERMISSIONS[permission as Permission]}
                             </label>
@@ -533,10 +533,10 @@ export default function BenutzerVerwaltungPage() {
               </div>
 
               {/* Footer */}
-              <div className="flex justify-end gap-3 px-6 py-4 border-t border-[#2a2a2a]">
+              <div className="flex justify-end gap-3 px-6 py-4 border-t border-border">
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg hover:bg-[#333]"
+                  className="px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333]"
                 >
                   Abbrechen
                 </button>

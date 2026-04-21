@@ -201,7 +201,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
               <button
                 onClick={loadHessenStatus}
                 disabled={hessenLoading}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#2a2a2a] hover:bg-[#333] text-zinc-400 rounded-lg text-xs transition-all"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-highest hover:bg-[#333] text-zinc-400 rounded-lg text-xs transition-all"
                 title="Status laden"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${hessenLoading ? "animate-spin" : ""}`} />
@@ -232,7 +232,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
                 {showHessenLog ? "Log ausblenden" : "Log anzeigen"}
               </button>
               {showHessenLog && (
-                <pre className="mt-2 p-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg text-xs text-zinc-400 font-mono overflow-x-auto whitespace-pre-wrap">
+                <pre className="mt-2 p-3 bg-[#0a0a0a] border border-border rounded-lg text-xs text-zinc-400 font-mono overflow-x-auto whitespace-pre-wrap">
                   {hessenStatus.crawlLog}
                 </pre>
               )}
@@ -273,7 +273,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
         const [showPass, setShowPass] = useState(false)
 
         return (
-          <div key={quelle.id} className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+          <div key={quelle.id} className="bg-[#161616] border border-border rounded-xl overflow-hidden">
             <div className="p-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
@@ -319,7 +319,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
                   {quelle.loginRequired && (
                     <button
                       onClick={() => toggleCredForm(quelle.id)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-[#2a2a2a] hover:bg-[#333] text-zinc-400 rounded-lg text-xs transition-all"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-highest hover:bg-[#333] text-zinc-400 rounded-lg text-xs transition-all"
                     >
                       <Key className="w-3.5 h-3.5" />
                       Credentials
@@ -343,7 +343,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
 
             {/* Credential-Formular */}
             {form?.open && (
-              <div className="border-t border-[#2a2a2a] p-5 bg-[#0f0f0f]">
+              <div className="border-t border-border p-5 bg-[#0f0f0f]">
                 <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">
                   Zugangsdaten (AES-256-GCM verschlüsselt)
                 </h4>
@@ -360,7 +360,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
                         }))
                       }
                       placeholder="z.B. forstamt@example.de"
-                      className="w-full px-3 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                      className="w-full px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
@@ -376,7 +376,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
                           }))
                         }
                         placeholder="Passwort"
-                        className="w-full px-3 py-2 pr-10 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                        className="w-full px-3 py-2 pr-10 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
                       />
                       <button
                         type="button"
@@ -413,7 +413,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
       })}
 
       {quellen.length === 0 && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-12 text-center">
+        <div className="bg-[#161616] border border-border rounded-xl p-12 text-center">
           <p className="text-zinc-600">Keine Registerquellen vorhanden</p>
           <p className="text-zinc-700 text-xs mt-1">Erstelle zuerst eine Quelle über die API</p>
         </div>

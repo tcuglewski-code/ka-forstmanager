@@ -169,7 +169,7 @@ function ProfilTab({
 
   return (
     <div className="space-y-6">
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+      <div className="bg-[#161616] border border-border rounded-xl p-5">
         <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-5">
           Profil & Scout-Bewertung
         </h2>
@@ -180,7 +180,7 @@ function ProfilTab({
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
             >
               {statusOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -212,7 +212,7 @@ function ProfilTab({
               type="date"
               value={letzteInspektion}
               onChange={(e) => setLetzteInspektion(e.target.value)}
-              className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
             />
           </div>
 
@@ -223,7 +223,7 @@ function ProfilTab({
               type="date"
               value={naechsteErnte}
               onChange={(e) => setNaechsteErnte(e.target.value)}
-              className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
             />
           </div>
         </div>
@@ -236,7 +236,7 @@ function ProfilTab({
             onChange={(e) => setNotizen(e.target.value)}
             rows={5}
             placeholder="Beobachtungen, Hinweise, Scout-Notizen..."
-            className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
+            className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
           />
         </div>
 
@@ -255,7 +255,7 @@ function ProfilTab({
 function ErntehistorieTab({ ernten }: { ernten: Ernte[] }) {
   if (ernten.length === 0) {
     return (
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-10 flex flex-col items-center justify-center text-center">
+      <div className="bg-[#161616] border border-border rounded-xl p-10 flex flex-col items-center justify-center text-center">
         <ClipboardList className="w-10 h-10 text-zinc-700 mb-3" />
         <p className="text-zinc-500">Noch keine Ernten für diese Fläche erfasst.</p>
       </div>
@@ -263,8 +263,8 @@ function ErntehistorieTab({ ernten }: { ernten: Ernte[] }) {
   }
 
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-      <div className="px-5 py-4 border-b border-[#2a2a2a]">
+    <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="px-5 py-4 border-b border-border">
         <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
           Erntehistorie ({ernten.length} Einträge)
         </h2>
@@ -272,7 +272,7 @@ function ErntehistorieTab({ ernten }: { ernten: Ernte[] }) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-[#2a2a2a] text-xs text-zinc-500 uppercase">
+            <tr className="border-b border-border text-xs text-zinc-500 uppercase">
               <th className="px-4 py-3 text-left">Saison</th>
               <th className="px-4 py-3 text-left">Datum</th>
               <th className="px-4 py-3 text-left">Baumart</th>
@@ -282,7 +282,7 @@ function ErntehistorieTab({ ernten }: { ernten: Ernte[] }) {
           </thead>
           <tbody>
             {ernten.map((ernte) => (
-              <tr key={ernte.id} className="border-b border-[#2a2a2a] hover:bg-[#1a1a1a] transition-colors">
+              <tr key={ernte.id} className="border-b border-border hover:bg-[#1a1a1a] transition-colors">
                 <td className="px-4 py-3 text-zinc-300 font-mono">{ernte.saison}</td>
                 <td className="px-4 py-3 text-zinc-400">{formatDatum(ernte.datum)}</td>
                 <td className="px-4 py-3 text-zinc-300">{ernte.baumart}</td>
@@ -310,7 +310,7 @@ function AnsprechpartnerBlock({ flaeche }: { flaeche: Flaeche }) {
     flaeche.ansprechpartnerEmail != null
   if (!hasContact) return null
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+    <div className="bg-[#161616] border border-border rounded-xl p-4">
       <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Ansprechpartner</h2>
       <div className="space-y-2 text-sm">
         {flaeche.ansprechpartner != null && (
@@ -362,7 +362,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
   return (
     <div>
       {/* Tab Navigation */}
-      <div className="flex gap-1 mb-6 bg-[#161616] border border-[#2a2a2a] rounded-xl p-1">
+      <div className="flex gap-1 mb-6 bg-[#161616] border border-border rounded-xl p-1">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -385,7 +385,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
           {/* Linke Spalte */}
           <div className="space-y-6">
             {/* Grunddaten */}
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+            <div className="bg-[#161616] border border-border rounded-xl p-5">
               <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-4">Grunddaten</h2>
               <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
                 {[
@@ -415,7 +415,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
             </div>
 
             {/* Standort */}
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+            <div className="bg-[#161616] border border-border rounded-xl p-5">
               <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-4">Standort</h2>
               <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm mb-4">
                 {[
@@ -451,7 +451,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
                   </div>
                   <iframe
                     src={flaeche.osmUrl}
-                    className="w-full h-64 rounded-lg border border-[#2a2a2a]"
+                    className="w-full h-64 rounded-lg border border-border"
                     style={{ border: 0 }}
                     loading="lazy"
                   />
@@ -463,7 +463,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
           {/* Rechte Spalte */}
           <div className="space-y-4">
             {/* Quelle */}
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+            <div className="bg-[#161616] border border-border rounded-xl p-4">
               <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Registerquelle</h2>
               <div className="space-y-2 text-sm">
                 <div>
@@ -517,7 +517,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
 
             {/* Ansprechpartner */}
             {(flaeche.ansprechpartner != null || flaeche.ansprechpartnerTel != null || flaeche.ansprechpartnerEmail != null) ? (
-              <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+              <div className="bg-[#161616] border border-border rounded-xl p-4">
                 <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Ansprechpartner</h2>
                 <div className="space-y-2 text-sm">
                   {flaeche.ansprechpartner != null ? <div className="text-zinc-300">{flaeche.ansprechpartner}</div> : null}
@@ -537,7 +537,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
             ) : null}
 
             {/* Weitere Angaben */}
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+            <div className="bg-[#161616] border border-border rounded-xl p-4">
               <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Weitere Angaben</h2>
               <div className="space-y-2 text-xs">
                 {[
@@ -558,7 +558,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
 
             {/* Rohdaten */}
             {flaeche.rohdaten && (
-              <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+              <div className="bg-[#161616] border border-border rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-3">
                   <Database className="w-3.5 h-3.5 text-zinc-600" />
                   <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide">Rohdaten (JSON)</h2>

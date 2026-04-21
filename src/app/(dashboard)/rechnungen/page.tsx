@@ -178,7 +178,7 @@ export default function RechnungenPage() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="px-3 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white"
+          className="px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white"
         >
           <option value="">Alle Status</option>
           <option value="offen">Offen</option>
@@ -193,7 +193,7 @@ export default function RechnungenPage() {
             setSortBy(b as "datum" | "betrag" | "status")
             setSortDir(d as "asc" | "desc")
           }}
-          className="px-3 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-white"
+          className="px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white"
         >
           <option value="datum-desc">Datum (neueste)</option>
           <option value="datum-asc">Datum (älteste)</option>
@@ -211,10 +211,10 @@ export default function RechnungenPage() {
       {loading ? (
         <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
       ) : (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-x-auto">
+        <div className="bg-[#161616] border border-border rounded-xl overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Nummer</th>
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Auftrag</th>
                 <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Betrag</th>
@@ -224,7 +224,7 @@ export default function RechnungenPage() {
                 <th className="px-6 py-3"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#2a2a2a]">
+            <tbody className="divide-y divide-border">
               {gefilterteRechnungen.length === 0 ? (
                 <tr><td colSpan={7} className="px-6 py-12 text-center text-zinc-600">
                   {filterStatus ? "Keine Rechnungen mit diesem Status" : "Keine Rechnungen"}
@@ -320,7 +320,7 @@ export default function RechnungenPage() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto">
+          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto">
             <h2 className="text-lg font-bold text-white mb-4">Rechnung erstellen</h2>
             <div className="space-y-4">
               <div>

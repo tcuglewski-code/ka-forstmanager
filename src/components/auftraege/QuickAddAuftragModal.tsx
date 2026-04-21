@@ -77,8 +77,8 @@ export function QuickAddAuftragModal({ saisonId, saisonName, onClose, onCreated 
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md">
-        <div className="flex items-center justify-between p-4 border-b border-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md">
+        <div className="flex items-center justify-between p-4 border-b border-border">
           <div>
             <h2 className="text-lg font-semibold text-white flex items-center gap-2">
               <Plus className="w-5 h-5 text-emerald-500" />
@@ -101,7 +101,7 @@ export function QuickAddAuftragModal({ saisonId, saisonName, onClose, onCreated 
             <select
               value={form.typ}
               onChange={(e) => setForm((f) => ({ ...f, typ: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
             >
               {TYPEN.map((t) => (
                 <option key={t.value} value={t.value}>
@@ -119,7 +119,7 @@ export function QuickAddAuftragModal({ saisonId, saisonName, onClose, onCreated 
               value={form.waldbesitzer}
               onChange={(e) => setForm((f) => ({ ...f, waldbesitzer: e.target.value }))}
               placeholder="Name des Waldbesitzers"
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
               autoFocus
             />
           </div>
@@ -134,7 +134,7 @@ export function QuickAddAuftragModal({ saisonId, saisonName, onClose, onCreated 
                 value={form.flaeche_ha}
                 onChange={(e) => setForm((f) => ({ ...f, flaeche_ha: e.target.value }))}
                 placeholder="0.00"
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
               />
             </div>
             <div>
@@ -144,7 +144,7 @@ export function QuickAddAuftragModal({ saisonId, saisonName, onClose, onCreated 
                 value={form.standort}
                 onChange={(e) => setForm((f) => ({ ...f, standort: e.target.value }))}
                 placeholder="z.B. Abt. 5"
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
               />
             </div>
           </div>
@@ -159,7 +159,7 @@ export function QuickAddAuftragModal({ saisonId, saisonName, onClose, onCreated 
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white hover:border-zinc-500 transition-all"
+              className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white hover:border-zinc-500 transition-all"
             >
               Abbrechen
             </button>

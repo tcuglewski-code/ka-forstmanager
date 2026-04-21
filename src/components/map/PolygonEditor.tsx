@@ -238,7 +238,7 @@ export function PolygonEditor({
       <div
         ref={mapRef}
         style={{ height: typeof height === "number" ? `${height}px` : height }}
-        className="w-full rounded-lg border border-[#2a2a2a] overflow-hidden"
+        className="w-full rounded-lg border border-border overflow-hidden"
       />
 
       {/* Loading overlay */}
@@ -250,8 +250,8 @@ export function PolygonEditor({
 
       {/* Area display */}
       {area !== null && (
-        <div className="absolute bottom-3 left-3 px-3 py-1.5 bg-[#2C3A1C]/90 text-white text-xs rounded-lg shadow-lg z-[1000] flex items-center gap-2">
-          <Edit3 className="w-3.5 h-3.5 text-[#C5A55A]" />
+        <div className="absolute bottom-3 left-3 px-3 py-1.5 bg-forest/90 text-white text-xs rounded-lg shadow-lg z-[1000] flex items-center gap-2">
+          <Edit3 className="w-3.5 h-3.5 text-gold" />
           Fläche: {area.toFixed(2)} ha
         </div>
       )}

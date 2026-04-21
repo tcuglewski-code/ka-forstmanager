@@ -428,7 +428,7 @@ export default function ProfilPage() {
       )}
 
       {/* Persönliche Daten */}
-      <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+      <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <User className="w-5 h-5 text-emerald-400" />
           Persönliche Daten
@@ -438,7 +438,7 @@ export default function ProfilPage() {
           {/* Avatar */}
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-20 h-20 rounded-full bg-[#2a2a2a] flex items-center justify-center overflow-hidden">
+              <div className="w-20 h-20 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden">
                 {avatar ? (
                   <img src={avatar} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -472,14 +472,14 @@ export default function ProfilPage() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
             />
           </div>
 
           {/* Email (readonly) */}
           <div>
             <label className="block text-sm text-zinc-400 mb-1">E-Mail</label>
-            <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-zinc-500">
+            <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-zinc-500">
               <Mail className="w-4 h-4" />
               {profile?.email}
             </div>
@@ -489,7 +489,7 @@ export default function ProfilPage() {
 
       {/* Kontaktdaten (nur wenn Mitarbeiter-Datensatz existiert) */}
       {profile?.mitarbeiter && (
-        <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+        <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Phone className="w-5 h-5 text-emerald-400" />
             Kontaktdaten
@@ -503,7 +503,7 @@ export default function ProfilPage() {
                 value={telefon}
                 onChange={(e) => setTelefon(e.target.value)}
                 placeholder="+49 123 456789"
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
@@ -513,7 +513,7 @@ export default function ProfilPage() {
                 value={mobil}
                 onChange={(e) => setMobil(e.target.value)}
                 placeholder="+49 170 1234567"
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div className="md:col-span-2">
@@ -523,7 +523,7 @@ export default function ProfilPage() {
                 value={adresse}
                 onChange={(e) => setAdresse(e.target.value)}
                 placeholder="Straße und Hausnummer"
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
@@ -534,7 +534,7 @@ export default function ProfilPage() {
                 onChange={(e) => setPlz(e.target.value)}
                 placeholder="12345"
                 maxLength={5}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
@@ -544,7 +544,7 @@ export default function ProfilPage() {
                 value={ort}
                 onChange={(e) => setOrt(e.target.value)}
                 placeholder="Musterstadt"
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
           </div>
@@ -553,7 +553,7 @@ export default function ProfilPage() {
 
       {/* Notfallkontakt (nur wenn Mitarbeiter-Datensatz existiert) */}
       {profile?.mitarbeiter && (
-        <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+        <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Heart className="w-5 h-5 text-red-400" />
             Notfallkontakt
@@ -570,7 +570,7 @@ export default function ProfilPage() {
                 value={notfallName}
                 onChange={(e) => setNotfallName(e.target.value)}
                 placeholder="Max Mustermann"
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
@@ -580,7 +580,7 @@ export default function ProfilPage() {
                 value={notfallTelefon}
                 onChange={(e) => setNotfallTelefon(e.target.value)}
                 placeholder="+49 170 1234567"
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
@@ -588,7 +588,7 @@ export default function ProfilPage() {
               <select
                 value={notfallBeziehung}
                 onChange={(e) => setNotfallBeziehung(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               >
                 <option value="">Bitte wählen</option>
                 <option value="partner">Partner/in</option>
@@ -606,7 +606,7 @@ export default function ProfilPage() {
 
       {/* Arbeitszeitkonto (nur wenn Daten vorhanden) */}
       {profile?.arbeitszeitkonto && (
-        <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+        <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Clock className="w-5 h-5 text-emerald-400" />
             Arbeitszeitkonto — {profile.arbeitszeitkonto.monat}
@@ -672,7 +672,7 @@ export default function ProfilPage() {
 
       {/* Urlaubstage (nur wenn Daten vorhanden) */}
       {profile?.urlaubstage && (
-        <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+        <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-emerald-400" />
             Urlaubstage {profile.urlaubstage.jahr}
@@ -723,7 +723,7 @@ export default function ProfilPage() {
       )}
 
       {/* Passwort ändern */}
-      <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+      <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Lock className="w-5 h-5 text-emerald-400" />
           Passwort ändern
@@ -732,7 +732,7 @@ export default function ProfilPage() {
         {!showPasswordForm ? (
           <button
             onClick={() => setShowPasswordForm(true)}
-            className="px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg hover:bg-[#333] transition-colors"
+            className="px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333] transition-colors"
           >
             Passwort ändern
           </button>
@@ -745,7 +745,7 @@ export default function ProfilPage() {
                   type={showOldPassword ? "text" : "password"}
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none pr-10"
+                  className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none pr-10"
                 />
                 <button
                   type="button"
@@ -763,7 +763,7 @@ export default function ProfilPage() {
                   type={showNewPassword ? "text" : "password"}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none pr-10"
+                  className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none pr-10"
                 />
                 <button
                   type="button"
@@ -780,7 +780,7 @@ export default function ProfilPage() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div className="flex gap-2">
@@ -799,7 +799,7 @@ export default function ProfilPage() {
                   setNewPassword("")
                   setConfirmPassword("")
                 }}
-                className="px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg hover:bg-[#333]"
+                className="px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333]"
               >
                 Abbrechen
               </button>
@@ -809,7 +809,7 @@ export default function ProfilPage() {
       </section>
 
       {/* Zwei-Faktor-Authentifizierung */}
-      <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+      <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Smartphone className="w-5 h-5 text-emerald-400" />
           Zwei-Faktor-Authentifizierung (2FA)
@@ -848,7 +848,7 @@ export default function ProfilPage() {
 
           {/* Setup Flow */}
           {show2FASetup && qrCode && (
-            <div className="space-y-4 p-4 bg-[#0f0f0f] rounded-lg border border-[#2a2a2a]">
+            <div className="space-y-4 p-4 bg-[#0f0f0f] rounded-lg border border-border">
               <p className="text-sm text-zinc-400">
                 1. Scannen Sie diesen QR-Code mit Ihrer Authenticator-App (Google Authenticator, Authy, etc.)
               </p>
@@ -879,7 +879,7 @@ export default function ProfilPage() {
                   onChange={(e) => setTotpToken(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="000000"
                   maxLength={6}
-                  className="w-full px-4 py-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-center text-2xl font-mono tracking-widest focus:border-emerald-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-[#1a1a1a] border border-border rounded-lg text-white text-center text-2xl font-mono tracking-widest focus:border-emerald-500 focus:outline-none"
                 />
               </div>
               <div className="flex gap-2">
@@ -898,7 +898,7 @@ export default function ProfilPage() {
                     setTotpSecret(null)
                     setTotpToken("")
                   }}
-                  className="px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg hover:bg-[#333]"
+                  className="px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333]"
                 >
                   Abbrechen
                 </button>
@@ -922,7 +922,7 @@ export default function ProfilPage() {
                 value={disablePassword}
                 onChange={(e) => setDisablePassword(e.target.value)}
                 placeholder="Passwort eingeben"
-                className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white focus:border-red-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[#1a1a1a] border border-border rounded-lg text-white focus:border-red-500 focus:outline-none"
               />
               <div className="flex gap-2">
                 <button
@@ -938,7 +938,7 @@ export default function ProfilPage() {
                     setShow2FADisable(false)
                     setDisablePassword("")
                   }}
-                  className="px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg hover:bg-[#333]"
+                  className="px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333]"
                 >
                   Abbrechen
                 </button>
@@ -970,7 +970,7 @@ export default function ProfilPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => copyToClipboard(backupCodes.join('\n'))}
-                  className="flex-1 px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg hover:bg-[#333] flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333] flex items-center justify-center gap-2"
                 >
                   <Copy className="w-4 h-4" />
                   Alle kopieren
@@ -1006,7 +1006,7 @@ export default function ProfilPage() {
                   <button
                     onClick={handleRegenerateBackupCodes}
                     disabled={twoFactorLoading}
-                    className="px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg hover:bg-[#333] flex items-center gap-2"
+                    className="px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333] flex items-center gap-2"
                   >
                     <Key className="w-4 h-4" />
                     Neue Backup-Codes
@@ -1026,7 +1026,7 @@ export default function ProfilPage() {
       </section>
 
       {/* Benachrichtigungen */}
-      <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+      <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Bell className="w-5 h-5 text-emerald-400" />
           Benachrichtigungen
@@ -1039,7 +1039,7 @@ export default function ProfilPage() {
               onClick={() => setNotifyMaengel(!notifyMaengel)}
               className={cn(
                 "w-11 h-6 rounded-full transition-colors",
-                notifyMaengel ? "bg-emerald-600" : "bg-[#2a2a2a]"
+                notifyMaengel ? "bg-emerald-600" : "bg-surface-container-highest"
               )}
             >
               <div
@@ -1056,7 +1056,7 @@ export default function ProfilPage() {
               onClick={() => setNotifyAuftraege(!notifyAuftraege)}
               className={cn(
                 "w-11 h-6 rounded-full transition-colors",
-                notifyAuftraege ? "bg-emerald-600" : "bg-[#2a2a2a]"
+                notifyAuftraege ? "bg-emerald-600" : "bg-surface-container-highest"
               )}
             >
               <div
@@ -1073,7 +1073,7 @@ export default function ProfilPage() {
               onClick={() => setNotifyAbnahmen(!notifyAbnahmen)}
               className={cn(
                 "w-11 h-6 rounded-full transition-colors",
-                notifyAbnahmen ? "bg-emerald-600" : "bg-[#2a2a2a]"
+                notifyAbnahmen ? "bg-emerald-600" : "bg-surface-container-highest"
               )}
             >
               <div
@@ -1088,7 +1088,7 @@ export default function ProfilPage() {
       </section>
 
       {/* DSGVO Datenexport */}
-      <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+      <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Shield className="w-5 h-5 text-emerald-400" />
           Datenschutz (DSGVO)
@@ -1099,7 +1099,7 @@ export default function ProfilPage() {
         <a
           href={`/api/gdpr/export?userId=${profile?.id || ''}`}
           download
-          className="px-4 py-2 bg-[#2C3A1C] text-emerald-400 rounded-lg hover:bg-[#3d4f28] transition-colors inline-flex items-center gap-2"
+          className="px-4 py-2 bg-forest text-emerald-400 rounded-lg hover:bg-[#3d4f28] transition-colors inline-flex items-center gap-2"
         >
           <Save className="w-4 h-4" />
           Meine Daten exportieren
@@ -1107,7 +1107,7 @@ export default function ProfilPage() {
       </section>
 
       {/* Tour & Hilfe */}
-      <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+      <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <HelpCircle className="w-5 h-5 text-emerald-400" />
           Hilfe & Tour
@@ -1115,7 +1115,7 @@ export default function ProfilPage() {
 
         <button
           onClick={handleStartTour}
-          className="px-4 py-2 bg-[#2C3A1C] text-emerald-400 rounded-lg hover:bg-[#3d4f28] transition-colors flex items-center gap-2"
+          className="px-4 py-2 bg-forest text-emerald-400 rounded-lg hover:bg-[#3d4f28] transition-colors flex items-center gap-2"
         >
           <HelpCircle className="w-4 h-4" />
           Einführungs-Tour starten
@@ -1123,7 +1123,7 @@ export default function ProfilPage() {
       </section>
 
       {/* Session Info */}
-      <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+      <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Shield className="w-5 h-5 text-emerald-400" />
           Session-Informationen
@@ -1157,7 +1157,7 @@ export default function ProfilPage() {
 
       {/* Admin Links */}
       {isAdmin && (
-        <section className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+        <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Settings className="w-5 h-5 text-emerald-400" />
             Administration
@@ -1166,14 +1166,14 @@ export default function ProfilPage() {
           <div className="flex flex-wrap gap-3">
             <a
               href="/einstellungen"
-              className="px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg hover:bg-[#333] transition-colors flex items-center gap-2"
+              className="px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333] transition-colors flex items-center gap-2"
             >
               <Settings className="w-4 h-4" />
               System-Einstellungen
             </a>
             <a
               href="/admin/benutzer"
-              className="px-4 py-2 bg-[#2a2a2a] text-zinc-300 rounded-lg hover:bg-[#333] transition-colors flex items-center gap-2"
+              className="px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333] transition-colors flex items-center gap-2"
             >
               <Users className="w-4 h-4" />
               Benutzerverwaltung

@@ -340,9 +340,9 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* ─── Browser-Panel (links) ──────────────────────────────── */}
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
           {/* Panel-Header */}
-          <div className="px-4 py-3 border-b border-[#2a2a2a] flex items-center justify-between">
+          <div className="px-4 py-3 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm font-medium text-zinc-300">
               <FolderOpen className="w-4 h-4 text-emerald-400" />
               Nextcloud durchsuchen
@@ -364,7 +364,7 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
           </div>
 
           {/* Breadcrumb */}
-          <div className="px-4 py-2 border-b border-[#2a2a2a] flex items-center gap-1 flex-wrap text-xs text-zinc-500 overflow-x-auto">
+          <div className="px-4 py-2 border-b border-border flex items-center gap-1 flex-wrap text-xs text-zinc-500 overflow-x-auto">
             <button
               onClick={() => browseTo("/")}
               className="hover:text-zinc-300 transition-colors whitespace-nowrap"
@@ -482,7 +482,7 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
 
           {/* Footer: Zuordnen-Button */}
           {selectedPaths.size > 0 && (
-            <div className="px-4 py-3 border-t border-[#2a2a2a] bg-[#111]">
+            <div className="px-4 py-3 border-t border-border bg-[#111]">
               <button
                 onClick={handleZuordnen}
                 disabled={assigning}
@@ -500,9 +500,9 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
         </div>
 
         {/* ─── Zugeordnete Medien (rechts) ──────────────────────── */}
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
           {/* Panel-Header */}
-          <div className="px-4 py-3 border-b border-[#2a2a2a] flex items-center justify-between">
+          <div className="px-4 py-3 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm font-medium text-zinc-300">
               <ImageIcon className="w-4 h-4 text-emerald-400" />
               Zugeordnete Medien
@@ -551,7 +551,7 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
                 {sortedMedien.map((m, idx) => (
                   <div
                     key={m.id}
-                    className="relative group rounded-lg overflow-hidden bg-zinc-900 border border-[#2a2a2a] hover:border-emerald-500/50 transition-all"
+                    className="relative group rounded-lg overflow-hidden bg-zinc-900 border border-border hover:border-emerald-500/50 transition-all"
                   >
                     {/* Medieninhalt */}
                     <div

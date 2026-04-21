@@ -385,7 +385,7 @@ export function FlaechenPolygon({
       <div
         ref={karteRef}
         style={{ height: `${hoehe}px` }}
-        className="w-full rounded-lg border border-zinc-700 overflow-hidden"
+        className="w-full rounded-lg border border-border overflow-hidden"
       />
 
       {bearbeitbar && (

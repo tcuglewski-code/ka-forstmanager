@@ -92,7 +92,7 @@ export default function RechnungsEinstellungenPage() {
       <div className="flex items-center gap-4 mb-8">
         <button
           onClick={() => router.push("/einstellungen")}
-          className="p-2 rounded-lg bg-[#1e1e1e] border border-[#2a2a2a] text-zinc-400 hover:text-white hover:bg-[#252525] transition-colors"
+          className="p-2 rounded-lg bg-[#1e1e1e] border border-border text-zinc-400 hover:text-white hover:bg-[#252525] transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -123,7 +123,7 @@ export default function RechnungsEinstellungenPage() {
       {/* Form */}
       <form onSubmit={handleSave} className="space-y-6">
         {/* Bankdaten */}
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#161616] border border-border rounded-xl p-6">
           <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-emerald-400" />
             Bankverbindung
@@ -154,7 +154,7 @@ export default function RechnungsEinstellungenPage() {
         </div>
 
         {/* Steuerdaten */}
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#161616] border border-border rounded-xl p-6">
           <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
             <Building2 className="w-4 h-4 text-emerald-400" />
             Steuerdaten

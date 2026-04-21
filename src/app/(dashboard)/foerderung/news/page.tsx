@@ -137,7 +137,7 @@ export default function FoerderNewsPage() {
             onClick={() => setFilter(opt)}
             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
               filter === opt
-                ? "bg-[#2C3A1C] text-white"
+                ? "bg-forest text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
@@ -149,7 +149,7 @@ export default function FoerderNewsPage() {
       {/* News Liste */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2C3A1C]" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-forest" />
         </div>
       ) : news.length === 0 ? (
         <div className="text-center py-12 text-gray-500">
@@ -211,7 +211,7 @@ export default function FoerderNewsPage() {
       <div className="text-center pt-4">
         <Link
           href="/foerderung"
-          className="inline-flex items-center gap-2 text-sm text-[#2C3A1C] hover:underline font-medium"
+          className="inline-flex items-center gap-2 text-sm text-forest hover:underline font-medium"
         >
           <Leaf className="w-4 h-4" />
           Zum Förderberater

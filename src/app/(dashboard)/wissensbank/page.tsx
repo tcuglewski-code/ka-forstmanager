@@ -223,14 +223,14 @@ function ForstamterTab() {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
-            className="w-full bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
+            className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
             placeholder="Suche nach Name, Funktion, Forstamt, Ort..."
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
           />
         </div>
         <select
-          className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
           value={bundesland}
           onChange={(e) => setBundesland(e.target.value)}
         >
@@ -240,7 +240,7 @@ function ForstamterTab() {
           ))}
         </select>
         <select
-          className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
           value={sort}
           onChange={(e) => setSort(e.target.value)}
         >
@@ -251,7 +251,7 @@ function ForstamterTab() {
         </select>
         <button
           onClick={() => setOrder(order === "asc" ? "desc" : "asc")}
-          className="flex items-center gap-1.5 bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
+          className="flex items-center gap-1.5 bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
         >
           <ArrowUpDown className="w-3.5 h-3.5" />
           {order === "asc" ? "A→Z" : "Z→A"}
@@ -265,11 +265,11 @@ function ForstamterTab() {
       </div>
 
       {/* Table */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">Name / Funktion</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">Forstamt / Ort</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">Bundesland</th>
@@ -306,7 +306,7 @@ function ForstamterTab() {
                     </td>
                     <td className="px-4 py-3">
                       {k.bundesland_kuerzel && (
-                        <span className="px-2 py-0.5 bg-[#2C3A1C] text-emerald-400 rounded text-xs">
+                        <span className="px-2 py-0.5 bg-forest text-emerald-400 rounded text-xs">
                           {k.bundesland_kuerzel}
                         </span>
                       )}
@@ -356,7 +356,7 @@ function ForstamterTab() {
           <button
             onClick={() => setOffset(Math.max(0, offset - limit))}
             disabled={offset === 0}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
           >
             <ChevronLeft className="w-4 h-4" /> Zurück
           </button>
@@ -366,7 +366,7 @@ function ForstamterTab() {
           <button
             onClick={() => setOffset(offset + limit)}
             disabled={offset + limit >= total}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
           >
             Weiter <ChevronRight className="w-4 h-4" />
           </button>
@@ -440,14 +440,14 @@ function BetriebeTab() {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
-            className="w-full bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
+            className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
             placeholder="Suche nach Name oder Ort..."
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
           />
         </div>
         <select
-          className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
           value={betriebsartFilter}
           onChange={(e) => setBetriebsartFilter(e.target.value)}
         >
@@ -457,7 +457,7 @@ function BetriebeTab() {
           ))}
         </select>
         <select
-          className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
           value={sortField}
           onChange={(e) => setSortField(e.target.value)}
         >
@@ -467,7 +467,7 @@ function BetriebeTab() {
         </select>
         <button
           onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-          className="flex items-center gap-1.5 bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
+          className="flex items-center gap-1.5 bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
         >
           <ArrowUpDown className="w-3.5 h-3.5" />
           {sortOrder === "asc" ? "A→Z" : "Z→A"}
@@ -481,11 +481,11 @@ function BetriebeTab() {
       </div>
 
       {/* Table */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">Name</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">Betriebsart</th>
                 <th className="text-left px-4 py-3 text-zinc-400 font-medium">Ort</th>
@@ -544,7 +544,7 @@ function BetriebeTab() {
           <button
             onClick={() => setPage(Math.max(0, page - 1))}
             disabled={page === 0}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
           >
             <ChevronLeft className="w-4 h-4" /> Zurück
           </button>
@@ -554,7 +554,7 @@ function BetriebeTab() {
           <button
             onClick={() => setPage(page + 1)}
             disabled={(page + 1) * PAGE_SIZE >= total}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
           >
             Weiter <ChevronRight className="w-4 h-4" />
           </button>
@@ -575,7 +575,7 @@ function FoerderprogrammeCard({ prog }: { prog: Foerderprogramm }) {
       : "bg-gray-100 text-gray-700"
 
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+    <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
         className="w-full text-left p-5 hover:bg-[#1a1a1a] transition-colors"
@@ -592,7 +592,7 @@ function FoerderprogrammeCard({ prog }: { prog: Foerderprogramm }) {
                 </span>
               )}
               {prog.bundesland && (
-                <span className="px-2 py-0.5 bg-[#2C3A1C] text-emerald-400 rounded-full text-xs">
+                <span className="px-2 py-0.5 bg-forest text-emerald-400 rounded-full text-xs">
                   {prog.bundesland}
                 </span>
               )}
@@ -616,7 +616,7 @@ function FoerderprogrammeCard({ prog }: { prog: Foerderprogramm }) {
       </button>
 
       {open && (
-        <div className="px-5 pb-5 border-t border-[#2a2a2a] pt-4 space-y-3">
+        <div className="px-5 pb-5 border-t border-border pt-4 space-y-3">
           {prog.traeger && (
             <div>
               <p className="text-xs text-zinc-500 mb-0.5">Träger</p>
@@ -739,14 +739,14 @@ function FoerderprogrammeTab() {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
-            className="w-full bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
+            className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
             placeholder="Suche nach Programm, Fördergegenstand..."
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
           />
         </div>
         <select
-          className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
           value={bundesland}
           onChange={(e) => setBundesland(e.target.value)}
         >
@@ -757,7 +757,7 @@ function FoerderprogrammeTab() {
         </select>
         {kategorien.length > 0 && (
           <select
-            className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+            className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
             value={kategorie}
             onChange={(e) => setKategorie(e.target.value)}
           >
@@ -768,7 +768,7 @@ function FoerderprogrammeTab() {
           </select>
         )}
         <select
-          className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
         >
@@ -777,7 +777,7 @@ function FoerderprogrammeTab() {
           <option value="GESCHLOSSEN">Geschlossen</option>
         </select>
         <select
-          className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
           value={sort}
           onChange={(e) => setSort(e.target.value)}
         >
@@ -901,7 +901,7 @@ function WissenTab() {
   return (
     <div className="space-y-4">
       {/* Search */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+      <div className="bg-[#161616] border border-border rounded-xl p-5">
         <p className="text-zinc-400 text-sm mb-4">
           Volltextsuche in{" "}
           {total > 0 && hasSearched ? `${total.toLocaleString("de")} Treffer aus ` : ""}
@@ -911,7 +911,7 @@ function WissenTab() {
           <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
             <input
-              className="w-full bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg pl-9 pr-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
+              className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
               placeholder="z.B. Pflanzverband, Borkenkäfer, Fördersatz..."
               value={suche}
               onChange={(e) => setSuche(e.target.value)}
@@ -920,7 +920,7 @@ function WissenTab() {
           </div>
           {kategorien.length > 0 && (
             <select
-              className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+              className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
               value={kategorie}
               onChange={(e) => setKategorie(e.target.value)}
             >
@@ -931,7 +931,7 @@ function WissenTab() {
             </select>
           )}
           <select
-            className="bg-[#1c1c1c] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+            className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
             value={sort}
             onChange={(e) => {
               setSort(e.target.value)
@@ -981,7 +981,7 @@ function WissenTab() {
           <div className="text-xs text-zinc-500">{total.toLocaleString("de")} Treffer</div>
           <div className="space-y-3">
             {data.map((chunk) => (
-              <div key={chunk.id} className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+              <div key={chunk.id} className="bg-[#161616] border border-border rounded-xl p-4">
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div>
                     <p className="text-white text-sm font-medium leading-tight">
@@ -989,7 +989,7 @@ function WissenTab() {
                     </p>
                     <div className="flex gap-2 mt-1 flex-wrap">
                       {chunk.doc_type && (
-                        <span className="px-2 py-0.5 bg-[#1e1e1e] text-zinc-400 rounded text-xs border border-[#2a2a2a]">
+                        <span className="px-2 py-0.5 bg-[#1e1e1e] text-zinc-400 rounded text-xs border border-border">
                           {chunk.doc_type}
                         </span>
                       )}
@@ -1026,7 +1026,7 @@ function WissenTab() {
               <button
                 onClick={() => setOffset(Math.max(0, offset - limit))}
                 disabled={offset === 0}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" /> Zurück
               </button>
@@ -1036,7 +1036,7 @@ function WissenTab() {
               <button
                 onClick={() => setOffset(offset + limit)}
                 disabled={offset + limit >= total}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
               >
                 Weiter <ChevronRight className="w-4 h-4" />
               </button>
@@ -1057,7 +1057,7 @@ export default function WissensPage() {
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <div className="w-10 h-10 rounded-xl bg-[#2C3A1C] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-xl bg-forest flex items-center justify-center">
           <BookOpen className="w-5 h-5 text-emerald-400" />
         </div>
         <div>
@@ -1067,17 +1067,17 @@ export default function WissensPage() {
           </p>
         </div>
         <div className="ml-auto hidden sm:flex gap-2">
-          <div className="px-3 py-1.5 bg-[#2C3A1C]/50 border border-emerald-900/50 rounded-lg text-xs text-emerald-400">
+          <div className="px-3 py-1.5 bg-forest/50 border border-emerald-900/50 rounded-lg text-xs text-emerald-400">
             🌲 SecondBrain DB
           </div>
-          <div className="px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-xs text-zinc-400">
+          <div className="px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-xs text-zinc-400">
             7.064 Einträge
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-[#161616] p-1 rounded-xl border border-[#2a2a2a] overflow-x-auto">
+      <div className="flex gap-1 bg-[#161616] p-1 rounded-xl border border-border overflow-x-auto">
         {TAB_LIST.map((tab) => {
           const Icon = tab.icon
           const isActive = activeTab === tab.id
@@ -1087,7 +1087,7 @@ export default function WissensPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap flex-1 justify-center ${
                 isActive
-                  ? "bg-[#2C3A1C] text-emerald-400"
+                  ? "bg-forest text-emerald-400"
                   : "text-zinc-400 hover:text-white hover:bg-[#1e1e1e]"
               }`}
             >

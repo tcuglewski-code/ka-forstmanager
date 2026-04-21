@@ -80,7 +80,7 @@ export default function SchulungenPage() {
           {schulungen.length === 0 ? (
             <p className="text-zinc-600 col-span-3 text-center py-12">Keine Schulungen</p>
           ) : schulungen.map((s) => (
-            <Link key={s.id} href={`/schulungen/${s.id}`} className="block bg-[#161616] border border-[#2a2a2a] rounded-xl p-5 hover:border-zinc-600 transition-all cursor-pointer">
+            <Link key={s.id} href={`/schulungen/${s.id}`} className="block bg-[#161616] border border-border rounded-xl p-5 hover:border-zinc-600 transition-all cursor-pointer">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex gap-2 flex-wrap">
                   <span className={`px-2 py-0.5 rounded-full text-xs ${typBadge[s.typ] ?? "bg-zinc-700 text-zinc-400"}`}>
@@ -118,7 +118,7 @@ export default function SchulungenPage() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto">
+          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto">
             <h2 className="text-lg font-bold text-white mb-4">Schulung anlegen</h2>
             <div className="space-y-4">
               <div>

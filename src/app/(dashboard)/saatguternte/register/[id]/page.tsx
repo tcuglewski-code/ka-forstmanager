@@ -121,7 +121,7 @@ export default async function FlaecheDetailPage({
         {hasKoord && (
           <a
             href={`/saatguternte/scout/${flaeche.id}`}
-            className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-[#1e1e1e] border border-[#2a2a2a] hover:border-emerald-500 rounded-lg text-xs text-zinc-400 hover:text-emerald-400 transition-all"
+            className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-[#1e1e1e] border border-border hover:border-emerald-500 rounded-lg text-xs text-zinc-400 hover:text-emerald-400 transition-all"
           >
             📱 Scout-Ansicht <ExternalLink className="w-3 h-3" />
           </a>

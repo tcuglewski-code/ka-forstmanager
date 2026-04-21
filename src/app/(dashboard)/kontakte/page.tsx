@@ -17,7 +17,7 @@ interface Kontakt {
 }
 
 const TYP_FARBEN: Record<string, string> = {
-  foerster: "bg-[#2C3A1C] text-emerald-400",
+  foerster: "bg-forest text-emerald-400",
   waldbesitzer: "bg-blue-100 text-blue-800",
   behoerde: "bg-amber-100 text-amber-800",
   lieferant: "bg-violet-100 text-violet-800",
@@ -103,8 +103,8 @@ function KontaktModal({ kontakt, onClose, onSave }: { kontakt?: Kontakt | null; 
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md flex flex-col max-h-[85vh]">
-        <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a] shrink-0">
+      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md flex flex-col max-h-[85vh]">
+        <div className="flex items-center justify-between p-6 border-b border-border shrink-0">
           <h2 className="text-lg font-semibold text-white">{kontakt?.id ? "Kontakt bearbeiten" : "Neuer Kontakt"}</h2>
           <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
@@ -113,25 +113,25 @@ function KontaktModal({ kontakt, onClose, onSave }: { kontakt?: Kontakt | null; 
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Name *</label>
               <input type="text" value={form.name} onChange={e => { setForm(f => ({ ...f, name: e.target.value })); if (errors.name) setErrors(v => ({ ...v, name: false })) }}
-                className={`w-full bg-[#0f0f0f] border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 ${errors.name ? "border-red-500" : "border-[#2a2a2a]"}`} />
+                className={`w-full bg-[#0f0f0f] border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 ${errors.name ? "border-red-500" : "border-border"}`} />
               {errors.name && <p className="text-red-400 text-xs mt-1">Name ist erforderlich</p>}
             </div>
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Typ</label>
               <select value={form.typ} onChange={e => setForm(f => ({ ...f, typ: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
                 {TYPEN.map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
               </select>
             </div>
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Telefon</label>
               <input type="tel" value={form.telefon} onChange={e => setForm(f => ({ ...f, telefon: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
             </div>
             <div>
               <label className="block text-xs text-zinc-400 mb-1">E-Mail</label>
               <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
             </div>
             {/* Sprint FY (G2): Forstamt mit Autocomplete */}
             <div className="relative">
@@ -140,9 +140,9 @@ function KontaktModal({ kontakt, onClose, onSave }: { kontakt?: Kontakt | null; 
                 onChange={e => { setForm(f => ({ ...f, forstamt: e.target.value })); searchForstamt(e.target.value) }}
                 onFocus={() => form.forstamt && searchForstamt(form.forstamt)}
                 onBlur={() => setTimeout(() => setShowForstamtDropdown(false), 200)}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
               {showForstamtDropdown && forstamtSuggestions.length > 0 && (
-                <div className="absolute z-10 top-full mt-1 w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg max-h-32 overflow-y-auto">
+                <div className="absolute z-10 top-full mt-1 w-full bg-[#1a1a1a] border border-border rounded-lg max-h-32 overflow-y-auto">
                   {forstamtSuggestions.map((s, i) => (
                     <button key={i} type="button" onClick={() => { setForm(f => ({ ...f, forstamt: s.forstamt })); setShowForstamtDropdown(false) }}
                       className="w-full text-left px-3 py-2 text-sm text-zinc-300 hover:bg-[#222] transition-colors">
@@ -155,7 +155,7 @@ function KontaktModal({ kontakt, onClose, onSave }: { kontakt?: Kontakt | null; 
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Revier</label>
               <input type="text" value={form.revier} onChange={e => setForm(f => ({ ...f, revier: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
             </div>
             {/* Sprint FY (G1): PLZ + Ort mit Autofill */}
             <div className="grid grid-cols-3 gap-2">
@@ -165,29 +165,29 @@ function KontaktModal({ kontakt, onClose, onSave }: { kontakt?: Kontakt | null; 
                   onChange={e => setForm(f => ({ ...f, plz: e.target.value }))}
                   onBlur={handlePlzBlur}
                   placeholder="12345"
-                  className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                  className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
               </div>
               <div className="col-span-2">
                 <label className="block text-xs text-zinc-400 mb-1">Ort</label>
                 <input type="text" value={form.ort}
                   onChange={e => setForm(f => ({ ...f, ort: e.target.value }))}
                   placeholder="wird automatisch befüllt"
-                  className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 placeholder-zinc-600" />
+                  className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 placeholder-zinc-600" />
               </div>
             </div>
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Adresse (Straße)</label>
               <input type="text" value={form.adresse} onChange={e => setForm(f => ({ ...f, adresse: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
             </div>
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
               <textarea value={form.notizen} onChange={e => setForm(f => ({ ...f, notizen: e.target.value }))} rows={3}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 resize-none" />
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 resize-none" />
             </div>
           </div>
-          <div className="shrink-0 flex gap-3 p-6 border-t border-[#2a2a2a]">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+          <div className="shrink-0 flex gap-3 p-6 border-t border-border">
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
             <button type="submit" disabled={loading} className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
               {loading ? "Speichern..." : "Speichern"}
             </button>
@@ -245,11 +245,11 @@ export default function KontaktePage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Suchen..."
-            className="w-full bg-[#161616] border border-[#2a2a2a] rounded-lg pl-9 pr-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+            className="w-full bg-[#161616] border border-border rounded-lg pl-9 pr-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
           />
         </div>
         <select value={filterTyp} onChange={e => setFilterTyp(e.target.value)}
-          className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500">
+          className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500">
           <option value="">Alle Typen</option>
           {TYPEN.map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
         </select>
@@ -265,7 +265,7 @@ export default function KontaktePage() {
             <div
               key={k.id}
               onClick={() => setModal({ open: true, kontakt: k })}
-              className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5 hover:border-zinc-600 cursor-pointer transition-all"
+              className="bg-[#161616] border border-border rounded-xl p-5 hover:border-zinc-600 cursor-pointer transition-all"
             >
               <div className="flex items-start justify-between mb-3">
                 <h3 className="font-semibold text-white leading-tight">{k.name}</h3>

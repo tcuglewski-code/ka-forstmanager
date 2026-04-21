@@ -130,7 +130,7 @@ export default function ReportsPage() {
             <button
               key={k.key}
               onClick={() => setActiveReport(k.key as typeof activeReport)}
-              className={`p-5 rounded-xl border text-left transition-all ${activeReport === k.key ? "bg-[#2C3A1C] border-emerald-500/30 text-emerald-400" : "bg-[#161616] border-[#2a2a2a] text-zinc-400 hover:border-zinc-600"}`}
+              className={`p-5 rounded-xl border text-left transition-all ${activeReport === k.key ? "bg-forest border-emerald-500/30 text-emerald-400" : "bg-[#161616] border-border text-zinc-400 hover:border-zinc-600"}`}
             >
               <Icon className="w-5 h-5 mb-2" />
               <p className="font-semibold text-sm">{k.label}</p>
@@ -144,14 +144,14 @@ export default function ReportsPage() {
       {activeReport === "saison" && (
         <div className="space-y-4">
           <div className="flex gap-3">
-            <select value={selectedSaison} onChange={(e) => setSelectedSaison(e.target.value)} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white flex-1">
+            <select value={selectedSaison} onChange={(e) => setSelectedSaison(e.target.value)} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white flex-1">
               <option value="">— Saison auswählen —</option>
               {saisons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
             </select>
             <button onClick={loadSaisonReport} disabled={!selectedSaison || saisonLoading} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-medium disabled:opacity-50">
               {saisonLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Laden"}
             </button>
-            <button onClick={exportSaisonCSV} disabled={!saisonReport} className="flex items-center gap-2 px-4 py-2 bg-[#161616] border border-[#2a2a2a] text-zinc-400 hover:text-white rounded-lg text-sm disabled:opacity-40">
+            <button onClick={exportSaisonCSV} disabled={!saisonReport} className="flex items-center gap-2 px-4 py-2 bg-[#161616] border border-border text-zinc-400 hover:text-white rounded-lg text-sm disabled:opacity-40">
               <Download className="w-4 h-4" /> CSV
             </button>
           </div>
@@ -166,25 +166,25 @@ export default function ReportsPage() {
                   { label: "Mitarbeiter", value: saisonReport.stats.mitarbeiter },
                   { label: "Protokolle", value: saisonReport.stats.protokolle },
                 ].map((s) => (
-                  <div key={s.label} className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-4">
+                  <div key={s.label} className="bg-[#161616] border border-border rounded-xl p-4">
                     <p className="text-xs text-zinc-500">{s.label}</p>
                     <p className="text-xl font-bold text-emerald-400 mt-1">{s.value}</p>
                   </div>
                 ))}
               </div>
-              <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-                <div className="px-6 py-4 border-b border-[#2a2a2a]">
+              <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+                <div className="px-6 py-4 border-b border-border">
                   <h3 className="font-semibold text-white">Aufträge</h3>
                 </div>
                 <div className="overflow-x-auto">
                 <table className="min-w-full">
-                  <thead><tr className="border-b border-[#2a2a2a]">
+                  <thead><tr className="border-b border-border">
                     <th className="text-left px-6 py-3 text-xs text-zinc-500">Titel</th>
                     <th className="text-left px-6 py-3 text-xs text-zinc-500">Typ</th>
                     <th className="text-left px-6 py-3 text-xs text-zinc-500">Status</th>
                     <th className="text-left px-6 py-3 text-xs text-zinc-500">Fläche</th>
                   </tr></thead>
-                  <tbody className="divide-y divide-[#2a2a2a]">
+                  <tbody className="divide-y divide-border">
                     {saisonReport.auftraege.map((a) => (
                       <tr key={a.id} className="hover:bg-[#1c1c1c]">
                         <td className="px-6 py-3 text-sm text-white">
@@ -211,33 +211,33 @@ export default function ReportsPage() {
       {activeReport === "mitarbeiter" && (
         <div className="space-y-4">
           <div className="flex gap-3 flex-wrap">
-            <select value={monat} onChange={(e) => setMonat(Number(e.target.value))} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white">
+            <select value={monat} onChange={(e) => setMonat(Number(e.target.value))} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white">
               {monate.map((m, i) => <option key={i + 1} value={i + 1}>{m}</option>)}
             </select>
-            <select value={jahr} onChange={(e) => setJahr(Number(e.target.value))} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white">
+            <select value={jahr} onChange={(e) => setJahr(Number(e.target.value))} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white">
               {[2024, 2025, 2026, 2027].map((y) => <option key={y} value={y}>{y}</option>)}
             </select>
             <button onClick={loadMaReport} disabled={maLoading} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-medium disabled:opacity-50">
               {maLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Laden"}
             </button>
-            <button onClick={exportMaCSV} disabled={!maReport} className="flex items-center gap-2 px-4 py-2 bg-[#161616] border border-[#2a2a2a] text-zinc-400 hover:text-white rounded-lg text-sm disabled:opacity-40">
+            <button onClick={exportMaCSV} disabled={!maReport} className="flex items-center gap-2 px-4 py-2 bg-[#161616] border border-border text-zinc-400 hover:text-white rounded-lg text-sm disabled:opacity-40">
               <Download className="w-4 h-4" /> CSV
             </button>
           </div>
           {maReport && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-              <div className="px-6 py-4 border-b border-[#2a2a2a]">
+            <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+              <div className="px-6 py-4 border-b border-border">
                 <h3 className="font-semibold text-white">{monate[maReport.monat - 1]} {maReport.jahr}</h3>
               </div>
               <div className="overflow-x-auto">
               <table className="min-w-full">
-                <thead><tr className="border-b border-[#2a2a2a]">
+                <thead><tr className="border-b border-border">
                   <th className="text-left px-6 py-3 text-xs text-zinc-500">Mitarbeiter</th>
                   <th className="text-left px-6 py-3 text-xs text-zinc-500">Stunden</th>
                   <th className="text-left px-6 py-3 text-xs text-zinc-500">Stundenlohn</th>
                   <th className="text-left px-6 py-3 text-xs text-zinc-500">Brutto</th>
                 </tr></thead>
-                <tbody className="divide-y divide-[#2a2a2a]">
+                <tbody className="divide-y divide-border">
                   {maReport.mitarbeiter.length === 0 ? (
                     <tr><td colSpan={4} className="px-6 py-8 text-center text-zinc-600">Keine Stunden</td></tr>
                   ) : maReport.mitarbeiter.map((m, i) => (
@@ -251,7 +251,7 @@ export default function ReportsPage() {
                 </tbody>
                 {maReport.mitarbeiter.length > 0 && (
                   <tfoot>
-                    <tr className="border-t border-[#2a2a2a] bg-[#1a1a1a]">
+                    <tr className="border-t border-border bg-[#1a1a1a]">
                       <td className="px-6 py-3 text-sm font-medium text-zinc-400">Gesamt</td>
                       <td className="px-6 py-3 text-sm font-medium text-emerald-400">{maReport.mitarbeiter.reduce((s, m) => s + m.stunden, 0).toFixed(1)} h</td>
                       <td></td>
@@ -267,7 +267,7 @@ export default function ReportsPage() {
       )}
 
       {/* DATEV-Export */}
-      <div className="mt-8 bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+      <div className="mt-8 bg-[#161616] border border-border rounded-xl p-6">
         <div className="flex items-center gap-2 mb-4">
           <FileText className="w-4 h-4 text-zinc-500" />
           <h3 className="text-sm font-semibold text-zinc-300">DATEV-Export (Steuerberater)</h3>
@@ -275,13 +275,13 @@ export default function ReportsPage() {
         <div className="flex gap-3 flex-wrap">
           <a
             href="/api/export/datev-rechnungen"
-            className="flex items-center gap-2 px-4 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-zinc-400 hover:text-white hover:border-zinc-600 transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-[#1e1e1e] border border-border rounded-lg text-sm text-zinc-400 hover:text-white hover:border-zinc-600 transition-all"
           >
             <Download className="w-4 h-4" /> Rechnungen DATEV CSV
           </a>
           <a
             href="/api/export/datev-lohn"
-            className="flex items-center gap-2 px-4 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-sm text-zinc-400 hover:text-white hover:border-zinc-600 transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-[#1e1e1e] border border-border rounded-lg text-sm text-zinc-400 hover:text-white hover:border-zinc-600 transition-all"
           >
             <Download className="w-4 h-4" /> Lohnabrechnungen DATEV CSV
           </a>
@@ -295,24 +295,24 @@ export default function ReportsPage() {
       {activeReport === "lager" && (
         <div className="space-y-4">
           <div className="flex justify-end">
-            <button onClick={exportLagerCSV} disabled={lagerLoading} className="flex items-center gap-2 px-4 py-2 bg-[#161616] border border-[#2a2a2a] text-zinc-400 hover:text-white rounded-lg text-sm disabled:opacity-40">
+            <button onClick={exportLagerCSV} disabled={lagerLoading} className="flex items-center gap-2 px-4 py-2 bg-[#161616] border border-border text-zinc-400 hover:text-white rounded-lg text-sm disabled:opacity-40">
               <Download className="w-4 h-4" /> CSV exportieren
             </button>
           </div>
           {lagerLoading ? (
             <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
           ) : (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+            <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
               <div className="overflow-x-auto">
               <table className="min-w-full">
-                <thead><tr className="border-b border-[#2a2a2a]">
+                <thead><tr className="border-b border-border">
                   <th className="text-left px-6 py-3 text-xs text-zinc-500">Artikel</th>
                   <th className="text-left px-6 py-3 text-xs text-zinc-500">Bestand</th>
                   <th className="text-left px-6 py-3 text-xs text-zinc-500">Einheit</th>
                   <th className="text-left px-6 py-3 text-xs text-zinc-500">Mindestbestand</th>
                   <th className="text-left px-6 py-3 text-xs text-zinc-500">Status</th>
                 </tr></thead>
-                <tbody className="divide-y divide-[#2a2a2a]">
+                <tbody className="divide-y divide-border">
                   {lagerItems.length === 0 ? (
                     <tr><td colSpan={5} className="px-6 py-12 text-center text-zinc-600">Kein Lager</td></tr>
                   ) : lagerItems.map((l) => (

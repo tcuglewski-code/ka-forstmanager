@@ -224,7 +224,7 @@ export default function StundenPage() {
           {tab === "stunden" && (
             <button
               onClick={() => exportStundenCSV(stunden, `stunden-export-${new Date().toISOString().slice(0, 10)}.csv`)}
-              className="flex items-center gap-2 px-3 py-2 border border-[#2a2a2a] rounded-lg text-sm text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 border border-border rounded-lg text-sm text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors"
               title="Stunden als CSV exportieren"
             >
               <Download className="w-4 h-4" />
@@ -239,9 +239,9 @@ export default function StundenPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-[#161616] border border-[#2a2a2a] rounded-lg p-1 w-fit">
+      <div className="flex gap-1 mb-6 bg-[#161616] border border-border rounded-lg p-1 w-fit">
         {(["stunden", "abwesenheiten"] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${tab === t ? "bg-[#2C3A1C] text-emerald-400" : "text-zinc-400 hover:text-white"}`}>
+          <button key={t} onClick={() => setTab(t)} className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${tab === t ? "bg-forest text-emerald-400" : "text-zinc-400 hover:text-white"}`}>
             {t === "stunden" ? "Stundenerfassung" : "Abwesenheiten"}
           </button>
         ))}
@@ -251,21 +251,21 @@ export default function StundenPage() {
         <>
           {/* Filter */}
           <div className="flex flex-wrap gap-3 mb-4">
-            <select value={filterMitarbeiter} onChange={(e) => setFilterMitarbeiter(e.target.value)} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white">
+            <select value={filterMitarbeiter} onChange={(e) => setFilterMitarbeiter(e.target.value)} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white">
               <option value="">Alle Mitarbeiter</option>
               {mitarbeiter.map((m) => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
             </select>
-            <select value={filterMonat} onChange={(e) => setFilterMonat(e.target.value)} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white">
+            <select value={filterMonat} onChange={(e) => setFilterMonat(e.target.value)} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white">
               <option value="">Alle Monate</option>
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                 <option key={m} value={m}>{new Date(2024, m - 1).toLocaleString("de-DE", { month: "long" })}</option>
               ))}
             </select>
-            <select value={filterJahr} onChange={(e) => setFilterJahr(e.target.value)} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white">
+            <select value={filterJahr} onChange={(e) => setFilterJahr(e.target.value)} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white">
               <option value="">Alle Jahre</option>
               {jahre.map((y) => <option key={y} value={y}>{y}</option>)}
             </select>
-            <select value={filterGenehmigt} onChange={(e) => setFilterGenehmigt(e.target.value)} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white">
+            <select value={filterGenehmigt} onChange={(e) => setFilterGenehmigt(e.target.value)} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white">
               <option value="">Alle Status</option>
               <option value="true">Genehmigt</option>
               <option value="false">Ausstehend</option>
@@ -276,7 +276,7 @@ export default function StundenPage() {
           {Object.keys(stundenProMitarbeiter).length > 0 && (
             <div className="flex flex-wrap gap-3 mb-4">
               {Object.values(stundenProMitarbeiter).map((s) => (
-                <div key={s.name} className="bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm">
+                <div key={s.name} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm">
                   <span className="text-zinc-400">{s.name}: </span>
                   <span className="text-emerald-400 font-medium">{s.summe.toFixed(1)} h</span>
                 </div>
@@ -287,7 +287,7 @@ export default function StundenPage() {
           {loading ? (
             <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
           ) : stunden.length === 0 ? (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl px-6 py-12 text-center text-zinc-600">
+            <div className="bg-[#161616] border border-border rounded-xl px-6 py-12 text-center text-zinc-600">
               Keine Einträge
             </div>
           ) : (
@@ -312,11 +312,11 @@ export default function StundenPage() {
                       </span>
                     </div>
                     {/* Einträge des Tages */}
-                    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+                    <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
                       <div className="overflow-x-auto">
                       <table className="min-w-full">
                         <thead>
-                          <tr className="border-b border-[#2a2a2a]">
+                          <tr className="border-b border-border">
                             <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">Mitarbeiter</th>
                             <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">Stunden</th>
                             <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">Tätigkeit</th>
@@ -325,7 +325,7 @@ export default function StundenPage() {
                             <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">✓</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-[#2a2a2a]">
+                        <tbody className="divide-y divide-border">
                           {eintraege.map((s) => (
                             <tr key={s.id} className="hover:bg-[#1c1c1c]">
                               <td className="px-4 py-3 text-sm text-white">{s.mitarbeiter.vorname} {s.mitarbeiter.nachname}</td>
@@ -367,11 +367,11 @@ export default function StundenPage() {
           {loading ? (
             <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
           ) : (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+            <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
               <div className="overflow-x-auto">
               <table className="min-w-full">
                 <thead>
-                  <tr className="border-b border-[#2a2a2a]">
+                  <tr className="border-b border-border">
                     <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Mitarbeiter</th>
                     <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Von</th>
                     <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Bis</th>
@@ -380,7 +380,7 @@ export default function StundenPage() {
                     <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Aktion</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#2a2a2a]">
+                <tbody className="divide-y divide-border">
                   {abwesenheiten.length === 0 ? (
                     <tr><td colSpan={6} className="px-6 py-12 text-center text-zinc-600">Keine Abwesenheiten</td></tr>
                   ) : abwesenheiten.map((a) => (
@@ -420,7 +420,7 @@ export default function StundenPage() {
       {/* Stunden Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
             <h2 className="text-lg font-bold text-white mb-4">Stunden buchen</h2>
             <div className="space-y-4">
               <div>
@@ -445,7 +445,7 @@ export default function StundenPage() {
                 <select
                   value={stundenForm.typ}
                   onChange={(e) => handleTypChange(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                  className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white"
                 >
                   <option value="arbeit">Allgemeine Arbeit</option>
                   <option value="pflanzung">Pflanzung</option>
@@ -475,7 +475,7 @@ export default function StundenPage() {
                 <select
                   value={stundenForm.auftragId}
                   onChange={(e) => setStundenForm({ ...stundenForm, auftragId: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white"
+                  className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white"
                 >
                   <option value="">Kein Auftrag</option>
                   {auftraege.map((a) => <option key={a.id} value={a.id}>{a.titel}</option>)}
@@ -499,7 +499,7 @@ export default function StundenPage() {
       {/* Abwesenheit Modal */}
       {showAbwModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl w-full max-w-md p-6">
+          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6">
             <h2 className="text-lg font-bold text-white mb-4">Abwesenheit eintragen</h2>
             <div className="space-y-4">
               <div>

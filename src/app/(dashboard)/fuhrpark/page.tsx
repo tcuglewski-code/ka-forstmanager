@@ -104,8 +104,8 @@ function FahrzeugEditModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <h2 className="text-lg font-semibold text-white">Fahrzeug bearbeiten</h2>
           <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
@@ -114,14 +114,14 @@ function FahrzeugEditModal({
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Typ</label>
               <select value={form.typ} onChange={e => setForm(f => ({ ...f, typ: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
                 {["pkw", "lkw", "transporter", "maschine"].map(t => <option key={t} value={t}>{t.toUpperCase()}</option>)}
               </select>
             </div>
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Status</label>
               <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
                 {["verfuegbar", "im_einsatz", "in_wartung", "defekt"].map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
@@ -130,36 +130,36 @@ function FahrzeugEditModal({
             <div key={key}>
               <label className="block text-xs text-zinc-400 mb-1">{label}</label>
               <input type={key === "baujahr" ? "number" : "text"} value={(form as Record<string, string>)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
             </div>
           ))}
           <div>
             <label className="block text-xs text-zinc-400 mb-1">TÜV-Datum</label>
             <input type="date" value={form.tuvDatum} onChange={e => setForm(f => ({ ...f, tuvDatum: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
           </div>
           <div>
             <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
             <textarea rows={2} value={form.notizen} onChange={e => setForm(f => ({ ...f, notizen: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white resize-none focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white resize-none focus:outline-none focus:border-emerald-500" />
           </div>
-          <div className="border-t border-[#2a2a2a] pt-3">
+          <div className="border-t border-border pt-3">
             <p className="text-xs text-zinc-500 mb-3">Maschinenbonus</p>
             <div>
               <label className="text-xs text-zinc-500 mb-1 block">Maschinenzuschlag (€/h)</label>
               <input type="number" step="0.50" min="0" placeholder="0.00" value={form.stundenBonus}
                 onChange={e => setForm(f => ({ ...f, stundenBonus: e.target.value }))}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
             </div>
             <div className="mt-3">
               <label className="text-xs text-zinc-500 mb-1 block">Bonus-Beschreibung</label>
               <input type="text" placeholder="z.B. Schwermaschinenzuschlag" value={form.bonusBeschreibung}
                 onChange={e => setForm(f => ({ ...f, bonusBeschreibung: e.target.value }))}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
             <button type="submit" disabled={loading || !form.bezeichnung}
               className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
               {loading ? "Speichern..." : "Aktualisieren"}
@@ -195,8 +195,8 @@ function FahrzeugModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <h2 className="text-lg font-semibold text-white">Neues Fahrzeug</h2>
           <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
@@ -205,14 +205,14 @@ function FahrzeugModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Typ</label>
               <select value={form.typ} onChange={e => setForm(f => ({ ...f, typ: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
                 {["pkw", "lkw", "transporter", "maschine"].map(t => <option key={t} value={t}>{t.toUpperCase()}</option>)}
               </select>
             </div>
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Status</label>
               <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
                 {["verfuegbar", "im_einsatz", "in_wartung", "defekt"].map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
@@ -221,34 +221,34 @@ function FahrzeugModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
             <div key={key}>
               <label className="block text-xs text-zinc-400 mb-1">{label}</label>
               <input type={key === "baujahr" ? "number" : "text"} value={(form as Record<string, string>)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
             </div>
           ))}
           <div>
             <label className="block text-xs text-zinc-400 mb-1">TÜV-Datum</label>
             <input type="date" value={form.tuvDatum} onChange={e => setForm(f => ({ ...f, tuvDatum: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
           </div>
           {/* K6: Maschinenbonus */}
-          <div className="border-t border-[#2a2a2a] pt-3">
+          <div className="border-t border-border pt-3">
             <p className="text-xs text-zinc-500 mb-3">Maschinenbonus (Sprint K6)</p>
             <div>
               <label className="text-xs text-zinc-500 mb-1 block">Maschinenzuschlag (€/h)</label>
               <input type="number" step="0.50" min="0" placeholder="0.00"
                 value={form.stundenBonus}
                 onChange={(e) => setForm(prev => ({ ...prev, stundenBonus: e.target.value }))}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
             </div>
             <div className="mt-3">
               <label className="text-xs text-zinc-500 mb-1 block">Bonus-Beschreibung</label>
               <input type="text" placeholder="z.B. Schwermaschinenzuschlag"
                 value={form.bonusBeschreibung}
                 onChange={(e) => setForm(prev => ({ ...prev, bonusBeschreibung: e.target.value }))}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
             <button type="submit" disabled={loading || !form.bezeichnung} className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
               {loading ? "Speichern..." : "Speichern"}
             </button>
@@ -280,8 +280,8 @@ function GeraetModal({ onClose, onSave }: { onClose: () => void; onSave: () => v
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md">
-        <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <h2 className="text-lg font-semibold text-white">Neues Gerät</h2>
           <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
@@ -290,16 +290,16 @@ function GeraetModal({ onClose, onSave }: { onClose: () => void; onSave: () => v
             <div key={key}>
               <label className="block text-xs text-zinc-400 mb-1">{label}</label>
               <input type="text" value={(form as Record<string, string>)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
             </div>
           ))}
           <div>
             <label className="block text-xs text-zinc-400 mb-1">Nächste Wartung</label>
             <input type="date" value={form.naechsteWartung} onChange={e => setForm(f => ({ ...f, naechsteWartung: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
             <button type="submit" disabled={loading || !form.bezeichnung || !form.typ} className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
               {loading ? "Speichern..." : "Speichern"}
             </button>
@@ -353,8 +353,8 @@ function EinsatzModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-[#2a2a2a]">
+      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <h2 className="text-lg font-semibold text-white">Einsatz buchen</h2>
           <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
         </div>
@@ -362,7 +362,7 @@ function EinsatzModal({
           <div>
             <label className="block text-xs text-zinc-400 mb-1">Fahrzeug *</label>
             <select value={form.fahrzeugId} onChange={e => setForm(f => ({ ...f, fahrzeugId: e.target.value }))} required
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
               <option value="">— wählen —</option>
               {fahrzeuge.map(f => (
                 <option key={f.id} value={f.id}>{f.bezeichnung}{f.kennzeichen ? ` (${f.kennzeichen})` : ""}</option>
@@ -372,7 +372,7 @@ function EinsatzModal({
           <div>
             <label className="block text-xs text-zinc-400 mb-1">Gruppe</label>
             <select value={form.gruppeId} onChange={e => setForm(f => ({ ...f, gruppeId: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
               <option value="">— keine Gruppe —</option>
               {gruppen.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
             </select>
@@ -380,7 +380,7 @@ function EinsatzModal({
           <div>
             <label className="block text-xs text-zinc-400 mb-1">Auftrag (optional)</label>
             <select value={form.auftragId} onChange={e => setForm(f => ({ ...f, auftragId: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
               <option value="">— kein Auftrag —</option>
               {auftraege.map(a => <option key={a.id} value={a.id}>{a.titel}</option>)}
             </select>
@@ -389,28 +389,28 @@ function EinsatzModal({
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Von *</label>
               <input type="date" value={form.vonDatum} onChange={e => setForm(f => ({ ...f, vonDatum: e.target.value }))} required
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
             </div>
             <div>
               <label className="block text-xs text-zinc-400 mb-1">Bis (optional)</label>
               <input type="date" value={form.bisDatum} onChange={e => setForm(f => ({ ...f, bisDatum: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           <div>
             <label className="block text-xs text-zinc-400 mb-1">Zweck</label>
             <input type="text" value={form.zweck} onChange={e => setForm(f => ({ ...f, zweck: e.target.value }))}
               placeholder="z.B. Holztransport, Pflanzung..."
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
           </div>
           <div>
             <label className="block text-xs text-zinc-400 mb-1">Stundensatz (€/h)</label>
             <input type="number" step="0.50" min="0" value={form.stundensatz} onChange={e => setForm(f => ({ ...f, stundensatz: e.target.value }))}
               placeholder="0.00"
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-[#2a2a2a] text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
             <button type="submit" disabled={loading || !form.fahrzeugId || !form.vonDatum}
               className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
               {loading ? "Buchen..." : "Einsatz buchen"}
@@ -496,7 +496,7 @@ export default function FuhrparkPage() {
       <div className="flex gap-1 bg-[#0f0f0f] rounded-lg p-1 mb-6 w-fit">
         {(["fahrzeuge", "geraete", "einsaetze"] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${tab === t ? "bg-[#2C3A1C] text-emerald-400" : "text-zinc-500 hover:text-white"}`}>
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${tab === t ? "bg-forest text-emerald-400" : "text-zinc-500 hover:text-white"}`}>
             {t === "fahrzeuge" ? "Fahrzeuge" : t === "geraete" ? "Geräte" : "Einsätze"}
           </button>
         ))}
@@ -506,10 +506,10 @@ export default function FuhrparkPage() {
         <>
           {/* ─── Tab: Fahrzeuge ─────────────────────────────────────────── */}
           {tab === "fahrzeuge" && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-x-auto">
+            <div className="bg-[#161616] border border-border rounded-xl overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-[#2a2a2a]">
+                  <tr className="border-b border-border">
                     <th className="text-left px-4 py-3 text-zinc-500 font-medium">Typ</th>
                     <th className="text-left px-4 py-3 text-zinc-500 font-medium">Bezeichnung</th>
                     <th className="text-left px-4 py-3 text-zinc-500 font-medium">Kennzeichen</th>
@@ -556,7 +556,7 @@ export default function FuhrparkPage() {
                       <td className="px-4 py-3 text-right">
                         <button
                           onClick={() => setEditFahrzeug(f)}
-                          className="text-zinc-500 hover:text-emerald-400 transition-colors text-xs px-2 py-1 rounded hover:bg-[#2a2a2a]"
+                          className="text-zinc-500 hover:text-emerald-400 transition-colors text-xs px-2 py-1 rounded hover:bg-surface-container-highest"
                         >
                           Bearbeiten
                         </button>
@@ -570,10 +570,10 @@ export default function FuhrparkPage() {
 
           {/* ─── Tab: Geräte ─────────────────────────────────────────────── */}
           {tab === "geraete" && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-x-auto">
+            <div className="bg-[#161616] border border-border rounded-xl overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-[#2a2a2a]">
+                  <tr className="border-b border-border">
                     <th className="text-left px-4 py-3 text-zinc-500 font-medium">Bezeichnung</th>
                     <th className="text-left px-4 py-3 text-zinc-500 font-medium">Typ</th>
                     <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
@@ -613,10 +613,10 @@ export default function FuhrparkPage() {
 
           {/* ─── Tab: Einsätze (K2) ──────────────────────────────────────── */}
           {tab === "einsaetze" && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-x-auto">
+            <div className="bg-[#161616] border border-border rounded-xl overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-[#2a2a2a]">
+                  <tr className="border-b border-border">
                     <th className="text-left px-4 py-3 text-zinc-500 font-medium">Fahrzeug</th>
                     <th className="text-left px-4 py-3 text-zinc-500 font-medium">Gruppe</th>
                     <th className="text-left px-4 py-3 text-zinc-500 font-medium">Auftrag</th>

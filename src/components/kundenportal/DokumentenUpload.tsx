@@ -244,7 +244,7 @@ export function DokumentenUpload({ kundeId, auftragId, maxMb = 20 }: DokumentenU
         {ladenDateien ? (
           <div className="text-zinc-500 text-sm text-center py-4">Lade Dokumente...</div>
         ) : dateien.length === 0 ? (
-          <div className="text-zinc-600 text-sm text-center py-6 border border-dashed border-zinc-700 rounded-lg">
+          <div className="text-zinc-600 text-sm text-center py-6 border border-dashed border-border rounded-lg">
             Noch keine Dokumente hochgeladen
           </div>
         ) : (

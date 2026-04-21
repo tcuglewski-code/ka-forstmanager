@@ -25,7 +25,7 @@ export default async function KundeLayout({
     <SessionProvider>
       <div className="min-h-screen bg-gray-50">
         {/* Mobile-freundlicher Header */}
-        <header className="bg-[#2C3A1C] text-white sticky top-0 z-50">
+        <header className="bg-forest text-white sticky top-0 z-50">
           <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-xl">🌲</span>
@@ -55,7 +55,7 @@ export default async function KundeLayout({
           <div className="max-w-lg mx-auto px-4 py-4 text-center text-sm text-gray-500">
             <p>© {new Date().getFullYear()} Koch Aufforstung GmbH</p>
             <p className="mt-1">
-              <Link href="https://koch-aufforstung.de" className="text-[#2C3A1C] hover:underline">
+              <Link href="https://koch-aufforstung.de" className="text-forest hover:underline">
                 koch-aufforstung.de
               </Link>
             </p>
@@ -64,7 +64,7 @@ export default async function KundeLayout({
                 href="https://peru-otter-113714.hostingersite.com/datenschutz/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-[#2C3A1C] underline transition-colors"
+                className="text-gray-400 hover:text-forest underline transition-colors"
               >
                 Datenschutz
               </a>
@@ -72,7 +72,7 @@ export default async function KundeLayout({
                 href="https://peru-otter-113714.hostingersite.com/impressum/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-[#2C3A1C] underline transition-colors"
+                className="text-gray-400 hover:text-forest underline transition-colors"
               >
                 Impressum
               </a>

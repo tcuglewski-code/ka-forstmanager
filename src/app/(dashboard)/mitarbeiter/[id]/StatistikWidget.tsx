@@ -33,13 +33,13 @@ export function StatistikWidget({ mitarbeiterId, saisons }: { mitarbeiterId: str
   }, [mitarbeiterId, statSaisonId])
 
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 mb-6">
+    <div className="bg-[#161616] border border-border rounded-xl p-6 mb-6">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">Statistik</h3>
         <select
           value={statSaisonId}
           onChange={(e) => setStatSaisonId(e.target.value)}
-          className="text-xs px-2 py-1 bg-[#1e1e1e] border border-[#2a2a2a] rounded text-zinc-400 focus:outline-none focus:border-emerald-500"
+          className="text-xs px-2 py-1 bg-[#1e1e1e] border border-border rounded text-zinc-400 focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Saisons</option>
           {saisons.map((s) => (
@@ -63,7 +63,7 @@ export function StatistikWidget({ mitarbeiterId, saisons }: { mitarbeiterId: str
                 color: "text-red-400",
               },
             ].map(({ label, value, color }) => (
-              <div key={label} className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-xl p-3">
+              <div key={label} className="bg-[#0f0f0f] border border-border rounded-xl p-3">
                 <p className="text-xs text-zinc-500 mb-1">{label}</p>
                 <p className={`text-lg font-bold ${color}`}>{value}</p>
               </div>
@@ -81,7 +81,7 @@ export function StatistikWidget({ mitarbeiterId, saisons }: { mitarbeiterId: str
               {Object.entries(statistik.nachTyp).map(([typ, std]) => (
                 <span
                   key={typ}
-                  className="text-xs px-2 py-1 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-zinc-400"
+                  className="text-xs px-2 py-1 bg-[#1a1a1a] border border-border rounded text-zinc-400"
                 >
                   {typ}: {(std as number).toFixed(1)}h
                 </span>

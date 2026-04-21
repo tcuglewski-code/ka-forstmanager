@@ -22,7 +22,7 @@ const BAR_COLORS = ["#10b981", "#6366f1", "#f59e0b", "#ec4899", "#8b5cf6"]
 
 export function FeatureUsageWidget() {
   return (
-    <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+    <div className="bg-[#1a1a1a] border border-border rounded-xl p-6">
       <h2 className="text-lg font-semibold text-white mb-1">
         API-Nutzung
       </h2>
@@ -53,7 +53,7 @@ export function FeatureUsageWidget() {
             <Tooltip
               contentStyle={{
                 backgroundColor: "#1a1a1a",
-                border: "1px solid #2a2a2a",
+                border: "1px solid var(--color-border)",
                 borderRadius: "8px",
                 color: "#fff",
               }}

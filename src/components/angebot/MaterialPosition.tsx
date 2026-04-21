@@ -91,14 +91,14 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Package className="w-4 h-4 text-[#C5A55A]" />
+          <Package className="w-4 h-4 text-gold" />
           <h3 className="text-sm font-medium text-white">Materialien</h3>
         </div>
         {!readOnly && (
           <button
             type="button"
             onClick={addPosition}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg bg-[#C5A55A]/20 text-[#C5A55A] hover:bg-[#C5A55A]/30 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg bg-gold/20 text-gold hover:bg-gold/30 transition-colors"
           >
             <Plus className="w-3 h-3" />
             Material hinzufügen
@@ -107,14 +107,14 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
       </div>
 
       {positionen.length === 0 ? (
-        <div className="text-center py-6 text-zinc-500 text-sm border border-dashed border-[#2a2a2a] rounded-lg">
+        <div className="text-center py-6 text-zinc-500 text-sm border border-dashed border-border rounded-lg">
           Keine Materialien hinzugefügt
         </div>
       ) : (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="text-left px-4 py-3 text-zinc-500 font-medium">Artikel</th>
                 <th className="text-right px-4 py-3 text-zinc-500 font-medium w-24">Menge</th>
                 <th className="text-right px-4 py-3 text-zinc-500 font-medium w-32">Einzelpreis</th>
@@ -132,7 +132,7 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
                       <select
                         value={pos.artikelId}
                         onChange={e => handleArtikelChange(index, e.target.value)}
-                        className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-[#C5A55A]"
+                        className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-gold"
                       >
                         <option value="">Artikel wählen...</option>
                         {artikel.map(a => (
@@ -154,7 +154,7 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
                           step="0.01"
                           value={pos.menge}
                           onChange={e => updatePosition(index, { menge: parseFloat(e.target.value) || 0 })}
-                          className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-2 py-1.5 text-sm text-white text-right focus:outline-none focus:border-[#C5A55A]"
+                          className="w-full bg-[#0f0f0f] border border-border rounded-lg px-2 py-1.5 text-sm text-white text-right focus:outline-none focus:border-gold"
                         />
                         <span className="text-xs text-zinc-500">{pos.einheit}</span>
                       </div>
@@ -170,7 +170,7 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
                         step="0.01"
                         value={pos.einzelpreis}
                         onChange={e => updatePosition(index, { einzelpreis: parseFloat(e.target.value) || 0 })}
-                        className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-2 py-1.5 text-sm text-white text-right focus:outline-none focus:border-[#C5A55A]"
+                        className="w-full bg-[#0f0f0f] border border-border rounded-lg px-2 py-1.5 text-sm text-white text-right focus:outline-none focus:border-gold"
                       />
                     )}
                   </td>
@@ -196,7 +196,7 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
                 <td colSpan={readOnly ? 3 : 3} className="px-4 py-3 text-right text-zinc-400 font-medium">
                   Materialkosten Gesamt:
                 </td>
-                <td className="px-4 py-3 text-right text-[#C5A55A] font-bold">
+                <td className="px-4 py-3 text-right text-gold font-bold">
                   {gesamtSumme.toFixed(2)} €
                 </td>
                 {!readOnly && <td></td>}

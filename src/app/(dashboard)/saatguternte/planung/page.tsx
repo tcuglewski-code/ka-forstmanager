@@ -196,7 +196,7 @@ function PlanungPageInner() {
 
       {/* Leer-Zustand */}
       {!loading && planungFlaechen.length === 0 && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-16 flex flex-col items-center justify-center text-center">
+        <div className="bg-[#161616] border border-border rounded-xl p-16 flex flex-col items-center justify-center text-center">
           <MapPin className="w-12 h-12 text-zinc-800 mb-4" />
           <p className="text-zinc-400 font-medium mb-2">Keine Flächen in der Planung</p>
           <p className="text-zinc-600 text-sm mb-6">Wähle Flächen in der Register-Übersicht aus und klicke auf „Zur Planung →"</p>
@@ -212,14 +212,14 @@ function PlanungPageInner() {
 
       {/* Laden */}
       {loading && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-16 text-center text-zinc-600">
+        <div className="bg-[#161616] border border-border rounded-xl p-16 text-center text-zinc-600">
           Lade Flächen...
         </div>
       )}
 
       {/* Planungs-Liste */}
       {!loading && planungFlaechen.length > 0 && (
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
+        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
           <div className="divide-y divide-[#1e1e1e]">
             {planungFlaechen.map((f, idx) => {
               const prev = idx > 0 ? planungFlaechen[idx - 1] : null
@@ -282,25 +282,25 @@ function PlanungPageInner() {
           </div>
 
           {/* Aktionen */}
-          <div className="p-4 border-t border-[#2a2a2a] space-y-3">
+          <div className="p-4 border-t border-border space-y-3">
             <button
               onClick={optimizeRoute}
               disabled={mitKoords < 2}
-              className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-[#2a2a2a] hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
+              className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-border hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
             >
               🗺️ Optimale Route berechnen (TSP)
             </button>
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={exportEinsatzliste}
-                className="px-4 py-2.5 bg-[#1e1e1e] border border-[#2a2a2a] hover:border-blue-500 text-zinc-300 hover:text-blue-400 rounded-lg text-sm font-medium transition-all"
+                className="px-4 py-2.5 bg-[#1e1e1e] border border-border hover:border-blue-500 text-zinc-300 hover:text-blue-400 rounded-lg text-sm font-medium transition-all"
               >
                 📋 Einsatzliste exportieren
               </button>
               <button
                 onClick={openGoogleMaps}
                 disabled={mitKoords === 0}
-                className="px-4 py-2.5 bg-[#1e1e1e] border border-[#2a2a2a] hover:border-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-orange-400 rounded-lg text-sm font-medium transition-all"
+                className="px-4 py-2.5 bg-[#1e1e1e] border border-border hover:border-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-orange-400 rounded-lg text-sm font-medium transition-all"
               >
                 🌍 Google Maps öffnen
               </button>
@@ -311,7 +311,7 @@ function PlanungPageInner() {
                 router.push(`/saatguternte/vertrag?flaechenIds=${ids}`)
               }}
               disabled={planungFlaechen.length === 0}
-              className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-[#2a2a2a] hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
+              className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-border hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
             >
               📄 Vertrag generieren
             </button>

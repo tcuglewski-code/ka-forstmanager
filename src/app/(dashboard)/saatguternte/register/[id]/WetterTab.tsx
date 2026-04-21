@@ -134,7 +134,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+      <div className="bg-[#161616] border border-border rounded-xl p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-zinc-200 flex items-center gap-2">
             🌤️ Wetterdaten für diese Fläche
@@ -167,7 +167,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
               <button
                 onClick={ladeGespeicherte}
                 disabled={loading}
-                className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2a] hover:bg-[#333] disabled:opacity-50 text-zinc-300 rounded-lg text-sm font-medium transition-all"
+                className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest hover:bg-[#333] disabled:opacity-50 text-zinc-300 rounded-lg text-sm font-medium transition-all"
               >
                 <Cloud className="w-4 h-4" />
                 Gespeicherte anzeigen
@@ -193,8 +193,8 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
         <>
           {/* Aktuelle 7-Tage-Vorschau */}
           {aktuell && (
-            <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-[#2a2a2a] flex items-center justify-between">
+            <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+              <div className="px-5 py-4 border-b border-border flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
                   📅 Aktuelle 7-Tage-Vorschau
                 </h3>
@@ -207,7 +207,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-[#2a2a2a] text-xs text-zinc-500 uppercase">
+                    <tr className="border-b border-border text-xs text-zinc-500 uppercase">
                       <th className="px-4 py-3 text-left">Datum</th>
                       <th className="px-4 py-3 text-center">Symbol</th>
                       <th className="px-4 py-3 text-right">Min °C</th>
@@ -247,7 +247,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
           )}
 
           {/* Jahres-Statistik */}
-          <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+          <div className="bg-[#161616] border border-border rounded-xl p-5">
             <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
               <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
                 📊 Jahres-Statistik
@@ -289,7 +289,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                       aktivesJahr === jahr
                         ? "bg-emerald-600 text-white"
-                        : "bg-[#2a2a2a] text-zinc-400 hover:bg-[#333] hover:text-zinc-200"
+                        : "bg-surface-container-highest text-zinc-400 hover:bg-[#333] hover:text-zinc-200"
                     }`}
                   >
                     {ladeJahr === jahr ? <RefreshCw className="w-3 h-3 animate-spin inline" /> : jahr}
@@ -302,7 +302,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
               <>
                 {/* Stats Cards */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
-                  <div className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg p-3 text-center">
+                  <div className="bg-[#1e1e1e] border border-border rounded-lg p-3 text-center">
                     <div className="text-2xl mb-1">🌡️</div>
                     <div className="text-xs text-zinc-500 mb-1">Ø Temperatur</div>
                     <div className="text-sm font-semibold text-zinc-200">
@@ -312,7 +312,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
                       Min: {n(aktuellerSnapshot.tempMinAvgC, "°")} | Max: {n(aktuellerSnapshot.tempMaxAvgC, "°")}
                     </div>
                   </div>
-                  <div className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg p-3 text-center">
+                  <div className="bg-[#1e1e1e] border border-border rounded-lg p-3 text-center">
                     <div className="text-2xl mb-1">🌧️</div>
                     <div className="text-xs text-zinc-500 mb-1">Niederschlag</div>
                     <div className="text-sm font-semibold text-zinc-200">
@@ -320,7 +320,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
                     </div>
                     <div className="text-xs text-zinc-500 mt-0.5">Jahressumme</div>
                   </div>
-                  <div className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg p-3 text-center">
+                  <div className="bg-[#1e1e1e] border border-border rounded-lg p-3 text-center">
                     <div className="text-2xl mb-1">❄️</div>
                     <div className="text-xs text-zinc-500 mb-1">Frosttage</div>
                     <div className="text-sm font-semibold text-zinc-200">
@@ -328,7 +328,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
                     </div>
                     <div className="text-xs text-zinc-500 mt-0.5">Min &lt; 0°C</div>
                   </div>
-                  <div className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg p-3 text-center">
+                  <div className="bg-[#1e1e1e] border border-border rounded-lg p-3 text-center">
                     <div className="text-2xl mb-1">☀️</div>
                     <div className="text-xs text-zinc-500 mb-1">Hitzetage</div>
                     <div className="text-sm font-semibold text-zinc-200">
@@ -336,7 +336,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
                     </div>
                     <div className="text-xs text-zinc-500 mt-0.5">Max &gt; 30°C</div>
                   </div>
-                  <div className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg p-3 text-center">
+                  <div className="bg-[#1e1e1e] border border-border rounded-lg p-3 text-center">
                     <div className="text-2xl mb-1">🌧️</div>
                     <div className="text-xs text-zinc-500 mb-1">Regentage</div>
                     <div className="text-sm font-semibold text-zinc-200">
@@ -355,7 +355,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b border-[#2a2a2a] text-xs text-zinc-500 uppercase">
+                          <tr className="border-b border-border text-xs text-zinc-500 uppercase">
                             <th className="px-3 py-2 text-left">Monat</th>
                             <th className="px-3 py-2 text-right">Ø Min °C</th>
                             <th className="px-3 py-2 text-right">Ø Max °C</th>

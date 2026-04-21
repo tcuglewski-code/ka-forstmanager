@@ -24,7 +24,7 @@ function RolleBadge({ rolle }: { rolle: string }) {
   if (rolle === "ka_mitarbeiter" || rolle === "mitarbeiter") {
     return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-500/20">Mitarbeiter</span>
   }
-  return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs text-zinc-500 border border-zinc-700">{rolle}</span>
+  return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs text-zinc-500 border border-border">{rolle}</span>
 }
 
 const statusBadge: Record<string, string> = {
@@ -74,9 +74,9 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
       </Link>
 
       {/* Profil Header */}
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 mb-6">
+      <div className="bg-[#161616] border border-border rounded-xl p-6 mb-6">
         <div className="flex items-start gap-5">
-          <div className="w-16 h-16 rounded-2xl bg-[#2C3A1C] flex items-center justify-center flex-shrink-0">
+          <div className="w-16 h-16 rounded-2xl bg-forest flex items-center justify-center flex-shrink-0">
             <User className="w-8 h-8 text-emerald-400" />
           </div>
           <div className="flex-1">
@@ -161,7 +161,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
                 const abgelaufen = ablauf && ablauf < heute
                 const kritisch = ablauf && !abgelaufen && (ablauf.getTime() - heute.getTime()) < 30 * 24 * 60 * 60 * 1000
                 return (
-                  <div key={q.id} className="flex items-center justify-between py-2 border-b border-[#2a2a2a] last:border-0">
+                  <div key={q.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                     <div>
                       <p className="text-sm text-white">{q.qualifikation.name}</p>
                       <p className="text-xs text-zinc-500">{q.qualifikation.typ}</p>
@@ -188,7 +188,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
           ) : (
             <div className="space-y-2">
               {ma.schulungen.map((s) => (
-                <div key={s.id} className="flex items-center justify-between py-2 border-b border-[#2a2a2a] last:border-0">
+                <div key={s.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                   <div>
                     <p className="text-sm text-white">{s.schulung.titel}</p>
                     <p className="text-xs text-zinc-500">{s.schulung.typ} • {s.schulung.datum ? new Date(s.schulung.datum).toLocaleDateString("de-DE") : "—"}</p>
@@ -209,7 +209,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
           ) : (
             <div className="overflow-x-auto">
             <table className="min-w-full">
-              <thead><tr className="border-b border-[#2a2a2a]">
+              <thead><tr className="border-b border-border">
                 <th className="text-left py-2 text-xs text-zinc-500">Datum</th>
                 <th className="text-left py-2 text-xs text-zinc-500">Stunden</th>
                 <th className="text-left py-2 text-xs text-zinc-500">Typ</th>
@@ -217,7 +217,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
               </tr></thead>
               <tbody>
                 {ma.stundeneintraege.map((s) => (
-                  <tr key={s.id} className="border-b border-[#2a2a2a] last:border-0">
+                  <tr key={s.id} className="border-b border-border last:border-0">
                     <td className="py-2 text-sm text-zinc-400">{new Date(s.datum).toLocaleDateString("de-DE")}</td>
                     <td className="py-2 text-sm font-medium text-emerald-400">{s.stunden} h</td>
                     <td className="py-2 text-sm text-zinc-400">{s.typ}</td>
@@ -241,7 +241,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
           ) : (
             <div className="overflow-x-auto">
             <table className="min-w-full">
-              <thead><tr className="border-b border-[#2a2a2a]">
+              <thead><tr className="border-b border-border">
                 <th className="text-left py-2 text-xs text-zinc-500">Monat/Jahr</th>
                 <th className="text-left py-2 text-xs text-zinc-500">Stunden</th>
                 <th className="text-left py-2 text-xs text-zinc-500">Brutto</th>
@@ -249,7 +249,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
               </tr></thead>
               <tbody>
                 {ma.lohneintraege.map((l) => (
-                  <tr key={l.id} className="border-b border-[#2a2a2a] last:border-0">
+                  <tr key={l.id} className="border-b border-border last:border-0">
                     <td className="py-2 text-sm text-zinc-400">{l.monat}/{l.jahr}</td>
                     <td className="py-2 text-sm text-zinc-400">{l.stunden} h</td>
                     <td className="py-2 text-sm font-medium text-white">{l.brutto.toFixed(2)} €</td>
@@ -287,7 +287,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
 
 function Section({ title, children, link }: { title: string; children: React.ReactNode; link?: string }) {
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+    <div className="bg-[#161616] border border-border rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-semibold text-white">{title}</h2>
         {link && (

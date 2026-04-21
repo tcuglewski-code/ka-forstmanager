@@ -62,7 +62,7 @@ export function KritischeBestaendeWidget({ artikel }: KritischeBestaendeWidgetPr
   
   if (kritisch.length === 0) {
     return (
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+      <div className="bg-[#161616] border border-border rounded-xl p-5">
         <div className="flex items-center gap-2 mb-3">
           <span className="w-2 h-2 rounded-full bg-emerald-500" />
           <h3 className="text-sm font-medium text-white">Kritische Bestände</h3>
@@ -73,7 +73,7 @@ export function KritischeBestaendeWidget({ artikel }: KritischeBestaendeWidgetPr
   }
 
   return (
-    <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
+    <div className="bg-[#161616] border border-border rounded-xl p-5">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
@@ -92,7 +92,7 @@ export function KritischeBestaendeWidget({ artikel }: KritischeBestaendeWidgetPr
             <div className="flex items-center gap-2">
               <BestandsAmpel bestand={a.bestand} mindestbestand={a.mindestbestand} />
               <span className="text-sm text-white truncate max-w-[150px]">{a.name}</span>
-              <span className="text-xs text-zinc-500 px-1.5 py-0.5 rounded bg-[#2a2a2a]">
+              <span className="text-xs text-zinc-500 px-1.5 py-0.5 rounded bg-surface-container-highest">
                 {a.kategorie}
               </span>
             </div>

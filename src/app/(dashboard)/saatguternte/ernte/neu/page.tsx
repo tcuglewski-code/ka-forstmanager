@@ -208,7 +208,7 @@ export default function NeueErnteSeite() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Fläche auswählen */}
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#161616] border border-border rounded-xl p-6">
           <h2 className="text-white font-semibold mb-4">Fläche</h2>
 
           <div className="relative">
@@ -246,17 +246,17 @@ export default function NeueErnteSeite() {
                     }}
                     onFocus={() => setFlaecheDropdownOpen(true)}
                     placeholder="Register-Nr, Baumart oder Bundesland suchen..."
-                    className="w-full pl-9 pr-4 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-600"
+                    className="w-full pl-9 pr-4 py-2 bg-[#1e1e1e] border border-border rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-600"
                   />
                 </div>
                 {flaecheDropdownOpen && filteredFlaechen.length > 0 && (
-                  <div className="absolute z-10 w-full mt-1 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg shadow-xl max-h-60 overflow-y-auto">
+                  <div className="absolute z-10 w-full mt-1 bg-[#1a1a1a] border border-border rounded-lg shadow-xl max-h-60 overflow-y-auto">
                     {filteredFlaechen.map((f) => (
                       <button
                         key={f.id}
                         type="button"
                         onClick={() => selectFlaeche(f)}
-                        className="w-full px-4 py-3 text-left hover:bg-[#2a2a2a] transition-colors border-b border-[#222] last:border-0"
+                        className="w-full px-4 py-3 text-left hover:bg-surface-container-highest transition-colors border-b border-[#222] last:border-0"
                       >
                         <span className="text-white font-mono text-sm">{f.registerNr}</span>
                         <span className="text-emerald-400 ml-3 text-sm">{f.baumart}</span>
@@ -271,7 +271,7 @@ export default function NeueErnteSeite() {
         </div>
 
         {/* Ernte-Details */}
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#161616] border border-border rounded-xl p-6">
           <h2 className="text-white font-semibold mb-4">Ernte-Details</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -283,7 +283,7 @@ export default function NeueErnteSeite() {
                 min="2000"
                 max="2100"
                 required
-                className="w-full px-3 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-white focus:outline-none focus:border-emerald-600"
+                className="w-full px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-white focus:outline-none focus:border-emerald-600"
               />
             </div>
             <div>
@@ -293,7 +293,7 @@ export default function NeueErnteSeite() {
                 value={datum}
                 onChange={(e) => setDatum(e.target.value)}
                 required
-                className="w-full px-3 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-white focus:outline-none focus:border-emerald-600"
+                className="w-full px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-white focus:outline-none focus:border-emerald-600"
               />
             </div>
             <div>
@@ -304,7 +304,7 @@ export default function NeueErnteSeite() {
                 onChange={(e) => setBaumart(e.target.value)}
                 placeholder="z.B. Fichte, Buche..."
                 required
-                className="w-full px-3 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-white focus:outline-none focus:border-emerald-600"
+                className="w-full px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-white focus:outline-none focus:border-emerald-600"
               />
             </div>
             <div>
@@ -316,7 +316,7 @@ export default function NeueErnteSeite() {
                 placeholder="0.0"
                 step="0.1"
                 min="0"
-                className="w-full px-3 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-white focus:outline-none focus:border-emerald-600"
+                className="w-full px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-white focus:outline-none focus:border-emerald-600"
               />
             </div>
             <div className="col-span-2">
@@ -326,14 +326,14 @@ export default function NeueErnteSeite() {
                 onChange={(e) => setNotizen(e.target.value)}
                 rows={3}
                 placeholder="Bemerkungen zur Ernte..."
-                className="w-full px-3 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-white focus:outline-none focus:border-emerald-600 resize-none"
+                className="w-full px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-white focus:outline-none focus:border-emerald-600 resize-none"
               />
             </div>
           </div>
         </div>
 
         {/* Sammler / Positionen */}
-        <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6">
+        <div className="bg-[#161616] border border-border rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-white font-semibold">Sammler / Positionen</h2>
             <button
@@ -366,13 +366,13 @@ export default function NeueErnteSeite() {
                     value={s.sammlerName}
                     onChange={(e) => updateSammler(s.id, "sammlerName", e.target.value)}
                     placeholder="Name"
-                    className="col-span-3 px-3 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-white text-sm focus:outline-none focus:border-emerald-600"
+                    className="col-span-3 px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-white text-sm focus:outline-none focus:border-emerald-600"
                   />
                   <input
                     type="date"
                     value={s.datum}
                     onChange={(e) => updateSammler(s.id, "datum", e.target.value)}
-                    className="col-span-3 px-3 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-white text-sm focus:outline-none focus:border-emerald-600"
+                    className="col-span-3 px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-white text-sm focus:outline-none focus:border-emerald-600"
                   />
                   <input
                     type="number"
@@ -381,7 +381,7 @@ export default function NeueErnteSeite() {
                     placeholder="0.0"
                     step="0.1"
                     min="0"
-                    className="col-span-2 px-3 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-white text-sm focus:outline-none focus:border-emerald-600"
+                    className="col-span-2 px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-white text-sm focus:outline-none focus:border-emerald-600"
                   />
                   <input
                     type="number"
@@ -390,7 +390,7 @@ export default function NeueErnteSeite() {
                     placeholder="0.0"
                     step="0.5"
                     min="0"
-                    className="col-span-2 px-3 py-2 bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg text-white text-sm focus:outline-none focus:border-emerald-600"
+                    className="col-span-2 px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-white text-sm focus:outline-none focus:border-emerald-600"
                   />
                   <button
                     type="button"
