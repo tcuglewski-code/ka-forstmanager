@@ -2,6 +2,8 @@
  * API Route: Telegram Testnachricht senden
  * POST /api/telegram/test
  * Body: { chatId?: string } — ohne chatId → interne Gruppe
+ *
+ * NUR für Admins in Production. In development wird nur geloggt.
  */
 
 import { NextRequest, NextResponse } from "next/server"
@@ -14,6 +16,12 @@ export async function POST(req: NextRequest) {
   const session = await auth()
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  // Nur Admins dürfen Test-Nachrichten senden
+  const role = (session.user as { role?: string })?.role
+  if (role !== "admin" && role !== "ka_admin") {
+    return NextResponse.json({ error: "Nur Admins dürfen Test-Nachrichten senden" }, { status: 403 })
   }
 
   try {
@@ -32,6 +40,12 @@ export async function POST(req: NextRequest) {
         { error: "TELEGRAM_BOT_TOKEN_KA nicht konfiguriert" },
         { status: 500 }
       )
+    }
+
+    // In development: nur loggen
+    if (process.env.NODE_ENV === "development") {
+      console.log(`[Telegram Test][DEV] Würde senden an ${chatId}`)
+      return NextResponse.json({ ok: true, chatId, dev: true })
     }
 
     const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
