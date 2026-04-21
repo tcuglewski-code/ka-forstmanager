@@ -390,6 +390,10 @@ export default function TagesprotokollFormular({
         body: JSON.stringify(payload),
       })
       if (!res.ok) throw new Error('Fehler beim Speichern')
+      const result = await res.json()
+      if (result.warnings && result.warnings.length > 0) {
+        result.warnings.forEach((w: string) => toast.warning(w))
+      }
       if (onSaved) onSaved()
       else router.back()
     } catch (e) {
