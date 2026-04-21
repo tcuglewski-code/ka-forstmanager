@@ -60,7 +60,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
   IN_PRUEFUNG: { label: "In Prüfung", color: "bg-amber-100 text-amber-800 border-amber-500/30", icon: Clock },
   UMGESETZT: { label: "Umgesetzt", color: "bg-emerald-100 text-emerald-800 border-emerald-500/30", icon: CheckCircle },
   ABGELEHNT: { label: "Abgelehnt", color: "bg-red-100 text-red-800 border-red-500/30", icon: XCircle },
-  ARCHIVIERT: { label: "Archiviert", color: "bg-gray-100 text-gray-700 border-zinc-500/30", icon: FileText },
+  ARCHIVIERT: { label: "Archiviert", color: "bg-gray-100 text-gray-700 border-border", icon: FileText },
 }
 
 const REQUEST_TYPES: Record<string, string> = {

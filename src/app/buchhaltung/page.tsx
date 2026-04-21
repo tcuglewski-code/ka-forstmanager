@@ -72,7 +72,7 @@ export default async function BuchhaltungDashboard() {
         {/* Rechnungen Card */}
         <Link 
           href="/buchhaltung/rechnungen"
-          className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md hover:border-emerald-200 transition-all group"
+          className="bg-white rounded-xl shadow-sm border border-border p-6 hover:shadow-md hover:border-emerald-200 transition-all group"
         >
           <div className="flex items-start justify-between">
             <div>
@@ -101,7 +101,7 @@ export default async function BuchhaltungDashboard() {
         {/* Stundeneinträge Card */}
         <Link 
           href="/buchhaltung/stundeneintraege"
-          className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md hover:border-emerald-200 transition-all group"
+          className="bg-white rounded-xl shadow-sm border border-border p-6 hover:shadow-md hover:border-emerald-200 transition-all group"
         >
           <div className="flex items-start justify-between">
             <div>
@@ -149,7 +149,7 @@ export default async function BuchhaltungDashboard() {
       </div>
       
       {/* Quick Filters */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-border p-6">
         <h2 className="font-semibold text-gray-900 mb-4">Schnellzugriff</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Link

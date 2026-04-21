@@ -141,14 +141,14 @@ export default function BuchhaltungRechnungenPage() {
       </div>
       
       {/* Filter */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+      <div className="bg-white rounded-xl shadow-sm border border-border p-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
             >
               <option value="">Alle Status</option>
               <option value="offen">Offen</option>
@@ -164,7 +164,7 @@ export default function BuchhaltungRechnungenPage() {
               type="date"
               value={von}
               onChange={(e) => setVon(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
             />
           </div>
           <div>
@@ -173,7 +173,7 @@ export default function BuchhaltungRechnungenPage() {
               type="date"
               value={bis}
               onChange={(e) => setBis(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
             />
           </div>
           <div className="flex items-end">
@@ -195,7 +195,7 @@ export default function BuchhaltungRechnungenPage() {
       )}
       
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-border overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-gray-500">
             <svg className="animate-spin h-8 w-8 mx-auto text-emerald-600" fill="none" viewBox="0 0 24 24">
@@ -210,7 +210,7 @@ export default function BuchhaltungRechnungenPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+          <table className="min-w-full divide-y divide-border">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -233,7 +233,7 @@ export default function BuchhaltungRechnungenPage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-border">
               {rechnungen.map((rechnung) => (
                 <tr key={rechnung.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -297,14 +297,14 @@ export default function BuchhaltungRechnungenPage() {
             <button
               onClick={() => router.push(`/buchhaltung/rechnungen?page=${pagination.page - 1}&status=${status}&von=${von}&bis=${bis}`)}
               disabled={pagination.page <= 1}
-              className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="px-3 py-1 border border-border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
               Zurück
             </button>
             <button
               onClick={() => router.push(`/buchhaltung/rechnungen?page=${pagination.page + 1}&status=${status}&von=${von}&bis=${bis}`)}
               disabled={pagination.page >= pagination.pages}
-              className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="px-3 py-1 border border-border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
               Weiter
             </button>

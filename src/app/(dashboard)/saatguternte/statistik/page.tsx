@@ -135,7 +135,7 @@ export default function SaatgutStatistikV2Page() {
           <select
             value={jahrFilter}
             onChange={(e) => setJahrFilter(e.target.value)}
-            className="text-sm border rounded px-2 py-1 bg-white dark:bg-gray-800 dark:border-gray-700"
+            className="text-sm border rounded px-2 py-1 bg-white dark:bg-gray-800 dark:border-border"
           >
             <option value="alle">Alle</option>
             {saisons.map((s) => (
@@ -146,7 +146,7 @@ export default function SaatgutStatistikV2Page() {
       </div>
 
       {/* ── Tabs ──────────────────────────────────────────────────────────── */}
-      <div className="flex gap-1 border-b border-gray-200 dark:border-gray-700 overflow-x-auto pb-0">
+      <div className="flex gap-1 border-b border-border overflow-x-auto pb-0">
         {([
           { key: "uebersicht", label: "📊 Übersicht" },
           { key: "ranking",    label: "🏆 Sammler-Ranking" },
@@ -198,7 +198,7 @@ export default function SaatgutStatistikV2Page() {
                 color: "text-orange-700 dark:text-orange-400",
               },
             ].map((k) => (
-              <div key={k.label} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-1">
+              <div key={k.label} className="bg-white dark:bg-gray-800 border border-border rounded-lg p-4 space-y-1">
                 <div className="flex items-center gap-1.5 text-xs text-gray-500 uppercase tracking-wide">
                   {k.icon} {k.label}
                 </div>
@@ -212,7 +212,7 @@ export default function SaatgutStatistikV2Page() {
             {saisons.map((s) => {
               const kg = jahresvergleich.jahresSummen[String(s.jahr)] ?? 0
               return (
-                <div key={s.jahr} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div key={s.jahr} className="bg-white dark:bg-gray-800 border border-border rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-semibold text-lg">Saison {s.jahr}</span>
                     <span className="bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 text-sm font-medium px-2 py-0.5 rounded">
@@ -233,8 +233,8 @@ export default function SaatgutStatistikV2Page() {
 
       {/* ── Tab: Sammler-Ranking ───────────────────────────────────────────── */}
       {tab === "ranking" && (
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
+        <div className="bg-white dark:bg-gray-800 border border-border rounded-lg overflow-hidden">
+          <div className="px-4 py-3 border-b border-border flex items-center gap-2">
             <Users className="w-4 h-4 text-gray-500" />
             <span className="font-medium text-sm">
               Sammler-Ranking ({total} Personen)
@@ -245,7 +245,7 @@ export default function SaatgutStatistikV2Page() {
           </div>
 
           {/* Mobile: Cards */}
-          <div className="divide-y divide-gray-100 dark:divide-gray-700 sm:hidden">
+          <div className="divide-y divide-border sm:hidden">
             {ranking.map((r) => (
               <div key={r.name} className="p-3">
                 <div className="flex items-start justify-between">
@@ -286,7 +286,7 @@ export default function SaatgutStatistikV2Page() {
                   <th className="px-3 py-2 text-center text-xs text-gray-500 uppercase">Jahre</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+              <tbody className="divide-y divide-border">
                 {ranking.map((r) => (
                   <tr key={r.name} className="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors">
                     <td className="px-3 py-2 text-center"><RangBadge rang={r.rang} /></td>
@@ -340,7 +340,7 @@ export default function SaatgutStatistikV2Page() {
             {Object.entries(jahresvergleich.jahresSummen)
               .sort(([a], [b]) => Number(b) - Number(a))
               .map(([jahr, kg]) => (
-                <div key={jahr} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div key={jahr} className="bg-white dark:bg-gray-800 border border-border rounded-lg p-4">
                   <p className="text-sm text-gray-500">Saison {jahr}</p>
                   <p className="text-2xl font-bold text-green-700 dark:text-green-400">{fmt(kg, 0)} kg</p>
                 </div>
@@ -348,8 +348,8 @@ export default function SaatgutStatistikV2Page() {
           </div>
 
           {/* Baumarten-Vergleich */}
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 font-medium text-sm flex items-center gap-2">
+          <div className="bg-white dark:bg-gray-800 border border-border rounded-lg overflow-hidden">
+            <div className="px-4 py-3 border-b border-border font-medium text-sm flex items-center gap-2">
               <BarChart3 className="w-4 h-4 text-gray-500" />
               Baumarten 2024 vs 2025
             </div>
@@ -363,7 +363,7 @@ export default function SaatgutStatistikV2Page() {
                     <th className="px-3 py-2 text-right text-xs text-gray-500 uppercase">Veränderung</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                <tbody className="divide-y divide-border">
                   {vergleichEntries.map(([baumart, v]) => (
                     <tr key={baumart} className="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors">
                       <td className="px-3 py-2 font-medium">{baumart}</td>
@@ -401,8 +401,8 @@ export default function SaatgutStatistikV2Page() {
 
       {/* ── Tab: Flächen-Performance ───────────────────────────────────────── */}
       {tab === "flaechen" && (
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 font-medium text-sm flex items-center gap-2">
+        <div className="bg-white dark:bg-gray-800 border border-border rounded-lg overflow-hidden">
+          <div className="px-4 py-3 border-b border-border font-medium text-sm flex items-center gap-2">
             <MapPin className="w-4 h-4 text-gray-500" />
             Flächen-Performance
             <span className="text-xs text-gray-400 font-normal">(Top 25 nach kg)</span>
@@ -419,7 +419,7 @@ export default function SaatgutStatistikV2Page() {
                   <th className="px-3 py-2 text-right text-xs text-gray-500 uppercase">Saisons</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+              <tbody className="divide-y divide-border">
                 {flaechenPerformance.map((f, idx) => (
                   <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors">
                     <td className="px-3 py-2">

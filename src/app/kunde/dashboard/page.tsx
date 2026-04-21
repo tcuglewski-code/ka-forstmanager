@@ -80,7 +80,7 @@ export default async function KundeDashboard() {
   return (
     <div className="space-y-6">
       {/* Begrüßung */}
-      <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+      <div className="bg-white rounded-xl shadow-sm p-4 border border-border">
         <h1 className="text-xl font-semibold text-gray-900">
           Willkommen, {user.name}! 👋
         </h1>
@@ -96,7 +96,7 @@ export default async function KundeDashboard() {
         </h2>
         
         {projekte.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 text-center">
+          <div className="bg-white rounded-xl shadow-sm p-6 border border-border text-center">
             <p className="text-gray-500">
               Noch keine Projekte vorhanden.
             </p>
@@ -109,7 +109,7 @@ export default async function KundeDashboard() {
             {projekte.map((projekt) => (
               <div 
                 key={projekt.id} 
-                className="bg-white rounded-xl shadow-sm p-4 border border-gray-100"
+                className="bg-white rounded-xl shadow-sm p-4 border border-border"
               >
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-medium text-gray-900">{projekt.titel}</h3>
@@ -162,13 +162,13 @@ export default async function KundeDashboard() {
         </h2>
         
         {alleDokumente.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 text-center">
+          <div className="bg-white rounded-xl shadow-sm p-6 border border-border text-center">
             <p className="text-gray-500">
               Noch keine Dokumente vorhanden.
             </p>
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 divide-y">
+          <div className="bg-white rounded-xl shadow-sm border border-border divide-y">
             {alleDokumente.slice(0, 5).map((dok) => (
               <div key={dok.id} className="p-3 flex items-center justify-between">
                 <div className="flex items-center gap-2 min-w-0">
@@ -214,7 +214,7 @@ export default async function KundeDashboard() {
         </h2>
         
         {alleRechnungen.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 text-center">
+          <div className="bg-white rounded-xl shadow-sm p-6 border border-border text-center">
             <p className="text-gray-500">
               Noch keine Rechnungen vorhanden.
             </p>
@@ -224,7 +224,7 @@ export default async function KundeDashboard() {
             {alleRechnungen.map((rechnung) => (
               <div 
                 key={rechnung.id} 
-                className="bg-white rounded-xl shadow-sm p-4 border border-gray-100"
+                className="bg-white rounded-xl shadow-sm p-4 border border-border"
               >
                 <div className="flex justify-between items-start">
                   <div>
@@ -267,7 +267,7 @@ export default async function KundeDashboard() {
           <span>📞</span> Kontakt
         </h2>
         
-        <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+        <div className="bg-white rounded-xl shadow-sm p-4 border border-border">
           <p className="text-sm text-gray-600 mb-4">
             Haben Sie Fragen zu Ihren Projekten? Wir helfen Ihnen gerne weiter.
           </p>

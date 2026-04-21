@@ -146,11 +146,11 @@ export default function BuchhaltungStundeneintraegePage() {
       {/* Stats Summary */}
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-lg border border-border p-4">
             <p className="text-sm text-gray-500">Einträge</p>
             <p className="text-2xl font-bold text-gray-900">{stats.anzahlEintraege.toLocaleString("de-DE")}</p>
           </div>
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-lg border border-border p-4">
             <p className="text-sm text-gray-500">Gesamtstunden</p>
             <p className="text-2xl font-bold text-gray-900">{stats.gesamtStunden.toLocaleString("de-DE")} h</p>
           </div>
@@ -158,7 +158,7 @@ export default function BuchhaltungStundeneintraegePage() {
       )}
       
       {/* Filter */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+      <div className="bg-white rounded-xl shadow-sm border border-border p-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Von</label>
@@ -166,7 +166,7 @@ export default function BuchhaltungStundeneintraegePage() {
               type="date"
               value={von}
               onChange={(e) => setVon(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
             />
           </div>
           <div>
@@ -175,7 +175,7 @@ export default function BuchhaltungStundeneintraegePage() {
               type="date"
               value={bis}
               onChange={(e) => setBis(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
             />
           </div>
           <div>
@@ -183,7 +183,7 @@ export default function BuchhaltungStundeneintraegePage() {
             <select
               value={genehmigt}
               onChange={(e) => setGenehmigt(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
             >
               <option value="">Alle</option>
               <option value="true">Nur genehmigte</option>
@@ -209,7 +209,7 @@ export default function BuchhaltungStundeneintraegePage() {
       )}
       
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-border overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-gray-500">
             <svg className="animate-spin h-8 w-8 mx-auto text-emerald-600" fill="none" viewBox="0 0 24 24">
@@ -224,7 +224,7 @@ export default function BuchhaltungStundeneintraegePage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+          <table className="min-w-full divide-y divide-border">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -250,7 +250,7 @@ export default function BuchhaltungStundeneintraegePage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-border">
               {eintraege.map((eintrag) => (
                 <tr key={eintrag.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -324,14 +324,14 @@ export default function BuchhaltungStundeneintraegePage() {
             <button
               onClick={() => router.push(`/buchhaltung/stundeneintraege?page=${pagination.page - 1}&von=${von}&bis=${bis}&genehmigt=${genehmigt}`)}
               disabled={pagination.page <= 1}
-              className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="px-3 py-1 border border-border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
               Zurück
             </button>
             <button
               onClick={() => router.push(`/buchhaltung/stundeneintraege?page=${pagination.page + 1}&von=${von}&bis=${bis}&genehmigt=${genehmigt}`)}
               disabled={pagination.page >= pagination.pages}
-              className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="px-3 py-1 border border-border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
               Weiter
             </button>

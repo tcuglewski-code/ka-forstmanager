@@ -291,7 +291,7 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
 
       {/* Floating Action Bar — Zur Planung */}
       {ausgewaehlt.size > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-gray-800 border border-gray-600 rounded-xl shadow-2xl px-6 py-3 flex items-center gap-4">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-gray-800 border border-border rounded-xl shadow-2xl px-6 py-3 flex items-center gap-4">
           <span className="text-white font-medium">
             {ausgewaehlt.size} Fläche{ausgewaehlt.size !== 1 ? "n" : ""} ausgewählt
           </span>
