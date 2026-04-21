@@ -260,7 +260,7 @@ export default function DatenschutzVerwaltungPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-foreground">Datenschutz-Anfragen</h1>
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-on-surface-variant">
               DSGVO Art. 12-23 Betroffenenanfragen verwalten
             </p>
           </div>
@@ -277,25 +277,25 @@ export default function DatenschutzVerwaltungPage() {
       {/* Stats Cards */}
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <div className="bg-[#1a1a1a] border border-border rounded-xl p-4">
+          <div className="bg-surface-container-lowest border border-border rounded-xl p-4">
             <div className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{stats.total}</div>
-            <div className="text-sm text-zinc-500">Gesamt</div>
+            <div className="text-sm text-on-surface-variant">Gesamt</div>
           </div>
-          <div className="bg-[#1a1a1a] border border-blue-500/30 rounded-xl p-4">
+          <div className="bg-surface-container-lowest border border-blue-500/30 rounded-xl p-4">
             <div className="text-2xl font-bold text-blue-400">{stats.byStatus?.EINGEGANGEN || 0}</div>
-            <div className="text-sm text-zinc-500">Eingegangen</div>
+            <div className="text-sm text-on-surface-variant">Eingegangen</div>
           </div>
-          <div className="bg-[#1a1a1a] border border-amber-500/30 rounded-xl p-4">
+          <div className="bg-surface-container-lowest border border-amber-500/30 rounded-xl p-4">
             <div className="text-2xl font-bold text-amber-400">{stats.byStatus?.IN_PRUEFUNG || 0}</div>
-            <div className="text-sm text-zinc-500">In Prüfung</div>
+            <div className="text-sm text-on-surface-variant">In Prüfung</div>
           </div>
-          <div className="bg-[#1a1a1a] border border-emerald-500/30 rounded-xl p-4">
+          <div className="bg-surface-container-lowest border border-emerald-500/30 rounded-xl p-4">
             <div className="text-2xl font-bold text-emerald-400">{stats.byStatus?.UMGESETZT || 0}</div>
-            <div className="text-sm text-zinc-500">Umgesetzt</div>
+            <div className="text-sm text-on-surface-variant">Umgesetzt</div>
           </div>
-          <div className="bg-[#1a1a1a] border border-red-500/30 rounded-xl p-4">
+          <div className="bg-surface-container-lowest border border-red-500/30 rounded-xl p-4">
             <div className="text-2xl font-bold text-red-400">{stats.overdueCount}</div>
-            <div className="text-sm text-zinc-500">Überfällig</div>
+            <div className="text-sm text-on-surface-variant">Überfällig</div>
           </div>
         </div>
       )}
@@ -321,7 +321,7 @@ export default function DatenschutzVerwaltungPage() {
           onClick={() => setStatusFilter("")}
           className={cn(
             "px-3 py-1.5 rounded-lg text-sm",
-            statusFilter === "" ? "bg-emerald-600 text-white" : "bg-surface-container-highest text-zinc-400 hover:text-white"
+            statusFilter === "" ? "bg-emerald-600 text-white" : "bg-surface-container-highest text-on-surface-variant hover:text-on-surface"
           )}
         >
           Alle
@@ -332,7 +332,7 @@ export default function DatenschutzVerwaltungPage() {
             onClick={() => setStatusFilter(key)}
             className={cn(
               "px-3 py-1.5 rounded-lg text-sm flex items-center gap-1",
-              statusFilter === key ? "bg-emerald-600 text-white" : "bg-surface-container-highest text-zinc-400 hover:text-white"
+              statusFilter === key ? "bg-emerald-600 text-white" : "bg-surface-container-highest text-on-surface-variant hover:text-on-surface"
             )}
           >
             {config.label}
@@ -341,22 +341,22 @@ export default function DatenschutzVerwaltungPage() {
       </div>
 
       {/* Requests Table */}
-      <div className="bg-[#1a1a1a] border border-border rounded-xl overflow-hidden">
+      <div className="bg-surface-container-lowest border border-border rounded-xl overflow-hidden">
         <table className="w-full">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">Antragsteller</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">Typ</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">Status</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">Frist</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">Flags</th>
-              <th className="text-right px-4 py-3 text-sm font-medium text-zinc-400">Aktionen</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-on-surface-variant">Antragsteller</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-on-surface-variant">Typ</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-on-surface-variant">Status</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-on-surface-variant">Frist</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-on-surface-variant">Flags</th>
+              <th className="text-right px-4 py-3 text-sm font-medium text-on-surface-variant">Aktionen</th>
             </tr>
           </thead>
           <tbody>
             {requests.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-zinc-500">
+                <td colSpan={6} className="px-4 py-8 text-center text-on-surface-variant">
                   Keine Anfragen gefunden
                 </td>
               </tr>
@@ -367,14 +367,14 @@ export default function DatenschutzVerwaltungPage() {
                 const daysLeft = getDaysRemaining(request)
 
                 return (
-                  <tr key={request.id} className="border-b border-border last:border-0 hover:bg-[#222]">
+                  <tr key={request.id} className="border-b border-border last:border-0 hover:bg-surface-container-high">
                     <td className="px-4 py-3">
                       <div>
-                        <div className="text-white font-medium">{request.requesterName}</div>
-                        <div className="text-sm text-zinc-500">{request.requesterEmail}</div>
+                        <div className="text-on-surface font-medium">{request.requesterName}</div>
+                        <div className="text-sm text-on-surface-variant">{request.requesterEmail}</div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-zinc-300">
+                    <td className="px-4 py-3 text-on-surface">
                       {REQUEST_TYPES[request.requestType] || request.requestType}
                     </td>
                     <td className="px-4 py-3">
@@ -385,9 +385,9 @@ export default function DatenschutzVerwaltungPage() {
                     </td>
                     <td className="px-4 py-3">
                       {request.completedAt ? (
-                        <span className="text-zinc-500 text-sm">Erledigt</span>
+                        <span className="text-on-surface-variant text-sm">Erledigt</span>
                       ) : request.dueAt ? (
-                        <span className={cn("text-sm", isOverdue(request) ? "text-red-400" : daysLeft && daysLeft <= 7 ? "text-amber-400" : "text-zinc-400")}>
+                        <span className={cn("text-sm", isOverdue(request) ? "text-red-400" : daysLeft && daysLeft <= 7 ? "text-amber-400" : "text-on-surface-variant")}>
                           {isOverdue(request) ? (
                             <span className="flex items-center gap-1">
                               <AlertTriangle className="w-3 h-3" /> Überfällig
@@ -397,7 +397,7 @@ export default function DatenschutzVerwaltungPage() {
                           )}
                         </span>
                       ) : (
-                        <span className="text-zinc-500 text-sm">-</span>
+                        <span className="text-on-surface-variant text-sm">-</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -417,7 +417,7 @@ export default function DatenschutzVerwaltungPage() {
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => openDetailModal(request)}
-                        className="p-2 text-zinc-500 hover:text-white hover:bg-surface-container-highest rounded-lg"
+                        className="p-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest rounded-lg"
                         title="Details anzeigen"
                       >
                         <Eye className="w-4 h-4" />
@@ -436,49 +436,49 @@ export default function DatenschutzVerwaltungPage() {
         <>
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" onClick={() => setModalOpen(false)} />
           <div className="fixed inset-x-0 top-[10%] mx-auto max-w-lg z-50 px-4">
-            <div className="bg-[#1a1a1a] border border-border rounded-xl shadow-2xl">
+            <div className="bg-surface-container-lowest border border-border rounded-xl shadow-2xl">
               <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-                <h2 className="text-lg font-semibold text-white">Neue DSGVO-Anfrage erfassen</h2>
-                <button onClick={() => setModalOpen(false)} className="p-1 text-zinc-500 hover:text-white">
+                <h2 className="text-lg font-semibold text-on-surface">Neue DSGVO-Anfrage erfassen</h2>
+                <button onClick={() => setModalOpen(false)} className="p-1 text-on-surface-variant hover:text-on-surface">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm text-zinc-400 mb-1">Name des Betroffenen *</label>
-                  <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg">
-                    <User className="w-4 h-4 text-zinc-500" />
+                  <label className="block text-sm text-on-surface-variant mb-1">Name des Betroffenen *</label>
+                  <div className="flex items-center gap-2 px-3 py-2 bg-surface-container-low border border-border rounded-lg">
+                    <User className="w-4 h-4 text-on-surface-variant" />
                     <input
                       type="text"
                       value={formName}
                       onChange={(e) => setFormName(e.target.value)}
-                      className="flex-1 bg-transparent text-white outline-none"
+                      className="flex-1 bg-transparent text-on-surface outline-none"
                       placeholder="Max Mustermann"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm text-zinc-400 mb-1">E-Mail *</label>
-                  <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg">
-                    <Mail className="w-4 h-4 text-zinc-500" />
+                  <label className="block text-sm text-on-surface-variant mb-1">E-Mail *</label>
+                  <div className="flex items-center gap-2 px-3 py-2 bg-surface-container-low border border-border rounded-lg">
+                    <Mail className="w-4 h-4 text-on-surface-variant" />
                     <input
                       type="email"
                       value={formEmail}
                       onChange={(e) => setFormEmail(e.target.value)}
-                      className="flex-1 bg-transparent text-white outline-none"
+                      className="flex-1 bg-transparent text-on-surface outline-none"
                       placeholder="max@beispiel.de"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm text-zinc-400 mb-1">Anfragetyp</label>
+                  <label className="block text-sm text-on-surface-variant mb-1">Anfragetyp</label>
                   <select
                     value={formType}
                     onChange={(e) => setFormType(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white outline-none"
+                    className="w-full px-3 py-2 bg-surface-container-low border border-border rounded-lg text-on-surface outline-none"
                   >
                     {Object.entries(REQUEST_TYPES).map(([value, label]) => (
                       <option key={value} value={value}>{label}</option>
@@ -487,11 +487,11 @@ export default function DatenschutzVerwaltungPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-zinc-400 mb-1">Begründung / Details</label>
+                  <label className="block text-sm text-on-surface-variant mb-1">Begründung / Details</label>
                   <textarea
                     value={formReason}
                     onChange={(e) => setFormReason(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white outline-none resize-none h-24"
+                    className="w-full px-3 py-2 bg-surface-container-low border border-border rounded-lg text-on-surface outline-none resize-none h-24"
                     placeholder="Optionale Details zur Anfrage..."
                   />
                 </div>
@@ -509,7 +509,7 @@ export default function DatenschutzVerwaltungPage() {
               <div className="flex justify-end gap-3 px-6 py-4 border-t border-border">
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333]"
+                  className="px-4 py-2 bg-surface-container-highest text-on-surface rounded-lg hover:bg-surface-container-highest"
                 >
                   Abbrechen
                 </button>
@@ -534,13 +534,13 @@ export default function DatenschutzVerwaltungPage() {
         <>
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" onClick={() => setDetailModalOpen(false)} />
           <div className="fixed inset-x-0 top-[5%] mx-auto max-w-2xl z-50 px-4 max-h-[90vh] overflow-y-auto">
-            <div className="bg-[#1a1a1a] border border-border rounded-xl shadow-2xl">
+            <div className="bg-surface-container-lowest border border-border rounded-xl shadow-2xl">
               <div className="flex items-center justify-between px-6 py-4 border-b border-border">
                 <div>
-                  <h2 className="text-lg font-semibold text-white">{selectedRequest.requesterName}</h2>
-                  <p className="text-sm text-zinc-500">{REQUEST_TYPES[selectedRequest.requestType]}</p>
+                  <h2 className="text-lg font-semibold text-on-surface">{selectedRequest.requesterName}</h2>
+                  <p className="text-sm text-on-surface-variant">{REQUEST_TYPES[selectedRequest.requestType]}</p>
                 </div>
-                <button onClick={() => setDetailModalOpen(false)} className="p-1 text-zinc-500 hover:text-white">
+                <button onClick={() => setDetailModalOpen(false)} className="p-1 text-on-surface-variant hover:text-on-surface">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -548,7 +548,7 @@ export default function DatenschutzVerwaltungPage() {
               <div className="p-6 space-y-6">
                 {/* Status Actions */}
                 <div>
-                  <label className="block text-sm text-zinc-400 mb-2">Status ändern</label>
+                  <label className="block text-sm text-on-surface-variant mb-2">Status ändern</label>
                   <div className="flex flex-wrap gap-2">
                     {Object.entries(STATUS_CONFIG).map(([key, config]) => (
                       <button
@@ -559,7 +559,7 @@ export default function DatenschutzVerwaltungPage() {
                           "px-3 py-1.5 rounded-lg text-sm border transition-colors",
                           selectedRequest.status === key
                             ? config.color
-                            : "bg-surface-container-highest text-zinc-400 border-[#3a3a3a] hover:text-white"
+                            : "bg-surface-container-highest text-on-surface-variant border-outline-variant hover:text-on-surface"
                         )}
                       >
                         {config.label}
@@ -571,16 +571,16 @@ export default function DatenschutzVerwaltungPage() {
                 {/* Info Grid */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-zinc-500 mb-1">E-Mail</label>
-                    <p className="text-white">{selectedRequest.requesterEmail}</p>
+                    <label className="block text-sm text-on-surface-variant mb-1">E-Mail</label>
+                    <p className="text-on-surface">{selectedRequest.requesterEmail}</p>
                   </div>
                   <div>
-                    <label className="block text-sm text-zinc-500 mb-1">Eingegangen am</label>
-                    <p className="text-white">{format(new Date(selectedRequest.receivedAt), "dd.MM.yyyy HH:mm", { locale: de })}</p>
+                    <label className="block text-sm text-on-surface-variant mb-1">Eingegangen am</label>
+                    <p className="text-on-surface">{format(new Date(selectedRequest.receivedAt), "dd.MM.yyyy HH:mm", { locale: de })}</p>
                   </div>
                   <div>
-                    <label className="block text-sm text-zinc-500 mb-1">Frist</label>
-                    <p className={cn("text-white", isOverdue(selectedRequest) && "text-red-400")}>
+                    <label className="block text-sm text-on-surface-variant mb-1">Frist</label>
+                    <p className={cn("text-on-surface", isOverdue(selectedRequest) && "text-red-400")}>
                       {selectedRequest.dueAt
                         ? format(new Date(selectedRequest.dueAt), "dd.MM.yyyy", { locale: de })
                         : "-"}
@@ -588,8 +588,8 @@ export default function DatenschutzVerwaltungPage() {
                     </p>
                   </div>
                   <div>
-                    <label className="block text-sm text-zinc-500 mb-1">Abgeschlossen</label>
-                    <p className="text-white">
+                    <label className="block text-sm text-on-surface-variant mb-1">Abgeschlossen</label>
+                    <p className="text-on-surface">
                       {selectedRequest.completedAt
                         ? format(new Date(selectedRequest.completedAt), "dd.MM.yyyy HH:mm", { locale: de })
                         : "-"}
@@ -600,8 +600,8 @@ export default function DatenschutzVerwaltungPage() {
                 {/* Reason */}
                 {selectedRequest.requestReason && (
                   <div>
-                    <label className="block text-sm text-zinc-500 mb-1">Begründung des Betroffenen</label>
-                    <p className="text-zinc-300 p-3 bg-[#0f0f0f] rounded-lg">{selectedRequest.requestReason}</p>
+                    <label className="block text-sm text-on-surface-variant mb-1">Begründung des Betroffenen</label>
+                    <p className="text-on-surface p-3 bg-surface-container-low rounded-lg">{selectedRequest.requestReason}</p>
                   </div>
                 )}
 
@@ -622,10 +622,10 @@ export default function DatenschutzVerwaltungPage() {
                             <p className="text-sm text-amber-200">Betroffene Rechnungen:</p>
                             <div className="space-y-1">
                               {selectedRequest.rechnungen.map((r) => (
-                                <div key={r.id} className="flex items-center justify-between p-2 bg-[#0f0f0f] rounded">
-                                  <span className="text-zinc-300">{r.nummer}</span>
+                                <div key={r.id} className="flex items-center justify-between p-2 bg-surface-container-low rounded">
+                                  <span className="text-on-surface">{r.nummer}</span>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-zinc-400">{r.betrag.toFixed(2)} €</span>
+                                    <span className="text-on-surface-variant">{r.betrag.toFixed(2)} €</span>
                                     {r.gdprRestricted ? (
                                       <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded text-xs flex items-center gap-1">
                                         <Lock className="w-3 h-3" /> Eingeschränkt
@@ -669,16 +669,16 @@ export default function DatenschutzVerwaltungPage() {
                 {/* Decision */}
                 {selectedRequest.decision && (
                   <div>
-                    <label className="block text-sm text-zinc-500 mb-1">Entscheidung</label>
+                    <label className="block text-sm text-on-surface-variant mb-1">Entscheidung</label>
                     <div className={cn(
                       "p-3 rounded-lg",
                       selectedRequest.decision === "STATTGEGEBEN" ? "bg-emerald-500/20 border border-emerald-500/30" :
                       selectedRequest.decision === "ABGELEHNT" ? "bg-red-500/20 border border-red-500/30" :
                       "bg-amber-500/20 border border-amber-500/30"
                     )}>
-                      <p className="font-medium text-white mb-1">{selectedRequest.decision}</p>
+                      <p className="font-medium text-on-surface mb-1">{selectedRequest.decision}</p>
                       {selectedRequest.decisionReason && (
-                        <p className="text-sm text-zinc-300">{selectedRequest.decisionReason}</p>
+                        <p className="text-sm text-on-surface">{selectedRequest.decisionReason}</p>
                       )}
                     </div>
                   </div>
@@ -688,7 +688,7 @@ export default function DatenschutzVerwaltungPage() {
               <div className="flex justify-end gap-3 px-6 py-4 border-t border-border">
                 <button
                   onClick={() => setDetailModalOpen(false)}
-                  className="px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333]"
+                  className="px-4 py-2 bg-surface-container-highest text-on-surface rounded-lg hover:bg-surface-container-highest"
                 >
                   Schließen
                 </button>

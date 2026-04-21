@@ -104,62 +104,62 @@ function FahrzeugEditModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div className="bg-surface-container border border-border rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-lg font-semibold text-white">Fahrzeug bearbeiten</h2>
-          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <h2 className="text-lg font-semibold text-on-surface">Fahrzeug bearbeiten</h2>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-on-surface-variant hover:text-on-surface" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Typ</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Typ</label>
               <select value={form.typ} onChange={e => setForm(f => ({ ...f, typ: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
                 {["pkw", "lkw", "transporter", "maschine"].map(t => <option key={t} value={t}>{t.toUpperCase()}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Status</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Status</label>
               <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
                 {["verfuegbar", "im_einsatz", "in_wartung", "defekt"].map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
           </div>
           {[["Bezeichnung *", "bezeichnung"], ["Kennzeichen", "kennzeichen"], ["Baujahr", "baujahr"]].map(([label, key]) => (
             <div key={key}>
-              <label className="block text-xs text-zinc-400 mb-1">{label}</label>
+              <label className="block text-xs text-on-surface-variant mb-1">{label}</label>
               <input type={key === "baujahr" ? "number" : "text"} value={(form as Record<string, string>)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
           ))}
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">TÜV-Datum</label>
+            <label className="block text-xs text-on-surface-variant mb-1">TÜV-Datum</label>
             <input type="date" value={form.tuvDatum} onChange={e => setForm(f => ({ ...f, tuvDatum: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Notizen</label>
             <textarea rows={2} value={form.notizen} onChange={e => setForm(f => ({ ...f, notizen: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white resize-none focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface resize-none focus:outline-none focus:border-emerald-500" />
           </div>
           <div className="border-t border-border pt-3">
-            <p className="text-xs text-zinc-500 mb-3">Maschinenbonus</p>
+            <p className="text-xs text-on-surface-variant mb-3">Maschinenbonus</p>
             <div>
-              <label className="text-xs text-zinc-500 mb-1 block">Maschinenzuschlag (€/h)</label>
+              <label className="text-xs text-on-surface-variant mb-1 block">Maschinenzuschlag (€/h)</label>
               <input type="number" step="0.50" min="0" placeholder="0.00" value={form.stundenBonus}
                 onChange={e => setForm(f => ({ ...f, stundenBonus: e.target.value }))}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full px-3 py-2 bg-surface-container-low border border-border rounded-lg text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
             <div className="mt-3">
-              <label className="text-xs text-zinc-500 mb-1 block">Bonus-Beschreibung</label>
+              <label className="text-xs text-on-surface-variant mb-1 block">Bonus-Beschreibung</label>
               <input type="text" placeholder="z.B. Schwermaschinenzuschlag" value={form.bonusBeschreibung}
                 onChange={e => setForm(f => ({ ...f, bonusBeschreibung: e.target.value }))}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full px-3 py-2 bg-surface-container-low border border-border rounded-lg text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-on-surface-variant hover:text-on-surface transition-all">Abbrechen</button>
             <button type="submit" disabled={loading || !form.bezeichnung}
               className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
               {loading ? "Speichern..." : "Aktualisieren"}
@@ -195,60 +195,60 @@ function FahrzeugModal({ onClose, onSave }: { onClose: () => void; onSave: () =>
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div className="bg-surface-container border border-border rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-lg font-semibold text-white">Neues Fahrzeug</h2>
-          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <h2 className="text-lg font-semibold text-on-surface">Neues Fahrzeug</h2>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-on-surface-variant hover:text-on-surface" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Typ</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Typ</label>
               <select value={form.typ} onChange={e => setForm(f => ({ ...f, typ: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
                 {["pkw", "lkw", "transporter", "maschine"].map(t => <option key={t} value={t}>{t.toUpperCase()}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Status</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Status</label>
               <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
                 {["verfuegbar", "im_einsatz", "in_wartung", "defekt"].map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
           </div>
           {[["Bezeichnung *", "bezeichnung"], ["Kennzeichen", "kennzeichen"], ["Baujahr", "baujahr"]].map(([label, key]) => (
             <div key={key}>
-              <label className="block text-xs text-zinc-400 mb-1">{label}</label>
+              <label className="block text-xs text-on-surface-variant mb-1">{label}</label>
               <input type={key === "baujahr" ? "number" : "text"} value={(form as Record<string, string>)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
           ))}
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">TÜV-Datum</label>
+            <label className="block text-xs text-on-surface-variant mb-1">TÜV-Datum</label>
             <input type="date" value={form.tuvDatum} onChange={e => setForm(f => ({ ...f, tuvDatum: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
           </div>
           {/* K6: Maschinenbonus */}
           <div className="border-t border-border pt-3">
-            <p className="text-xs text-zinc-500 mb-3">Maschinenbonus (Sprint K6)</p>
+            <p className="text-xs text-on-surface-variant mb-3">Maschinenbonus (Sprint K6)</p>
             <div>
-              <label className="text-xs text-zinc-500 mb-1 block">Maschinenzuschlag (€/h)</label>
+              <label className="text-xs text-on-surface-variant mb-1 block">Maschinenzuschlag (€/h)</label>
               <input type="number" step="0.50" min="0" placeholder="0.00"
                 value={form.stundenBonus}
                 onChange={(e) => setForm(prev => ({ ...prev, stundenBonus: e.target.value }))}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full px-3 py-2 bg-surface-container-low border border-border rounded-lg text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
             <div className="mt-3">
-              <label className="text-xs text-zinc-500 mb-1 block">Bonus-Beschreibung</label>
+              <label className="text-xs text-on-surface-variant mb-1 block">Bonus-Beschreibung</label>
               <input type="text" placeholder="z.B. Schwermaschinenzuschlag"
                 value={form.bonusBeschreibung}
                 onChange={(e) => setForm(prev => ({ ...prev, bonusBeschreibung: e.target.value }))}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full px-3 py-2 bg-surface-container-low border border-border rounded-lg text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-on-surface-variant hover:text-on-surface transition-all">Abbrechen</button>
             <button type="submit" disabled={loading || !form.bezeichnung} className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
               {loading ? "Speichern..." : "Speichern"}
             </button>
@@ -280,26 +280,26 @@ function GeraetModal({ onClose, onSave }: { onClose: () => void; onSave: () => v
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md">
+      <div className="bg-surface-container border border-border rounded-xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-lg font-semibold text-white">Neues Gerät</h2>
-          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <h2 className="text-lg font-semibold text-on-surface">Neues Gerät</h2>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-on-surface-variant hover:text-on-surface" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {[["Typ *", "typ"], ["Bezeichnung *", "bezeichnung"], ["Seriennummer", "seriennummer"]].map(([label, key]) => (
             <div key={key}>
-              <label className="block text-xs text-zinc-400 mb-1">{label}</label>
+              <label className="block text-xs text-on-surface-variant mb-1">{label}</label>
               <input type="text" value={(form as Record<string, string>)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
           ))}
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Nächste Wartung</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Nächste Wartung</label>
             <input type="date" value={form.naechsteWartung} onChange={e => setForm(f => ({ ...f, naechsteWartung: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-on-surface-variant hover:text-on-surface transition-all">Abbrechen</button>
             <button type="submit" disabled={loading || !form.bezeichnung || !form.typ} className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
               {loading ? "Speichern..." : "Speichern"}
             </button>
@@ -353,16 +353,16 @@ function EinsatzModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div className="bg-surface-container border border-border rounded-xl w-full max-w-md max-h-[85vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-lg font-semibold text-white">Einsatz buchen</h2>
-          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <h2 className="text-lg font-semibold text-on-surface">Einsatz buchen</h2>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-on-surface-variant hover:text-on-surface" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Fahrzeug *</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Fahrzeug *</label>
             <select value={form.fahrzeugId} onChange={e => setForm(f => ({ ...f, fahrzeugId: e.target.value }))} required
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
               <option value="">— wählen —</option>
               {fahrzeuge.map(f => (
                 <option key={f.id} value={f.id}>{f.bezeichnung}{f.kennzeichen ? ` (${f.kennzeichen})` : ""}</option>
@@ -370,47 +370,47 @@ function EinsatzModal({
             </select>
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Gruppe</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Gruppe</label>
             <select value={form.gruppeId} onChange={e => setForm(f => ({ ...f, gruppeId: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
               <option value="">— keine Gruppe —</option>
               {gruppen.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Auftrag (optional)</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Auftrag (optional)</label>
             <select value={form.auftragId} onChange={e => setForm(f => ({ ...f, auftragId: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
               <option value="">— kein Auftrag —</option>
               {auftraege.map(a => <option key={a.id} value={a.id}>{a.titel}</option>)}
             </select>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Von *</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Von *</label>
               <input type="date" value={form.vonDatum} onChange={e => setForm(f => ({ ...f, vonDatum: e.target.value }))} required
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Bis (optional)</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Bis (optional)</label>
               <input type="date" value={form.bisDatum} onChange={e => setForm(f => ({ ...f, bisDatum: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Zweck</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Zweck</label>
             <input type="text" value={form.zweck} onChange={e => setForm(f => ({ ...f, zweck: e.target.value }))}
               placeholder="z.B. Holztransport, Pflanzung..."
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Stundensatz (€/h)</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Stundensatz (€/h)</label>
             <input type="number" step="0.50" min="0" value={form.stundensatz} onChange={e => setForm(f => ({ ...f, stundensatz: e.target.value }))}
               placeholder="0.00"
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-on-surface-variant hover:text-on-surface transition-all">Abbrechen</button>
             <button type="submit" disabled={loading || !form.fahrzeugId || !form.vonDatum}
               className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
               {loading ? "Buchen..." : "Einsatz buchen"}
@@ -477,7 +477,7 @@ export default function FuhrparkPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Fuhrpark & Geräte</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">{fahrzeuge.length} Fahrzeuge · {geraete.length} Geräte</p>
+          <p className="text-on-surface-variant text-sm mt-0.5">{fahrzeuge.length} Fahrzeuge · {geraete.length} Geräte</p>
         </div>
         <button
           onClick={() => {
@@ -493,70 +493,70 @@ export default function FuhrparkPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-[#0f0f0f] rounded-lg p-1 mb-6 w-fit">
+      <div className="flex gap-1 bg-surface-container-low rounded-lg p-1 mb-6 w-fit">
         {(["fahrzeuge", "geraete", "einsaetze"] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${tab === t ? "bg-forest text-emerald-400" : "text-zinc-500 hover:text-white"}`}>
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${tab === t ? "bg-forest text-emerald-400" : "text-on-surface-variant hover:text-on-surface"}`}>
             {t === "fahrzeuge" ? "Fahrzeuge" : t === "geraete" ? "Geräte" : "Einsätze"}
           </button>
         ))}
       </div>
 
-      {loading && tab !== "einsaetze" ? <div className="text-center py-16 text-zinc-600">Laden...</div> : (
+      {loading && tab !== "einsaetze" ? <div className="text-center py-16 text-on-surface-variant">Laden...</div> : (
         <>
           {/* ─── Tab: Fahrzeuge ─────────────────────────────────────────── */}
           {tab === "fahrzeuge" && (
-            <div className="bg-[#161616] border border-border rounded-xl overflow-x-auto">
+            <div className="bg-surface-container border border-border rounded-xl overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-left px-4 py-3 text-zinc-500 font-medium">Typ</th>
-                    <th className="text-left px-4 py-3 text-zinc-500 font-medium">Bezeichnung</th>
-                    <th className="text-left px-4 py-3 text-zinc-500 font-medium">Kennzeichen</th>
-                    <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
-                    <th className="text-left px-4 py-3 text-zinc-500 font-medium">TÜV</th>
-                    <th className="text-right px-4 py-3 text-zinc-500 font-medium">Zuschlag/h</th>
+                    <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Typ</th>
+                    <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Bezeichnung</th>
+                    <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Kennzeichen</th>
+                    <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Status</th>
+                    <th className="text-left px-4 py-3 text-on-surface-variant font-medium">TÜV</th>
+                    <th className="text-right px-4 py-3 text-on-surface-variant font-medium">Zuschlag/h</th>
                     <th className="px-4 py-3" />
                   </tr>
                 </thead>
                 <tbody>
                   {fahrzeuge.length === 0 ? (
-                    <tr><td colSpan={7} className="text-center py-12 text-zinc-600">Keine Fahrzeuge</td></tr>
+                    <tr><td colSpan={7} className="text-center py-12 text-on-surface-variant">Keine Fahrzeuge</td></tr>
                   ) : fahrzeuge.map(f => (
-                    <tr key={f.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors cursor-default">
+                    <tr key={f.id} className="border-b border-outline-variant hover:bg-surface-container-high transition-colors cursor-default">
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-2 text-zinc-400">
+                        <div className="flex items-center gap-2 text-on-surface-variant">
                           <TypIcon typ={f.typ} />
                           <span className="uppercase text-xs">{f.typ}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-white font-medium">{f.bezeichnung}</td>
-                      <td className="px-4 py-3 text-zinc-400">{f.kennzeichen ?? "–"}</td>
+                      <td className="px-4 py-3 text-on-surface font-medium">{f.bezeichnung}</td>
+                      <td className="px-4 py-3 text-on-surface-variant">{f.kennzeichen ?? "–"}</td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-0.5 rounded-full text-xs ${STATUS_FARBEN[f.status] ?? "bg-zinc-700 text-zinc-300"}`}>
+                        <span className={`px-2 py-0.5 rounded-full text-xs ${STATUS_FARBEN[f.status] ?? "bg-surface-container-highest text-on-surface"}`}>
                           {f.status}
                         </span>
                       </td>
                       <td className="px-4 py-3">
                         {f.tuvDatum ? (
-                          <span className={isTuvUeberfaellig(f.tuvDatum) ? "text-red-400" : "text-zinc-400"}>
+                          <span className={isTuvUeberfaellig(f.tuvDatum) ? "text-red-400" : "text-on-surface-variant"}>
                             {new Date(f.tuvDatum).toLocaleDateString("de-DE")}
                             {isTuvUeberfaellig(f.tuvDatum) && " ⚠️"}
                           </span>
-                        ) : <span className="text-zinc-600">–</span>}
+                        ) : <span className="text-on-surface-variant">–</span>}
                       </td>
                       <td className="px-4 py-3 text-right">
                         {f.stundenBonus && f.stundenBonus > 0 ? (
                           <span className="text-emerald-400 text-xs" title={f.bonusBeschreibung ?? undefined}>
                             +{f.stundenBonus.toFixed(2)} €/h
                           </span>
-                        ) : <span className="text-zinc-600">–</span>}
+                        ) : <span className="text-on-surface-variant">–</span>}
                       </td>
                       {/* Y2: Edit-Button */}
                       <td className="px-4 py-3 text-right">
                         <button
                           onClick={() => setEditFahrzeug(f)}
-                          className="text-zinc-500 hover:text-emerald-400 transition-colors text-xs px-2 py-1 rounded hover:bg-surface-container-highest"
+                          className="text-on-surface-variant hover:text-emerald-400 transition-colors text-xs px-2 py-1 rounded hover:bg-surface-container-highest"
                         >
                           Bearbeiten
                         </button>
@@ -570,39 +570,39 @@ export default function FuhrparkPage() {
 
           {/* ─── Tab: Geräte ─────────────────────────────────────────────── */}
           {tab === "geraete" && (
-            <div className="bg-[#161616] border border-border rounded-xl overflow-x-auto">
+            <div className="bg-surface-container border border-border rounded-xl overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-left px-4 py-3 text-zinc-500 font-medium">Bezeichnung</th>
-                    <th className="text-left px-4 py-3 text-zinc-500 font-medium">Typ</th>
-                    <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
-                    <th className="text-left px-4 py-3 text-zinc-500 font-medium">Nächste Wartung</th>
+                    <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Bezeichnung</th>
+                    <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Typ</th>
+                    <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Status</th>
+                    <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Nächste Wartung</th>
                   </tr>
                 </thead>
                 <tbody>
                   {geraete.length === 0 ? (
-                    <tr><td colSpan={4} className="text-center py-12 text-zinc-600">Keine Geräte</td></tr>
+                    <tr><td colSpan={4} className="text-center py-12 text-on-surface-variant">Keine Geräte</td></tr>
                   ) : geraete.map(g => (
-                    <tr key={g.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors cursor-default">
-                      <td className="px-4 py-3 text-white font-medium">
+                    <tr key={g.id} className="border-b border-outline-variant hover:bg-surface-container-high transition-colors cursor-default">
+                      <td className="px-4 py-3 text-on-surface font-medium">
                         <div className="flex items-center gap-2">
-                          <Wrench className="w-4 h-4 text-zinc-500" />
+                          <Wrench className="w-4 h-4 text-on-surface-variant" />
                           {g.bezeichnung}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-zinc-400">{g.typ}</td>
+                      <td className="px-4 py-3 text-on-surface-variant">{g.typ}</td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-0.5 rounded-full text-xs ${STATUS_FARBEN[g.status] ?? "bg-zinc-700 text-zinc-300"}`}>
+                        <span className={`px-2 py-0.5 rounded-full text-xs ${STATUS_FARBEN[g.status] ?? "bg-surface-container-highest text-on-surface"}`}>
                           {g.status}
                         </span>
                       </td>
                       <td className="px-4 py-3">
                         {g.naechsteWartung ? (
-                          <span className={new Date(g.naechsteWartung) < heute ? "text-amber-400" : "text-zinc-400"}>
+                          <span className={new Date(g.naechsteWartung) < heute ? "text-amber-400" : "text-on-surface-variant"}>
                             {new Date(g.naechsteWartung).toLocaleDateString("de-DE")}
                           </span>
-                        ) : <span className="text-zinc-600">–</span>}
+                        ) : <span className="text-on-surface-variant">–</span>}
                       </td>
                     </tr>
                   ))}
@@ -613,40 +613,40 @@ export default function FuhrparkPage() {
 
           {/* ─── Tab: Einsätze (K2) ──────────────────────────────────────── */}
           {tab === "einsaetze" && (
-            <div className="bg-[#161616] border border-border rounded-xl overflow-x-auto">
+            <div className="bg-surface-container border border-border rounded-xl overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-left px-4 py-3 text-zinc-500 font-medium">Fahrzeug</th>
-                    <th className="text-left px-4 py-3 text-zinc-500 font-medium">Gruppe</th>
-                    <th className="text-left px-4 py-3 text-zinc-500 font-medium">Auftrag</th>
-                    <th className="text-left px-4 py-3 text-zinc-500 font-medium">Von</th>
-                    <th className="text-left px-4 py-3 text-zinc-500 font-medium">Bis</th>
-                    <th className="text-left px-4 py-3 text-zinc-500 font-medium">Zweck</th>
+                    <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Fahrzeug</th>
+                    <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Gruppe</th>
+                    <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Auftrag</th>
+                    <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Von</th>
+                    <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Bis</th>
+                    <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Zweck</th>
                   </tr>
                 </thead>
                 <tbody>
                   {einsaetzeLoading ? (
-                    <tr><td colSpan={6} className="text-center py-12 text-zinc-600">Laden...</td></tr>
+                    <tr><td colSpan={6} className="text-center py-12 text-on-surface-variant">Laden...</td></tr>
                   ) : einsaetze.length === 0 ? (
-                    <tr><td colSpan={6} className="text-center py-12 text-zinc-600">Keine Einsätze erfasst</td></tr>
+                    <tr><td colSpan={6} className="text-center py-12 text-on-surface-variant">Keine Einsätze erfasst</td></tr>
                   ) : einsaetze.map(e => (
-                    <tr key={e.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors">
-                      <td className="px-4 py-3 text-white font-medium">
+                    <tr key={e.id} className="border-b border-outline-variant hover:bg-surface-container-high transition-colors">
+                      <td className="px-4 py-3 text-on-surface font-medium">
                         {e.fahrzeug.bezeichnung}
-                        {e.fahrzeug.kennzeichen && <span className="text-zinc-500 ml-1 text-xs">({e.fahrzeug.kennzeichen})</span>}
+                        {e.fahrzeug.kennzeichen && <span className="text-on-surface-variant ml-1 text-xs">({e.fahrzeug.kennzeichen})</span>}
                       </td>
-                      <td className="px-4 py-3 text-zinc-400">{e.gruppe?.name ?? "—"}</td>
-                      <td className="px-4 py-3 text-zinc-400">{e.auftrag?.titel ?? "—"}</td>
-                      <td className="px-4 py-3 text-zinc-400">
+                      <td className="px-4 py-3 text-on-surface-variant">{e.gruppe?.name ?? "—"}</td>
+                      <td className="px-4 py-3 text-on-surface-variant">{e.auftrag?.titel ?? "—"}</td>
+                      <td className="px-4 py-3 text-on-surface-variant">
                         {new Date(e.vonDatum).toLocaleDateString("de-DE")}
                       </td>
-                      <td className="px-4 py-3 text-zinc-400">
+                      <td className="px-4 py-3 text-on-surface-variant">
                         {e.bisDatum ? new Date(e.bisDatum).toLocaleDateString("de-DE") : (
                           <span className="text-amber-400 text-xs">Laufend</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-zinc-500">{e.zweck ?? "—"}</td>
+                      <td className="px-4 py-3 text-on-surface-variant">{e.zweck ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>

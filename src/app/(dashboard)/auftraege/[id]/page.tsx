@@ -20,7 +20,7 @@ import dynamic from "next/dynamic"
 
 const FlaechenPolygon = dynamic(
   () => import("@/components/karten/FlaechenPolygon").then(m => m.FlaechenPolygon),
-  { ssr: false, loading: () => <div className="h-64 bg-zinc-800 animate-pulse rounded-lg" /> }
+  { ssr: false, loading: () => <div className="h-64 bg-surface-container-high animate-pulse rounded-lg" /> }
 )
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -149,8 +149,8 @@ const TYP_FARBEN: Record<string, string> = {
 
 function SectionHeading({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
-    <h2 className="font-semibold text-white mb-4 flex items-center gap-2 text-sm uppercase tracking-wide">
-      <span className="text-zinc-500">{icon}</span>
+    <h2 className="font-semibold text-on-surface mb-4 flex items-center gap-2 text-sm uppercase tracking-wide">
+      <span className="text-on-surface-variant">{icon}</span>
       {label}
     </h2>
   )
@@ -160,8 +160,8 @@ function Field({ label, value, className }: { label: string; value?: string | nu
   if (value == null || value === "" || value === "–" || value === "-") return null
   return (
     <div>
-      <span className="text-zinc-500 text-xs block mb-0.5">{label}</span>
-      <span className={`text-sm ${className ?? "text-zinc-200"}`}>{value}</span>
+      <span className="text-on-surface-variant text-xs block mb-0.5">{label}</span>
+      <span className={`text-sm ${className ?? "text-on-surface"}`}>{value}</span>
     </div>
   )
 }
@@ -170,10 +170,10 @@ function FieldFull({ label, value, pre }: { label: string; value?: string | null
   if (!value || value.trim() === "") return null
   return (
     <div className="mt-4 pt-4 border-t border-border">
-      <span className="text-zinc-500 text-xs block mb-1.5">{label}</span>
+      <span className="text-on-surface-variant text-xs block mb-1.5">{label}</span>
       {pre
-        ? <pre className="text-zinc-200 text-sm leading-relaxed whitespace-pre-wrap font-sans">{value}</pre>
-        : <p className="text-zinc-200 text-sm leading-relaxed">{value}</p>
+        ? <pre className="text-on-surface text-sm leading-relaxed whitespace-pre-wrap font-sans">{value}</pre>
+        : <p className="text-on-surface text-sm leading-relaxed">{value}</p>
       }
     </div>
   )
@@ -187,7 +187,7 @@ function Grid2({ children }: { children: React.ReactNode }) {
 
 function WizardPflanzung({ w }: { w: WizardDaten }) {
   return (
-    <div className="bg-[#161616] border border-border rounded-xl p-6 space-y-4">
+    <div className="bg-surface-container border border-border rounded-xl p-6 space-y-4">
       <SectionHeading icon={<TreePine className="w-4 h-4" />} label="🌳 Pflanzung – Details" />
 
       {/* Baumarten */}
@@ -195,31 +195,31 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
         <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3 mb-2">
           {w.baumarten && <p className="text-emerald-300 text-sm font-medium">{w.baumarten}</p>}
           {w.pflanzenzahl_gesamt && (
-            <p className="text-zinc-400 text-xs mt-1">Gesamt: {Number(w.pflanzenzahl_gesamt).toLocaleString("de-DE")} Stk.</p>
+            <p className="text-on-surface-variant text-xs mt-1">Gesamt: {Number(w.pflanzenzahl_gesamt).toLocaleString("de-DE")} Stk.</p>
           )}
         </div>
       )}
 
       {/* FoRVG */}
       {w.forvg_herkunft && (
-        <div className="bg-[#1a1a1a] border border-[#333] rounded-lg p-3">
-          <span className="text-xs text-zinc-500 block mb-1">FoRVG-Herkunftsnachweise</span>
-          <pre className="text-zinc-300 text-sm whitespace-pre-wrap font-sans">{w.forvg_herkunft}</pre>
+        <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-3">
+          <span className="text-xs text-on-surface-variant block mb-1">FoRVG-Herkunftsnachweise</span>
+          <pre className="text-on-surface text-sm whitespace-pre-wrap font-sans">{w.forvg_herkunft}</pre>
         </div>
       )}
 
       {/* Standort */}
       <div>
-        <p className="text-xs text-zinc-500 mb-2 font-medium">Standort</p>
+        <p className="text-xs text-on-surface-variant mb-2 font-medium">Standort</p>
         <Grid2>
           {Array.isArray(w.flaechen) && w.flaechen.length > 0 ? (
             <div className="col-span-2 space-y-2">
-              <p className="text-xs text-zinc-500 font-semibold uppercase tracking-wide">
+              <p className="text-xs text-on-surface-variant font-semibold uppercase tracking-wide">
                 {w.flaechen.length} Fläche{w.flaechen.length > 1 ? "n" : ""}
               </p>
               {(w.flaechen as FlaecheItem[]).map((fl, i) => (
-                <div key={i} className="bg-[#0f0f0f] border border-border rounded-lg p-3 space-y-1">
-                  <p className="text-xs font-semibold text-zinc-200">
+                <div key={i} className="bg-surface-container-low border border-border rounded-lg p-3 space-y-1">
+                  <p className="text-xs font-semibold text-on-surface">
                     Fläche {i + 1} — {fl.ha} ha
                   </p>
                   {(fl.plz || fl.ort) && (
@@ -252,7 +252,7 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
       {/* Pflanzverband */}
       {(w.pflanzabstand || w.reihenabstand || w.pflanzverband) && (
         <div className="pt-3 border-t border-border">
-          <p className="text-xs text-zinc-500 mb-2 font-medium">Pflanzverband</p>
+          <p className="text-xs text-on-surface-variant mb-2 font-medium">Pflanzverband</p>
           <Grid2>
             <Field label="Pflanzabstand" value={w.pflanzabstand} />
             <Field label="Reihenabstand" value={w.reihenabstand} />
@@ -266,7 +266,7 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
         (w.flaechen as FlaecheItem[]).map((fl, i) => (
           <div key={i}>
             {w.flaechen!.length > 1 && (
-              <p className="text-xs text-zinc-500 font-medium mb-1">Fläche {i + 1} — Pflanzverband</p>
+              <p className="text-xs text-on-surface-variant font-medium mb-1">Fläche {i + 1} — Pflanzverband</p>
             )}
             {(() => {
               // Per-Fläche baumarten aus baumarten_verteilung
@@ -307,7 +307,7 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
       {/* Bezugsquelle */}
       {(w.bezugsquelle || w.lieferant || w.lieferort || w.lieferAdresse) && (
         <div className="pt-3 border-t border-border">
-          <p className="text-xs text-zinc-500 mb-2 font-medium">Bezugsquelle & Lieferung</p>
+          <p className="text-xs text-on-surface-variant mb-2 font-medium">Bezugsquelle & Lieferung</p>
           <Grid2>
             <Field label="Bezugsquelle" value={w.bezugsquelle} />
             {w.lieferant && <Field label="Lieferant" value={w.lieferant} />}
@@ -315,7 +315,7 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
             {w.lieferAdresse && <div className="col-span-2"><Field label="Lieferadresse" value={w.lieferAdresse} /></div>}
             {w.lieferMapsLink && (
               <div className="col-span-2">
-                <span className="text-xs text-zinc-500 block mb-0.5">Maps-Link</span>
+                <span className="text-xs text-on-surface-variant block mb-0.5">Maps-Link</span>
                 <a href={w.lieferMapsLink} target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline text-sm break-all">{w.lieferMapsLink}</a>
               </div>
             )}
@@ -332,7 +332,7 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
       {/* Förderung */}
       {(w.foerderProgramme || w.foerderBeratungS2 || w.beratungsgespraech || w.darmstaedter_angebote) && (
         <div className="pt-3 border-t border-border">
-          <p className="text-xs text-zinc-500 mb-2 font-medium">Förderung</p>
+          <p className="text-xs text-on-surface-variant mb-2 font-medium">Förderung</p>
           <Grid2>
             <Field label="Förderprogramm" value={w.foerderProgramme} className="text-emerald-400" />
             <Field label="Beratungsanfrage" value={w.foerderBeratungS2} />
@@ -351,18 +351,18 @@ function WizardFlaechenvorbereitung({ w }: { w: WizardDaten }) {
   const flaechen: FlaecheVorbereitung[] = Array.isArray(w.flaechen) ? w.flaechen : []
 
   return (
-    <div className="bg-[#161616] border border-border rounded-xl p-6 space-y-4">
+    <div className="bg-surface-container border border-border rounded-xl p-6 space-y-4">
       <SectionHeading icon={<Layers className="w-4 h-4" />} label="🌿 Flächenvorbereitung – Details" />
 
       {/* Flächen-Cards */}
       {flaechen.length > 0 && (
         <div className="space-y-3">
-          <p className="text-xs text-zinc-500 font-medium">{flaechen.length} Fläche{flaechen.length > 1 ? "n" : ""}</p>
+          <p className="text-xs text-on-surface-variant font-medium">{flaechen.length} Fläche{flaechen.length > 1 ? "n" : ""}</p>
           {flaechen.map((f, i) => (
-            <div key={i} className="bg-[#1a1a1a] border border-[#2e2e2e] rounded-lg p-4">
+            <div key={i} className="bg-surface-container-lowest border border-outline-variant rounded-lg p-4">
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-6 h-6 bg-blue-100 text-blue-800 rounded-full text-xs flex items-center justify-center font-bold">{f.nr ?? i + 1}</span>
-                <span className="text-white text-sm font-medium">{f.ha ? `${f.ha} ha` : "—"}</span>
+                <span className="text-on-surface text-sm font-medium">{f.ha ? `${f.ha} ha` : "—"}</span>
               </div>
               <Grid2>
                 <Field label="Aufwuchsarten" value={f.aufwuchsarten} />
@@ -401,7 +401,7 @@ function WizardKulturschutz({ w }: { w: WizardDaten }) {
   const kosten = kostenMin && kostenMax ? `${Number(kostenMin).toLocaleString("de-DE")} – ${Number(kostenMax).toLocaleString("de-DE")} €` : null
 
   return (
-    <div className="bg-[#161616] border border-border rounded-xl p-6 space-y-4">
+    <div className="bg-surface-container border border-border rounded-xl p-6 space-y-4">
       <SectionHeading icon={<Shield className="w-4 h-4" />} label="🛡 Kulturschutz – Details" />
 
       {/* Main info */}
@@ -449,7 +449,7 @@ function WizardKulturschutz({ w }: { w: WizardDaten }) {
       {/* Kosten */}
       {kosten && (
         <div className="mt-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3">
-          <span className="text-xs text-zinc-500 block mb-0.5">Kostenindikation</span>
+          <span className="text-xs text-on-surface-variant block mb-0.5">Kostenindikation</span>
           <p className="text-emerald-400 font-semibold text-lg">{kosten}</p>
         </div>
       )}
@@ -459,20 +459,20 @@ function WizardKulturschutz({ w }: { w: WizardDaten }) {
 
 function WizardKulturpflege({ w }: { w: WizardDaten }) {
   return (
-    <div className="bg-[#161616] border border-border rounded-xl p-6 space-y-4">
+    <div className="bg-surface-container border border-border rounded-xl p-6 space-y-4">
       <SectionHeading icon={<Scissors className="w-4 h-4" />} label="✂️ Kulturpflege – Details" />
 
       {/* Maßnahme highlight */}
       {w.massnahme && (
         <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-2">
-          <span className="text-xs text-zinc-500 block mb-0.5">Maßnahme</span>
+          <span className="text-xs text-on-surface-variant block mb-0.5">Maßnahme</span>
           <p className="text-yellow-300 text-sm font-medium">{w.massnahme}</p>
         </div>
       )}
 
       {/* Standort */}
       <div>
-        <p className="text-xs text-zinc-500 mb-2 font-medium">Standort</p>
+        <p className="text-xs text-on-surface-variant mb-2 font-medium">Standort</p>
         <Grid2>
           <Field label="Fläche (ha)" value={w.ha} />
           <Field label="PLZ" value={w.plz} />
@@ -484,7 +484,7 @@ function WizardKulturpflege({ w }: { w: WizardDaten }) {
 
       {/* Bestand */}
       <div className="pt-3 border-t border-border">
-        <p className="text-xs text-zinc-500 mb-2 font-medium">Bestandsdaten</p>
+        <p className="text-xs text-on-surface-variant mb-2 font-medium">Bestandsdaten</p>
         <Grid2>
           <Field label="Bestandsalter" value={w.bestandsalter} />
           <Field label="Baumarten" value={w.baumarten} />
@@ -497,7 +497,7 @@ function WizardKulturpflege({ w }: { w: WizardDaten }) {
 
       {/* Planung */}
       <div className="pt-3 border-t border-border">
-        <p className="text-xs text-zinc-500 mb-2 font-medium">Planung</p>
+        <p className="text-xs text-on-surface-variant mb-2 font-medium">Planung</p>
         <Grid2>
           <Field label="Zeitpunkt" value={w.zeitpunkt} />
           <Field label="Folgepflege" value={w.folgepflege} />
@@ -519,7 +519,7 @@ function WizardKulturpflege({ w }: { w: WizardDaten }) {
       {/* Kosten */}
       {w.kostenindikation && (
         <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3">
-          <span className="text-xs text-zinc-500 block mb-0.5">Kostenindikation</span>
+          <span className="text-xs text-on-surface-variant block mb-0.5">Kostenindikation</span>
           <p className="text-emerald-400 font-semibold text-lg">{w.kostenindikation}</p>
         </div>
       )}
@@ -529,7 +529,7 @@ function WizardKulturpflege({ w }: { w: WizardDaten }) {
 
 function WizardSaatguternte({ w }: { w: WizardDaten }) {
   return (
-    <div className="bg-[#161616] border border-border rounded-xl p-6 space-y-4">
+    <div className="bg-surface-container border border-border rounded-xl p-6 space-y-4">
       <SectionHeading icon={<Package className="w-4 h-4" />} label="🌰 Saatguternte – Details" />
 
       {/* Baumarten + Menge */}
@@ -537,16 +537,16 @@ function WizardSaatguternte({ w }: { w: WizardDaten }) {
         <div className="bg-lime-500/10 border border-lime-500/20 rounded-lg p-3 mb-2">
           {w.baumarten && <p className="text-lime-300 text-sm font-medium">{w.baumarten}</p>}
           {w.gesamtmenge_kg && (
-            <p className="text-zinc-400 text-xs mt-1">Gesamtmenge: {w.gesamtmenge_kg} kg</p>
+            <p className="text-on-surface-variant text-xs mt-1">Gesamtmenge: {w.gesamtmenge_kg} kg</p>
           )}
         </div>
       )}
 
       {/* FoRVG */}
       {w.forvg_herkunft && (
-        <div className="bg-[#1a1a1a] border border-[#333] rounded-lg p-3">
-          <span className="text-xs text-zinc-500 block mb-1">FoRVG-Herkunftsnachweise</span>
-          <pre className="text-zinc-300 text-sm whitespace-pre-wrap font-sans">{w.forvg_herkunft}</pre>
+        <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-3">
+          <span className="text-xs text-on-surface-variant block mb-1">FoRVG-Herkunftsnachweise</span>
+          <pre className="text-on-surface text-sm whitespace-pre-wrap font-sans">{w.forvg_herkunft}</pre>
         </div>
       )}
 
@@ -563,7 +563,7 @@ function WizardSaatguternte({ w }: { w: WizardDaten }) {
       {/* Kosten */}
       {w.kostenindikation && (
         <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3">
-          <span className="text-xs text-zinc-500 block mb-0.5">Kostenindikation</span>
+          <span className="text-xs text-on-surface-variant block mb-0.5">Kostenindikation</span>
           <p className="text-emerald-400 font-semibold text-lg">{w.kostenindikation}</p>
         </div>
       )}
@@ -585,15 +585,15 @@ function WizardDetails({ auftrag }: { auftrag: Auftrag }) {
 
   // Fallback: show raw data nicely
   return (
-    <div className="bg-[#161616] border border-border rounded-xl p-6">
+    <div className="bg-surface-container border border-border rounded-xl p-6">
       <SectionHeading icon={<Info className="w-4 h-4" />} label="Wizard-Daten" />
       <div className="grid grid-cols-2 gap-3 text-sm">
         {Object.entries(w)
           .filter(([, v]) => v != null && v !== "" && typeof v !== "object")
           .map(([k, v]) => (
             <div key={k}>
-              <span className="text-zinc-500 text-xs block">{k}</span>
-              <span className="text-zinc-200">{String(v)}</span>
+              <span className="text-on-surface-variant text-xs block">{k}</span>
+              <span className="text-on-surface">{String(v)}</span>
             </div>
           ))}
       </div>
@@ -616,14 +616,14 @@ function KostenVorschau({ auftrag }: { auftrag: Auftrag }) {
   if (!kosten) return null
 
   return (
-    <div className="bg-[#161616] border border-emerald-500/30 rounded-xl p-6">
-      <h2 className="font-semibold text-white mb-3 flex items-center gap-2 text-sm uppercase tracking-wide">
+    <div className="bg-surface-container border border-emerald-500/30 rounded-xl p-6">
+      <h2 className="font-semibold text-on-surface mb-3 flex items-center gap-2 text-sm uppercase tracking-wide">
         <BadgeCheck className="w-4 h-4 text-emerald-500" />
         Kosten-Vorschau
       </h2>
       <div className="bg-emerald-500/10 rounded-lg p-4 text-center">
         <p className="text-3xl font-bold text-emerald-400">{kosten}</p>
-        <p className="text-zinc-500 text-xs mt-1">Kostenindikation (unverbindlich)</p>
+        <p className="text-on-surface-variant text-xs mt-1">Kostenindikation (unverbindlich)</p>
       </div>
     </div>
   )
@@ -765,7 +765,7 @@ export default function AuftragDetailPage() {
   if (loading) {
     return (
       <div className="max-w-5xl mx-auto flex items-center justify-center h-64">
-        <p className="text-zinc-600 animate-pulse">Laden...</p>
+        <p className="text-on-surface-variant animate-pulse">Laden...</p>
       </div>
     )
   }
@@ -773,7 +773,7 @@ export default function AuftragDetailPage() {
   if (!auftrag) {
     return (
       <div className="max-w-5xl mx-auto">
-        <p className="text-zinc-500">Auftrag nicht gefunden.</p>
+        <p className="text-on-surface-variant">Auftrag nicht gefunden.</p>
       </div>
     )
   }
@@ -791,21 +791,21 @@ export default function AuftragDetailPage() {
       <KiDisclaimer />
       <Breadcrumb items={[{ label: "Aufträge", href: "/auftraege" }, { label: auftrag.titel }]} />
       {/* Back */}
-      <Link href="/auftraege" className="flex items-center gap-2 text-zinc-400 hover:text-white text-sm mb-6 transition-all">
+      <Link href="/auftraege" className="flex items-center gap-2 text-on-surface-variant hover:text-on-surface text-sm mb-6 transition-all">
         <ArrowLeft className="w-4 h-4" />
         <span>Zurück zu Aufträge</span>
       </Link>
 
       {/* ── Header ──────────────────────────────────────────────────────── */}
-      <div className="bg-[#161616] border border-border rounded-xl p-6 mb-6">
+      <div className="bg-surface-container border border-border rounded-xl p-6 mb-6">
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-2 flex-wrap">
-              <h1 className="text-xl font-bold text-white leading-tight">{auftrag.titel}</h1>
+              <h1 className="text-xl font-bold text-on-surface leading-tight">{auftrag.titel}</h1>
               {auftrag.neuFlag && (
                 <span className="px-2 py-0.5 bg-emerald-500/30 text-emerald-300 rounded text-xs font-bold border border-emerald-500/40">NEU</span>
               )}
-              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${TYP_FARBEN[auftrag.typ] ?? "bg-zinc-700/50 text-zinc-400"}`}>
+              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${TYP_FARBEN[auftrag.typ] ?? "bg-surface-container-highest/50 text-on-surface-variant"}`}>
                 {TYP_LABEL[auftrag.typ] ?? auftrag.typ}
               </span>
               <span className={`px-2 py-0.5 rounded-full text-xs border ${statusObj.color}`}>
@@ -817,12 +817,12 @@ export default function AuftragDetailPage() {
                   <MessageCircle className="w-3 h-3" /> Telegram verbunden
                 </span>
               ) : (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-zinc-700/30 text-zinc-500 border border-zinc-600/30 flex items-center gap-1" title={`Waldbesitzer kann @KochAufforstungBot /anmelden ${auftrag.nummer ?? auftrag.id} schreiben`}>
+                <span className="px-2 py-0.5 rounded-full text-xs bg-surface-container-highest/30 text-on-surface-variant border border-outline-variant/30 flex items-center gap-1" title={`Waldbesitzer kann @KochAufforstungBot /anmelden ${auftrag.nummer ?? auftrag.id} schreiben`}>
                   <MessageCircle className="w-3 h-3" /> Telegram nicht verbunden
                 </span>
               )}
             </div>
-            <p className="text-zinc-500 text-xs">Erstellt: {new Date(auftrag.createdAt).toLocaleDateString("de-DE")}</p>
+            <p className="text-on-surface-variant text-xs">Erstellt: {new Date(auftrag.createdAt).toLocaleDateString("de-DE")}</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             {/* Arbeitsanweisung drucken (Sprint V) */}
@@ -830,7 +830,7 @@ export default function AuftragDetailPage() {
               href={`/auftraege/${auftrag.id}/arbeitsanweisung`}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-2 px-4 py-2 border border-zinc-600 text-zinc-400 rounded-lg text-sm hover:border-zinc-400 hover:text-white transition-colors"
+              className="flex items-center gap-2 px-4 py-2 border border-outline-variant text-on-surface-variant rounded-lg text-sm hover:border-outline-variant hover:text-on-surface transition-colors"
             >
               🖨️ Arbeitsanweisung
             </a>
@@ -839,14 +839,14 @@ export default function AuftragDetailPage() {
               <>
                 <a
                   href={`/api/auftraege/${auftrag.id}/export?format=gpx`}
-                  className="flex items-center gap-1.5 px-3 py-2 border border-zinc-600 text-zinc-400 rounded-lg text-sm hover:border-zinc-400 hover:text-white transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-2 border border-outline-variant text-on-surface-variant rounded-lg text-sm hover:border-outline-variant hover:text-on-surface transition-colors"
                   title="GPS-Koordinaten als GPX exportieren"
                 >
                   📍 GPX
                 </a>
                 <a
                   href={`/api/auftraege/${auftrag.id}/export?format=kml`}
-                  className="flex items-center gap-1.5 px-3 py-2 border border-zinc-600 text-zinc-400 rounded-lg text-sm hover:border-zinc-400 hover:text-white transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-2 border border-outline-variant text-on-surface-variant rounded-lg text-sm hover:border-outline-variant hover:text-on-surface transition-colors"
                   title="GPS-Koordinaten als KML exportieren"
                 >
                   🗺️ KML
@@ -921,7 +921,7 @@ export default function AuftragDetailPage() {
                 href={wpAdminUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-1.5 px-3 py-2 bg-surface-container-highest hover:bg-[#333] text-zinc-400 hover:text-white rounded-lg text-xs transition-all"
+                className="flex items-center gap-1.5 px-3 py-2 bg-surface-container-highest hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface rounded-lg text-xs transition-all"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
                 WP Admin
@@ -937,7 +937,7 @@ export default function AuftragDetailPage() {
               key={s.value}
               onClick={() => { if (s.value !== status) setPendingStatus(s.value) }}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                status === s.value ? s.color : "border-border text-zinc-500 hover:text-zinc-300 hover:border-zinc-500"
+                status === s.value ? s.color : "border-border text-on-surface-variant hover:text-on-surface hover:border-outline-variant"
               }`}
             >
               {s.label}
@@ -966,19 +966,19 @@ export default function AuftragDetailPage() {
         <div className="lg:col-span-2 space-y-6">
 
           {/* Kontakt */}
-          <div className="bg-[#161616] border border-border rounded-xl p-6">
+          <div className="bg-surface-container border border-border rounded-xl p-6">
             <SectionHeading icon={<User className="w-4 h-4" />} label="Kontakt" />
             {auftrag.waldbesitzer || auftrag.waldbesitzerEmail || auftrag.waldbesitzerTelefon ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 {auftrag.waldbesitzer && (
                   <div>
-                    <span className="text-zinc-500 text-xs block mb-0.5">Name</span>
-                    <span className="text-white">{auftrag.waldbesitzer}</span>
+                    <span className="text-on-surface-variant text-xs block mb-0.5">Name</span>
+                    <span className="text-on-surface">{auftrag.waldbesitzer}</span>
                   </div>
                 )}
                 {auftrag.waldbesitzerEmail && (
                   <div>
-                    <span className="text-zinc-500 text-xs block mb-0.5">E-Mail</span>
+                    <span className="text-on-surface-variant text-xs block mb-0.5">E-Mail</span>
                     <a href={`mailto:${auftrag.waldbesitzerEmail}`} className="text-emerald-400 hover:underline flex items-center gap-1">
                       <Mail className="w-3.5 h-3.5" />{auftrag.waldbesitzerEmail}
                     </a>
@@ -986,7 +986,7 @@ export default function AuftragDetailPage() {
                 )}
                 {auftrag.waldbesitzerTelefon && (
                   <div>
-                    <span className="text-zinc-500 text-xs block mb-0.5">Telefon</span>
+                    <span className="text-on-surface-variant text-xs block mb-0.5">Telefon</span>
                     <a href={`tel:${auftrag.waldbesitzerTelefon}`} className="text-emerald-400 hover:underline flex items-center gap-1">
                       <Phone className="w-3.5 h-3.5" />{auftrag.waldbesitzerTelefon}
                     </a>
@@ -994,43 +994,43 @@ export default function AuftragDetailPage() {
                 )}
                 {w?.plz_ort && (
                   <div>
-                    <span className="text-zinc-500 text-xs block mb-0.5">PLZ / Ort</span>
-                    <span className="text-zinc-200">{w.plz_ort}</span>
+                    <span className="text-on-surface-variant text-xs block mb-0.5">PLZ / Ort</span>
+                    <span className="text-on-surface">{w.plz_ort}</span>
                   </div>
                 )}
                 {w?.waldbesitzertyp && (
                   <div>
-                    <span className="text-zinc-500 text-xs block mb-0.5">Waldbesitzertyp</span>
-                    <span className="text-zinc-200">{w.waldbesitzertyp}</span>
+                    <span className="text-on-surface-variant text-xs block mb-0.5">Waldbesitzertyp</span>
+                    <span className="text-on-surface">{w.waldbesitzertyp}</span>
                   </div>
                 )}
               </div>
             ) : (
-              <p className="text-zinc-600 text-sm">Keine Kontaktdaten vorhanden</p>
+              <p className="text-on-surface-variant text-sm">Keine Kontaktdaten vorhanden</p>
             )}
           </div>
 
           {/* Projekt-Info */}
-          <div className="bg-[#161616] border border-border rounded-xl p-6">
+          <div className="bg-surface-container border border-border rounded-xl p-6">
             <SectionHeading icon={<TreePine className="w-4 h-4" />} label="Projekt-Info" />
             <Grid2>
               <div>
-                <span className="text-zinc-500 text-xs block mb-0.5">Leistungsart</span>
-                <span className={`text-sm px-2 py-0.5 rounded-full ${TYP_FARBEN[auftrag.typ] ?? "text-zinc-200"}`}>
+                <span className="text-on-surface-variant text-xs block mb-0.5">Leistungsart</span>
+                <span className={`text-sm px-2 py-0.5 rounded-full ${TYP_FARBEN[auftrag.typ] ?? "text-on-surface"}`}>
                   {TYP_LABEL[auftrag.typ] ?? auftrag.typ}
                 </span>
               </div>
               {auftrag.bundesland && <Field label="Bundesland" value={auftrag.bundesland} />}
               {auftrag.zeitraum && (
                 <div>
-                  <span className="text-zinc-500 text-xs block mb-0.5 flex items-center gap-1"><Calendar className="w-3 h-3" />Zeitraum</span>
-                  <span className="text-zinc-200 text-sm">{auftrag.zeitraum}</span>
+                  <span className="text-on-surface-variant text-xs block mb-0.5 flex items-center gap-1"><Calendar className="w-3 h-3" />Zeitraum</span>
+                  <span className="text-on-surface text-sm">{auftrag.zeitraum}</span>
                 </div>
               )}
               {auftrag.flaeche_ha != null && (
                 <div>
-                  <span className="text-zinc-500 text-xs block mb-0.5 flex items-center gap-1"><MapPin className="w-3 h-3" />Gesamtfläche</span>
-                  <span className="text-zinc-200 text-sm">{auftrag.flaeche_ha} ha</span>
+                  <span className="text-on-surface-variant text-xs block mb-0.5 flex items-center gap-1"><MapPin className="w-3 h-3" />Gesamtfläche</span>
+                  <span className="text-on-surface text-sm">{auftrag.flaeche_ha} ha</span>
                 </div>
               )}
               {w?.zeitpunkt && <Field label="Zeitpunkt" value={w.zeitpunkt} />}
@@ -1040,7 +1040,7 @@ export default function AuftragDetailPage() {
           </div>
 
           {/* Flächen-Polygon Karte (Sprint Q017) */}
-          <div className="bg-[#161616] border border-border rounded-xl p-6">
+          <div className="bg-surface-container border border-border rounded-xl p-6">
             <SectionHeading icon={<MapPin className="w-4 h-4" />} label="Flächenkarte" />
             <FlaechenPolygon
               auftragId={auftrag.id}
@@ -1059,23 +1059,23 @@ export default function AuftragDetailPage() {
 
           {/* Wirtschaftlichkeits-Widget */}
           {wirtschaft && (
-            <div className="bg-[#161616] border border-border rounded-xl p-6 mb-0">
-              <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-3">Wirtschaftlichkeit</h3>
+            <div className="bg-surface-container border border-border rounded-xl p-6 mb-0">
+              <h3 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider mb-3">Wirtschaftlichkeit</h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                  { label: "Stunden", value: `${wirtschaft.stundenAnzahl}h`, color: "text-white" },
+                  { label: "Stunden", value: `${wirtschaft.stundenAnzahl}h`, color: "text-on-surface" },
                   { label: "Lohnkosten", value: wirtschaft.lohnkosten.toLocaleString("de-DE", { style: "currency", currency: "EUR" }), color: "text-amber-400" },
                   { label: "Umsatz", value: wirtschaft.umsatz.toLocaleString("de-DE", { style: "currency", currency: "EUR" }), color: "text-emerald-400" },
                   { label: "Marge", value: `${wirtschaft.marge}%`, color: wirtschaft.marge > 20 ? "text-emerald-400" : wirtschaft.marge > 0 ? "text-amber-400" : "text-red-400" },
                 ].map(({ label, value, color }) => (
-                  <div key={label} className="bg-[#0f0f0f] border border-border rounded-xl p-3">
-                    <p className="text-xs text-zinc-500 mb-1">{label}</p>
+                  <div key={label} className="bg-surface-container-low border border-border rounded-xl p-3">
+                    <p className="text-xs text-on-surface-variant mb-1">{label}</p>
                     <p className={`text-lg font-bold ${color}`}>{value}</p>
                   </div>
                 ))}
               </div>
               {wirtschaft.deckungsbeitrag !== 0 && (
-                <p className="text-xs text-zinc-500 mt-2">
+                <p className="text-xs text-on-surface-variant mt-2">
                   Deckungsbeitrag:{" "}
                   <span className={wirtschaft.deckungsbeitrag >= 0 ? "text-emerald-400" : "text-red-400"}>
                     {wirtschaft.deckungsbeitrag.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
@@ -1086,7 +1086,7 @@ export default function AuftragDetailPage() {
           )}
 
           {/* Tagesprotokolle */}
-          <div className="bg-[#161616] border border-border rounded-xl p-6">
+          <div className="bg-surface-container border border-border rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
               <SectionHeading icon={<FileText className="w-4 h-4" />} label={`Tagesprotokolle (${tagesprotokolle.length})`} />
               <Link
@@ -1098,12 +1098,12 @@ export default function AuftragDetailPage() {
               </Link>
             </div>
             {tagesprotokolle.length === 0 ? (
-              <p className="text-zinc-600 text-sm">Noch keine Tagesprotokolle vorhanden.</p>
+              <p className="text-on-surface-variant text-sm">Noch keine Tagesprotokolle vorhanden.</p>
             ) : (
               <div className="space-y-2">
                 {tagesprotokolle.map(p => {
                   const statusColors: Record<string, string> = {
-                    entwurf: "bg-zinc-700 text-zinc-300 border-zinc-600",
+                    entwurf: "bg-surface-container-highest text-on-surface border-outline-variant",
                     eingereicht: "bg-emerald-100 text-emerald-800 border-emerald-500/40",
                     genehmigt: "bg-blue-100 text-blue-800 border-blue-500/40",
                     abgelehnt: "bg-red-100 text-red-800 border-red-500/40",
@@ -1118,31 +1118,31 @@ export default function AuftragDetailPage() {
                       <button
                         type="button"
                         onClick={() => setTagesprotokollExpanded(isExpanded ? null : p.id)}
-                        className="w-full flex items-center justify-between px-4 py-3 bg-[#111] hover:bg-[#181818] transition-colors text-left"
+                        className="w-full flex items-center justify-between px-4 py-3 bg-surface-container-low hover:bg-surface-container-high transition-colors text-left"
                       >
                         <div className="flex items-center gap-3">
-                          <span className="text-sm text-zinc-300">
+                          <span className="text-sm text-on-surface">
                             {new Date(p.datum).toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric" })}
                           </span>
-                          {p.ersteller && <span className="text-xs text-zinc-500">{p.ersteller}</span>}
-                          {p.witterung && <span className="text-xs text-zinc-600">{p.witterung}</span>}
+                          {p.ersteller && <span className="text-xs text-on-surface-variant">{p.ersteller}</span>}
+                          {p.witterung && <span className="text-xs text-on-surface-variant">{p.witterung}</span>}
                         </div>
-                        <span className={`text-xs px-2 py-0.5 rounded-full border ${statusColors[p.status] ?? "bg-zinc-700 text-zinc-400 border-zinc-600"}`}>
+                        <span className={`text-xs px-2 py-0.5 rounded-full border ${statusColors[p.status] ?? "bg-surface-container-highest text-on-surface-variant border-outline-variant"}`}>
                           {statusLabels[p.status] ?? p.status}
                         </span>
                       </button>
                       {isExpanded && (
-                        <div className="p-4 bg-[#0d0d0d]">
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs text-zinc-400">
-                            {p.forstamt && <div><span className="text-zinc-600 block">Forstamt</span>{p.forstamt}</div>}
-                            {p.revier && <div><span className="text-zinc-600 block">Revier</span>{p.revier}</div>}
-                            {p.waldbesitzerName && <div><span className="text-zinc-600 block">Waldbesitzer</span>{p.waldbesitzerName}</div>}
-                            {p.witterung && <div><span className="text-zinc-600 block">Witterung</span>{p.witterung}</div>}
-                            {(p.std_handpflanzung ?? 0) > 0 && <div><span className="text-zinc-600 block">Pflanzung (Std)</span>{p.std_handpflanzung}</div>}
-                            {(p.stk_pflanzung ?? 0) > 0 && <div><span className="text-zinc-600 block">Gepflanzt (Stk)</span>{p.stk_pflanzung?.toLocaleString()}</div>}
+                        <div className="p-4 bg-surface">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs text-on-surface-variant">
+                            {p.forstamt && <div><span className="text-on-surface-variant block">Forstamt</span>{p.forstamt}</div>}
+                            {p.revier && <div><span className="text-on-surface-variant block">Revier</span>{p.revier}</div>}
+                            {p.waldbesitzerName && <div><span className="text-on-surface-variant block">Waldbesitzer</span>{p.waldbesitzerName}</div>}
+                            {p.witterung && <div><span className="text-on-surface-variant block">Witterung</span>{p.witterung}</div>}
+                            {(p.std_handpflanzung ?? 0) > 0 && <div><span className="text-on-surface-variant block">Pflanzung (Std)</span>{p.std_handpflanzung}</div>}
+                            {(p.stk_pflanzung ?? 0) > 0 && <div><span className="text-on-surface-variant block">Gepflanzt (Stk)</span>{p.stk_pflanzung?.toLocaleString()}</div>}
                           </div>
                           {p.kommentar && (
-                            <p className="mt-3 text-xs text-zinc-400 whitespace-pre-wrap border-t border-border pt-3">{p.kommentar}</p>
+                            <p className="mt-3 text-xs text-on-surface-variant whitespace-pre-wrap border-t border-border pt-3">{p.kommentar}</p>
                           )}
                         </div>
                       )}
@@ -1155,10 +1155,10 @@ export default function AuftragDetailPage() {
 
           {/* ── Abnahmen ──────────────────────────────────────────── */}
           {auftrag.abnahmen && auftrag.abnahmen.length > 0 && (
-            <div className="bg-[#161616] border border-border rounded-xl p-6">
+            <div className="bg-surface-container border border-border rounded-xl p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-semibold text-white flex items-center gap-2 text-sm uppercase tracking-wide">
-                  <CheckSquare className="w-4 h-4 text-zinc-500" />
+                <h2 className="font-semibold text-on-surface flex items-center gap-2 text-sm uppercase tracking-wide">
+                  <CheckSquare className="w-4 h-4 text-on-surface-variant" />
                   Abnahmen ({auftrag.abnahmen.length})
                 </h2>
                 {/* Rechnung erstellen: nur wenn noch keine existiert */}
@@ -1195,15 +1195,15 @@ export default function AuftragDetailPage() {
               </div>
               <div className="space-y-2">
                 {auftrag.abnahmen.map(abnahme => (
-                  <div key={abnahme.id} className="flex items-center justify-between p-3 bg-[#0f0f0f] rounded-lg border border-border">
+                  <div key={abnahme.id} className="flex items-center justify-between p-3 bg-surface-container-low rounded-lg border border-border">
                     <div className="flex items-center gap-3">
                       <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
                         abnahme.status === "bestanden" ? "bg-emerald-500" :
                         abnahme.status === "offen" ? "bg-amber-400" : "bg-red-400"
                       }`} />
                       <div>
-                        <p className="text-sm text-white">{new Date(abnahme.datum).toLocaleDateString("de-DE")}</p>
-                        {abnahme.notizen && <p className="text-xs text-zinc-500 mt-0.5">{abnahme.notizen}</p>}
+                        <p className="text-sm text-on-surface">{new Date(abnahme.datum).toLocaleDateString("de-DE")}</p>
+                        {abnahme.notizen && <p className="text-xs text-on-surface-variant mt-0.5">{abnahme.notizen}</p>}
                       </div>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full border ${
@@ -1223,34 +1223,34 @@ export default function AuftragDetailPage() {
           {auftrag && <AbnahmeStatus auftragId={auftrag.id} />}
 
           {/* ── Materialzuweisung ──────────────────────────────────── */}
-          <div className="bg-[#161616] border border-border rounded-xl p-6">
+          <div className="bg-surface-container border border-border rounded-xl p-6">
             <SectionHeading icon={<Package className="w-4 h-4" />} label="Materialzuweisung" />
             {materialLoading ? (
-              <p className="text-zinc-600 text-sm mt-2">Laden...</p>
+              <p className="text-on-surface-variant text-sm mt-2">Laden...</p>
             ) : material.length === 0 ? (
-              <p className="text-zinc-600 text-sm mt-2">Noch kein Material zugewiesen</p>
+              <p className="text-on-surface-variant text-sm mt-2">Noch kein Material zugewiesen</p>
             ) : (
               <div className="overflow-x-auto mt-3">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-border">
-                      <th className="text-left pb-2 text-zinc-500 font-medium text-xs">Datum</th>
-                      <th className="text-left pb-2 text-zinc-500 font-medium text-xs">Artikel</th>
-                      <th className="text-right pb-2 text-zinc-500 font-medium text-xs">Menge</th>
-                      <th className="text-left pb-2 text-zinc-500 font-medium text-xs pl-3">Typ</th>
-                      <th className="text-left pb-2 text-zinc-500 font-medium text-xs pl-3">Mitarbeiter</th>
+                      <th className="text-left pb-2 text-on-surface-variant font-medium text-xs">Datum</th>
+                      <th className="text-left pb-2 text-on-surface-variant font-medium text-xs">Artikel</th>
+                      <th className="text-right pb-2 text-on-surface-variant font-medium text-xs">Menge</th>
+                      <th className="text-left pb-2 text-on-surface-variant font-medium text-xs pl-3">Typ</th>
+                      <th className="text-left pb-2 text-on-surface-variant font-medium text-xs pl-3">Mitarbeiter</th>
                     </tr>
                   </thead>
                   <tbody>
                     {material.map(b => (
-                      <tr key={b.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors">
-                        <td className="py-2.5 text-zinc-500 text-xs whitespace-nowrap">
+                      <tr key={b.id} className="border-b border-outline-variant hover:bg-surface-container-high transition-colors">
+                        <td className="py-2.5 text-on-surface-variant text-xs whitespace-nowrap">
                           {new Date(b.createdAt).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })}
                         </td>
-                        <td className="py-2.5 text-white text-xs">{b.artikel.name}</td>
-                        <td className="py-2.5 text-right text-white text-xs">{b.menge} {b.artikel.einheit}</td>
+                        <td className="py-2.5 text-on-surface text-xs">{b.artikel.name}</td>
+                        <td className="py-2.5 text-right text-on-surface text-xs">{b.menge} {b.artikel.einheit}</td>
                         <td className="py-2.5 pl-3">
-                          <span className="text-xs px-1.5 py-0.5 rounded bg-surface-container-highest text-zinc-400">{b.typ}</span>
+                          <span className="text-xs px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface-variant">{b.typ}</span>
                         </td>
                         <td className="py-2.5 pl-3">
                           {b.mitarbeiter ? (
@@ -1258,7 +1258,7 @@ export default function AuftragDetailPage() {
                               {b.mitarbeiter.vorname} {b.mitarbeiter.nachname}
                             </span>
                           ) : (
-                            <span className="text-zinc-600 text-xs">–</span>
+                            <span className="text-on-surface-variant text-xs">–</span>
                           )}
                         </td>
                       </tr>
@@ -1275,7 +1275,7 @@ export default function AuftragDetailPage() {
         <div className="space-y-6">
 
           {/* Förderprüfung */}
-          <div className="bg-[#161616] border border-border rounded-xl p-6">
+          <div className="bg-surface-container border border-border rounded-xl p-6">
             <SectionHeading icon={<TreePine className="w-4 h-4" />} label="Förderprogramm-Check" />
             <AuftragFoerderCheck
               auftragId={auftrag.id}
@@ -1286,15 +1286,15 @@ export default function AuftragDetailPage() {
           </div>
 
           {/* Interne Verwaltung */}
-          <div className="bg-[#161616] border border-border rounded-xl p-6">
+          <div className="bg-surface-container border border-border rounded-xl p-6">
             <SectionHeading icon={<Sprout className="w-4 h-4" />} label="Interne Verwaltung" />
             <div className="space-y-4">
               <div>
-                <label className="block text-xs text-zinc-500 mb-1.5">Saison</label>
+                <label className="block text-xs text-on-surface-variant mb-1.5">Saison</label>
                 <select
                   value={saisonId}
                   onChange={e => setSaisonId(e.target.value)}
-                  className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500"
                 >
                   <option value="">Keine Saison</option>
                   {saisons.map(s => (
@@ -1303,11 +1303,11 @@ export default function AuftragDetailPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-zinc-500 mb-1.5">Gruppe</label>
+                <label className="block text-xs text-on-surface-variant mb-1.5">Gruppe</label>
                 <select
                   value={gruppeId}
                   onChange={e => setGruppeId(e.target.value)}
-                  className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500"
                 >
                   <option value="">Keine Gruppe</option>
                   {gruppen.map(g => (
@@ -1317,40 +1317,40 @@ export default function AuftragDetailPage() {
               </div>
               {/* GPS-Koordinaten (Sprint U) */}
               <div>
-                <h4 className="text-xs font-medium text-zinc-400 mb-2 uppercase tracking-wider flex items-center gap-1">
+                <h4 className="text-xs font-medium text-on-surface-variant mb-2 uppercase tracking-wider flex items-center gap-1">
                   <MapPin className="w-3 h-3" /> Standort GPS
                 </h4>
                 <div className="grid grid-cols-2 gap-2 mb-2">
                   <div>
-                    <label className="text-xs text-zinc-500 mb-1 block">Breitengrad (lat)</label>
+                    <label className="text-xs text-on-surface-variant mb-1 block">Breitengrad (lat)</label>
                     <input
                       type="number"
                       step="0.000001"
                       value={lat}
                       onChange={e => setLat(e.target.value)}
-                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+                      className="w-full px-3 py-2 bg-surface-container-low border border-border rounded text-sm text-on-surface focus:outline-none focus:border-emerald-500"
                       placeholder="z.B. 50.123456"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-zinc-500 mb-1 block">Längengrad (lng)</label>
+                    <label className="text-xs text-on-surface-variant mb-1 block">Längengrad (lng)</label>
                     <input
                       type="number"
                       step="0.000001"
                       value={lng}
                       onChange={e => setLng(e.target.value)}
-                      className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+                      className="w-full px-3 py-2 bg-surface-container-low border border-border rounded text-sm text-on-surface focus:outline-none focus:border-emerald-500"
                       placeholder="z.B. 8.654321"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-500 mb-1 block">Plus Code (optional)</label>
+                  <label className="text-xs text-on-surface-variant mb-1 block">Plus Code (optional)</label>
                   <input
                     type="text"
                     value={plusCode}
                     onChange={e => setPlusCode(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 bg-surface-container-low border border-border rounded text-sm text-on-surface focus:outline-none focus:border-emerald-500"
                     placeholder="z.B. 8FWH4HGW+QV"
                   />
                 </div>
@@ -1369,7 +1369,7 @@ export default function AuftragDetailPage() {
                     href={`https://plus.codes/${plusCode}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-1 flex items-center gap-2 text-xs text-zinc-500 hover:text-zinc-400"
+                    className="mt-1 flex items-center gap-2 text-xs text-on-surface-variant hover:text-on-surface-variant"
                   >
                     Plus Code: {plusCode}
                   </a>
@@ -1377,14 +1377,14 @@ export default function AuftragDetailPage() {
               </div>
 
               <div>
-                <label className="block text-xs text-zinc-500 mb-1.5 flex items-center gap-1">
+                <label className="block text-xs text-on-surface-variant mb-1.5 flex items-center gap-1">
                   <FileText className="w-3 h-3" /> Notizen
                 </label>
                 <textarea
                   value={notizen}
                   onChange={e => setNotizen(e.target.value)}
                   rows={4}
-                  className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
+                  className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500 resize-none"
                   placeholder="Interne Notizen..."
                 />
               </div>
@@ -1405,14 +1405,14 @@ export default function AuftragDetailPage() {
 
           {/* Rechnungen */}
           {auftrag.rechnungen && auftrag.rechnungen.length > 0 && (
-            <div className="bg-[#161616] border border-border rounded-xl p-4">
-              <p className="text-xs text-zinc-500 mb-2 uppercase tracking-wider">Rechnungen</p>
+            <div className="bg-surface-container border border-border rounded-xl p-4">
+              <p className="text-xs text-on-surface-variant mb-2 uppercase tracking-wider">Rechnungen</p>
               <div className="space-y-1.5">
                 {auftrag.rechnungen.map(r => (
                   <div key={r.id} className="flex items-center justify-between text-sm">
-                    <span className="text-zinc-400">{r.nummer}</span>
+                    <span className="text-on-surface-variant">{r.nummer}</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-white font-medium">{r.betrag.toFixed(2)} €</span>
+                      <span className="text-on-surface font-medium">{r.betrag.toFixed(2)} €</span>
                       <span className={`text-xs px-1.5 py-0.5 rounded-full ${
                         r.status === "bezahlt" ? "bg-emerald-100 text-emerald-800" :
                         r.status === "offen" ? "bg-amber-100 text-amber-800" :
@@ -1427,9 +1427,9 @@ export default function AuftragDetailPage() {
 
           {/* WP Info */}
           {auftrag.wpProjektId && (
-            <div className="bg-[#161616] border border-border rounded-xl p-4">
-              <p className="text-xs text-zinc-500 mb-2">WordPress Post</p>
-              <p className="text-xs font-mono text-zinc-400 mb-3">ID: {auftrag.wpProjektId}</p>
+            <div className="bg-surface-container border border-border rounded-xl p-4">
+              <p className="text-xs text-on-surface-variant mb-2">WordPress Post</p>
+              <p className="text-xs font-mono text-on-surface-variant mb-3">ID: {auftrag.wpProjektId}</p>
               {wpAdminUrl && (
                 <a
                   href={wpAdminUrl}
@@ -1446,8 +1446,8 @@ export default function AuftragDetailPage() {
 
           {/* Kundenportal-Link */}
           {auftrag.waldbesitzerEmail && (
-            <div className="bg-[#161616] border border-border rounded-xl p-4">
-              <p className="text-xs text-zinc-500 mb-2">Kundenportal</p>
+            <div className="bg-surface-container border border-border rounded-xl p-4">
+              <p className="text-xs text-on-surface-variant mb-2">Kundenportal</p>
               <a
                 href={`https://peru-otter-113714.hostingersite.com/kundenportal/?auftrag=${auftrag.wpProjektId ?? auftrag.id}`}
                 target="_blank"
@@ -1465,13 +1465,13 @@ export default function AuftragDetailPage() {
 
       {/* Audit-Log Timeline (Sprint S) */}
       {auftragLog.length > 0 && (
-        <div className="mt-6 bg-[#161616] border border-border rounded-xl p-5">
-          <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-3">Verlauf</h3>
+        <div className="mt-6 bg-surface-container border border-border rounded-xl p-5">
+          <h3 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider mb-3">Verlauf</h3>
           <div className="space-y-2">
             {auftragLog.map((l) => (
               <div key={l.id} className="flex items-start gap-3 text-xs">
-                <span className="text-zinc-600 whitespace-nowrap">{new Date(l.createdAt).toLocaleString("de-DE")}</span>
-                <span className="text-zinc-400">
+                <span className="text-on-surface-variant whitespace-nowrap">{new Date(l.createdAt).toLocaleString("de-DE")}</span>
+                <span className="text-on-surface-variant">
                   {l.aktion === "status_geaendert"
                     ? `Status: ${l.von ?? "—"} → ${l.nach ?? "—"}`
                     : l.aktion}
@@ -1485,7 +1485,7 @@ export default function AuftragDetailPage() {
       <div className="mt-6">
         <button
           onClick={() => router.back()}
-          className="text-zinc-500 hover:text-zinc-300 text-sm transition-colors"
+          className="text-on-surface-variant hover:text-on-surface text-sm transition-colors"
         >
           ← Zurück
         </button>

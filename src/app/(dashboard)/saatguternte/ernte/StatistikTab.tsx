@@ -90,7 +90,7 @@ export function StatistikTab() {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center h-64 text-zinc-400">
+      <div className="flex items-center justify-center h-64 text-on-surface-variant">
         <BarChart3 className="w-6 h-6 mr-2 animate-pulse" /> Lade Statistiken…
       </div>
     )
@@ -108,7 +108,7 @@ export function StatistikTab() {
     if (rang === 1) return <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-500 text-white font-bold text-sm">1</span>
     if (rang === 2) return <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-400 text-white font-bold text-sm">2</span>
     if (rang === 3) return <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-700 text-white font-bold text-sm">3</span>
-    return <span className="text-zinc-500 text-sm">{rang}</span>
+    return <span className="text-on-surface-variant text-sm">{rang}</span>
   }
 
   const vergleichEntries = Object.entries(jahresvergleich.baumartVergleich)
@@ -134,7 +134,7 @@ export function StatistikTab() {
               className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                 tab === t.key
                   ? "border-emerald-500 text-emerald-400"
-                  : "border-transparent text-zinc-500 hover:text-zinc-300"
+                  : "border-transparent text-on-surface-variant hover:text-on-surface"
               }`}
             >
               {t.label}
@@ -142,11 +142,11 @@ export function StatistikTab() {
           ))}
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <span className="text-sm text-zinc-500">Jahr:</span>
+          <span className="text-sm text-on-surface-variant">Jahr:</span>
           <select
             value={jahrFilter}
             onChange={(e) => setJahrFilter(e.target.value)}
-            className="text-sm border border-border rounded px-2 py-1 bg-[#1e1e1e] text-zinc-300"
+            className="text-sm border border-border rounded px-2 py-1 bg-surface-container-high text-on-surface"
           >
             <option value="alle">Alle</option>
             {saisons.map((s) => (
@@ -186,8 +186,8 @@ export function StatistikTab() {
                 color: "text-orange-400",
               },
             ].map((k) => (
-              <div key={k.label} className="bg-[#161616] border border-border rounded-xl p-4 space-y-1">
-                <div className="flex items-center gap-1.5 text-xs text-zinc-500 uppercase tracking-wide">
+              <div key={k.label} className="bg-surface-container border border-border rounded-xl p-4 space-y-1">
+                <div className="flex items-center gap-1.5 text-xs text-on-surface-variant uppercase tracking-wide">
                   {k.icon} {k.label}
                 </div>
                 <p className={`text-2xl font-bold ${k.color}`}>{k.value}</p>
@@ -199,16 +199,16 @@ export function StatistikTab() {
             {saisons.map((s) => {
               const kg = jahresvergleich.jahresSummen[String(s.jahr)] ?? 0
               return (
-                <div key={s.jahr} className="bg-[#161616] border border-border rounded-xl p-4">
+                <div key={s.jahr} className="bg-surface-container border border-border rounded-xl p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-semibold text-lg text-white">Saison {s.jahr}</span>
+                    <span className="font-semibold text-lg text-on-surface">Saison {s.jahr}</span>
                     <span className="bg-emerald-900/40 text-emerald-400 text-sm font-medium px-2 py-0.5 rounded">
                       {fmt(kg, 0)} kg
                     </span>
                   </div>
                   {s.gruppenFuehrer && (
-                    <p className="text-sm text-zinc-500">
-                      Gruppenführer: <span className="text-zinc-300">{s.gruppenFuehrer}</span>
+                    <p className="text-sm text-on-surface-variant">
+                      Gruppenführer: <span className="text-on-surface">{s.gruppenFuehrer}</span>
                     </p>
                   )}
                 </div>
@@ -220,19 +220,19 @@ export function StatistikTab() {
 
       {/* ── Tab: Sammler-Ranking ─────────────────────────────────────────────── */}
       {tab === "ranking" && (
-        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="bg-surface-container border border-border rounded-xl overflow-hidden">
           <div className="px-4 py-3 border-b border-border flex items-center gap-2">
-            <Users className="w-4 h-4 text-zinc-500" />
-            <span className="font-medium text-sm text-zinc-300">
+            <Users className="w-4 h-4 text-on-surface-variant" />
+            <span className="font-medium text-sm text-on-surface">
               Sammler-Ranking ({total} Personen)
             </span>
-            <span className="text-xs text-zinc-500 ml-2">
+            <span className="text-xs text-on-surface-variant ml-2">
               🥇 Gold · 🥈 Silber · 🥉 Bronze
             </span>
           </div>
 
           {/* Mobile */}
-          <div className="divide-y divide-[#222] sm:hidden">
+          <div className="divide-y divide-outline-variant sm:hidden">
             {ranking.map((r) => (
               <div key={r.name} className="p-3">
                 <div className="flex items-start justify-between">
@@ -245,7 +245,7 @@ export function StatistikTab() {
                 <div className="mt-2 h-1.5 bg-surface-container-highest rounded-full">
                   <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${(r.gesamtKg / maxKg) * 100}%` }} />
                 </div>
-                <div className="flex gap-3 mt-1.5 text-xs text-zinc-500">
+                <div className="flex gap-3 mt-1.5 text-xs text-on-surface-variant">
                   <span>{r.anteilProzent} %</span>
                   {r.kgProStunde && <span>{fmt(r.kgProStunde)} kg/h</span>}
                   <span>{r.jahre.join(", ")}</span>
@@ -257,21 +257,21 @@ export function StatistikTab() {
           {/* Desktop */}
           <div className="hidden sm:block overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-[#111]">
+              <thead className="bg-surface-container-low">
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs text-zinc-500 uppercase w-10">#</th>
-                  <th className="px-3 py-2 text-left text-xs text-zinc-500 uppercase">Name</th>
-                  <th className="px-3 py-2 text-right text-xs text-zinc-500 uppercase">Gesamt kg</th>
-                  <th className="px-3 py-2 text-right text-xs text-zinc-500 uppercase">Anteil</th>
-                  <th className="px-3 py-2 text-right text-xs text-zinc-500 uppercase">Stunden</th>
-                  <th className="px-3 py-2 text-right text-xs text-zinc-500 uppercase">kg/h</th>
-                  <th className="px-3 py-2 text-right text-xs text-zinc-500 uppercase">Kosten</th>
-                  <th className="px-3 py-2 text-center text-xs text-zinc-500 uppercase">Jahre</th>
+                  <th className="px-3 py-2 text-left text-xs text-on-surface-variant uppercase w-10">#</th>
+                  <th className="px-3 py-2 text-left text-xs text-on-surface-variant uppercase">Name</th>
+                  <th className="px-3 py-2 text-right text-xs text-on-surface-variant uppercase">Gesamt kg</th>
+                  <th className="px-3 py-2 text-right text-xs text-on-surface-variant uppercase">Anteil</th>
+                  <th className="px-3 py-2 text-right text-xs text-on-surface-variant uppercase">Stunden</th>
+                  <th className="px-3 py-2 text-right text-xs text-on-surface-variant uppercase">kg/h</th>
+                  <th className="px-3 py-2 text-right text-xs text-on-surface-variant uppercase">Kosten</th>
+                  <th className="px-3 py-2 text-center text-xs text-on-surface-variant uppercase">Jahre</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#222]">
+              <tbody className="divide-y divide-outline-variant">
                 {ranking.map((r) => (
-                  <tr key={r.name} className="hover:bg-[#1a1a1a] transition-colors">
+                  <tr key={r.name} className="hover:bg-surface-container-high transition-colors">
                     <td className="px-3 py-2 text-center"><RangBadge rang={r.rang} /></td>
                     <td className="px-3 py-2">
                       <div>
@@ -281,23 +281,23 @@ export function StatistikTab() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-3 py-2 text-right tabular-nums font-semibold text-white">{fmt(r.gesamtKg)} kg</td>
-                    <td className="px-3 py-2 text-right tabular-nums text-zinc-500">{fmt(r.anteilProzent)} %</td>
-                    <td className="px-3 py-2 text-right tabular-nums text-zinc-500">
+                    <td className="px-3 py-2 text-right tabular-nums font-semibold text-on-surface">{fmt(r.gesamtKg)} kg</td>
+                    <td className="px-3 py-2 text-right tabular-nums text-on-surface-variant">{fmt(r.anteilProzent)} %</td>
+                    <td className="px-3 py-2 text-right tabular-nums text-on-surface-variant">
                       {r.gesamtStunden != null ? `${fmt(r.gesamtStunden)} h` : "–"}
                     </td>
                     <td className="px-3 py-2 text-right tabular-nums">
                       {r.kgProStunde != null ? (
-                        <span className={r.kgProStunde > 10 ? "text-emerald-400 font-medium" : "text-zinc-400"}>
+                        <span className={r.kgProStunde > 10 ? "text-emerald-400 font-medium" : "text-on-surface-variant"}>
                           {fmt(r.kgProStunde)}
                         </span>
                       ) : "–"}
                     </td>
-                    <td className="px-3 py-2 text-right tabular-nums text-zinc-500">{fmtEur(r.gesamtKosten)}</td>
+                    <td className="px-3 py-2 text-right tabular-nums text-on-surface-variant">{fmtEur(r.gesamtKosten)}</td>
                     <td className="px-3 py-2">
                       <div className="flex gap-1 justify-center flex-wrap">
                         {r.jahre.map((j) => (
-                          <span key={j} className="text-xs bg-surface-container-highest text-zinc-400 px-1.5 py-0.5 rounded">{j}</span>
+                          <span key={j} className="text-xs bg-surface-container-highest text-on-surface-variant px-1.5 py-0.5 rounded">{j}</span>
                         ))}
                       </div>
                     </td>
@@ -316,36 +316,36 @@ export function StatistikTab() {
             {Object.entries(jahresvergleich.jahresSummen)
               .sort(([a], [b]) => Number(b) - Number(a))
               .map(([jahr, kg]) => (
-                <div key={jahr} className="bg-[#161616] border border-border rounded-xl p-4">
-                  <p className="text-sm text-zinc-500">Saison {jahr}</p>
+                <div key={jahr} className="bg-surface-container border border-border rounded-xl p-4">
+                  <p className="text-sm text-on-surface-variant">Saison {jahr}</p>
                   <p className="text-2xl font-bold text-emerald-400">{fmt(kg, 0)} kg</p>
                 </div>
               ))}
           </div>
 
-          <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-border font-medium text-sm flex items-center gap-2 text-zinc-300">
-              <BarChart3 className="w-4 h-4 text-zinc-500" />
+          <div className="bg-surface-container border border-border rounded-xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-border font-medium text-sm flex items-center gap-2 text-on-surface">
+              <BarChart3 className="w-4 h-4 text-on-surface-variant" />
               Baumarten 2024 vs 2025
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-[#111]">
+                <thead className="bg-surface-container-low">
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs text-zinc-500 uppercase">Baumart</th>
-                    <th className="px-3 py-2 text-right text-xs text-zinc-500 uppercase">2024 (kg)</th>
-                    <th className="px-3 py-2 text-right text-xs text-zinc-500 uppercase">2025 (kg)</th>
-                    <th className="px-3 py-2 text-right text-xs text-zinc-500 uppercase">Veränderung</th>
+                    <th className="px-3 py-2 text-left text-xs text-on-surface-variant uppercase">Baumart</th>
+                    <th className="px-3 py-2 text-right text-xs text-on-surface-variant uppercase">2024 (kg)</th>
+                    <th className="px-3 py-2 text-right text-xs text-on-surface-variant uppercase">2025 (kg)</th>
+                    <th className="px-3 py-2 text-right text-xs text-on-surface-variant uppercase">Veränderung</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#222]">
+                <tbody className="divide-y divide-outline-variant">
                   {vergleichEntries.map(([baumart, v]) => (
-                    <tr key={baumart} className="hover:bg-[#1a1a1a] transition-colors">
-                      <td className="px-3 py-2 font-medium text-zinc-300">{baumart}</td>
-                      <td className="px-3 py-2 text-right tabular-nums text-zinc-500">
+                    <tr key={baumart} className="hover:bg-surface-container-high transition-colors">
+                      <td className="px-3 py-2 font-medium text-on-surface">{baumart}</td>
+                      <td className="px-3 py-2 text-right tabular-nums text-on-surface-variant">
                         {v.jahr2024 > 0 ? fmt(v.jahr2024) : "–"}
                       </td>
-                      <td className="px-3 py-2 text-right tabular-nums text-zinc-300">
+                      <td className="px-3 py-2 text-right tabular-nums text-on-surface">
                         {v.jahr2025 > 0 ? fmt(v.jahr2025) : "–"}
                       </td>
                       <td className="px-3 py-2 text-right">
@@ -355,7 +355,7 @@ export function StatistikTab() {
                             {v.diff > 0 ? "+" : ""}{fmt(v.diff)} kg
                           </span>
                         ) : (
-                          <span className="text-zinc-600 inline-flex items-center gap-0.5">
+                          <span className="text-on-surface-variant inline-flex items-center gap-0.5">
                             <Minus className="w-3 h-3" /> 0
                           </span>
                         )}
@@ -371,27 +371,27 @@ export function StatistikTab() {
 
       {/* ── Tab: Flächen-Performance ─────────────────────────────────────────── */}
       {tab === "flaechen" && (
-        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
-          <div className="px-4 py-3 border-b border-border font-medium text-sm flex items-center gap-2 text-zinc-300">
-            <MapPin className="w-4 h-4 text-zinc-500" />
+        <div className="bg-surface-container border border-border rounded-xl overflow-hidden">
+          <div className="px-4 py-3 border-b border-border font-medium text-sm flex items-center gap-2 text-on-surface">
+            <MapPin className="w-4 h-4 text-on-surface-variant" />
             Flächen-Performance
-            <span className="text-xs text-zinc-600 font-normal">(Top 25 nach kg)</span>
+            <span className="text-xs text-on-surface-variant font-normal">(Top 25 nach kg)</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-[#111]">
+              <thead className="bg-surface-container-low">
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs text-zinc-500 uppercase">Register-Nr.</th>
-                  <th className="px-3 py-2 text-left text-xs text-zinc-500 uppercase">Forstamt</th>
-                  <th className="px-3 py-2 text-left text-xs text-zinc-500 uppercase">Baumart</th>
-                  <th className="px-3 py-2 text-right text-xs text-zinc-500 uppercase">Gesamt kg</th>
-                  <th className="px-3 py-2 text-right text-xs text-zinc-500 uppercase">Einsätze</th>
-                  <th className="px-3 py-2 text-right text-xs text-zinc-500 uppercase">Saisons</th>
+                  <th className="px-3 py-2 text-left text-xs text-on-surface-variant uppercase">Register-Nr.</th>
+                  <th className="px-3 py-2 text-left text-xs text-on-surface-variant uppercase">Forstamt</th>
+                  <th className="px-3 py-2 text-left text-xs text-on-surface-variant uppercase">Baumart</th>
+                  <th className="px-3 py-2 text-right text-xs text-on-surface-variant uppercase">Gesamt kg</th>
+                  <th className="px-3 py-2 text-right text-xs text-on-surface-variant uppercase">Einsätze</th>
+                  <th className="px-3 py-2 text-right text-xs text-on-surface-variant uppercase">Saisons</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#222]">
+              <tbody className="divide-y divide-outline-variant">
                 {flaechenPerformance.map((f, idx) => (
-                  <tr key={idx} className="hover:bg-[#1a1a1a] transition-colors">
+                  <tr key={idx} className="hover:bg-surface-container-high transition-colors">
                     <td className="px-3 py-2">
                       {f.registerNr ? (
                         <Link
@@ -401,18 +401,18 @@ export function StatistikTab() {
                           {f.registerNr}
                         </Link>
                       ) : (
-                        <span className="text-zinc-600 text-sm">—</span>
+                        <span className="text-on-surface-variant text-sm">—</span>
                       )}
                     </td>
-                    <td className="px-3 py-2 text-zinc-500 text-xs">{f.forstamt ?? "–"}</td>
+                    <td className="px-3 py-2 text-on-surface-variant text-xs">{f.forstamt ?? "–"}</td>
                     <td className="px-3 py-2">
                       <span className="text-xs bg-emerald-900/40 text-emerald-400 px-1.5 py-0.5 rounded">
                         {f.baumart}
                       </span>
                     </td>
-                    <td className="px-3 py-2 text-right tabular-nums font-semibold text-white">{fmt(f.gesamtKg)} kg</td>
-                    <td className="px-3 py-2 text-right tabular-nums text-zinc-500">{f.einsaetze}</td>
-                    <td className="px-3 py-2 text-right tabular-nums text-zinc-500">{f.saisons}</td>
+                    <td className="px-3 py-2 text-right tabular-nums font-semibold text-on-surface">{fmt(f.gesamtKg)} kg</td>
+                    <td className="px-3 py-2 text-right tabular-nums text-on-surface-variant">{f.einsaetze}</td>
+                    <td className="px-3 py-2 text-right tabular-nums text-on-surface-variant">{f.saisons}</td>
                   </tr>
                 ))}
               </tbody>
@@ -421,7 +421,7 @@ export function StatistikTab() {
         </div>
       )}
 
-      <p className="text-xs text-zinc-600 text-right">
+      <p className="text-xs text-on-surface-variant text-right">
         Stand: {new Date(data.meta.generiert).toLocaleString("de-DE")}
       </p>
     </div>

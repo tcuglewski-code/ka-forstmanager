@@ -13,10 +13,10 @@ const UnterkunftKarte = dynamic(
     ssr: false,
     loading: () => (
       <div className="flex gap-4 h-[600px]">
-        <div className="flex-1 rounded-xl bg-[#161616] border border-border flex items-center justify-center">
-          <Loader2 className="w-8 h-8 text-zinc-600 animate-spin" />
+        <div className="flex-1 rounded-xl bg-surface-container border border-border flex items-center justify-center">
+          <Loader2 className="w-8 h-8 text-on-surface-variant animate-spin" />
         </div>
-        <div className="w-80 bg-[#161616] border border-border rounded-xl" />
+        <div className="w-80 bg-surface-container border border-border rounded-xl" />
       </div>
     ),
   }
@@ -232,8 +232,8 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
   return (
     <div className="space-y-6">
       {/* Auftrag-Auswahl */}
-      <div className="bg-[#161616] border border-border rounded-xl p-4">
-        <label className="block text-sm font-medium text-zinc-400 mb-3">
+      <div className="bg-surface-container border border-border rounded-xl p-4">
+        <label className="block text-sm font-medium text-on-surface-variant mb-3">
           Auftrag auswählen
         </label>
         
@@ -253,26 +253,26 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
                 className={`p-3 rounded-lg border text-left transition-all ${
                   selectedAuftrag?.id === a.id
                     ? "border-gold bg-gold/10"
-                    : "border-border hover:border-zinc-600 bg-[#0f0f0f]"
+                    : "border-border hover:border-zinc-600 bg-surface-container-low"
                 }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white truncate">
+                    <p className="text-sm font-medium text-on-surface truncate">
                       {a.titel}
                     </p>
-                    <p className="text-xs text-zinc-500 mt-0.5">
+                    <p className="text-xs text-on-surface-variant mt-0.5">
                       {a.nummer && <span className="mr-2">{a.nummer}</span>}
                       {a.waldbesitzer}
                     </p>
                     {a.standort && (
-                      <p className="text-xs text-zinc-600 mt-1 flex items-center gap-1">
+                      <p className="text-xs text-on-surface-variant mt-1 flex items-center gap-1">
                         <MapPin className="w-3 h-3" />
                         {a.standort}
                       </p>
                     )}
                   </div>
-                  <span className="text-xs px-1.5 py-0.5 rounded bg-zinc-700/50 text-zinc-400">
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-surface-container-highest/50 text-on-surface-variant">
                     {statusLabels[a.status] || a.status}
                   </span>
                 </div>
@@ -284,14 +284,14 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
 
       {/* Radius-Einstellung + KI-Analyse Button */}
       {selectedAuftrag && (
-        <div className="bg-[#161616] border border-border rounded-xl p-4">
+        <div className="bg-surface-container border border-border rounded-xl p-4">
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-3">
-              <label className="text-sm text-zinc-400">Suchradius:</label>
+              <label className="text-sm text-on-surface-variant">Suchradius:</label>
               <select
                 value={radius}
                 onChange={(e) => setRadius(parseInt(e.target.value))}
-                className="bg-[#0f0f0f] border border-border rounded-lg px-3 py-1.5 text-sm text-white"
+                className="bg-surface-container-low border border-border rounded-lg px-3 py-1.5 text-sm text-on-surface"
               >
                 <option value={10}>10 km</option>
                 <option value={20}>20 km</option>
@@ -309,7 +309,7 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
               title={kiVerfuegbar === false ? "ANTHROPIC_API_KEY fehlt" : "KI analysiert Unterkünfte"}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 kiVerfuegbar === false
-                  ? "bg-zinc-700 text-zinc-500 cursor-not-allowed"
+                  ? "bg-surface-container-highest text-on-surface-variant cursor-not-allowed"
                   : kiLoading
                     ? "bg-gold/50 text-[#0f0f0f]"
                     : "bg-gold text-[#0f0f0f] hover:bg-[#d4b86b]"
@@ -323,7 +323,7 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
               {kiLoading ? "Analysiere..." : "KI-Analyse"}
             </button>
             
-            <div className="flex items-center gap-2 text-sm text-zinc-400">
+            <div className="flex items-center gap-2 text-sm text-on-surface-variant">
               <Hotel className="w-4 h-4" />
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -340,9 +340,9 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
 
       {/* KI-Empfehlungen anzeigen */}
       {kiEmpfehlungen.length > 0 && (
-        <div className="bg-[#161616] border border-border rounded-xl p-4">
+        <div className="bg-surface-container border border-border rounded-xl p-4">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-white flex items-center gap-2">
+            <h3 className="text-sm font-medium text-on-surface flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-gold" />
               KI-Empfehlungen
             </h3>
@@ -354,16 +354,16 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
             {kiEmpfehlungen.map((emp, idx) => (
               <div 
                 key={idx}
-                className="bg-[#0f0f0f] border border-border rounded-lg p-4"
+                className="bg-surface-container-low border border-border rounded-lg p-4"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div>
-                    <h4 className="text-sm font-medium text-white">{emp.name}</h4>
-                    <p className="text-xs text-zinc-500">{emp.distanzKm} km entfernt · {emp.typ}</p>
+                    <h4 className="text-sm font-medium text-on-surface">{emp.name}</h4>
+                    <p className="text-xs text-on-surface-variant">{emp.distanzKm} km entfernt · {emp.typ}</p>
                   </div>
                   <div className="text-right">
                     <div className="text-lg font-bold text-gold">{emp.empfehlungsScore}</div>
-                    <div className="text-xs text-zinc-500">Score</div>
+                    <div className="text-xs text-on-surface-variant">Score</div>
                   </div>
                 </div>
                 
@@ -375,29 +375,29 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
                   />
                 </div>
                 
-                <p className="text-sm text-zinc-300 mb-3">{emp.begruendung}</p>
+                <p className="text-sm text-on-surface mb-3">{emp.begruendung}</p>
                 
-                <div className="flex items-center justify-between text-xs text-zinc-400">
+                <div className="flex items-center justify-between text-xs text-on-surface-variant">
                   <div className="flex gap-4">
                     <span>👥 {emp.geeignetFuerPersonen} Pers.</span>
                     <span>💰 {emp.geschaetzteKosten}</span>
                   </div>
                   <button
                     onClick={() => generiereEmail(emp)}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-surface-container-highest hover:bg-[#3a3a3a] rounded text-zinc-300 transition-colors"
+                    className="flex items-center gap-1 px-3 py-1.5 bg-surface-container-highest hover:bg-surface-container-highest rounded text-on-surface transition-colors"
                   >
                     <Mail className="w-3 h-3" />
                     Anfrage generieren
                   </button>
                 </div>
-                
+
                 {emp.buchungsHinweis && (
-                  <p className="text-xs text-zinc-500 mt-2 italic">💡 {emp.buchungsHinweis}</p>
+                  <p className="text-xs text-on-surface-variant mt-2 italic">💡 {emp.buchungsHinweis}</p>
                 )}
               </div>
             ))}
           </div>
-          <p className="text-xs text-zinc-500 mt-3">
+          <p className="text-xs text-on-surface-variant mt-3">
             KI-Hinweis gem. EU AI Act Art. 50: Empfehlungen sind maschinell generiert und unverbindlich.
           </p>
         </div>
@@ -430,34 +430,34 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
 
       {/* Leere State */}
       {selectedAuftrag && !loading && unterkuenfte.length === 0 && !error && (
-        <div className="bg-[#161616] border border-border rounded-xl p-8 text-center">
-          <Search className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
-          <p className="text-zinc-400">Keine Unterkünfte im Umkreis von {radius} km gefunden</p>
-          <p className="text-zinc-600 text-sm mt-1">Versuche einen größeren Suchradius</p>
+        <div className="bg-surface-container border border-border rounded-xl p-8 text-center">
+          <Search className="w-10 h-10 text-on-surface-variant mx-auto mb-3" />
+          <p className="text-on-surface-variant">Keine Unterkünfte im Umkreis von {radius} km gefunden</p>
+          <p className="text-on-surface-variant text-sm mt-1">Versuche einen größeren Suchradius</p>
         </div>
       )}
 
       {/* Initial State */}
       {!selectedAuftrag && auftraege.length > 0 && (
-        <div className="bg-[#161616] border border-border rounded-xl p-8 text-center">
-          <MapPin className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
-          <p className="text-zinc-400">Wähle einen Auftrag aus um Unterkünfte in der Nähe zu suchen</p>
+        <div className="bg-surface-container border border-border rounded-xl p-8 text-center">
+          <MapPin className="w-10 h-10 text-on-surface-variant mx-auto mb-3" />
+          <p className="text-on-surface-variant">Wähle einen Auftrag aus um Unterkünfte in der Nähe zu suchen</p>
         </div>
       )}
 
       {/* E-Mail Modal */}
       {emailModal.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-[#161616] border border-border rounded-xl w-full max-w-2xl mx-4 max-h-[80vh] flex flex-col">
+          <div className="bg-surface-container border border-border rounded-xl w-full max-w-2xl mx-4 max-h-[80vh] flex flex-col">
             <div className="p-4 border-b border-border flex items-center justify-between">
-              <h3 className="text-lg font-medium text-white">
+              <h3 className="text-lg font-medium text-on-surface">
                 Anfrage an: {emailModal.unterkunft?.name}
               </h3>
               <button 
                 onClick={() => setEmailModal({ open: false, unterkunft: null, emailText: "" })}
                 className="p-1 hover:bg-surface-container-highest rounded"
               >
-                <X className="w-5 h-5 text-zinc-400" />
+                <X className="w-5 h-5 text-on-surface-variant" />
               </button>
             </div>
             
@@ -467,7 +467,7 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
                   <Loader2 className="w-6 h-6 text-gold animate-spin" />
                 </div>
               ) : (
-                <pre className="whitespace-pre-wrap text-sm text-zinc-300 font-sans leading-relaxed">
+                <pre className="whitespace-pre-wrap text-sm text-on-surface font-sans leading-relaxed">
                   {emailModal.emailText}
                 </pre>
               )}
@@ -476,7 +476,7 @@ export default function UnterkunftPageClient({ auftraege }: Props) {
             <div className="p-4 border-t border-border flex gap-3">
               <button
                 onClick={copyToClipboard}
-                className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest hover:bg-[#3a3a3a] rounded-lg text-sm text-zinc-300 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest hover:bg-surface-container-highest rounded-lg text-sm text-on-surface transition-colors"
               >
                 {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
                 {copied ? "Kopiert!" : "Kopieren"}

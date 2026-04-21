@@ -92,13 +92,13 @@ function QrPrintModal({ artikel, onClose }: { artikel: LagerArtikel; onClose: ()
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-sm">
+      <div className="bg-surface-container border border-border rounded-xl w-full max-w-sm">
         <div className="flex items-center justify-between p-5 border-b border-border">
-          <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-on-surface flex items-center gap-2">
             <QrCode className="w-5 h-5 text-emerald-400" />
             QR Code
           </h2>
-          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-on-surface-variant hover:text-on-surface" /></button>
         </div>
         <div className="p-6 flex flex-col items-center gap-4">
           <div ref={printRef} className="hidden">
@@ -110,9 +110,9 @@ function QrPrintModal({ artikel, onClose }: { artikel: LagerArtikel; onClose: ()
             <QRCode value={qrValue} size={180} />
           </div>
           <div className="text-center">
-            <p className="text-white font-semibold">{artikel.name}</p>
+            <p className="text-on-surface font-semibold">{artikel.name}</p>
             {artikel.artikelnummer && (
-              <p className="text-zinc-500 text-xs mt-1">Art.-Nr.: {artikel.artikelnummer}</p>
+              <p className="text-on-surface-variant text-xs mt-1">Art.-Nr.: {artikel.artikelnummer}</p>
             )}
           </div>
           <button
@@ -148,30 +148,30 @@ function ArtikelModal({ onClose, onSave }: { onClose: () => void; onSave: () => 
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md">
+      <div className="bg-surface-container border border-border rounded-xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-lg font-semibold text-white">Neuer Artikel</h2>
-          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <h2 className="text-lg font-semibold text-on-surface">Neuer Artikel</h2>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-on-surface-variant hover:text-on-surface" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Name *</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Name *</label>
             <input type="text" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
               placeholder="z.B. Schutzhelm, Säge..."
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:border-emerald-500" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Kategorie</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Kategorie</label>
               <select value={form.kategorie} onChange={e => setForm(f => ({ ...f, kategorie: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
                 {["material", "werkzeug", "pflanzgut", "schutz", "chemie", "sonstiges"].map(k => <option key={k} value={k}>{k}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Einheit</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Einheit</label>
               <select value={form.einheit} onChange={e => setForm(f => ({ ...f, einheit: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
                 {["Stück", "kg", "g", "l", "ml", "m", "m²", "m³", "Paar", "Packung", "Karton", "Rolle"].map(e => (
                   <option key={e} value={e}>{e}</option>
                 ))}
@@ -180,30 +180,30 @@ function ArtikelModal({ onClose, onSave }: { onClose: () => void; onSave: () => 
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Bestand</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Bestand</label>
               <input type="number" value={form.bestand} onChange={e => setForm(f => ({ ...f, bestand: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Mindestbestand</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Mindestbestand</label>
               <input type="number" value={form.mindestbestand} onChange={e => setForm(f => ({ ...f, mindestbestand: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Einkaufspreis (€)</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Einkaufspreis (€)</label>
               <input type="number" step="0.01" value={form.einkaufspreis} onChange={e => setForm(f => ({ ...f, einkaufspreis: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Verkaufspreis (€)</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Verkaufspreis (€)</label>
               <input type="number" step="0.01" value={form.verkaufspreis} onChange={e => setForm(f => ({ ...f, verkaufspreis: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white">Abbrechen</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-on-surface-variant hover:text-on-surface">Abbrechen</button>
             <button type="submit" disabled={loading || !form.name} 
               className="flex-1 px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 transition-all"
               style={{ backgroundColor: GOLD, color: WALDGRUEN }}>
@@ -239,33 +239,33 @@ function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onC
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-sm">
+      <div className="bg-surface-container border border-border rounded-xl w-full max-w-sm">
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-lg font-semibold text-white">Buchung: {artikel.name}</h2>
-          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <h2 className="text-lg font-semibold text-on-surface">Buchung: {artikel.name}</h2>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-on-surface-variant hover:text-on-surface" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Typ</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Typ</label>
             <select value={form.typ} onChange={e => setForm(f => ({ ...f, typ: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
               <option value="ausgang">Ausgabe (-)</option>
               <option value="eingang">Eingang (+)</option>
               <option value="korrektur">Korrektur</option>
             </select>
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Menge ({artikel.einheit})</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Menge ({artikel.einheit})</label>
             <input type="number" min="0.01" step="0.01" value={form.menge} onChange={e => setForm(f => ({ ...f, menge: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Notiz</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Notiz</label>
             <input type="text" value={form.notiz} onChange={e => setForm(f => ({ ...f, notiz: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white">Abbrechen</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-on-surface-variant hover:text-on-surface">Abbrechen</button>
             <button type="submit" disabled={loading}
               className="flex-1 px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
               style={{ backgroundColor: GOLD, color: WALDGRUEN }}>
@@ -320,29 +320,29 @@ function EditArtikelModal({ artikel, onClose, onSave }: { artikel: LagerArtikel;
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md">
+      <div className="bg-surface-container border border-border rounded-xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-lg font-semibold text-white">Artikel bearbeiten</h2>
-          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <h2 className="text-lg font-semibold text-on-surface">Artikel bearbeiten</h2>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-on-surface-variant hover:text-on-surface" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Name *</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Name *</label>
             <input type="text" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:border-emerald-500" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Kategorie</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Kategorie</label>
               <select value={form.kategorie} onChange={e => setForm(f => ({ ...f, kategorie: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
                 {["material", "werkzeug", "pflanzgut", "schutz", "chemie", "sonstiges"].map(k => <option key={k} value={k}>{k}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Einheit</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Einheit</label>
               <select value={form.einheit} onChange={e => setForm(f => ({ ...f, einheit: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
                 {["Stück", "kg", "g", "l", "ml", "m", "m²", "m³", "Paar", "Packung", "Karton", "Rolle"].map(e => (
                   <option key={e} value={e}>{e}</option>
                 ))}
@@ -351,35 +351,35 @@ function EditArtikelModal({ artikel, onClose, onSave }: { artikel: LagerArtikel;
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Mindestbestand</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Mindestbestand</label>
               <input type="number" value={form.mindestbestand} onChange={e => setForm(f => ({ ...f, mindestbestand: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Lagerort</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Lagerort</label>
               <input type="text" value={form.lagerort} onChange={e => setForm(f => ({ ...f, lagerort: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Einkaufspreis (€)</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Einkaufspreis (€)</label>
               <input type="number" step="0.01" value={form.einkaufspreis} onChange={e => setForm(f => ({ ...f, einkaufspreis: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Verkaufspreis (€)</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Verkaufspreis (€)</label>
               <input type="number" step="0.01" value={form.verkaufspreis} onChange={e => setForm(f => ({ ...f, verkaufspreis: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Artikelnummer</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Artikelnummer</label>
             <input type="text" value={form.artikelnummer} onChange={e => setForm(f => ({ ...f, artikelnummer: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:border-emerald-500" />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white">Abbrechen</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-on-surface-variant hover:text-on-surface">Abbrechen</button>
             <button type="submit" disabled={loading || !form.name}
               className="flex-1 px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 transition-all"
               style={{ backgroundColor: GOLD, color: WALDGRUEN }}>
@@ -505,18 +505,18 @@ function LagerPageInner() {
         
         {/* Stats Banner */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-[#161616] border border-border rounded-xl p-4">
-            <p className="text-zinc-500 text-xs mb-1">Gesamtwert</p>
+          <div className="bg-surface-container border border-border rounded-xl p-4">
+            <p className="text-on-surface-variant text-xs mb-1">Gesamtwert</p>
             <p className="text-xl font-bold" style={{ color: GOLD }}>{stats.gesamtwert.toFixed(2)} €</p>
           </div>
-          <div className="bg-[#161616] border border-border rounded-xl p-4">
-            <p className="text-zinc-500 text-xs mb-1">Unter Mindestbestand</p>
+          <div className="bg-surface-container border border-border rounded-xl p-4">
+            <p className="text-on-surface-variant text-xs mb-1">Unter Mindestbestand</p>
             <p className={`text-xl font-bold ${stats.kritisch > 0 ? "text-red-400" : "text-emerald-400"}`}>
               {stats.kritisch} Artikel
             </p>
           </div>
-          <div className="bg-[#161616] border border-border rounded-xl p-4">
-            <p className="text-zinc-500 text-xs mb-1">Offene Bestellungen</p>
+          <div className="bg-surface-container border border-border rounded-xl p-4">
+            <p className="text-on-surface-variant text-xs mb-1">Offene Bestellungen</p>
             <p className="text-xl font-bold text-blue-400">{stats.offeneBestellungen}</p>
           </div>
         </div>
@@ -535,8 +535,8 @@ function LagerPageInner() {
             onClick={() => changeTab(tab.id)}
             className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
               activeTab === tab.id 
-                ? "border-current text-white" 
-                : "border-transparent text-zinc-500 hover:text-zinc-300"
+                ? "border-current text-on-surface"
+                : "border-transparent text-on-surface-variant hover:text-on-surface"
             }`}
             style={activeTab === tab.id ? { borderColor: GOLD, color: GOLD } : {}}
           >
@@ -555,19 +555,19 @@ function LagerPageInner() {
           {/* Filter */}
           <div className="flex gap-3 mb-4 flex-wrap">
             <div className="relative flex-1 max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant" />
               <input
                 type="text"
                 placeholder="Artikel suchen..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500"
+                className="w-full pl-9 pr-3 py-2 bg-surface-container-high border border-border rounded-lg text-sm text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:border-emerald-500"
               />
             </div>
             <select
               value={filterKategorie}
               onChange={e => setFilterKategorie(e.target.value)}
-              className="bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+              className="bg-surface-container-high border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500"
             >
               <option value="">Alle Kategorien</option>
               {kategorien.map(k => <option key={k} value={k}>{k}</option>)}
@@ -575,63 +575,63 @@ function LagerPageInner() {
           </div>
 
           {/* Artikel-Tabelle */}
-          <div className="bg-[#161616] border border-border rounded-xl overflow-x-auto">
+          <div className="bg-surface-container border border-border rounded-xl overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left px-4 py-3 text-zinc-500 font-medium w-6"></th>
-                  <th className="text-left px-4 py-3 text-zinc-500 font-medium">Name</th>
-                  <th className="text-left px-4 py-3 text-zinc-500 font-medium">Kategorie</th>
-                  <th className="text-right px-4 py-3 text-zinc-500 font-medium">Bestand</th>
-                  <th className="text-left px-4 py-3 text-zinc-500 font-medium">Lagerort</th>
+                  <th className="text-left px-4 py-3 text-on-surface-variant font-medium w-6"></th>
+                  <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Name</th>
+                  <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Kategorie</th>
+                  <th className="text-right px-4 py-3 text-on-surface-variant font-medium">Bestand</th>
+                  <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Lagerort</th>
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={6} className="text-center py-12 text-zinc-600">Laden...</td></tr>
+                  <tr><td colSpan={6} className="text-center py-12 text-on-surface-variant">Laden...</td></tr>
                 ) : filteredArtikel.length === 0 ? (
-                  <tr><td colSpan={6} className="text-center py-12 text-zinc-600">Keine Artikel gefunden</td></tr>
+                  <tr><td colSpan={6} className="text-center py-12 text-on-surface-variant">Keine Artikel gefunden</td></tr>
                 ) : (
                   filteredArtikel.map(a => (
-                    <tr key={a.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors">
+                    <tr key={a.id} className="border-b border-outline-variant hover:bg-surface-container-high transition-colors">
                       <td className="px-4 py-3">
                         <BestandsAmpel bestand={a.bestand} mindestbestand={a.mindestbestand} />
                       </td>
-                      <td className="px-4 py-3 font-medium text-white">{a.name}</td>
+                      <td className="px-4 py-3 font-medium text-on-surface">{a.name}</td>
                       <td className="px-4 py-3">
-                        <span className="px-2 py-0.5 rounded text-xs bg-surface-container-highest text-zinc-400">{a.kategorie}</span>
+                        <span className="px-2 py-0.5 rounded text-xs bg-surface-container-highest text-on-surface-variant">{a.kategorie}</span>
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <span className="text-white">{a.bestand}</span>
-                        <span className="text-zinc-500">/{a.mindestbestand} {a.einheit}</span>
+                        <span className="text-on-surface">{a.bestand}</span>
+                        <span className="text-on-surface-variant">/{a.mindestbestand} {a.einheit}</span>
                       </td>
-                      <td className="px-4 py-3 text-zinc-500">{a.lagerort ?? "–"}</td>
+                      <td className="px-4 py-3 text-on-surface-variant">{a.lagerort ?? "–"}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1 justify-end">
                           <button
                             onClick={() => setEditArtikel(a)}
-                            className="p-1.5 rounded-lg text-zinc-500 hover:text-blue-400 hover:bg-surface-container-highest transition-all"
+                            className="p-1.5 rounded-lg text-on-surface-variant hover:text-blue-400 hover:bg-surface-container-highest transition-all"
                             title="Bearbeiten"
                           >
                             <Pencil className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => setQrArtikel(a)}
-                            className="p-1.5 rounded-lg text-zinc-500 hover:text-emerald-400 hover:bg-surface-container-highest transition-all"
+                            className="p-1.5 rounded-lg text-on-surface-variant hover:text-emerald-400 hover:bg-surface-container-highest transition-all"
                           >
                             <QrCode className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => setDeleteArtikel(a)}
-                            className="p-1.5 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-surface-container-highest transition-all"
+                            className="p-1.5 rounded-lg text-on-surface-variant hover:text-red-400 hover:bg-surface-container-highest transition-all"
                             title="Löschen"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => setBuchungArtikel(a)}
-                            className="px-3 py-1 rounded-lg text-xs bg-[#1e1e1e] text-zinc-400 hover:text-white hover:bg-surface-container-highest transition-all"
+                            className="px-3 py-1 rounded-lg text-xs bg-surface-container-high text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all"
                           >
                             Buchen
                           </button>
@@ -647,23 +647,23 @@ function LagerPageInner() {
       )}
 
       {activeTab === "reservierungen" && (
-        <div className="bg-[#161616] border border-border rounded-xl overflow-x-auto">
+        <div className="bg-surface-container border border-border rounded-xl overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Artikel</th>
-                <th className="text-right px-4 py-3 text-zinc-500 font-medium">Menge</th>
-                <th className="text-center px-4 py-3 text-zinc-500 font-medium">Status</th>
+                <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Artikel</th>
+                <th className="text-right px-4 py-3 text-on-surface-variant font-medium">Menge</th>
+                <th className="text-center px-4 py-3 text-on-surface-variant font-medium">Status</th>
               </tr>
             </thead>
             <tbody>
               {reservierungen.length === 0 ? (
-                <tr><td colSpan={3} className="text-center py-12 text-zinc-600">Keine Reservierungen</td></tr>
+                <tr><td colSpan={3} className="text-center py-12 text-on-surface-variant">Keine Reservierungen</td></tr>
               ) : (
                 reservierungen.map(r => (
-                  <tr key={r.id} className="border-b border-[#1e1e1e]">
-                    <td className="px-4 py-3 text-white">{r.artikel.name}</td>
-                    <td className="px-4 py-3 text-right text-white">{r.menge} {r.artikel.einheit}</td>
+                  <tr key={r.id} className="border-b border-outline-variant">
+                    <td className="px-4 py-3 text-on-surface">{r.artikel.name}</td>
+                    <td className="px-4 py-3 text-right text-on-surface">{r.menge} {r.artikel.einheit}</td>
                     <td className="px-4 py-3 text-center">
                       <span className={`px-2 py-0.5 rounded text-xs ${
                         r.status === "RESERVIERT" ? "bg-blue-100 text-blue-800" :
@@ -688,24 +688,24 @@ function LagerPageInner() {
               Neue Bestellung
             </a>
           </div>
-          <div className="bg-[#161616] border border-border rounded-xl overflow-x-auto">
+          <div className="bg-surface-container border border-border rounded-xl overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left px-4 py-3 text-zinc-500 font-medium">Datum</th>
-                  <th className="text-left px-4 py-3 text-zinc-500 font-medium">Lieferant</th>
-                  <th className="text-center px-4 py-3 text-zinc-500 font-medium">Status</th>
-                  <th className="text-right px-4 py-3 text-zinc-500 font-medium">Betrag</th>
+                  <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Datum</th>
+                  <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Lieferant</th>
+                  <th className="text-center px-4 py-3 text-on-surface-variant font-medium">Status</th>
+                  <th className="text-right px-4 py-3 text-on-surface-variant font-medium">Betrag</th>
                 </tr>
               </thead>
               <tbody>
                 {bestellungen.length === 0 ? (
-                  <tr><td colSpan={4} className="text-center py-12 text-zinc-600">Keine Bestellungen</td></tr>
+                  <tr><td colSpan={4} className="text-center py-12 text-on-surface-variant">Keine Bestellungen</td></tr>
                 ) : (
                   bestellungen.slice(0, 10).map(b => (
-                    <tr key={b.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c]">
-                      <td className="px-4 py-3 text-white">{new Date(b.bestelldatum).toLocaleDateString("de-DE")}</td>
-                      <td className="px-4 py-3 text-white">{b.lieferant.name}</td>
+                    <tr key={b.id} className="border-b border-outline-variant hover:bg-surface-container-high">
+                      <td className="px-4 py-3 text-on-surface">{new Date(b.bestelldatum).toLocaleDateString("de-DE")}</td>
+                      <td className="px-4 py-3 text-on-surface">{b.lieferant.name}</td>
                       <td className="px-4 py-3 text-center">
                         <span className={`px-2 py-0.5 rounded text-xs ${
                           b.status === "ENTWURF" ? "bg-gray-100 text-gray-700" :
@@ -735,13 +735,13 @@ function LagerPageInner() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {lieferanten.map(l => (
               <a key={l.id} href={`/lager/lieferanten/${l.id}`}
-                className="bg-[#161616] border border-border rounded-xl p-4 hover:border-zinc-600 transition-colors">
+                className="bg-surface-container border border-border rounded-xl p-4 hover:border-outline-variant transition-colors">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-medium text-white">{l.name}</h3>
-                  <span className={`w-2 h-2 rounded-full ${l.aktiv ? "bg-emerald-500" : "bg-zinc-500"}`} />
+                  <h3 className="font-medium text-on-surface">{l.name}</h3>
+                  <span className={`w-2 h-2 rounded-full ${l.aktiv ? "bg-emerald-500" : "bg-on-surface-variant"}`} />
                 </div>
-                {l.email && <p className="text-zinc-500 text-xs truncate">{l.email}</p>}
-                {l.telefon && <p className="text-zinc-500 text-xs">{l.telefon}</p>}
+                {l.email && <p className="text-on-surface-variant text-xs truncate">{l.email}</p>}
+                {l.telefon && <p className="text-on-surface-variant text-xs">{l.telefon}</p>}
               </a>
             ))}
           </div>
@@ -763,25 +763,25 @@ function LagerPageInner() {
       )}
       {deleteArtikel && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#161616] border border-border rounded-xl w-full max-w-sm">
+          <div className="bg-surface-container border border-border rounded-xl w-full max-w-sm">
             <div className="flex items-center justify-between p-5 border-b border-border">
-              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-on-surface flex items-center gap-2">
                 <Trash2 className="w-5 h-5 text-red-400" />
                 Artikel löschen
               </h2>
-              <button onClick={() => setDeleteArtikel(null)} className="p-2 -m-2"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+              <button onClick={() => setDeleteArtikel(null)} className="p-2 -m-2"><X className="w-5 h-5 text-on-surface-variant hover:text-on-surface" /></button>
             </div>
             <div className="p-6">
-              <p className="text-zinc-300 mb-1">Möchten Sie diesen Artikel wirklich löschen?</p>
-              <p className="text-white font-semibold text-lg">{deleteArtikel.name}</p>
-              {deleteArtikel.artikelnummer && <p className="text-zinc-500 text-sm">Art.-Nr.: {deleteArtikel.artikelnummer}</p>}
+              <p className="text-on-surface mb-1">Möchten Sie diesen Artikel wirklich löschen?</p>
+              <p className="text-on-surface font-semibold text-lg">{deleteArtikel.name}</p>
+              {deleteArtikel.artikelnummer && <p className="text-on-surface-variant text-sm">Art.-Nr.: {deleteArtikel.artikelnummer}</p>}
               {deleteArtikel.bestand > 0 && (
                 <p className="text-amber-400 text-sm mt-3">Achtung: Dieser Artikel hat noch {deleteArtikel.bestand} {deleteArtikel.einheit} auf Lager.</p>
               )}
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={() => setDeleteArtikel(null)}
-                  className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium bg-surface-container-highest text-zinc-300 hover:bg-[#333] transition-all"
+                  className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium bg-surface-container-highest text-on-surface hover:bg-surface-container-highest transition-all"
                 >
                   Abbrechen
                 </button>
@@ -803,7 +803,7 @@ function LagerPageInner() {
 
 export default function LagerPage() {
   return (
-    <Suspense fallback={<div className="text-center py-16 text-zinc-600">Laden...</div>}>
+    <Suspense fallback={<div className="text-center py-16 text-on-surface-variant">Laden...</div>}>
       <LagerPageInner />
     </Suspense>
   )

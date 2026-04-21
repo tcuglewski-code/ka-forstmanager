@@ -67,31 +67,31 @@ function GeraetEditModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md">
+      <div className="bg-surface-container border border-border rounded-xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-lg font-semibold text-white">Gerät bearbeiten</h2>
+          <h2 className="text-lg font-semibold text-on-surface">Gerät bearbeiten</h2>
           <button onClick={onClose}>
-            <X className="w-5 h-5 text-zinc-500 hover:text-white" />
+            <X className="w-5 h-5 text-on-surface-variant hover:text-on-surface" />
           </button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Typ *</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Typ *</label>
               <input
                 type="text"
                 required
                 value={form.typ}
                 onChange={(e) => setForm((f) => ({ ...f, typ: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500"
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Status</label>
+              <label className="block text-xs text-on-surface-variant mb-1">Status</label>
               <select
                 value={form.status}
                 onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500"
               >
                 {["verfuegbar", "im_einsatz", "in_wartung", "defekt"].map(
                   (s) => (
@@ -104,47 +104,47 @@ function GeraetEditModal({
             </div>
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Bezeichnung *</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Bezeichnung *</label>
             <input
               type="text"
               required
               value={form.bezeichnung}
               onChange={(e) => setForm((f) => ({ ...f, bezeichnung: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500"
             />
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Seriennummer</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Seriennummer</label>
             <input
               type="text"
               value={form.seriennummer}
               onChange={(e) => setForm((f) => ({ ...f, seriennummer: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500"
             />
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Nächste Wartung</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Nächste Wartung</label>
             <input
               type="date"
               value={form.naechsteWartung}
               onChange={(e) => setForm((f) => ({ ...f, naechsteWartung: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500"
             />
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Notizen</label>
             <textarea
               rows={2}
               value={form.notizen}
               onChange={(e) => setForm((f) => ({ ...f, notizen: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white resize-none focus:outline-none focus:border-emerald-500"
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface resize-none focus:outline-none focus:border-emerald-500"
             />
           </div>
           <div className="flex gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all"
+              className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-on-surface-variant hover:text-on-surface transition-all"
             >
               Abbrechen
             </button>
@@ -200,11 +200,11 @@ function GeraetNeuModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md">
+      <div className="bg-surface-container border border-border rounded-xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-lg font-semibold text-white">Neues Gerät</h2>
+          <h2 className="text-lg font-semibold text-on-surface">Neues Gerät</h2>
           <button onClick={onClose}>
-            <X className="w-5 h-5 text-zinc-500 hover:text-white" />
+            <X className="w-5 h-5 text-on-surface-variant hover:text-on-surface" />
           </button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
@@ -216,29 +216,29 @@ function GeraetNeuModal({
             ] as [string, string][]
           ).map(([label, key]) => (
             <div key={key}>
-              <label className="block text-xs text-zinc-400 mb-1">{label}</label>
+              <label className="block text-xs text-on-surface-variant mb-1">{label}</label>
               <input
                 type="text"
                 value={(form as Record<string, string>)[key]}
                 onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500"
               />
             </div>
           ))}
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Nächste Wartung</label>
+            <label className="block text-xs text-on-surface-variant mb-1">Nächste Wartung</label>
             <input
               type="date"
               value={form.naechsteWartung}
               onChange={(e) => setForm((f) => ({ ...f, naechsteWartung: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500"
             />
           </div>
           <div className="flex gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all"
+              className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-on-surface-variant hover:text-on-surface transition-all"
             >
               Abbrechen
             </button>
@@ -335,7 +335,7 @@ export default function GeraetePage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Geräte</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">{geraete.length} Geräte</p>
+          <p className="text-on-surface-variant text-sm mt-0.5">{geraete.length} Geräte</p>
         </div>
         <button
           onClick={() => setShowNeuModal(true)}
@@ -358,7 +358,7 @@ export default function GeraetePage() {
             <select
               value={bulkStatus}
               onChange={(e) => setBulkStatus(e.target.value)}
-              className="px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white"
+              className="px-3 py-1.5 bg-surface-container-high border border-border rounded-lg text-sm text-on-surface"
             >
               <option value="">Status setzen...</option>
               {["verfuegbar", "im_einsatz", "in_wartung", "defekt"].map(
@@ -388,7 +388,7 @@ export default function GeraetePage() {
 
           <button
             onClick={() => setSelected([])}
-            className="text-xs text-zinc-500 hover:text-white ml-auto"
+            className="text-xs text-on-surface-variant hover:text-on-surface ml-auto"
           >
             Auswahl aufheben
           </button>
@@ -396,7 +396,7 @@ export default function GeraetePage() {
       )}
 
       {/* Tabelle */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-surface-container border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
@@ -416,25 +416,25 @@ export default function GeraetePage() {
                   className="rounded border-zinc-600"
                 />
               </th>
-              <th className="text-left px-4 py-3 text-zinc-500 font-medium">Bezeichnung</th>
-              <th className="text-left px-4 py-3 text-zinc-500 font-medium">Typ</th>
-              <th className="text-left px-4 py-3 text-zinc-500 font-medium">Seriennummer</th>
-              <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
-              <th className="text-left px-4 py-3 text-zinc-500 font-medium">Nächste Wartung</th>
+              <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Bezeichnung</th>
+              <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Typ</th>
+              <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Seriennummer</th>
+              <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Status</th>
+              <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Nächste Wartung</th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={7} className="text-center py-12 text-zinc-600">
+                <td colSpan={7} className="text-center py-12 text-on-surface-variant">
                   <Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" />
                   Laden...
                 </td>
               </tr>
             ) : geraete.length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center py-12 text-zinc-600">
+                <td colSpan={7} className="text-center py-12 text-on-surface-variant">
                   Keine Geräte vorhanden
                 </td>
               </tr>
@@ -442,7 +442,7 @@ export default function GeraetePage() {
               geraete.map((g) => (
                 <tr
                   key={g.id}
-                  className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors"
+                  className="border-b border-outline-variant hover:bg-surface-container-high transition-colors"
                 >
                   {/* Y3: Zeilen-Checkbox */}
                   <td
@@ -462,19 +462,19 @@ export default function GeraetePage() {
                       className="rounded border-zinc-600"
                     />
                   </td>
-                  <td className="px-4 py-3 text-white font-medium">
+                  <td className="px-4 py-3 text-on-surface font-medium">
                     <div className="flex items-center gap-2">
-                      <Wrench className="w-4 h-4 text-zinc-500" />
+                      <Wrench className="w-4 h-4 text-on-surface-variant" />
                       {g.bezeichnung}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-zinc-400">{g.typ}</td>
-                  <td className="px-4 py-3 text-zinc-500 text-xs">
+                  <td className="px-4 py-3 text-on-surface-variant">{g.typ}</td>
+                  <td className="px-4 py-3 text-on-surface-variant text-xs">
                     {g.seriennummer ?? "–"}
                   </td>
                   <td className="px-4 py-3">
                     <span
-                      className={`px-2 py-0.5 rounded-full text-xs ${STATUS_FARBEN[g.status] ?? "bg-zinc-700 text-zinc-300"}`}
+                      className={`px-2 py-0.5 rounded-full text-xs ${STATUS_FARBEN[g.status] ?? "bg-surface-container-highest text-on-surface"}`}
                     >
                       {g.status}
                     </span>
@@ -485,7 +485,7 @@ export default function GeraetePage() {
                         className={
                           new Date(g.naechsteWartung) < heute
                             ? "text-amber-400"
-                            : "text-zinc-400"
+                            : "text-on-surface-variant"
                         }
                       >
                         {new Date(g.naechsteWartung).toLocaleDateString(
@@ -493,13 +493,13 @@ export default function GeraetePage() {
                         )}
                       </span>
                     ) : (
-                      <span className="text-zinc-600">–</span>
+                      <span className="text-on-surface-variant">–</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => setEditGeraet(g)}
-                      className="text-zinc-500 hover:text-emerald-400 transition-colors text-xs px-2 py-1 rounded hover:bg-surface-container-highest"
+                      className="text-on-surface-variant hover:text-emerald-400 transition-colors text-xs px-2 py-1 rounded hover:bg-surface-container-highest"
                     >
                       Bearbeiten
                     </button>

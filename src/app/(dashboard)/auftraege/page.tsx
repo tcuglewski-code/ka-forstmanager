@@ -305,7 +305,7 @@ export default function AuftraegePage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Aufträge</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">
+          <p className="text-on-surface-variant text-sm mt-0.5">
             {auftraege.length} Aufträge gesamt
             {neuCount > 0 && (
               <span className="ml-2 px-1.5 py-0.5 bg-emerald-100 text-emerald-800 rounded text-xs font-medium">
@@ -316,13 +316,13 @@ export default function AuftraegePage() {
         </div>
         <div className="flex items-center gap-2">
           {/* Q048: View-Mode Toggle */}
-          <div className="flex items-center bg-[#1e1e1e] rounded-lg p-1">
+          <div className="flex items-center bg-surface-container-high rounded-lg p-1">
             <button
               onClick={() => setViewMode("liste")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                 viewMode === "liste"
                   ? "bg-emerald-600 text-white"
-                  : "text-zinc-400 hover:text-white"
+                  : "text-on-surface-variant hover:text-on-surface"
               }`}
             >
               <List className="w-4 h-4" />
@@ -333,7 +333,7 @@ export default function AuftraegePage() {
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                 viewMode === "gantt"
                   ? "bg-emerald-600 text-white"
-                  : "text-zinc-400 hover:text-white"
+                  : "text-on-surface-variant hover:text-on-surface"
               }`}
             >
               <BarChart3 className="w-4 h-4" />
@@ -343,7 +343,7 @@ export default function AuftraegePage() {
           <button
             onClick={() => sync(false)}
             disabled={syncing}
-            className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest hover:bg-[#333] text-zinc-300 rounded-lg text-sm font-medium transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest hover:bg-surface-container-highest text-on-surface rounded-lg text-sm font-medium transition-all disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} />
             {syncing ? "Sync..." : "Synchronisieren"}
@@ -375,7 +375,7 @@ export default function AuftraegePage() {
 
       {/* Filter-Leiste */}
       <div className="flex gap-3 mb-4 flex-wrap">
-        <div className="flex items-center gap-2 text-zinc-500">
+        <div className="flex items-center gap-2 text-on-surface-variant">
           <Filter className="w-4 h-4" />
         </div>
         <input
@@ -383,12 +383,12 @@ export default function AuftraegePage() {
           placeholder="Suche nach Titel, Waldbesitzer, Bundesland..."
           value={suche}
           onChange={(e) => setSuche(e.target.value)}
-          className="px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 w-64"
+          className="px-3 py-1.5 bg-surface-container-high border border-border rounded-lg text-sm text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-emerald-500 w-64"
         />
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-surface-container border border-border rounded-lg px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Status</option>
           <option value="anfrage">Anfrage</option>
@@ -403,7 +403,7 @@ export default function AuftraegePage() {
         <select
           value={filterTyp}
           onChange={(e) => setFilterTyp(e.target.value)}
-          className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-surface-container border border-border rounded-lg px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Typen</option>
           <option value="pflanzung">Pflanzung</option>
@@ -418,7 +418,7 @@ export default function AuftraegePage() {
         <select
           value={filterSaison}
           onChange={(e) => setFilterSaison(e.target.value)}
-          className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-surface-container border border-border rounded-lg px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Saisons</option>
           {saisons.map((s) => (
@@ -432,7 +432,7 @@ export default function AuftraegePage() {
         <select
           value={filterGruppe}
           onChange={(e) => setFilterGruppe(e.target.value)}
-          className="bg-[#161616] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-surface-container border border-border rounded-lg px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Gruppen</option>
           {gruppen.map((g) => (
@@ -484,7 +484,7 @@ export default function AuftraegePage() {
             URL.revokeObjectURL(url)
             toast.success(`${filtered.length} Aufträge als CSV exportiert`)
           }}
-          className="flex items-center gap-2 px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-sm text-zinc-400 hover:text-zinc-200 hover:border-zinc-500 transition-colors ml-auto"
+          className="flex items-center gap-2 px-3 py-1.5 bg-surface-container-high border border-border rounded-lg text-sm text-on-surface-variant hover:text-on-surface hover:border-outline-variant transition-colors ml-auto"
         >
           <Download className="w-4 h-4" />
           Alle exportieren ({filtered.length})
@@ -503,7 +503,7 @@ export default function AuftraegePage() {
             <select
               value={bulkSaisonId}
               onChange={(e) => setBulkSaisonId(e.target.value)}
-              className="px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white"
+              className="px-3 py-1.5 bg-surface-container-high border border-border rounded-lg text-sm text-on-surface"
             >
               <option value="">Saison zuweisen...</option>
               {/* X5: Nur nicht-abgeschlossene Saisons anzeigen */}
@@ -547,7 +547,7 @@ export default function AuftraegePage() {
                 toast.success(`${count} Aufträge aktualisiert`)
               }
             }}
-            className="px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white"
+            className="px-3 py-1.5 bg-surface-container-high border border-border rounded-lg text-sm text-on-surface"
           >
             <option value="">Gruppe zuweisen...</option>
             {gruppen.map((g) => (
@@ -580,7 +580,7 @@ export default function AuftraegePage() {
                 toast.success(`${count} Aufträge aktualisiert`)
               }
             }}
-            className="px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white"
+            className="px-3 py-1.5 bg-surface-container-high border border-border rounded-lg text-sm text-on-surface"
           >
             <option value="">Status setzen...</option>
             <option value="anfrage">Anfrage</option>
@@ -629,7 +629,7 @@ export default function AuftraegePage() {
 
           <button
             onClick={() => setSelected([])}
-            className="text-xs text-zinc-500 hover:text-white ml-auto"
+            className="text-xs text-on-surface-variant hover:text-on-surface ml-auto"
           >
             Auswahl aufheben
           </button>
@@ -639,7 +639,7 @@ export default function AuftraegePage() {
       {/* Q048: Conditional View - Liste oder Gantt */}
       {viewMode === "liste" ? (
         /* Tabelle */
-        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="bg-surface-container border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
@@ -655,39 +655,39 @@ export default function AuftraegePage() {
                         e.target.checked ? filtered.map((a) => a.id) : []
                       )
                     }
-                    className="rounded border-zinc-600"
+                    className="rounded border-outline-variant"
                   />
                 </th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Titel</th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Waldbesitzer</th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Leistung</th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Fläche</th>
+                <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Titel</th>
+                <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Waldbesitzer</th>
+                <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Leistung</th>
+                <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Fläche</th>
                 {/* X6: Saison-Spalte */}
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Saison</th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">
+                <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Saison</th>
+                <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Status</th>
+                <th className="text-left px-4 py-3 text-on-surface-variant font-medium">
                   <button
                     onClick={() =>
                       setDatumSort((s) => (s === "desc" ? "asc" : "desc"))
                     }
-                    className="flex items-center gap-1 hover:text-zinc-300 transition-colors"
+                    className="flex items-center gap-1 hover:text-on-surface transition-colors"
                   >
                     Datum {datumSort === "desc" ? "↓" : "↑"}
                   </button>
                 </th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium" />
+                <th className="text-left px-4 py-3 text-on-surface-variant font-medium" />
               </tr>
             </thead>
             <tbody>
               {loading || syncing ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-12 text-zinc-600">
+                  <td colSpan={9} className="text-center py-12 text-on-surface-variant">
                     {syncing ? "Synchronisiere mit WordPress..." : "Laden..."}
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-12 text-zinc-600">
+                  <td colSpan={9} className="text-center py-12 text-on-surface-variant">
                     Keine Aufträge gefunden
                   </td>
                 </tr>
@@ -695,7 +695,7 @@ export default function AuftraegePage() {
                 filtered.map((a) => (
                   <tr
                     key={a.id}
-                    className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] cursor-pointer transition-colors"
+                    className="border-b border-outline-variant hover:bg-surface-container-high cursor-pointer transition-colors"
                     onClick={() => (router.push(`/auftraege/${a.id}`))}
                   >
                     <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
@@ -709,12 +709,12 @@ export default function AuftraegePage() {
                               : prev.filter((id) => id !== a.id)
                           )
                         }
-                        className="rounded border-zinc-600"
+                        className="rounded border-outline-variant"
                       />
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-white font-medium leading-tight">
+                        <span className="text-on-surface font-medium leading-tight">
                           {a.titel}
                         </span>
                         {a.neuFlag && (
@@ -724,31 +724,31 @@ export default function AuftraegePage() {
                         )}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-zinc-400">
+                    <td className="px-4 py-3 text-on-surface-variant">
                       {a.waldbesitzer ?? "–"}
                     </td>
                     <td className="px-4 py-3">
                       <span
-                        className={`px-2 py-0.5 rounded-full text-xs ${TYP_FARBEN[a.typ] ?? "bg-zinc-700/50 text-zinc-400"}`}
+                        className={`px-2 py-0.5 rounded-full text-xs ${TYP_FARBEN[a.typ] ?? "bg-surface-container-highest/50 text-on-surface-variant"}`}
                       >
                         {typLabel(a.typ)}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-zinc-400">
+                    <td className="px-4 py-3 text-on-surface-variant">
                       {a.flaeche_ha != null ? `${a.flaeche_ha} ha` : "–"}
                     </td>
                     {/* X6: Saison-Spalte in der Tabelle */}
-                    <td className="px-4 py-3 text-zinc-400 text-xs">
+                    <td className="px-4 py-3 text-on-surface-variant text-xs">
                       {a.saison?.name ?? "–"}
                     </td>
                     <td className="px-4 py-3">
                       <span
-                        className={`px-2 py-0.5 rounded-full text-xs ${STATUS_FARBEN[a.status] ?? "bg-zinc-700 text-zinc-300"}`}
+                        className={`px-2 py-0.5 rounded-full text-xs ${STATUS_FARBEN[a.status] ?? "bg-surface-container-highest text-on-surface"}`}
                       >
                         {STATUS_LABELS[a.status] ?? a.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-zinc-500">
+                    <td className="px-4 py-3 text-on-surface-variant">
                       {new Date(a.wpErstelltAm ?? a.createdAt).toLocaleDateString(
                         "de-DE",
                         {
@@ -762,7 +762,7 @@ export default function AuftraegePage() {
                       <Link
                         href={`/auftraege/${a.id}`}
                         onClick={(e) => e.stopPropagation()}
-                        className="text-zinc-600 hover:text-emerald-400 transition-colors"
+                        className="text-on-surface-variant hover:text-emerald-400 transition-colors"
                       >
                         <Eye className="w-4 h-4" />
                       </Link>

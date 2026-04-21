@@ -119,7 +119,7 @@ export default function JahresuebersichtPage() {
           <BarChart3 className="w-6 h-6 text-emerald-400" />
           Jahresübersicht
         </h1>
-        <p className="text-zinc-500 text-sm mt-1">Strategische Gesamtsicht über alle Saisons</p>
+        <p className="text-on-surface-variant text-sm mt-1">Strategische Gesamtsicht über alle Saisons</p>
       </div>
 
       {/* Gesamt-Banner */}
@@ -127,11 +127,11 @@ export default function JahresuebersichtPage() {
         {kacheln.map(k => (
           <div
             key={k.label}
-            className="bg-[#161616] border border-border rounded-xl p-5"
+            className="bg-surface-container border border-border rounded-xl p-5"
           >
             <div className="flex items-center gap-2 mb-2">
               {k.icon}
-              <p className="text-xs text-zinc-500">{k.label}</p>
+              <p className="text-xs text-on-surface-variant">{k.label}</p>
             </div>
             <p className={`text-xl font-bold ${k.color}`}>{k.value}</p>
           </div>
@@ -141,53 +141,53 @@ export default function JahresuebersichtPage() {
       {/* Weitere Gesamt-Zahlen */}
       {gesamt && (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-[#161616] border border-border rounded-xl p-4">
-            <p className="text-xs text-zinc-500 mb-1">Gesamtstunden</p>
-            <p className="text-lg font-bold text-white">{gesamt.gesamtStunden.toLocaleString("de-DE")} h</p>
+          <div className="bg-surface-container border border-border rounded-xl p-4">
+            <p className="text-xs text-on-surface-variant mb-1">Gesamtstunden</p>
+            <p className="text-lg font-bold text-on-surface">{gesamt.gesamtStunden.toLocaleString("de-DE")} h</p>
           </div>
-          <div className="bg-[#161616] border border-border rounded-xl p-4">
-            <p className="text-xs text-zinc-500 mb-1">Aufträge gesamt</p>
-            <p className="text-lg font-bold text-white">{gesamt.auftraege}</p>
+          <div className="bg-surface-container border border-border rounded-xl p-4">
+            <p className="text-xs text-on-surface-variant mb-1">Aufträge gesamt</p>
+            <p className="text-lg font-bold text-on-surface">{gesamt.auftraege}</p>
           </div>
-          <div className="bg-[#161616] border border-border rounded-xl p-4">
-            <p className="text-xs text-zinc-500 mb-1">Saisons</p>
-            <p className="text-lg font-bold text-white">{saisons.length}</p>
+          <div className="bg-surface-container border border-border rounded-xl p-4">
+            <p className="text-xs text-on-surface-variant mb-1">Saisons</p>
+            <p className="text-lg font-bold text-on-surface">{saisons.length}</p>
           </div>
         </div>
       )}
 
       {/* Tabelle per Saison */}
       {saisons.length === 0 ? (
-        <div className="bg-[#161616] border border-border rounded-xl p-12 text-center text-zinc-600 text-sm">
+        <div className="bg-surface-container border border-border rounded-xl p-12 text-center text-on-surface-variant text-sm">
           Keine Saisons gefunden
         </div>
       ) : (
-        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="bg-surface-container border border-border rounded-xl overflow-hidden">
           <div className="px-6 py-4 border-b border-border flex items-center gap-2">
-            <ClipboardList className="w-4 h-4 text-zinc-500" />
-            <h2 className="font-semibold text-white text-sm uppercase tracking-wider">Auswertung nach Saison</h2>
+            <ClipboardList className="w-4 h-4 text-on-surface-variant" />
+            <h2 className="font-semibold text-on-surface text-sm uppercase tracking-wider">Auswertung nach Saison</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left px-4 py-3 text-xs text-zinc-500 font-medium">Saison</th>
-                  <th className="text-right px-4 py-3 text-xs text-zinc-500 font-medium">Aufträge</th>
-                  <th className="text-right px-4 py-3 text-xs text-zinc-500 font-medium">Abgeschl.</th>
-                  <th className="text-right px-4 py-3 text-xs text-zinc-500 font-medium">MA</th>
-                  <th className="text-right px-4 py-3 text-xs text-zinc-500 font-medium">Stunden</th>
-                  <th className="text-right px-4 py-3 text-xs text-zinc-500 font-medium">Umsatz</th>
-                  <th className="text-right px-4 py-3 text-xs text-zinc-500 font-medium">Lohnkosten</th>
-                  <th className="text-right px-4 py-3 text-xs text-zinc-500 font-medium">DB</th>
-                  <th className="text-right px-4 py-3 text-xs text-zinc-500 font-medium">Marge</th>
+                  <th className="text-left px-4 py-3 text-xs text-on-surface-variant font-medium">Saison</th>
+                  <th className="text-right px-4 py-3 text-xs text-on-surface-variant font-medium">Aufträge</th>
+                  <th className="text-right px-4 py-3 text-xs text-on-surface-variant font-medium">Abgeschl.</th>
+                  <th className="text-right px-4 py-3 text-xs text-on-surface-variant font-medium">MA</th>
+                  <th className="text-right px-4 py-3 text-xs text-on-surface-variant font-medium">Stunden</th>
+                  <th className="text-right px-4 py-3 text-xs text-on-surface-variant font-medium">Umsatz</th>
+                  <th className="text-right px-4 py-3 text-xs text-on-surface-variant font-medium">Lohnkosten</th>
+                  <th className="text-right px-4 py-3 text-xs text-on-surface-variant font-medium">DB</th>
+                  <th className="text-right px-4 py-3 text-xs text-on-surface-variant font-medium">Marge</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {saisons.map(s => (
-                  <tr key={s.saison.id} className="hover:bg-[#1c1c1c] transition-colors">
+                  <tr key={s.saison.id} className="hover:bg-surface-container-high transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-white font-medium">{s.saison.name}</span>
+                        <span className="text-on-surface font-medium">{s.saison.name}</span>
                         {s.saison.aktiv && (
                           <span className="px-1.5 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-800 border border-emerald-500/30">
                             aktiv
@@ -195,14 +195,14 @@ export default function JahresuebersichtPage() {
                         )}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-right text-zinc-300">{s.auftraege}</td>
-                    <td className="px-4 py-3 text-right text-zinc-400">
+                    <td className="px-4 py-3 text-right text-on-surface">{s.auftraege}</td>
+                    <td className="px-4 py-3 text-right text-on-surface-variant">
                       <span className={s.abgeschlossen === s.auftraege && s.auftraege > 0 ? "text-emerald-400" : ""}>
                         {s.abgeschlossen}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right text-zinc-400">{s.mitarbeiter}</td>
-                    <td className="px-4 py-3 text-right text-zinc-300">{s.gesamtStunden.toLocaleString("de-DE")} h</td>
+                    <td className="px-4 py-3 text-right text-on-surface-variant">{s.mitarbeiter}</td>
+                    <td className="px-4 py-3 text-right text-on-surface">{s.gesamtStunden.toLocaleString("de-DE")} h</td>
                     <td className="px-4 py-3 text-right font-medium text-emerald-400">{formatEur(s.umsatz)}</td>
                     <td className="px-4 py-3 text-right text-amber-400">{formatEur(s.lohnkosten)}</td>
                     <td className={`px-4 py-3 text-right font-medium ${s.deckungsbeitrag >= 0 ? "text-blue-400" : "text-red-400"}`}>
@@ -217,12 +217,12 @@ export default function JahresuebersichtPage() {
               {/* Gesamt-Zeile */}
               {gesamt && (
                 <tfoot>
-                  <tr className="border-t-2 border-[#3a3a3a] bg-[#1a1a1a]">
-                    <td className="px-4 py-3 text-xs font-bold text-zinc-400 uppercase tracking-wider">Gesamt</td>
-                    <td className="px-4 py-3 text-right text-zinc-300 font-bold">{gesamt.auftraege}</td>
+                  <tr className="border-t-2 border-outline-variant bg-surface-container-lowest">
+                    <td className="px-4 py-3 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Gesamt</td>
+                    <td className="px-4 py-3 text-right text-on-surface font-bold">{gesamt.auftraege}</td>
                     <td className="px-4 py-3"></td>
                     <td className="px-4 py-3"></td>
-                    <td className="px-4 py-3 text-right text-zinc-300 font-bold">{gesamt.gesamtStunden.toLocaleString("de-DE")} h</td>
+                    <td className="px-4 py-3 text-right text-on-surface font-bold">{gesamt.gesamtStunden.toLocaleString("de-DE")} h</td>
                     <td className="px-4 py-3 text-right font-bold text-emerald-400">{formatEur(gesamt.umsatz)}</td>
                     <td className="px-4 py-3 text-right font-bold text-amber-400">{formatEur(gesamt.lohnkosten)}</td>
                     <td className={`px-4 py-3 text-right font-bold ${gesamt.deckungsbeitrag >= 0 ? "text-blue-400" : "text-red-400"}`}>

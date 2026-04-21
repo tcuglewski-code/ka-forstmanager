@@ -246,7 +246,7 @@ export default function BenutzerVerwaltungPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-foreground">Benutzerverwaltung</h1>
-            <p className="text-sm text-zinc-500">{users.length} Benutzer</p>
+            <p className="text-sm text-on-surface-variant">{users.length} Benutzer</p>
           </div>
         </div>
         <button
@@ -274,35 +274,35 @@ export default function BenutzerVerwaltungPage() {
       )}
 
       {/* Users Table */}
-      <div className="bg-[#1a1a1a] border border-border rounded-xl overflow-hidden">
+      <div className="bg-surface-container-lowest border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
         <table className="min-w-full">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">Name</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">E-Mail</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">Rolle</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">Status</th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">Letzter Login</th>
-              <th className="text-right px-4 py-3 text-sm font-medium text-zinc-400">Aktionen</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-on-surface-variant">Name</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-on-surface-variant">E-Mail</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-on-surface-variant">Rolle</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-on-surface-variant">Status</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-on-surface-variant">Letzter Login</th>
+              <th className="text-right px-4 py-3 text-sm font-medium text-on-surface-variant">Aktionen</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr key={user.id} className="border-b border-border last:border-0 hover:bg-[#222]">
+              <tr key={user.id} className="border-b border-border last:border-0 hover:bg-surface-container-high">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden">
                       {user.avatar ? (
                         <img src={user.avatar} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <User className="w-4 h-4 text-zinc-500" />
+                        <User className="w-4 h-4 text-on-surface-variant" />
                       )}
                     </div>
-                    <span className="text-white">{user.name}</span>
+                    <span className="text-on-surface">{user.name}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-zinc-400">{user.email}</td>
+                <td className="px-4 py-3 text-on-surface-variant">{user.email}</td>
                 <td className="px-4 py-3">
                   <span
                     className={cn(
@@ -311,7 +311,7 @@ export default function BenutzerVerwaltungPage() {
                         ? "bg-emerald-100 text-emerald-800"
                         : user.role === "ka_gruppenführer"
                         ? "bg-blue-100 text-blue-800"
-                        : "bg-zinc-700 text-zinc-300"
+                        : "bg-surface-container-highest text-on-surface"
                     )}
                   >
                     {getRoleLabel(user.role)}
@@ -329,7 +329,7 @@ export default function BenutzerVerwaltungPage() {
                     {user.active ? "Aktiv" : "Inaktiv"}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-zinc-500 text-sm">
+                <td className="px-4 py-3 text-on-surface-variant text-sm">
                   {user.lastLoginAt
                     ? new Date(user.lastLoginAt).toLocaleString("de-DE")
                     : "Nie"}
@@ -338,13 +338,13 @@ export default function BenutzerVerwaltungPage() {
                   <div className="flex items-center justify-end gap-2">
                     <button
                       onClick={() => openEditModal(user)}
-                      className="p-2 text-zinc-500 hover:text-white hover:bg-surface-container-highest rounded-lg"
+                      className="p-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest rounded-lg"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(user)}
-                      className="p-2 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
+                      className="p-2 text-on-surface-variant hover:text-red-400 hover:bg-red-500/10 rounded-lg"
                       disabled={user.id === session?.user?.id}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -368,15 +368,15 @@ export default function BenutzerVerwaltungPage() {
             onClick={() => setModalOpen(false)}
           />
           <div className="fixed inset-x-0 top-[5%] mx-auto max-w-2xl z-50 px-4 max-h-[90vh] overflow-y-auto">
-            <div className="bg-[#1a1a1a] border border-border rounded-xl shadow-2xl">
+            <div className="bg-surface-container-lowest border border-border rounded-xl shadow-2xl">
               {/* Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-                <h2 className="text-lg font-semibold text-white">
+                <h2 className="text-lg font-semibold text-on-surface">
                   {editingUser ? "Benutzer bearbeiten" : "Neuer Benutzer"}
                 </h2>
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="p-1 text-zinc-500 hover:text-white"
+                  className="p-1 text-on-surface-variant hover:text-on-surface"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -387,27 +387,27 @@ export default function BenutzerVerwaltungPage() {
                 {/* Basis-Daten */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-zinc-400 mb-1">Name *</label>
-                    <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg">
-                      <User className="w-4 h-4 text-zinc-500" />
+                    <label className="block text-sm text-on-surface-variant mb-1">Name *</label>
+                    <div className="flex items-center gap-2 px-3 py-2 bg-surface-container-low border border-border rounded-lg">
+                      <User className="w-4 h-4 text-on-surface-variant" />
                       <input
                         type="text"
                         value={formName}
                         onChange={(e) => setFormName(e.target.value)}
-                        className="flex-1 bg-transparent text-white outline-none"
+                        className="flex-1 bg-transparent text-on-surface outline-none"
                         placeholder="Max Mustermann"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm text-zinc-400 mb-1">E-Mail *</label>
-                    <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg">
-                      <Mail className="w-4 h-4 text-zinc-500" />
+                    <label className="block text-sm text-on-surface-variant mb-1">E-Mail *</label>
+                    <div className="flex items-center gap-2 px-3 py-2 bg-surface-container-low border border-border rounded-lg">
+                      <Mail className="w-4 h-4 text-on-surface-variant" />
                       <input
                         type="email"
                         value={formEmail}
                         onChange={(e) => setFormEmail(e.target.value)}
-                        className="flex-1 bg-transparent text-white outline-none"
+                        className="flex-1 bg-transparent text-on-surface outline-none"
                         placeholder="max@beispiel.de"
                       />
                     </div>
@@ -416,14 +416,14 @@ export default function BenutzerVerwaltungPage() {
 
                 {/* Benutzername (optional) */}
                 <div>
-                  <label className="block text-sm text-zinc-400 mb-1">Benutzername (optional, für App-Login)</label>
-                  <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg">
-                    <User className="w-4 h-4 text-zinc-500" />
+                  <label className="block text-sm text-on-surface-variant mb-1">Benutzername (optional, für App-Login)</label>
+                  <div className="flex items-center gap-2 px-3 py-2 bg-surface-container-low border border-border rounded-lg">
+                    <User className="w-4 h-4 text-on-surface-variant" />
                     <input
                       type="text"
                       value={formUsername}
                       onChange={(e) => setFormUsername(e.target.value)}
-                      className="flex-1 bg-transparent text-white outline-none"
+                      className="flex-1 bg-transparent text-on-surface outline-none"
                       placeholder="z.B. mmustermann"
                       autoCapitalize="none"
                     />
@@ -433,12 +433,12 @@ export default function BenutzerVerwaltungPage() {
                 {/* Rolle & Status */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-zinc-400 mb-1">Rolle</label>
+                    <label className="block text-sm text-on-surface-variant mb-1">Rolle</label>
                     <div className="flex gap-2">
                       <select
                         value={formRole}
                         onChange={(e) => setFormRole(e.target.value)}
-                        className="flex-1 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white outline-none"
+                        className="flex-1 px-3 py-2 bg-surface-container-low border border-border rounded-lg text-on-surface outline-none"
                       >
                         {ROLES.map((r) => (
                           <option key={r.value} value={r.value}>
@@ -449,7 +449,7 @@ export default function BenutzerVerwaltungPage() {
                       <button
                         type="button"
                         onClick={applyRoleTemplate}
-                        className="px-3 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333] text-sm"
+                        className="px-3 py-2 bg-surface-container-highest text-on-surface rounded-lg hover:bg-surface-container-highest text-sm"
                         title="Rollen-Vorlage anwenden"
                       >
                         <Shield className="w-4 h-4" />
@@ -457,8 +457,8 @@ export default function BenutzerVerwaltungPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm text-zinc-400 mb-1">Status</label>
-                    <label className="flex items-center gap-3 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg cursor-pointer">
+                    <label className="block text-sm text-on-surface-variant mb-1">Status</label>
+                    <label className="flex items-center gap-3 px-3 py-2 bg-surface-container-low border border-border rounded-lg cursor-pointer">
                       <button
                         type="button"
                         onClick={() => setFormActive(!formActive)}
@@ -474,29 +474,29 @@ export default function BenutzerVerwaltungPage() {
                           )}
                         />
                       </button>
-                      <span className="text-white">{formActive ? "Aktiv" : "Inaktiv"}</span>
+                      <span className="text-on-surface">{formActive ? "Aktiv" : "Inaktiv"}</span>
                     </label>
                   </div>
                 </div>
 
                 {/* Passwort */}
                 <div>
-                  <label className="block text-sm text-zinc-400 mb-1">
+                  <label className="block text-sm text-on-surface-variant mb-1">
                     {editingUser ? "Neues Passwort (leer = unverändert)" : "Passwort *"}
                   </label>
-                  <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg">
-                    <Lock className="w-4 h-4 text-zinc-500" />
+                  <div className="flex items-center gap-2 px-3 py-2 bg-surface-container-low border border-border rounded-lg">
+                    <Lock className="w-4 h-4 text-on-surface-variant" />
                     <input
                       type={showPassword ? "text" : "password"}
                       value={formPassword}
                       onChange={(e) => setFormPassword(e.target.value)}
-                      className="flex-1 bg-transparent text-white outline-none"
+                      className="flex-1 bg-transparent text-on-surface outline-none"
                       placeholder="••••••••"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="text-zinc-500 hover:text-white"
+                      className="text-on-surface-variant hover:text-on-surface"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -505,22 +505,22 @@ export default function BenutzerVerwaltungPage() {
 
                 {/* Permissions */}
                 <div>
-                  <label className="block text-sm text-zinc-400 mb-3">Berechtigungen</label>
-                  <div className="space-y-4 max-h-64 overflow-y-auto p-3 bg-[#0f0f0f] border border-border rounded-lg">
+                  <label className="block text-sm text-on-surface-variant mb-3">Berechtigungen</label>
+                  <div className="space-y-4 max-h-64 overflow-y-auto p-3 bg-surface-container-low border border-border rounded-lg">
                     {Object.entries(PERMISSION_GROUPS).map(([groupKey, group]) => (
                       <div key={groupKey}>
-                        <h4 className="text-sm font-medium text-white mb-2">{group.label}</h4>
+                        <h4 className="text-sm font-medium text-on-surface mb-2">{group.label}</h4>
                         <div className="grid grid-cols-2 gap-2">
                           {group.permissions.map((permission) => (
                             <label
                               key={permission}
-                              className="flex items-center gap-2 text-sm text-zinc-400 cursor-pointer"
+                              className="flex items-center gap-2 text-sm text-on-surface-variant cursor-pointer"
                             >
                               <input
                                 type="checkbox"
                                 checked={formPermissions.includes(permission)}
                                 onChange={() => togglePermission(permission)}
-                                className="w-4 h-4 rounded bg-surface-container-highest border-[#3a3a3a] text-emerald-500 focus:ring-emerald-500"
+                                className="w-4 h-4 rounded bg-surface-container-highest border-outline-variant text-emerald-500 focus:ring-emerald-500"
                               />
                               {ALL_PERMISSIONS[permission as Permission]}
                             </label>
@@ -536,7 +536,7 @@ export default function BenutzerVerwaltungPage() {
               <div className="flex justify-end gap-3 px-6 py-4 border-t border-border">
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 bg-surface-container-highest text-zinc-300 rounded-lg hover:bg-[#333]"
+                  className="px-4 py-2 bg-surface-container-highest text-on-surface rounded-lg hover:bg-surface-container-highest"
                 >
                   Abbrechen
                 </button>
