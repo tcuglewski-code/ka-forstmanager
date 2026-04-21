@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { ClipboardList, Plus, Loader2, ChevronDown, ChevronUp, X, Pencil, Trash2 } from "lucide-react"
+import { ClipboardList, Plus, Loader2, ChevronDown, ChevronUp, X, Pencil, Trash2, Download } from "lucide-react"
 import { toast } from "sonner"
 import TagesprotokollFormular from "@/components/tagesprotokoll/TagesprotokollFormular"
 import TagesprotokollDetail, { type TagesprotokollFull } from "@/components/tagesprotokoll/TagesprotokollDetail"
@@ -170,8 +170,8 @@ export default function ProtokolleSeite() {
         </button>
       </div>
 
-      {/* Filter */}
-      <div className="flex flex-wrap gap-3 mb-4">
+      {/* Filter + CSV Export */}
+      <div className="flex flex-wrap gap-3 mb-4 items-center">
         <select
           value={filterAuftrag}
           onChange={(e) => setFilterAuftrag(e.target.value)}
@@ -209,6 +209,17 @@ export default function ProtokolleSeite() {
           placeholder="Bis"
           className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white"
         />
+        <a
+          href={`/api/tagesprotokoll/export?${new URLSearchParams({
+            ...(filterAuftrag ? { auftragId: filterAuftrag } : {}),
+            ...(filterStatus ? { status: filterStatus } : {}),
+            ...(filterVon ? { vonDatum: filterVon } : {}),
+            ...(filterBis ? { bisDatum: filterBis } : {}),
+          }).toString()}`}
+          className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white border border-border px-3 py-2 rounded-lg hover:bg-[#222] transition-colors ml-auto"
+        >
+          <Download className="w-3.5 h-3.5" /> CSV
+        </a>
       </div>
 
       {/* Liste */}
