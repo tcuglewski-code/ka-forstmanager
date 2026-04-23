@@ -71,7 +71,7 @@ export default function ProtokolleSeite() {
     if (filterBis) params.set("bis", filterBis)
     const [p, a] = await Promise.all([
       fetch(`/api/tagesprotokoll?${params}`).then((r) => r.json()),
-      fetch("/api/auftraege?statusIn=in_ausfuehrung,bestaetigt,laufend,aktiv&limit=200").then((r) => r.json()),
+      fetch("/api/auftraege?limit=200").then((r) => r.json()),
     ])
     setProtokolle(Array.isArray(p) ? p : [])
     setAuftraege(Array.isArray(a) ? a : [])
@@ -235,14 +235,15 @@ export default function ProtokolleSeite() {
         <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-12 text-center">
           <ClipboardList className="w-8 h-8 text-zinc-600 mx-auto mb-3" />
           <p className="text-[var(--color-on-surface-variant)]">Noch keine Protokolle vorhanden.</p>
-          {auftraege.length > 0 && (
-            <button
-              onClick={() => { setSelectedAuftrag(auftraege[0]); setShowForm(true) }}
-              className="mt-4 text-sm text-emerald-400 hover:text-emerald-300"
-            >
-              Erstes Protokoll erstellen →
-            </button>
-          )}
+          <button
+            onClick={() => {
+              setSelectedAuftrag(auftraege[0] ?? null)
+              setShowForm(true)
+            }}
+            className="mt-4 text-sm text-emerald-400 hover:text-emerald-300"
+          >
+            Erstes Protokoll erstellen →
+          </button>
         </div>
       ) : (
         <div className="space-y-2">
@@ -351,7 +352,7 @@ export default function ProtokolleSeite() {
       )}
 
       {/* Modal: Neues Protokoll */}
-      {showForm && selectedAuftrag && (
+      {showForm && (
         <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-2xl my-8">
             <div className="flex items-center justify-between px-6 py-4 border-b border-border">
@@ -367,39 +368,46 @@ export default function ProtokolleSeite() {
             {/* Auftrag wählen */}
             <div className="px-6 pt-4 pb-0">
               <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Auftrag *</label>
-              <select
-                value={selectedAuftrag.id}
-                onChange={(e) => {
-                  const a = auftraege.find((x) => x.id === e.target.value) ?? null
-                  setSelectedAuftrag(a)
-                }}
-                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] mb-2"
-              >
-                {auftraege.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.titel}
-                  </option>
-                ))}
-              </select>
+              {auftraege.length === 0 ? (
+                <p className="text-sm text-[var(--color-on-surface-variant)] py-2">Keine Aufträge vorhanden.</p>
+              ) : (
+                <select
+                  value={selectedAuftrag?.id ?? ""}
+                  onChange={(e) => {
+                    const a = auftraege.find((x) => x.id === e.target.value) ?? null
+                    setSelectedAuftrag(a)
+                  }}
+                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] mb-2"
+                >
+                  <option value="" disabled>Auftrag wählen…</option>
+                  {auftraege.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.titel}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
 
+            {selectedAuftrag && (
             <div className="px-6 py-4">
               <TagesprotokollFormular
-                auftragId={selectedAuftrag?.id ?? ""}
-                auftragTitel={selectedAuftrag?.titel}
-                waldbesitzer={selectedAuftrag?.waldbesitzer ?? undefined}
-                gruppeId={selectedAuftrag?.gruppe?.id}
+                auftragId={selectedAuftrag.id}
+                auftragTitel={selectedAuftrag.titel}
+                waldbesitzer={selectedAuftrag.waldbesitzer ?? undefined}
+                gruppeId={selectedAuftrag.gruppe?.id}
                 // Sprint FP (A7): Autofill Revier + Forstamt aus Auftrag
-                defaultFoerstamt={selectedAuftrag?.wizardDaten?.flaeche_forstamt ?? selectedAuftrag?.wizardDaten?.forstamt ?? ""}
-                defaultRevier={selectedAuftrag?.wizardDaten?.flaeche_revier ?? selectedAuftrag?.wizardDaten?.revier ?? ""}
-                defaultGpsLat={selectedAuftrag?.lat ?? undefined}
-                defaultGpsLon={selectedAuftrag?.lng ?? undefined}
+                defaultFoerstamt={selectedAuftrag.wizardDaten?.flaeche_forstamt ?? selectedAuftrag.wizardDaten?.forstamt ?? ""}
+                defaultRevier={selectedAuftrag.wizardDaten?.flaeche_revier ?? selectedAuftrag.wizardDaten?.revier ?? ""}
+                defaultGpsLat={selectedAuftrag.lat ?? undefined}
+                defaultGpsLon={selectedAuftrag.lng ?? undefined}
                 onSaved={async () => {
                   setShowForm(false)
                   await fetchAll()
                 }}
               />
             </div>
+            )}
           </div>
         </div>
       )}
