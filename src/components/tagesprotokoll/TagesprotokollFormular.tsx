@@ -413,7 +413,7 @@ export default function TagesprotokollFormular({
       onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
       placeholder={placeholder}
       {...(type === 'number' ? { min: opts?.min ?? 0, max: opts?.max ?? 10000, step: opts?.step ?? 0.5 } : {})}
-      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
+      className="w-full border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] placeholder-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
     />
   )
 
@@ -421,17 +421,17 @@ export default function TagesprotokollFormular({
     <select
       value={form[field]}
       onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
-      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-green-600"
+      className="w-full border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] focus:outline-none focus:ring-2 focus:ring-green-600"
     >
       {opts.map(o => <option key={o} value={o}>{o}</option>)}
     </select>
   )
 
   const section = (title: string, icon: string, children: React.ReactNode) => (
-    <div className="mb-6 bg-white rounded-xl border border-gray-200 overflow-hidden">
-      <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center gap-2">
+    <div className="mb-6 bg-[var(--color-surface-container)] rounded-xl border border-border overflow-hidden">
+      <div className="bg-[var(--color-surface-container-highest)] px-4 py-3 border-b border-border flex items-center gap-2">
         <span>{icon}</span>
-        <h3 className="font-semibold text-gray-800 text-sm">{title}</h3>
+        <h3 className="font-semibold text-[var(--color-on-surface)] text-sm">{title}</h3>
       </div>
       <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>
     </div>
@@ -439,7 +439,7 @@ export default function TagesprotokollFormular({
 
   const field = (label: string, child: React.ReactNode, fullWidth = false) => (
     <div className={fullWidth ? 'md:col-span-2' : ''}>
-      <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
+      <label className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">{label}</label>
       {child}
     </div>
   )
@@ -449,20 +449,20 @@ export default function TagesprotokollFormular({
   // ──────────────────────────────────────────────────────────────────────────
   return (
     <div className="max-w-3xl mx-auto p-4">
-      <h2 className="text-xl font-bold text-gray-800 mb-1">Tagesprotokoll</h2>
-      {auftragTitel && <p className="text-sm text-gray-500 mb-6">Auftrag: {auftragTitel}</p>}
+      <h2 className="text-xl font-bold text-[var(--color-on-surface)] mb-1">Tagesprotokoll</h2>
+      {auftragTitel && <p className="text-sm text-[var(--color-on-surface-variant)] mb-6">Auftrag: {auftragTitel}</p>}
 
       <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
         {field('Datum *', inp('datum', 'date'))}
 
         {/* FIX 5: Rollenabhängiges Gruppenführer-Feld */}
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Gruppenführer</label>
+          <label className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">Gruppenführer</label>
           {isAdmin ? (
             <select
               value={form.ersteller}
               onChange={e => setForm(f => ({ ...f, ersteller: e.target.value }))}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] focus:outline-none focus:ring-2 focus:ring-green-600"
             >
               <option value="">— Gruppenführer wählen —</option>
               {gruppenfuehrerListe.map(gf => (
@@ -472,7 +472,7 @@ export default function TagesprotokollFormular({
               ))}
             </select>
           ) : (
-            <div className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 bg-gray-50">
+            <div className="w-full border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container-highest)]">
               {userName || '—'}
             </div>
           )}
@@ -489,40 +489,40 @@ export default function TagesprotokollFormular({
       </>)}
 
       {/* FIX 2: Arbeitszeit mit max 10h + Auto-Pause */}
-      <div className="mb-6 bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center gap-2">
+      <div className="mb-6 bg-[var(--color-surface-container)] rounded-xl border border-border overflow-hidden">
+        <div className="bg-[var(--color-surface-container-highest)] px-4 py-3 border-b border-border flex items-center gap-2">
           <span>⏰</span>
-          <h3 className="font-semibold text-gray-800 text-sm">Arbeitszeit vor Ort</h3>
+          <h3 className="font-semibold text-[var(--color-on-surface)] text-sm">Arbeitszeit vor Ort</h3>
         </div>
         <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Beginn</label>
+            <label className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">Beginn</label>
             <input
               type="datetime-local"
               value={form.zeitBeginn}
               onChange={e => handleZeitChange('zeitBeginn', e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] focus:outline-none focus:ring-2 focus:ring-green-600"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Ende</label>
+            <label className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">Ende</label>
             <input
               type="datetime-local"
               value={form.zeitEnde}
               onChange={e => handleZeitChange('zeitEnde', e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] focus:outline-none focus:ring-2 focus:ring-green-600"
             />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-xs font-medium text-gray-600 mb-1">Pause (Minuten)</label>
+            <label className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">Pause (Minuten)</label>
             <input
               type="number"
               value={form.pausezeit}
               onChange={e => setForm(f => ({ ...f, pausezeit: e.target.value }))}
               placeholder="30"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] placeholder-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-green-600"
             />
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">
               Automatisch nach ArbZG §4: &gt;6h = 30 min, &gt;9h = 45 min. Max. Arbeitszeit: 10h.
             </p>
           </div>
@@ -566,32 +566,32 @@ export default function TagesprotokollFormular({
       </>)}
 
       {/* Witterung & GPS */}
-      <div className="mb-6 bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center gap-2">
+      <div className="mb-6 bg-[var(--color-surface-container)] rounded-xl border border-border overflow-hidden">
+        <div className="bg-[var(--color-surface-container-highest)] px-4 py-3 border-b border-border flex items-center gap-2">
           <span>🌤️</span>
-          <h3 className="font-semibold text-gray-800 text-sm">Witterung &amp; GPS</h3>
+          <h3 className="font-semibold text-[var(--color-on-surface)] text-sm">Witterung &amp; GPS</h3>
         </div>
         <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
           {field('Witterung', sel('witterung', ['sonnig', 'bedeckt', 'leichter Regen', 'starker Regen', 'Schnee', 'Nebel', 'Frost']))}
 
           {/* FIX 4: GPS-Button statt manuelle Eingabe */}
           <div className="md:col-span-2">
-            <label className="block text-xs font-medium text-gray-600 mb-2">GPS Standort (Start)</label>
+            <label className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-2">GPS Standort (Start)</label>
             <div className="flex gap-3 items-start">
               <div className="flex-1">
                 {gpsStatus === 'ermittelt' ? (
-                  <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-sm text-green-800">
+                  <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3 py-2 text-sm text-emerald-400">
                     ✓ {form.gpsStartLat}, {form.gpsStartLon}
                     <button
                       type="button"
                       onClick={() => { setForm(f => ({ ...f, gpsStartLat: '', gpsStartLon: '' })); setGpsStatus('leer') }}
-                      className="ml-2 text-red-500 text-xs hover:underline"
+                      className="ml-2 text-red-400 text-xs hover:underline"
                     >
                       zurücksetzen
                     </button>
                   </div>
                 ) : (
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-400">
+                  <div className="bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface-variant)]">
                     {gpsStatus === 'laden' ? '⏳ GPS wird ermittelt…' : 'Noch nicht ermittelt'}
                   </div>
                 )}
@@ -607,7 +607,7 @@ export default function TagesprotokollFormular({
             </div>
             {gpsError && <p className="text-xs text-red-500 mt-1">{gpsError}</p>}
             {form.gpsStartLat && form.gpsStartLon && (
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">
                 Koordinaten: {parseFloat(form.gpsStartLat).toFixed(6)}, {parseFloat(form.gpsStartLon).toFixed(6)}
               </p>
             )}
@@ -617,11 +617,11 @@ export default function TagesprotokollFormular({
 
       {/* FIX 6: Team & Stunden */}
       {(team.length > 0 || gruppeId) && (
-        <div className="mb-6 bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+        <div className="mb-6 bg-[var(--color-surface-container)] rounded-xl border border-border overflow-hidden">
+          <div className="bg-[var(--color-surface-container-highest)] px-4 py-3 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span>👷</span>
-              <h3 className="font-semibold text-gray-800 text-sm">Team &amp; Stunden</h3>
+              <h3 className="font-semibold text-[var(--color-on-surface)] text-sm">Team &amp; Stunden</h3>
             </div>
             {team.length > 0 && (
               <div className="flex items-center gap-2">
@@ -633,7 +633,7 @@ export default function TagesprotokollFormular({
                   value={globalStunden}
                   onChange={e => setGlobalStunden(e.target.value)}
                   placeholder="Std"
-                  className="w-16 border border-gray-300 rounded px-2 py-1 text-sm text-gray-900 bg-white"
+                  className="w-16 border border-border rounded px-2 py-1 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)]"
                 />
                 <button
                   type="button"
@@ -647,7 +647,7 @@ export default function TagesprotokollFormular({
           </div>
           <div className="p-4">
             {team.length === 0 ? (
-              <p className="text-sm text-gray-400 text-center py-4">
+              <p className="text-sm text-[var(--color-on-surface-variant)] text-center py-4">
                 {gruppeId ? 'Lade Gruppenmitglieder…' : 'Kein Gruppe zugewiesen'}
               </p>
             ) : (
@@ -655,10 +655,10 @@ export default function TagesprotokollFormular({
                 {team.map((m, idx) => (
                   <div
                     key={m.mitarbeiterId}
-                    className={`rounded-lg border p-3 transition-all ${m.krank ? 'bg-red-50 border-red-200 opacity-70' : 'bg-gray-50 border-gray-200'}`}
+                    className={`rounded-lg border p-3 transition-all ${m.krank ? 'bg-red-500/10 border-red-500/30 opacity-70' : 'bg-[var(--color-surface-container-highest)] border-border'}`}
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className={`text-sm font-medium ${m.krank ? 'text-red-600 line-through' : 'text-gray-800'}`}>
+                      <span className={`text-sm font-medium ${m.krank ? 'text-red-400 line-through' : 'text-[var(--color-on-surface)]'}`}>
                         {m.name}
                       </span>
                       <label className="flex items-center gap-1.5 cursor-pointer">
@@ -671,12 +671,12 @@ export default function TagesprotokollFormular({
                           })}
                           className="w-4 h-4 accent-red-500"
                         />
-                        <span className="text-xs text-red-600 font-medium">Krank</span>
+                        <span className="text-xs text-red-400 font-medium">Krank</span>
                       </label>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                       <div>
-                        <label className="block text-xs text-gray-500 mb-1">Stunden (0–10)</label>
+                        <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Stunden (0–10)</label>
                         <input
                           type="number"
                           min="0"
@@ -685,22 +685,22 @@ export default function TagesprotokollFormular({
                           value={m.krank ? '0' : m.stunden}
                           disabled={m.krank}
                           onChange={e => updateTeamMitglied(idx, { stunden: e.target.value })}
-                          className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm text-gray-900 bg-white disabled:bg-gray-100 disabled:text-gray-400"
+                          className="w-full border border-border rounded px-2 py-1.5 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] disabled:opacity-50"
                         />
                       </div>
                       <div className="md:col-span-2">
-                        <label className="block text-xs text-gray-500 mb-1">Maschine (optional)</label>
+                        <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Maschine (optional)</label>
                         <input
                           type="text"
                           value={m.maschine}
                           disabled={m.krank}
                           onChange={e => updateTeamMitglied(idx, { maschine: e.target.value })}
                           placeholder="z.B. Forstbohrer, Motorsäge"
-                          className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm text-gray-900 bg-white placeholder-gray-400 disabled:bg-gray-100 disabled:text-gray-400"
+                          className="w-full border border-border rounded px-2 py-1.5 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] placeholder-[var(--color-on-surface-variant)] disabled:opacity-50"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-500 mb-1">Masch. Std</label>
+                        <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Masch. Std</label>
                         <input
                           type="number"
                           min="0"
@@ -709,7 +709,7 @@ export default function TagesprotokollFormular({
                           value={m.maschinenstunden}
                           disabled={m.krank || !m.maschine}
                           onChange={e => updateTeamMitglied(idx, { maschinenstunden: e.target.value })}
-                          className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm text-gray-900 bg-white disabled:bg-gray-100 disabled:text-gray-400"
+                          className="w-full border border-border rounded px-2 py-1.5 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] disabled:opacity-50"
                         />
                       </div>
                     </div>
@@ -722,9 +722,9 @@ export default function TagesprotokollFormular({
       )}
 
       {/* Kommentar */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
-        <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-800 text-sm">💬 Kommentar</h3>
+      <div className="bg-[var(--color-surface-container)] rounded-xl border border-border overflow-hidden mb-6">
+        <div className="bg-[var(--color-surface-container-highest)] px-4 py-3 border-b border-border">
+          <h3 className="font-semibold text-[var(--color-on-surface)] text-sm">💬 Kommentar</h3>
         </div>
         <div className="p-4">
           <textarea
@@ -732,7 +732,7 @@ export default function TagesprotokollFormular({
             onChange={e => setForm(f => ({ ...f, kommentar: e.target.value }))}
             placeholder="Tageskommentar des Gruppenführers…"
             rows={4}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-600 resize-none"
+            className="w-full border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] placeholder-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-green-600 resize-none"
           />
         </div>
       </div>
@@ -773,7 +773,7 @@ export default function TagesprotokollFormular({
         <button
           onClick={() => handleSubmit('entwurf')}
           disabled={loading}
-          className="flex-1 border border-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-50 disabled:opacity-50"
+          className="flex-1 border border-border text-[var(--color-on-surface)] py-3 rounded-xl font-semibold hover:bg-[var(--color-surface-container-highest)] disabled:opacity-50"
         >
           {loading ? '…' : editId ? 'Änderungen speichern' : 'Entwurf speichern'}
         </button>

@@ -161,7 +161,7 @@ export default function TeamLiveDashboard() {
         {/* Header */}
         <div className="flex justify-between items-start mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-[var(--color-on-surface)] flex items-center gap-3">
               <MapPin className="w-7 h-7 text-green-600" />
               Team Live-Karte
             </h1>
@@ -328,7 +328,7 @@ export default function TeamLiveDashboard() {
           <div className="mt-6 bg-white rounded-xl shadow-lg p-6">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <h2 className="text-xl font-bold text-[var(--color-on-surface)] flex items-center gap-2">
                   <User className="w-6 h-6 text-gray-400" />
                   {selectedMember.name}
                 </h2>

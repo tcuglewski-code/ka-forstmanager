@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { 
-  Receipt, ArrowLeft, Loader2, CheckCircle, Clock, 
+import {
+  Receipt, ArrowLeft, Loader2, CheckCircle, Clock,
   FileText, ExternalLink, Printer, XCircle, AlertCircle,
-  Download, BadgeCheck, Lock, History
+  Download, BadgeCheck, Lock, History, ChevronDown
 } from "lucide-react"
 import ZipayoButton from "@/components/payments/ZipayoButton"
 import AuditLogSection from "@/components/rechnung/AuditLogSection"
@@ -52,6 +52,8 @@ export default function RechnungDetailPage() {
   const [rechnung, setRechnung] = useState<Rechnung | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [statusChanging, setStatusChanging] = useState(false)
+  const [statusConfirm, setStatusConfirm] = useState<string | null>(null)
 
   const fetchRechnung = useCallback(async () => {
     if (!id) return
@@ -73,14 +75,54 @@ export default function RechnungDetailPage() {
   }, [fetchRechnung])
 
   const handlePaymentSuccess = async () => {
-    // Rechnung als bezahlt markieren
     await fetch(`/api/rechnungen/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: "bezahlt" }),
     })
-    // Neu laden
     await fetchRechnung()
+  }
+
+  // FM-22: Status-Workflow — erlaubte Übergänge
+  const validTransitions: Record<string, { status: string; label: string; icon: React.ElementType; color: string }[]> = {
+    entwurf: [
+      { status: "offen", label: "Freischalten", icon: Clock, color: "bg-blue-600 hover:bg-blue-500 text-white" },
+      { status: "storniert", label: "Stornieren", icon: XCircle, color: "bg-red-600 hover:bg-red-500 text-white" },
+    ],
+    offen: [
+      { status: "bezahlt", label: "Als bezahlt markieren", icon: CheckCircle, color: "bg-emerald-600 hover:bg-emerald-500 text-white" },
+      { status: "freigegeben", label: "Freigeben", icon: BadgeCheck, color: "bg-amber-600 hover:bg-amber-500 text-white" },
+      { status: "storniert", label: "Stornieren", icon: XCircle, color: "bg-red-600 hover:bg-red-500 text-white" },
+    ],
+    freigegeben: [
+      { status: "bezahlt", label: "Als bezahlt markieren", icon: CheckCircle, color: "bg-emerald-600 hover:bg-emerald-500 text-white" },
+      { status: "storniert", label: "Stornieren", icon: XCircle, color: "bg-red-600 hover:bg-red-500 text-white" },
+    ],
+    ueberfaellig: [
+      { status: "bezahlt", label: "Als bezahlt markieren", icon: CheckCircle, color: "bg-emerald-600 hover:bg-emerald-500 text-white" },
+      { status: "storniert", label: "Stornieren", icon: XCircle, color: "bg-red-600 hover:bg-red-500 text-white" },
+    ],
+  }
+
+  const handleStatusChange = async (newStatus: string) => {
+    setStatusChanging(true)
+    try {
+      const res = await fetch(`/api/rechnungen/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || "Statusänderung fehlgeschlagen")
+      }
+      await fetchRechnung()
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Fehler bei Statusänderung")
+    } finally {
+      setStatusChanging(false)
+      setStatusConfirm(null)
+    }
   }
 
   if (loading) {
@@ -260,17 +302,55 @@ export default function RechnungDetailPage() {
             </div>
           )}
           
-          {/* Sprint GB-01: Hinweis bei gesperrten offenen Rechnungen */}
-          {istOffen && isLocked && (
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <Lock className="w-5 h-5 text-amber-400" />
-                <h3 className="text-amber-400 font-semibold">Gesperrt</h3>
+          {/* FM-22: Status-Änderung für Admins (auch bei GoBD-gesperrten Rechnungen erlaubt) */}
+          {(validTransitions[rechnung.status] ?? []).length > 0 && (
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
+              <h3 className="text-[var(--color-on-surface)] font-semibold text-sm mb-3 flex items-center gap-2">
+                <ChevronDown className="w-4 h-4" />
+                Status ändern
+              </h3>
+              {isLocked && (
+                <p className="text-amber-400 text-xs mb-3 flex items-center gap-1">
+                  <Lock className="w-3 h-3" /> GoBD-gesperrt — Statusänderung trotzdem möglich
+                </p>
+              )}
+              <div className="space-y-2">
+                {(validTransitions[rechnung.status] ?? []).map(t => {
+                  const TIcon = t.icon
+                  return statusConfirm === t.status ? (
+                    <div key={t.status} className="border border-amber-500/30 rounded-lg p-3 bg-amber-500/5">
+                      <p className="text-[var(--color-on-surface)] text-sm mb-2">
+                        Status wirklich auf <strong>&quot;{t.label}&quot;</strong> setzen?
+                      </p>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleStatusChange(t.status)}
+                          disabled={statusChanging}
+                          className="flex-1 px-3 py-1.5 rounded-lg text-sm font-medium bg-emerald-600 hover:bg-emerald-500 text-white disabled:opacity-50"
+                        >
+                          {statusChanging ? "…" : "Bestätigen"}
+                        </button>
+                        <button
+                          onClick={() => setStatusConfirm(null)}
+                          className="flex-1 px-3 py-1.5 rounded-lg text-sm font-medium bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface)] border border-border hover:bg-[#333]"
+                        >
+                          Abbrechen
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      key={t.status}
+                      onClick={() => setStatusConfirm(t.status)}
+                      disabled={statusChanging}
+                      className={`flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${t.color}`}
+                    >
+                      <TIcon className="w-4 h-4" />
+                      {t.label}
+                    </button>
+                  )
+                })}
               </div>
-              <p className="text-[var(--color-on-surface-variant)] text-sm">
-                Diese Rechnung ist GoBD-gesperrt. Status-Änderungen sind nicht mehr möglich.
-                Kontaktieren Sie den Administrator für Korrekturen.
-              </p>
             </div>
           )}
 

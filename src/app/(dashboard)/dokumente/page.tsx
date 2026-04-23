@@ -115,15 +115,15 @@ export default function DokumentePage() {
 
       {/* Filter */}
       <div className="flex flex-wrap gap-3 mb-4">
-        <select value={filterTyp} onChange={(e) => setFilterTyp(e.target.value)} className="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }}>
+        <select value={filterTyp} onChange={(e) => setFilterTyp(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }}>
           <option value="">Alle Typen</option>
           {Object.keys(typLabel).map((t) => <option key={t} value={t}>{typLabel[t]}</option>)}
         </select>
-        <select value={filterAuftrag} onChange={(e) => setFilterAuftrag(e.target.value)} className="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }}>
+        <select value={filterAuftrag} onChange={(e) => setFilterAuftrag(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }}>
           <option value="">Alle Aufträge</option>
           {auftraege.map((a) => <option key={a.id} value={a.id}>{a.titel}</option>)}
         </select>
-        <select value={filterSaison} onChange={(e) => setFilterSaison(e.target.value)} className="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }}>
+        <select value={filterSaison} onChange={(e) => setFilterSaison(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }}>
           <option value="">Alle Saisons</option>
           {saisons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select>

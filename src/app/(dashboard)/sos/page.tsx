@@ -21,10 +21,10 @@ export default async function SOSPage() {
   
   if (!allowedRoles.includes(userRole)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Zugriff verweigert</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl font-bold text-[var(--color-on-surface)] mb-2">Zugriff verweigert</h1>
+          <p className="text-[var(--color-on-surface-variant)]">
             Nur Administratoren und Gruppenführer können auf die SOS-Koordination zugreifen.
           </p>
         </div>

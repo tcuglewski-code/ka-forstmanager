@@ -231,7 +231,7 @@ export default function SOSKoordinatorDashboard() {
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-[var(--color-on-surface)]">
             SOS-Koordination
           </h1>
           <div className="flex items-center gap-2 text-sm text-gray-500">
@@ -318,7 +318,7 @@ export default function SOSKoordinatorDashboard() {
           <div className="mt-6 bg-white rounded-xl shadow-lg p-6">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <h2 className="text-xl font-bold text-[var(--color-on-surface)] flex items-center gap-2">
                   <AlertTriangle className={`w-6 h-6 ${selectedEvent.status === "resolved" ? "text-green-500" : "text-red-500"}`} />
                   SOS von {selectedEvent.mitarbeiterName}
                 </h2>
