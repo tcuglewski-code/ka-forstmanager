@@ -199,7 +199,7 @@ export default function TelegramEinstellungenPage() {
 
           <div className="flex gap-2 mb-3">
             <select
-              className="flex-1 max-w-md bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+              className="flex-1 max-w-md bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
               value={selectedAuftragId}
               onChange={(e) => setSelectedAuftragId(e.target.value)}
             >
@@ -334,7 +334,7 @@ export default function TelegramEinstellungenPage() {
           <li><strong className="text-white">Deep-Link generieren:</strong> Wählen Sie oben einen Auftrag aus und kopieren Sie den Link.</li>
           <li><strong className="text-white">Link an Kunden senden:</strong> Per E-Mail, SMS oder auf der Rechnung.</li>
           <li><strong className="text-white">Kunde klickt den Link:</strong> Der Telegram-Bot wird geöffnet und der Kunde automatisch registriert.</li>
-          <li><strong className="text-white">Alternativ:</strong> Kunde kann auch direkt <code className="bg-[var(--color-surface-container-low)] px-1 rounded text-zinc-300">/anmelden AU-2025-0001</code> im Bot eingeben.</li>
+          <li><strong className="text-[var(--color-on-surface)]">Alternativ:</strong> Kunde kann auch direkt <code className="bg-[var(--color-surface-container-low)] px-1 rounded text-zinc-300">/anmelden AU-2025-0001</code> im Bot eingeben.</li>
           <li><strong className="text-white">Automatische Updates:</strong> Bei Statusänderungen erhält der Kunde eine Telegram-Nachricht.</li>
         </ol>
 

@@ -89,13 +89,13 @@ export default function AbnahmenPage() {
 
       {/* Filter */}
       <div className="flex flex-wrap gap-3 mb-4">
-        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
           <option value="">Alle Status</option>
           <option value="offen">Offen</option>
           <option value="bestanden">Bestanden</option>
           <option value="nicht_bestanden">Nicht bestanden</option>
         </select>
-        <select value={filterAuftrag} onChange={(e) => setFilterAuftrag(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+        <select value={filterAuftrag} onChange={(e) => setFilterAuftrag(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
           <option value="">Alle Aufträge</option>
           {auftraege.map((a) => <option key={a.id} value={a.id}>{a.titel}</option>)}
         </select>
@@ -163,7 +163,7 @@ export default function AbnahmenPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Auftrag</label>
-                <select value={form.auftragId} onChange={(e) => setForm({ ...form, auftragId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+                <select value={form.auftragId} onChange={(e) => setForm({ ...form, auftragId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
                   <option value="">— auswählen —</option>
                   {auftraege.map((a) => <option key={a.id} value={a.id}>{a.titel}</option>)}
                 </select>
@@ -171,11 +171,11 @@ export default function AbnahmenPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Datum</label>
-                  <input type="date" value={form.datum} onChange={(e) => setForm({ ...form, datum: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                  <input type="date" value={form.datum} onChange={(e) => setForm({ ...form, datum: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
                 </div>
                 <div>
                   <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Status</label>
-                  <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+                  <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
                     <option value="offen">Offen</option>
                     <option value="bestanden">Bestanden</option>
                     <option value="nicht_bestanden">Nicht bestanden</option>
@@ -184,11 +184,11 @@ export default function AbnahmenPage() {
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Förster Name</label>
-                <input value={form.foersterId} onChange={(e) => setForm({ ...form, foersterId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                <input value={form.foersterId} onChange={(e) => setForm({ ...form, foersterId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Notizen</label>
-                <textarea value={form.notizen} onChange={(e) => setForm({ ...form, notizen: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" rows={3} />
+                <textarea value={form.notizen} onChange={(e) => setForm({ ...form, notizen: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" rows={3} />
               </div>
             </div>
             <div className="flex gap-3 mt-6">

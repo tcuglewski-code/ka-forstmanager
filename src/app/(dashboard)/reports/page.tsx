@@ -144,7 +144,7 @@ export default function ReportsPage() {
       {activeReport === "saison" && (
         <div className="space-y-4">
           <div className="flex gap-3">
-            <select value={selectedSaison} onChange={(e) => setSelectedSaison(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white flex-1">
+            <select value={selectedSaison} onChange={(e) => setSelectedSaison(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] flex-1">
               <option value="">— Saison auswählen —</option>
               {saisons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
             </select>
@@ -211,10 +211,10 @@ export default function ReportsPage() {
       {activeReport === "mitarbeiter" && (
         <div className="space-y-4">
           <div className="flex gap-3 flex-wrap">
-            <select value={monat} onChange={(e) => setMonat(Number(e.target.value))} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+            <select value={monat} onChange={(e) => setMonat(Number(e.target.value))} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
               {monate.map((m, i) => <option key={i + 1} value={i + 1}>{m}</option>)}
             </select>
-            <select value={jahr} onChange={(e) => setJahr(Number(e.target.value))} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+            <select value={jahr} onChange={(e) => setJahr(Number(e.target.value))} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
               {[2024, 2025, 2026, 2027].map((y) => <option key={y} value={y}>{y}</option>)}
             </select>
             <button onClick={loadMaReport} disabled={maLoading} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-medium disabled:opacity-50">

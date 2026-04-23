@@ -122,7 +122,7 @@ export default function VorschuessePage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Mitarbeiter</label>
-                <select value={form.mitarbeiterId} onChange={(e) => setForm({ ...form, mitarbeiterId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+                <select value={form.mitarbeiterId} onChange={(e) => setForm({ ...form, mitarbeiterId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
                   <option value="">— auswählen —</option>
                   {mitarbeiter.map((m) => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
                 </select>
@@ -130,16 +130,16 @@ export default function VorschuessePage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Betrag (€)</label>
-                  <input type="number" step="0.01" value={form.betrag} onChange={(e) => setForm({ ...form, betrag: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                  <input type="number" step="0.01" value={form.betrag} onChange={(e) => setForm({ ...form, betrag: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
                 </div>
                 <div>
                   <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Datum</label>
-                  <input type="date" value={form.datum} onChange={(e) => setForm({ ...form, datum: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                  <input type="date" value={form.datum} onChange={(e) => setForm({ ...form, datum: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
                 </div>
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Grund</label>
-                <input value={form.grund} onChange={(e) => setForm({ ...form, grund: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                <input value={form.grund} onChange={(e) => setForm({ ...form, grund: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
               </div>
             </div>
             <div className="flex gap-3 mt-6">

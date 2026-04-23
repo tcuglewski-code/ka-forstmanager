@@ -314,7 +314,7 @@ export default function PreislisteClient({ lieferant }: Props) {
                       })
                     }
                   }}
-                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded px-2 py-1 text-xs text-white"
+                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded px-2 py-1 text-xs text-[var(--color-on-surface)]"
                 >
                   <option value="">-- ignorieren --</option>
                   <option value="name">Artikelname</option>
@@ -374,7 +374,7 @@ export default function PreislisteClient({ lieferant }: Props) {
                 value={neuerArtikel.name}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, name: e.target.value }))}
                 placeholder="z.B. Eiche Traubeneiche 1+1"
-                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
               />
             </div>
             <div>
@@ -384,7 +384,7 @@ export default function PreislisteClient({ lieferant }: Props) {
                 value={neuerArtikel.baumartName}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, baumartName: e.target.value }))}
                 placeholder="z.B. Quercus petraea"
-                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
               />
             </div>
             <div>
@@ -392,7 +392,7 @@ export default function PreislisteClient({ lieferant }: Props) {
               <select
                 value={neuerArtikel.einheit}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, einheit: e.target.value }))}
-                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
               >
                 <option value="Stück">Stück</option>
                 <option value="kg">kg</option>
@@ -407,7 +407,7 @@ export default function PreislisteClient({ lieferant }: Props) {
                 value={neuerArtikel.preis}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, preis: e.target.value }))}
                 placeholder="0,00"
-                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
               />
             </div>
             <div>
@@ -415,7 +415,7 @@ export default function PreislisteClient({ lieferant }: Props) {
               <select
                 value={neuerArtikel.verfuegbarkeit}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, verfuegbarkeit: e.target.value as "vorhanden" | "ausverkauft" | "auf_anfrage" }))}
-                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
               >
                 <option value="vorhanden">Vorhanden</option>
                 <option value="ausverkauft">Ausverkauft</option>
@@ -428,7 +428,7 @@ export default function PreislisteClient({ lieferant }: Props) {
                 type="date"
                 value={neuerArtikel.gueltigBis}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, gueltigBis: e.target.value }))}
-                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
               />
             </div>
           </div>

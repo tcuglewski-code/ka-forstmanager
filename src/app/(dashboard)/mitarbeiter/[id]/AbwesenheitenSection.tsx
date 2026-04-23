@@ -128,7 +128,7 @@ export function AbwesenheitenSection({ mitarbeiterId, initialAbwesenheiten }: Pr
                 <select
                   value={form.typ}
                   onChange={(e) => setForm({ ...form, typ: e.target.value })}
-                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
                 >
                   <option value="urlaub">Urlaub</option>
                   <option value="krank">Krankheit</option>
@@ -145,7 +145,7 @@ export function AbwesenheitenSection({ mitarbeiterId, initialAbwesenheiten }: Pr
                     type="date"
                     value={form.von}
                     onChange={(e) => setForm({ ...form, von: e.target.value })}
-                    className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                    className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
                   />
                 </div>
                 <div>
@@ -154,7 +154,7 @@ export function AbwesenheitenSection({ mitarbeiterId, initialAbwesenheiten }: Pr
                     type="date"
                     value={form.bis}
                     onChange={(e) => setForm({ ...form, bis: e.target.value })}
-                    className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                    className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
                   />
                 </div>
               </div>
@@ -164,7 +164,7 @@ export function AbwesenheitenSection({ mitarbeiterId, initialAbwesenheiten }: Pr
                   value={form.notiz}
                   onChange={(e) => setForm({ ...form, notiz: e.target.value })}
                   placeholder="z.B. Arbeitsunfähigkeitsbescheinigung eingereicht"
-                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
                 />
               </div>
             </div>

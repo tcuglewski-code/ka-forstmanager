@@ -472,7 +472,7 @@ export default function ProfilPage() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
             />
           </div>
 
@@ -503,7 +503,7 @@ export default function ProfilPage() {
                 value={telefon}
                 onChange={(e) => setTelefon(e.target.value)}
                 placeholder="+49 123 456789"
-                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
@@ -513,7 +513,7 @@ export default function ProfilPage() {
                 value={mobil}
                 onChange={(e) => setMobil(e.target.value)}
                 placeholder="+49 170 1234567"
-                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div className="md:col-span-2">
@@ -523,7 +523,7 @@ export default function ProfilPage() {
                 value={adresse}
                 onChange={(e) => setAdresse(e.target.value)}
                 placeholder="Straße und Hausnummer"
-                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
@@ -534,7 +534,7 @@ export default function ProfilPage() {
                 onChange={(e) => setPlz(e.target.value)}
                 placeholder="12345"
                 maxLength={5}
-                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
@@ -544,7 +544,7 @@ export default function ProfilPage() {
                 value={ort}
                 onChange={(e) => setOrt(e.target.value)}
                 placeholder="Musterstadt"
-                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
               />
             </div>
           </div>
@@ -570,7 +570,7 @@ export default function ProfilPage() {
                 value={notfallName}
                 onChange={(e) => setNotfallName(e.target.value)}
                 placeholder="Max Mustermann"
-                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
@@ -580,7 +580,7 @@ export default function ProfilPage() {
                 value={notfallTelefon}
                 onChange={(e) => setNotfallTelefon(e.target.value)}
                 placeholder="+49 170 1234567"
-                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
@@ -588,7 +588,7 @@ export default function ProfilPage() {
               <select
                 value={notfallBeziehung}
                 onChange={(e) => setNotfallBeziehung(e.target.value)}
-                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
               >
                 <option value="">Bitte wählen</option>
                 <option value="partner">Partner/in</option>
@@ -745,7 +745,7 @@ export default function ProfilPage() {
                   type={showOldPassword ? "text" : "password"}
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
-                  className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none pr-10"
+                  className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none pr-10"
                 />
                 <button
                   type="button"
@@ -763,7 +763,7 @@ export default function ProfilPage() {
                   type={showNewPassword ? "text" : "password"}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none pr-10"
+                  className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none pr-10"
                 />
                 <button
                   type="button"
@@ -780,7 +780,7 @@ export default function ProfilPage() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div className="flex gap-2">

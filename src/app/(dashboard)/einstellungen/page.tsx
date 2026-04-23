@@ -240,7 +240,7 @@ export default function EinstellungenPage() {
                 <input
                   value={config.firma_name ?? ""}
                   onChange={(e) => setConfig(prev => ({ ...prev, firma_name: e.target.value }))}
-                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
                 />
               </div>
               <div>
@@ -249,7 +249,7 @@ export default function EinstellungenPage() {
                   value={config.firma_adresse ?? ""}
                   onChange={(e) => setConfig(prev => ({ ...prev, firma_adresse: e.target.value }))}
                   placeholder="Straße, PLZ Ort"
-                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
                 />
               </div>
               <div>
@@ -258,7 +258,7 @@ export default function EinstellungenPage() {
                   type="email"
                   value={config.firma_email ?? ""}
                   onChange={(e) => setConfig(prev => ({ ...prev, firma_email: e.target.value }))}
-                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
                 />
               </div>
               <div>
@@ -273,7 +273,7 @@ export default function EinstellungenPage() {
                   <input
                     value={config.firma_farbe ?? "#2C3A1C"}
                     onChange={(e) => setConfig(prev => ({ ...prev, firma_farbe: e.target.value }))}
-                    className="flex-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white font-mono"
+                    className="flex-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] font-mono"
                   />
                 </div>
               </div>
@@ -290,7 +290,7 @@ export default function EinstellungenPage() {
                       min="0"
                       value={config.preis_pro_ha ?? "1800"}
                       onChange={(e) => setConfig(prev => ({ ...prev, preis_pro_ha: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-[var(--color-on-surface)]"
                     />
                   </div>
                   <div>
@@ -301,7 +301,7 @@ export default function EinstellungenPage() {
                       min="0"
                       value={config.standard_stundenlohn ?? "12"}
                       onChange={(e) => setConfig(prev => ({ ...prev, standard_stundenlohn: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-[var(--color-on-surface)]"
                     />
                   </div>
                   <div>
@@ -312,7 +312,7 @@ export default function EinstellungenPage() {
                       min="0"
                       value={config.vollkosten_pro_stunde ?? "43.50"}
                       onChange={(e) => setConfig(prev => ({ ...prev, vollkosten_pro_stunde: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-[var(--color-on-surface)]"
                     />
                   </div>
                   {/* Sprint FQ (B2): Preis pro Baum + MwSt */}
@@ -324,7 +324,7 @@ export default function EinstellungenPage() {
                       min="0"
                       value={config.preis_pro_baum_default ?? "2.50"}
                       onChange={(e) => setConfig(prev => ({ ...prev, preis_pro_baum_default: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-[var(--color-on-surface)]"
                     />
                   </div>
                   <div>
@@ -336,7 +336,7 @@ export default function EinstellungenPage() {
                       max="100"
                       value={config.mwst_satz ?? "19"}
                       onChange={(e) => setConfig(prev => ({ ...prev, mwst_satz: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-[var(--color-on-surface)]"
                     />
                   </div>
                   <div>
@@ -347,7 +347,7 @@ export default function EinstellungenPage() {
                       min="0"
                       value={config.maschinenzuschlag_kunde ?? "6.00"}
                       onChange={(e) => setConfig(prev => ({ ...prev, maschinenzuschlag_kunde: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-[var(--color-on-surface)]"
                     />
                   </div>
                   <div>
@@ -358,7 +358,7 @@ export default function EinstellungenPage() {
                       min="0"
                       value={config.maschinenbonus_mitarbeiter ?? "1.00"}
                       onChange={(e) => setConfig(prev => ({ ...prev, maschinenbonus_mitarbeiter: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-[var(--color-on-surface)]"
                     />
                   </div>
                 </div>
@@ -376,7 +376,7 @@ export default function EinstellungenPage() {
                       value={config.notfall_buero_name ?? "Koch Aufforstung GmbH"}
                       onChange={(e) => setConfig(prev => ({ ...prev, notfall_buero_name: e.target.value }))}
                       placeholder="z.B. Koch Aufforstung GmbH"
-                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-[var(--color-on-surface)]"
                     />
                   </div>
                   <div>
@@ -386,7 +386,7 @@ export default function EinstellungenPage() {
                       value={config.notfall_buero_telefon ?? ""}
                       onChange={(e) => setConfig(prev => ({ ...prev, notfall_buero_telefon: e.target.value }))}
                       placeholder="+49 6052 ..."
-                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-[var(--color-on-surface)]"
                     />
                   </div>
                   <div>
@@ -395,7 +395,7 @@ export default function EinstellungenPage() {
                       value={config.notfall_hotline_name ?? ""}
                       onChange={(e) => setConfig(prev => ({ ...prev, notfall_hotline_name: e.target.value }))}
                       placeholder="z.B. Tomek Cuglewski (GF)"
-                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-[var(--color-on-surface)]"
                     />
                   </div>
                   <div>
@@ -405,7 +405,7 @@ export default function EinstellungenPage() {
                       value={config.notfall_hotline_telefon ?? ""}
                       onChange={(e) => setConfig(prev => ({ ...prev, notfall_hotline_telefon: e.target.value }))}
                       placeholder="+49 171 ..."
-                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white"
+                      className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-[var(--color-on-surface)]"
                     />
                   </div>
                 </div>
@@ -512,19 +512,19 @@ export default function EinstellungenPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Name</label>
-                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">E-Mail</label>
-                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Passwort</label>
-                <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Rolle</label>
-                <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+                <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
                   <option value="admin">Admin</option>
                   <option value="buero">Büro</option>
                   <option value="gf_senior">🏅 Senior-Gruppenführer</option>
@@ -552,20 +552,20 @@ export default function EinstellungenPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Name</label>
-                <input value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                <input value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">E-Mail</label>
-                <input type="email" value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                <input type="email" value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Neues Passwort (leer = unverändert)</label>
-                <input type="password" value={editForm.password} onChange={(e) => setEditForm({ ...editForm, password: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                <input type="password" value={editForm.password} onChange={(e) => setEditForm({ ...editForm, password: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Rolle</label>
-                  <select value={editForm.role} onChange={(e) => setEditForm({ ...editForm, role: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+                  <select value={editForm.role} onChange={(e) => setEditForm({ ...editForm, role: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
                     <option value="admin">Admin</option>
                     <option value="buero">Büro</option>
                     <option value="gf_senior">🏅 Senior-Gruppenführer</option>
@@ -576,7 +576,7 @@ export default function EinstellungenPage() {
                 </div>
                 <div>
                   <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Status</label>
-                  <select value={editForm.active ? "aktiv" : "inaktiv"} onChange={(e) => setEditForm({ ...editForm, active: e.target.value === "aktiv" })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+                  <select value={editForm.active ? "aktiv" : "inaktiv"} onChange={(e) => setEditForm({ ...editForm, active: e.target.value === "aktiv" })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
                     <option value="aktiv">Aktiv</option>
                     <option value="inaktiv">Inaktiv</option>
                   </select>

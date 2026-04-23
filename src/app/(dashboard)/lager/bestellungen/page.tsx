@@ -152,7 +152,7 @@ function NeueBestellungModal({
             <select
               value={selectedLieferant}
               onChange={e => setSelectedLieferant(e.target.value)}
-              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-gold"
             >
               <option value="">Lieferant wählen...</option>
               {lieferanten.map(l => (
@@ -189,7 +189,7 @@ function NeueBestellungModal({
                         updated[idx].menge = parseInt(e.target.value) || 1
                         setPositionen(updated)
                       }}
-                      className="w-20 bg-[var(--color-surface-container-low)] border border-border rounded px-2 py-1 text-sm text-white text-right"
+                      className="w-20 bg-[var(--color-surface-container-low)] border border-border rounded px-2 py-1 text-sm text-[var(--color-on-surface)] text-right"
                     />
                     <span className="text-[var(--color-on-surface-variant)] text-xs">{artikel?.einheit}</span>
                     <span className="text-white text-sm">
@@ -213,7 +213,7 @@ function NeueBestellungModal({
               value={notizen}
               onChange={e => setNotizen(e.target.value)}
               rows={2}
-              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-gold"
               placeholder="Optionale Notizen..."
             />
           </div>

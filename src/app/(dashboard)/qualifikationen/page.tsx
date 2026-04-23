@@ -253,11 +253,11 @@ export default function QualifikationenPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Name</label>
-                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" placeholder="z.B. Motorsäge Klasse B" />
+                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" placeholder="z.B. Motorsäge Klasse B" />
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Typ</label>
-                <select value={form.typ} onChange={(e) => setForm({ ...form, typ: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+                <select value={form.typ} onChange={(e) => setForm({ ...form, typ: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
                   <option value="fuehrerschein">Führerschein</option>
                   <option value="sicherheit">Sicherheit</option>
                   <option value="zertifikat">Zertifikat</option>
@@ -266,7 +266,7 @@ export default function QualifikationenPage() {
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Beschreibung</label>
-                <textarea value={form.beschreibung} onChange={(e) => setForm({ ...form, beschreibung: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" rows={2} />
+                <textarea value={form.beschreibung} onChange={(e) => setForm({ ...form, beschreibung: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" rows={2} />
               </div>
             </div>
             <div className="flex gap-3 mt-6">
@@ -287,25 +287,25 @@ export default function QualifikationenPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Mitarbeiter</label>
-                <select value={assignForm.mitarbeiterId} onChange={(e) => setAssignForm({ ...assignForm, mitarbeiterId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+                <select value={assignForm.mitarbeiterId} onChange={(e) => setAssignForm({ ...assignForm, mitarbeiterId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
                   <option value="">— auswählen —</option>
                   {mitarbeiter.map((m) => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Qualifikation</label>
-                <select value={assignForm.qualifikationId} onChange={(e) => setAssignForm({ ...assignForm, qualifikationId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+                <select value={assignForm.qualifikationId} onChange={(e) => setAssignForm({ ...assignForm, qualifikationId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
                   <option value="">— auswählen —</option>
                   {qualifikationen.map((q) => <option key={q.id} value={q.id}>{q.name}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Erworben am</label>
-                <input type="date" value={assignForm.erworbenAm} onChange={(e) => setAssignForm({ ...assignForm, erworbenAm: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                <input type="date" value={assignForm.erworbenAm} onChange={(e) => setAssignForm({ ...assignForm, erworbenAm: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Ablaufdatum</label>
-                <input type="date" value={assignForm.ablaufDatum} onChange={(e) => setAssignForm({ ...assignForm, ablaufDatum: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                <input type="date" value={assignForm.ablaufDatum} onChange={(e) => setAssignForm({ ...assignForm, ablaufDatum: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
               </div>
             </div>
             <div className="flex gap-3 mt-6">

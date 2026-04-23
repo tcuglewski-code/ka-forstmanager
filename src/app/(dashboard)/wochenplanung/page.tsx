@@ -333,19 +333,19 @@ export default function WochenplanungPage() {
                     <div className="grid grid-cols-3 gap-3">
                       <div>
                         <label className="text-xs text-[var(--color-on-surface-variant)]">Datum</label>
-                        <input type="date" name="datum" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                        <input type="date" name="datum" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)]" />
                       </div>
                       <div>
                         <label className="text-xs text-[var(--color-on-surface-variant)]">Fläche / Waldstück</label>
-                        <input type="text" name="flaeche" placeholder="z.B. Forstort Eichwald" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                        <input type="text" name="flaeche" placeholder="z.B. Forstort Eichwald" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)]" />
                       </div>
                       <div>
                         <label className="text-xs text-[var(--color-on-surface-variant)]">Treffpunkt</label>
-                        <input type="text" name="treffpunkt" placeholder="z.B. Parkplatz B27" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                        <input type="text" name="treffpunkt" placeholder="z.B. Parkplatz B27" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)]" />
                       </div>
                       <div>
                         <label className="text-xs text-[var(--color-on-surface-variant)]">GPS-Position</label>
-                        <input type="text" name="gpsPosition" placeholder="51.1657, 10.4515" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                        <input type="text" name="gpsPosition" placeholder="51.1657, 10.4515" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)]" />
                       </div>
 
                       {/* Pflanzung-spezifische Felder */}
@@ -353,14 +353,14 @@ export default function WochenplanungPage() {
                         <>
                           <div>
                             <label className="text-xs text-[var(--color-on-surface-variant)]">Baumart</label>
-                            <select name="baumart" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white">
+                            <select name="baumart" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)]">
                               <option value="">Wählen...</option>
                               {BAUMARTEN.map((b) => <option key={b} value={b}>{b}</option>)}
                             </select>
                           </div>
                           <div>
                             <label className="text-xs text-[var(--color-on-surface-variant)]">Stückzahl</label>
-                            <input type="number" name="stueckzahl" min="0" placeholder="z.B. 5000" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                            <input type="number" name="stueckzahl" min="0" placeholder="z.B. 5000" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)]" />
                           </div>
                         </>
                       )}
@@ -370,25 +370,25 @@ export default function WochenplanungPage() {
                         <>
                           <div>
                             <label className="text-xs text-[var(--color-on-surface-variant)]">Baumart</label>
-                            <select name="baumart" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white">
+                            <select name="baumart" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)]">
                               <option value="">Wählen...</option>
                               {BAUMARTEN.map((b) => <option key={b} value={b}>{b}</option>)}
                             </select>
                           </div>
                           <div>
                             <label className="text-xs text-[var(--color-on-surface-variant)]">Herkunftscode</label>
-                            <input type="text" name="herkunftscode" placeholder="z.B. 06 NRW-818-07" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                            <input type="text" name="herkunftscode" placeholder="z.B. 06 NRW-818-07" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)]" />
                           </div>
                           <div>
                             <label className="text-xs text-[var(--color-on-surface-variant)]">Ziel (kg)</label>
-                            <input type="number" name="zielkg" min="0" step="0.1" placeholder="z.B. 50" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                            <input type="number" name="zielkg" min="0" step="0.1" placeholder="z.B. 50" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)]" />
                           </div>
                         </>
                       )}
 
                       <div className="col-span-3">
                         <label className="text-xs text-[var(--color-on-surface-variant)]">Notizen</label>
-                        <input type="text" name="notizen" placeholder="Besonderheiten, Hinweise..." className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                        <input type="text" name="notizen" placeholder="Besonderheiten, Hinweise..." className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)]" />
                       </div>
                     </div>
                     <div className="flex gap-2 justify-end">

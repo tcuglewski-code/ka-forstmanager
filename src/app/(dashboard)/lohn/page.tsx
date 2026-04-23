@@ -429,14 +429,14 @@ function VorschussModal({ mitarbeiter, onClose, onSave }: {
               <input type="number" step="1" min="0" placeholder="0"
                 value={form.individualBonus}
                 onChange={(e) => setForm(prev => ({ ...prev, individualBonus: e.target.value }))}
-                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500" />
             </div>
             <div className="mt-3">
               <label className="text-xs text-[var(--color-on-surface-variant)] mb-1 block">Grund des Bonus</label>
               <input type="text" placeholder="z.B. Schichtleitung, Erschwernis..."
                 value={form.individualBonusGrund}
                 onChange={(e) => setForm(prev => ({ ...prev, individualBonusGrund: e.target.value }))}
-                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           <div className="flex gap-3 pt-2">

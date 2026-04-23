@@ -123,7 +123,7 @@ export default function GruppeDetailPage() {
             <select
               value={selectedMitarbeiterId}
               onChange={e => setSelectedMitarbeiterId(e.target.value)}
-              className="flex-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="flex-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
             >
               <option value="">— Mitarbeiter wählen —</option>
               {verfuegbareMitarbeiter.map(m => (

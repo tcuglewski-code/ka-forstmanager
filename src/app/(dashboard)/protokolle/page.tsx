@@ -175,7 +175,7 @@ export default function ProtokolleSeite() {
         <select
           value={filterAuftrag}
           onChange={(e) => setFilterAuftrag(e.target.value)}
-          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
         >
           <option value="">Alle Aufträge</option>
           {auftraege.map((a) => (
@@ -187,7 +187,7 @@ export default function ProtokolleSeite() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
         >
           <option value="">Alle Status</option>
           <option value="entwurf">Entwurf</option>
@@ -364,7 +364,7 @@ export default function ProtokolleSeite() {
                   const a = auftraege.find((x) => x.id === e.target.value) ?? null
                   setSelectedAuftrag(a)
                 }}
-                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white mb-2"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] mb-2"
               >
                 {auftraege.map((a) => (
                   <option key={a.id} value={a.id}>

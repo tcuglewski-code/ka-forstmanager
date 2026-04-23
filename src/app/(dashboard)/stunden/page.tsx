@@ -251,21 +251,21 @@ export default function StundenPage() {
         <>
           {/* Filter */}
           <div className="flex flex-wrap gap-3 mb-4">
-            <select value={filterMitarbeiter} onChange={(e) => setFilterMitarbeiter(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+            <select value={filterMitarbeiter} onChange={(e) => setFilterMitarbeiter(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
               <option value="">Alle Mitarbeiter</option>
               {mitarbeiter.map((m) => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
             </select>
-            <select value={filterMonat} onChange={(e) => setFilterMonat(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+            <select value={filterMonat} onChange={(e) => setFilterMonat(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
               <option value="">Alle Monate</option>
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                 <option key={m} value={m}>{new Date(2024, m - 1).toLocaleString("de-DE", { month: "long" })}</option>
               ))}
             </select>
-            <select value={filterJahr} onChange={(e) => setFilterJahr(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+            <select value={filterJahr} onChange={(e) => setFilterJahr(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
               <option value="">Alle Jahre</option>
               {jahre.map((y) => <option key={y} value={y}>{y}</option>)}
             </select>
-            <select value={filterGenehmigt} onChange={(e) => setFilterGenehmigt(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+            <select value={filterGenehmigt} onChange={(e) => setFilterGenehmigt(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
               <option value="">Alle Status</option>
               <option value="true">Genehmigt</option>
               <option value="false">Ausstehend</option>
@@ -425,7 +425,7 @@ export default function StundenPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Mitarbeiter *</label>
-                <select value={stundenForm.mitarbeiterId} onChange={(e) => setStundenForm({ ...stundenForm, mitarbeiterId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+                <select value={stundenForm.mitarbeiterId} onChange={(e) => setStundenForm({ ...stundenForm, mitarbeiterId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
                   <option value="">— auswählen —</option>
                   {mitarbeiter.map((m) => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
                 </select>
@@ -433,11 +433,11 @@ export default function StundenPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Datum *</label>
-                  <input type="date" value={stundenForm.datum} onChange={(e) => setStundenForm({ ...stundenForm, datum: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                  <input type="date" value={stundenForm.datum} onChange={(e) => setStundenForm({ ...stundenForm, datum: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
                 </div>
                 <div>
                   <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Stunden *</label>
-                  <input type="number" step="0.5" min="0.5" max="24" value={stundenForm.stunden} onChange={(e) => setStundenForm({ ...stundenForm, stunden: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                  <input type="number" step="0.5" min="0.5" max="24" value={stundenForm.stunden} onChange={(e) => setStundenForm({ ...stundenForm, stunden: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
                 </div>
               </div>
               <div>
@@ -445,7 +445,7 @@ export default function StundenPage() {
                 <select
                   value={stundenForm.typ}
                   onChange={(e) => handleTypChange(e.target.value)}
-                  className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white"
+                  className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-[var(--color-on-surface)]"
                 >
                   <option value="arbeit">Allgemeine Arbeit</option>
                   <option value="pflanzung">Pflanzung</option>
@@ -465,7 +465,7 @@ export default function StundenPage() {
                     step="0.5"
                     value={stundenForm.maschinenzuschlag}
                     onChange={(e) => setStundenForm({ ...stundenForm, maschinenzuschlag: e.target.value })}
-                    className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                    className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
                     placeholder="1.00"
                   />
                 </div>
@@ -475,7 +475,7 @@ export default function StundenPage() {
                 <select
                   value={stundenForm.auftragId}
                   onChange={(e) => setStundenForm({ ...stundenForm, auftragId: e.target.value })}
-                  className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white"
+                  className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-[var(--color-on-surface)]"
                 >
                   <option value="">Kein Auftrag</option>
                   {auftraege.map((a) => <option key={a.id} value={a.id}>{a.titel}</option>)}
@@ -483,7 +483,7 @@ export default function StundenPage() {
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Notiz</label>
-                <input value={stundenForm.notiz} onChange={(e) => setStundenForm({ ...stundenForm, notiz: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                <input value={stundenForm.notiz} onChange={(e) => setStundenForm({ ...stundenForm, notiz: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
               </div>
             </div>
             <div className="flex gap-3 mt-6">
@@ -504,7 +504,7 @@ export default function StundenPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Mitarbeiter</label>
-                <select value={abwForm.mitarbeiterId} onChange={(e) => setAbwForm({ ...abwForm, mitarbeiterId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+                <select value={abwForm.mitarbeiterId} onChange={(e) => setAbwForm({ ...abwForm, mitarbeiterId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
                   <option value="">— auswählen —</option>
                   {mitarbeiter.map((m) => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
                 </select>
@@ -512,16 +512,16 @@ export default function StundenPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Von</label>
-                  <input type="date" value={abwForm.von} onChange={(e) => setAbwForm({ ...abwForm, von: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                  <input type="date" value={abwForm.von} onChange={(e) => setAbwForm({ ...abwForm, von: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
                 </div>
                 <div>
                   <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Bis</label>
-                  <input type="date" value={abwForm.bis} onChange={(e) => setAbwForm({ ...abwForm, bis: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                  <input type="date" value={abwForm.bis} onChange={(e) => setAbwForm({ ...abwForm, bis: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
                 </div>
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Typ</label>
-                <select value={abwForm.typ} onChange={(e) => setAbwForm({ ...abwForm, typ: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
+                <select value={abwForm.typ} onChange={(e) => setAbwForm({ ...abwForm, typ: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
                   <option value="urlaub">Urlaub</option>
                   <option value="krank">Krankheit</option>
                   <option value="schlechtwetter">Schlechtwetter</option>
@@ -532,7 +532,7 @@ export default function StundenPage() {
               </div>
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Notiz</label>
-                <input value={abwForm.notiz} onChange={(e) => setAbwForm({ ...abwForm, notiz: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
+                <input value={abwForm.notiz} onChange={(e) => setAbwForm({ ...abwForm, notiz: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]" />
               </div>
             </div>
             <div className="flex gap-3 mt-6">
