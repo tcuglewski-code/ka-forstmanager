@@ -582,7 +582,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
 
         <div className="ml-auto flex items-center gap-2">
           {onCancel && (
-            <button type="button" onClick={onCancel} disabled={saving} className="text-xs text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface-variant)] px-3 py-2">
+            <button type="button" onClick={onCancel} disabled={saving} className="text-xs text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] px-3 py-2">
               Abbrechen
             </button>
           )}

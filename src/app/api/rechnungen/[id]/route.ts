@@ -317,6 +317,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (body.status !== undefined && body.status !== aktuelleRechnung.status) {
     // FM-22: Status-Workflow validieren
     const validTransitions: Record<string, string[]> = {
+      'entwurf': ['offen', 'storniert'],
       'offen': ['bezahlt', 'storniert', 'freigegeben', 'ueberfaellig'],
       'freigegeben': ['bezahlt', 'storniert', 'ueberfaellig'],
       'ueberfaellig': ['bezahlt', 'storniert'],
