@@ -9,11 +9,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   try {
     const { id } = await params
     const body = await req.json()
+    const { typ, bezeichnung, seriennummer, status, naechsteWartung, notizen } = body
     const geraet = await prisma.geraet.update({
       where: { id },
       data: {
-        ...body,
-        naechsteWartung: body.naechsteWartung ? new Date(body.naechsteWartung) : undefined,
+        typ,
+        bezeichnung,
+        seriennummer,
+        status,
+        notizen,
+        naechsteWartung: naechsteWartung ? new Date(naechsteWartung) : undefined,
       },
     })
     return NextResponse.json(geraet)

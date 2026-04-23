@@ -149,18 +149,25 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
   }
 
   // FM-10: Pflanzrate Plausibilitätsprüfung (Warnung, nicht blockierend)
-  if (data.gepflanztGesamt && data.gepflanztGesamt > 0 && mitarbeiterAnzahl > 0) {
+  const totalPflanzen = data.gepflanztGesamt || ((data.stk_pflanzung || 0) + (data.stk_pflanzung_mit_bohrer || 0))
+  if (totalPflanzen > 0 && mitarbeiterAnzahl > 0) {
     let nettoStunden = 0
     if (data.arbeitsbeginn && data.arbeitsende) {
       const beginn = new Date(`1970-01-01T${data.arbeitsbeginn}`)
       const ende = new Date(`1970-01-01T${data.arbeitsende}`)
       let diff = (ende.getTime() - beginn.getTime()) / (1000 * 60 * 60)
       if (diff < 0) diff += 24
-      const pause = (data.pauseMinuten || 0) / 60
-      nettoStunden = diff - pause
+      nettoStunden = diff - (data.pauseMinuten || 0) / 60
+    } else if (data.zeitBeginn && data.zeitEnde) {
+      // Legacy-Feld-Fallback
+      const beginn = new Date(data.zeitBeginn)
+      const ende = new Date(data.zeitEnde)
+      let diff = (ende.getTime() - beginn.getTime()) / (1000 * 60 * 60)
+      if (diff < 0) diff += 24
+      nettoStunden = diff - (data.pausezeit || 0) / 60
     }
     if (nettoStunden > 0) {
-      const rate = data.gepflanztGesamt / (mitarbeiterAnzahl * nettoStunden)
+      const rate = totalPflanzen / (mitarbeiterAnzahl * nettoStunden)
       if (rate > 70) {
         warnings.push(`Sehr hohe Pflanzrate (${Math.round(rate)} Pfl/h/MA). Bitte prüfen.`)
       } else if (rate < 5) {
