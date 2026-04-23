@@ -168,7 +168,7 @@ export function MaterialTab({ auftragId }: MaterialTabProps) {
           </thead>
           <tbody>
             {reservierungen.map(r => (
-              <tr key={r.id} className="border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors">
+              <tr key={r.id} className="border-b border-[var(--color-outline-variant)] hover:bg-[var(--color-surface-container-high)] transition-colors">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
                     <BestandsAmpel 

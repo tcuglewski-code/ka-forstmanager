@@ -473,7 +473,7 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
             <div className="flex gap-3 mt-4">
               <button
                 onClick={() => { setShowRejectModal(false); setRejectComment("") }}
-                className="flex-1 px-4 py-2 rounded-lg text-sm text-[var(--color-on-surface-variant)] border border-border hover:bg-[#222] transition-colors"
+                className="flex-1 px-4 py-2 rounded-lg text-sm text-[var(--color-on-surface-variant)] border border-border hover:bg-[var(--color-surface-container-high)] transition-colors"
               >
                 Abbrechen
               </button>

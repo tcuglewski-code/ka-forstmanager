@@ -375,7 +375,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
                   key={f.id}
                   type="button"
                   onClick={() => foersterAuswaehlen(f)}
-                  className="w-full text-left px-3 py-2 hover:bg-[#222] transition-colors"
+                  className="w-full text-left px-3 py-2 hover:bg-[var(--color-surface-container-high)] transition-colors"
                 >
                   <p className="text-sm text-[var(--color-on-surface)]">{f.name}</p>
                   <p className="text-xs text-[var(--color-on-surface-variant)]">
@@ -458,7 +458,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
         <button
           type="button"
           onClick={() => setMaengelExpanded(p => !p)}
-          className="w-full flex items-center justify-between px-4 py-3 bg-[var(--color-surface-container-low)] hover:bg-[#141414] transition-colors"
+          className="w-full flex items-center justify-between px-4 py-3 bg-[var(--color-surface-container-low)] hover:bg-[var(--color-surface-container-high)] transition-colors"
         >
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />

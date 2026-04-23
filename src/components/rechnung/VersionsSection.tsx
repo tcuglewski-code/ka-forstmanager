@@ -221,7 +221,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
           <h3 className="text-sm text-[var(--color-on-surface-variant)] uppercase tracking-wider">
             Versionshistorie
           </h3>
-          <span className="px-2 py-0.5 bg-[#222] border border-border text-[var(--color-on-surface-variant)] text-xs rounded-full">
+          <span className="px-2 py-0.5 bg-[var(--color-surface-container)] border border-border text-[var(--color-on-surface-variant)] text-xs rounded-full">
             {data.totalVersions} Versionen
           </span>
         </div>
@@ -230,7 +230,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
           className={`flex items-center gap-1.5 px-2 py-1 text-xs rounded transition-colors ${
             showDiff 
               ? 'bg-blue-50 border border-blue-200 text-blue-700' 
-              : 'bg-[#222] border border-border text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
+              : 'bg-[var(--color-surface-container)] border border-border text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
           }`}
         >
           {showDiff ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
@@ -256,7 +256,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                 <div className={`absolute left-0 top-2 w-6 h-6 rounded-full flex items-center justify-center ${
                   index === 0 
                     ? 'bg-blue-500/20 border-2 border-blue-500' 
-                    : 'bg-[#222] border border-border'
+                    : 'bg-[var(--color-surface-container)] border border-border'
                 }`}>
                   <span className="text-xs font-medium text-[var(--color-on-surface-variant)]">
                     {version.versionNummer}
@@ -267,8 +267,8 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                 <div 
                   className={`p-4 rounded-lg transition-colors cursor-pointer ${
                     isSelected 
-                      ? 'bg-[#1f1f1f] border border-blue-500/30' 
-                      : 'bg-[var(--color-surface-container-lowest)] border border-[#252525] hover:border-border'
+                      ? 'bg-[var(--color-surface-container)] border border-blue-500/30' 
+                      : 'bg-[var(--color-surface-container-lowest)] border border-border hover:border-border'
                   }`}
                   onClick={() => setSelectedVersion(isSelected ? null : version.id)}
                 >
@@ -372,7 +372,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                           </div>
                           <div className="space-y-1">
                             {version.positionen.map((pos, i) => (
-                              <div key={i} className="flex justify-between text-sm py-1 border-b border-[#252525] last:border-0">
+                              <div key={i} className="flex justify-between text-sm py-1 border-b border-border last:border-0">
                                 <span className="text-[var(--color-on-surface-variant)]">{pos.beschreibung}</span>
                                 <span className="text-[var(--color-on-surface)]">
                                   {pos.menge} {pos.einheit} × {formatCurrency(pos.preisProEinheit)} = {formatCurrency(pos.gesamt)}
@@ -395,7 +395,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
       {data.versions.length > 3 && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-2 w-full mt-4 px-3 py-2 bg-[var(--color-surface-container-lowest)] border border-[#252525] text-[var(--color-on-surface-variant)] rounded-lg hover:bg-[#222] hover:text-[var(--color-on-surface)] transition-colors text-sm"
+          className="flex items-center gap-2 w-full mt-4 px-3 py-2 bg-[var(--color-surface-container-lowest)] border border-border text-[var(--color-on-surface-variant)] rounded-lg hover:bg-[var(--color-surface-container)] hover:text-[var(--color-on-surface)] transition-colors text-sm"
         >
           {expanded ? (
             <>

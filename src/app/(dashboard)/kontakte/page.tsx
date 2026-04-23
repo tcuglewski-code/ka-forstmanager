@@ -145,7 +145,7 @@ function KontaktModal({ kontakt, onClose, onSave }: { kontakt?: Kontakt | null; 
                 <div className="absolute z-10 top-full mt-1 w-full bg-[var(--color-surface-container-lowest)] border border-border rounded-lg max-h-32 overflow-y-auto">
                   {forstamtSuggestions.map((s, i) => (
                     <button key={i} type="button" onClick={() => { setForm(f => ({ ...f, forstamt: s.forstamt })); setShowForstamtDropdown(false) }}
-                      className="w-full text-left px-3 py-2 text-sm text-zinc-300 hover:bg-[#222] transition-colors">
+                      className="w-full text-left px-3 py-2 text-sm text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-high)] transition-colors">
                       {s.forstamt}
                     </button>
                   ))}
@@ -256,7 +256,7 @@ export default function KontaktePage() {
           />
         </div>
         <select value={filterTyp} onChange={e => setFilterTyp(e.target.value)}
-          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500">
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500">
           <option value="">Alle Typen</option>
           {TYPEN.map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
         </select>

@@ -87,7 +87,7 @@ export function KritischeBestaendeWidget({ artikel }: KritischeBestaendeWidgetPr
         {kritisch.map(a => (
           <div 
             key={a.id} 
-            className="flex items-center justify-between py-2 px-3 rounded-lg bg-[var(--color-surface-container-highest)] hover:bg-[#252525] transition-colors"
+            className="flex items-center justify-between py-2 px-3 rounded-lg bg-[var(--color-surface-container-highest)] hover:bg-[var(--color-surface-container-high)] transition-colors"
           >
             <div className="flex items-center gap-2">
               <BestandsAmpel bestand={a.bestand} mindestbestand={a.mindestbestand} />
