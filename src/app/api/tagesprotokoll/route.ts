@@ -50,12 +50,41 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
     }
   }
 
-  // Maschinenstunden: max 10h
-  if (data.stdFreischneider && data.stdFreischneider > 10) {
-    errors.push('Freischneider-Stunden dürfen 10h nicht überschreiten')
+  // Alle std_-Felder: max 24h, nicht negativ
+  const stdFields: Array<[string, string]> = [
+    ['std_einschlag', 'Einschlag'],
+    ['std_handpflanzung', 'Handpflanzung'],
+    ['std_zum_bohrer', 'Handpfl. zum Bohrer'],
+    ['std_mit_bohrer', 'Laufzeit Bohrer'],
+    ['std_freischneider', 'Freischneider'],
+    ['std_motorsaege', 'Motorsäge'],
+    ['std_wuchshuellen', 'Wuchshüllen'],
+    ['std_netze_staebe_spiralen', 'Netz/Stäbe/Spiralen'],
+    ['std_zaunbau', 'Zaunbau'],
+    ['std_nachbesserung', 'Nachbesserung'],
+    ['std_sonstige_arbeiten', 'Sonstige Arbeiten'],
+  ]
+  for (const [field, label] of stdFields) {
+    const val = data[field]
+    if (val !== null && val !== undefined && (val < 0 || val > 24)) {
+      errors.push(`${label}: Stundenwert muss zwischen 0 und 24 liegen (erhalten: ${val})`)
+    }
   }
-  if (data.stdMotorsaege && data.stdMotorsaege > 10) {
-    errors.push('Motorsäge-Stunden dürfen 10h nicht überschreiten')
+
+  // Stückzahlen: nicht negativ, max 50.000
+  const stkFields: Array<[string, string]> = [
+    ['stk_pflanzung', 'Stk. Pflanzung'],
+    ['stk_pflanzung_mit_bohrer', 'Stk. Pflanzung m. Bohrer'],
+    ['stk_wuchshuellen', 'Stk. Wuchshüllen'],
+    ['stk_netze_staebe_spiralen', 'Stk. Netz/Stäbe/Spiralen'],
+    ['stk_drahtverbinder', 'Stk. Drahtverbinder'],
+    ['stk_nachbesserung', 'Stk. Nachbesserung'],
+  ]
+  for (const [field, label] of stkFields) {
+    const val = data[field]
+    if (val !== null && val !== undefined && (val < 0 || val > 50000)) {
+      errors.push(`${label}: Wert muss zwischen 0 und 50.000 liegen (erhalten: ${val})`)
+    }
   }
 
   // Pflanzung: max mitarbeiterAnzahl * 10h * 70 Pflanzen/h

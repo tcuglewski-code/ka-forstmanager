@@ -200,14 +200,14 @@ export default function ProtokolleSeite() {
           value={filterVon}
           onChange={(e) => setFilterVon(e.target.value)}
           placeholder="Von"
-          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
         />
         <input
           type="date"
           value={filterBis}
           onChange={(e) => setFilterBis(e.target.value)}
           placeholder="Bis"
-          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
         />
         <a
           href={`/api/tagesprotokoll/export?${new URLSearchParams({
@@ -251,7 +251,7 @@ export default function ProtokolleSeite() {
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 flex-wrap">
-                    <span className="text-sm font-medium text-white">
+                    <span className="text-sm font-medium text-[var(--color-on-surface)]">
                       {new Date(p.datum).toLocaleDateString("de-DE", {
                         weekday: "short",
                         day: "2-digit",
@@ -346,7 +346,7 @@ export default function ProtokolleSeite() {
         <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-2xl my-8">
             <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-              <h2 className="text-base font-bold text-white">Tagesprotokoll erstellen</h2>
+              <h2 className="text-base font-bold text-[var(--color-on-surface)]">Tagesprotokoll erstellen</h2>
               <button
                 onClick={() => setShowForm(false)}
                 className="text-[var(--color-on-surface-variant)] hover:text-white transition-colors"
@@ -400,7 +400,7 @@ export default function ProtokolleSeite() {
         <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-2xl my-8">
             <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-              <h2 className="text-base font-bold text-white">Protokoll bearbeiten</h2>
+              <h2 className="text-base font-bold text-[var(--color-on-surface)]">Protokoll bearbeiten</h2>
               <button
                 onClick={() => { setShowEditForm(false); setEditProtokoll(null) }}
                 className="text-[var(--color-on-surface-variant)] hover:text-white transition-colors"
