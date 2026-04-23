@@ -27,7 +27,20 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
     }
   })
 
-  return NextResponse.json(protokolle)
+  // FM-15: Doppelte Protokolle erkennen (gleicher Tag + Auftrag)
+  const dupKeyCount = new Map<string, number>()
+  for (const p of protokolle) {
+    if (!p.auftragId) continue
+    const key = `${p.auftragId}_${new Date(p.datum).toISOString().split('T')[0]}`
+    dupKeyCount.set(key, (dupKeyCount.get(key) || 0) + 1)
+  }
+  const result = protokolle.map(p => {
+    if (!p.auftragId) return { ...p, isDuplicate: false }
+    const key = `${p.auftragId}_${new Date(p.datum).toISOString().split('T')[0]}`
+    return { ...p, isDuplicate: (dupKeyCount.get(key) || 0) > 1 }
+  })
+
+  return NextResponse.json(result)
 })
 
 export const POST = withErrorHandler(async (req: NextRequest) => {

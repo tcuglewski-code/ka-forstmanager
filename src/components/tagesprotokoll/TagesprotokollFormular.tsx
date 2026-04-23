@@ -262,6 +262,18 @@ export default function TagesprotokollFormular({
     )
   }
 
+  const verteileGleichmaessig = () => {
+    if (!globalStunden) return
+    const total = parseFloat(globalStunden)
+    if (isNaN(total) || total <= 0) return
+    const aktive = team.filter(m => !m.krank).length
+    if (aktive === 0) return
+    const proMA = Math.round((total / aktive) * 10) / 10 // 1 decimal
+    setTeam(t =>
+      t.map(m => (m.krank ? m : { ...m, stunden: String(proMA) }))
+    )
+  }
+
   // ──────────────────────────────────────────────────────────────────────────
   // Sprint FU (D5): Live-Berechnungen
   // ──────────────────────────────────────────────────────────────────────────
@@ -659,8 +671,17 @@ export default function TagesprotokollFormular({
                   type="button"
                   onClick={setGlobalStundenFuerAlle}
                   className="text-xs bg-green-700 text-white px-3 py-1.5 rounded-lg hover:bg-green-600 whitespace-nowrap"
+                  title="Gleichen Wert für alle setzen"
                 >
                   Alle setzen
+                </button>
+                <button
+                  type="button"
+                  onClick={verteileGleichmaessig}
+                  className="text-xs bg-blue-700 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 whitespace-nowrap"
+                  title="Gesamtstunden gleichmäßig auf alle MA verteilen"
+                >
+                  Verteilen
                 </button>
               </div>
             )}

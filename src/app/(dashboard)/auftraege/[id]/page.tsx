@@ -117,6 +117,9 @@ const STATUS_LIST = [
   { value: "maengel_offen", label: "Mängel offen", color: "bg-red-100 text-red-800 border-red-500/30" },
   { value: "abnahme", label: "Abnahme", color: "bg-purple-100 text-purple-800 border-purple-500/30" },
   { value: "abgeschlossen", label: "Abgeschlossen", color: "bg-gray-100 text-gray-700 border-zinc-500/30" },
+  { value: "in_bearbeitung", label: "In Bearbeitung", color: "bg-yellow-100 text-yellow-800 border-yellow-500/30" },
+  { value: "in_planung", label: "In Planung", color: "bg-indigo-100 text-indigo-800 border-indigo-500/30" },
+  { value: "storniert", label: "Storniert", color: "bg-gray-100 text-gray-600 border-gray-500/30" },
 ]
 
 const TYP_LABEL: Record<string, string> = {

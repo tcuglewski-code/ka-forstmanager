@@ -50,6 +50,9 @@ const STATUS_FARBEN: Record<string, string> = {
   auftrag: "bg-amber-100 text-amber-800",
   maengel_offen: "bg-red-100 text-red-800",  // Sprint FV
   abnahme: "bg-purple-100 text-purple-800",  // Sprint FV: WCAG AA
+  in_bearbeitung: "bg-yellow-100 text-yellow-800",  // FM-27
+  in_planung: "bg-indigo-100 text-indigo-800",  // FM-27
+  storniert: "bg-gray-100 text-gray-600",  // FM-27
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -66,6 +69,9 @@ const STATUS_LABELS: Record<string, string> = {
   auftrag: "Auftrag",
   maengel_offen: "Mängel offen",  // Sprint FV
   abnahme: "Abnahme",  // Sprint FV
+  in_bearbeitung: "In Bearbeitung",  // FM-27
+  in_planung: "In Planung",  // FM-27
+  storniert: "Storniert",  // FM-27
 }
 
 const TYP_FARBEN: Record<string, string> = {

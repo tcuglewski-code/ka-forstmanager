@@ -216,9 +216,106 @@ function ArtikelModal({ onClose, onSave }: { onClose: () => void; onSave: () => 
   )
 }
 
+interface AuftragOption {
+  id: string
+  titel: string
+}
+
+interface BewegungHistorie {
+  id: string
+  typ: string
+  menge: number
+  notiz: string | null
+  createdAt: string
+  auftrag?: { id: string; titel: string } | null
+  mitarbeiter?: { id: string; vorname: string; nachname: string } | null
+}
+
+function ArtikelHistorieModal({ artikel, onClose }: { artikel: LagerArtikel; onClose: () => void }) {
+  const [bewegungen, setBewegungen] = useState<BewegungHistorie[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch(`/api/lager/${artikel.id}/bewegung`)
+      .then(r => r.json())
+      .then(data => { setBewegungen(Array.isArray(data) ? data : []); setLoading(false) })
+      .catch(() => setLoading(false))
+  }, [artikel.id])
+
+  const typLabel: Record<string, string> = {
+    eingang: "+ Eingang",
+    ausgang: "- Ausgabe",
+    korrektur: "= Korrektur",
+    reserve: "- Reserviert",
+    zuweisung: "- Zugewiesen",
+    rueckgabe: "+ Rückgabe",
+  }
+  const typColor: Record<string, string> = {
+    eingang: "text-emerald-400",
+    ausgang: "text-red-400",
+    korrektur: "text-blue-400",
+    reserve: "text-amber-400",
+    zuweisung: "text-amber-400",
+    rueckgabe: "text-emerald-400",
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-surface-container border border-border rounded-xl w-full max-w-lg max-h-[80vh] flex flex-col">
+        <div className="flex items-center justify-between p-5 border-b border-border">
+          <h2 className="text-lg font-semibold text-on-surface">Buchungshistorie: {artikel.name}</h2>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-on-surface-variant hover:text-on-surface" /></button>
+        </div>
+        <div className="p-4 overflow-y-auto flex-1">
+          {loading ? (
+            <p className="text-center text-on-surface-variant py-8">Laden...</p>
+          ) : bewegungen.length === 0 ? (
+            <p className="text-center text-on-surface-variant py-8">Keine Buchungen vorhanden</p>
+          ) : (
+            <div className="space-y-2">
+              {bewegungen.map(b => (
+                <div key={b.id} className="flex items-start gap-3 p-3 bg-surface-container-low border border-border rounded-lg">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className={`text-sm font-medium ${typColor[b.typ] ?? "text-on-surface"}`}>
+                        {typLabel[b.typ] ?? b.typ}
+                      </span>
+                      <span className="text-sm text-on-surface font-bold">{b.menge} {artikel.einheit}</span>
+                    </div>
+                    {b.auftrag && (
+                      <p className="text-xs text-on-surface-variant mt-0.5">Auftrag: {b.auftrag.titel}</p>
+                    )}
+                    {b.mitarbeiter && (
+                      <p className="text-xs text-on-surface-variant">von: {b.mitarbeiter.vorname} {b.mitarbeiter.nachname}</p>
+                    )}
+                    {b.notiz && (
+                      <p className="text-xs text-on-surface-variant mt-0.5 italic">{b.notiz}</p>
+                    )}
+                  </div>
+                  <span className="text-xs text-on-surface-variant whitespace-nowrap">
+                    {new Date(b.createdAt).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit" })}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onClose: () => void; onSave: () => void }) {
   const [loading, setLoading] = useState(false)
-  const [form, setForm] = useState({ typ: "ausgang", menge: "1", notiz: "" })
+  const [auftraege, setAuftraege] = useState<AuftragOption[]>([])
+  const [form, setForm] = useState({ typ: "ausgang", menge: "1", notiz: "", auftragId: "" })
+
+  useEffect(() => {
+    fetch("/api/auftraege?statusIn=in_ausfuehrung,bestaetigt,laufend,aktiv&limit=200")
+      .then(r => r.json())
+      .then(data => setAuftraege(Array.isArray(data) ? data : []))
+      .catch(() => {})
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -227,7 +324,7 @@ function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onC
       const res = await fetch(`/api/lager/${artikel.id}/bewegung`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, auftragId: form.auftragId || null }),
       })
       if (!res.ok) {
         const err = await res.json()
@@ -264,6 +361,14 @@ function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onC
             <label className="block text-xs text-on-surface-variant mb-1">{form.typ === "korrektur" ? "Neuer Sollbestand" : "Menge"} ({artikel.einheit})</label>
             <input type="number" min="0.01" step="0.01" value={form.menge} onChange={e => setForm(f => ({ ...f, menge: e.target.value }))}
               className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
+          </div>
+          <div>
+            <label className="block text-xs text-on-surface-variant mb-1">Auftrag (optional)</label>
+            <select value={form.auftragId} onChange={e => setForm(f => ({ ...f, auftragId: e.target.value }))}
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
+              <option value="">— Kein Auftrag —</option>
+              {auftraege.map(a => <option key={a.id} value={a.id}>{a.titel}</option>)}
+            </select>
           </div>
           <div>
             <label className="block text-xs text-on-surface-variant mb-1">Notiz</label>
@@ -419,6 +524,7 @@ function LagerPageInner() {
   
   const [filterKategorie, setFilterKategorie] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
+  const [historieArtikel, setHistorieArtikel] = useState<LagerArtikel | null>(null)
   const [deleteArtikel, setDeleteArtikel] = useState<LagerArtikel | null>(null)
   const [deleting, setDeleting] = useState(false)
 
@@ -623,6 +729,13 @@ function LagerPageInner() {
                             <Pencil className="w-4 h-4" />
                           </button>
                           <button
+                            onClick={() => setHistorieArtikel(a)}
+                            className="p-1.5 rounded-lg text-on-surface-variant hover:text-amber-400 hover:bg-surface-container-highest transition-all"
+                            title="Buchungshistorie"
+                          >
+                            <Filter className="w-4 h-4" />
+                          </button>
+                          <button
                             onClick={() => setQrArtikel(a)}
                             className="p-1.5 rounded-lg text-on-surface-variant hover:text-emerald-400 hover:bg-surface-container-highest transition-all"
                           >
@@ -766,6 +879,9 @@ function LagerPageInner() {
       )}
       {qrArtikel && (
         <QrPrintModal artikel={qrArtikel} onClose={() => setQrArtikel(null)} />
+      )}
+      {historieArtikel && (
+        <ArtikelHistorieModal artikel={historieArtikel} onClose={() => setHistorieArtikel(null)} />
       )}
       {deleteArtikel && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">

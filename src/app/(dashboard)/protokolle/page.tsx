@@ -32,6 +32,7 @@ interface ProtokollListItem {
   stk_pflanzung?: number | null
   stk_pflanzung_mit_bohrer?: number | null
   kommentar?: string | null
+  isDuplicate?: boolean
 }
 
 export default function ProtokolleSeite() {
@@ -161,7 +162,10 @@ export default function ProtokolleSeite() {
         </div>
         <button
           onClick={() => {
-            setSelectedAuftrag(auftraege[0] ?? null)
+            const preselect = filterAuftrag
+              ? auftraege.find(a => a.id === filterAuftrag) ?? auftraege[0] ?? null
+              : auftraege[0] ?? null
+            setSelectedAuftrag(preselect)
             setShowForm(true)
           }}
           className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
@@ -264,6 +268,11 @@ export default function ProtokolleSeite() {
                     )}
                     {p.witterung && (
                       <span className="text-xs text-[var(--color-on-surface-variant)]">{p.witterung}</span>
+                    )}
+                    {p.isDuplicate && (
+                      <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30" title="Duplikat: gleicher Tag + Auftrag">
+                        Duplikat
+                      </span>
                     )}
                   </div>
                   {p.kommentar && (
