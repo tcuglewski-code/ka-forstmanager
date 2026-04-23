@@ -187,8 +187,9 @@ export default function TagesprotokollFormular({
     const [bH, bM] = beginn.split(':').map(Number)
     const [eH, eM] = ende.split(':').map(Number)
     const startMin = bH * 60 + bM
-    const endMin = eH * 60 + eM
-    if (endMin <= startMin) return 0
+    let endMin = eH * 60 + eM
+    // FM-06: Mitternacht-Edge-Case — wenn Ende < Beginn, über Tagesgrenze rechnen
+    if (endMin <= startMin) endMin += 24 * 60
     const nettoMin = (endMin - startMin) - (parseInt(pause) || 0)
     return Math.max(0, nettoMin / 60)
   }
@@ -201,7 +202,9 @@ export default function TagesprotokollFormular({
       if (b && e) {
         const [bH, bM] = b.split(':').map(Number)
         const [eH, eM] = e.split(':').map(Number)
-        const diffMin = (eH * 60 + eM) - (bH * 60 + bM)
+        let diffMin = (eH * 60 + eM) - (bH * 60 + bM)
+        // FM-06: Mitternacht-Edge-Case
+        if (diffMin < 0) diffMin += 24 * 60
         const diffStunden = diffMin / 60
         if (diffStunden > 10) {
           toast.warning('Arbeitszeit darf 10 Stunden nicht überschreiten (ArbZG §3).')

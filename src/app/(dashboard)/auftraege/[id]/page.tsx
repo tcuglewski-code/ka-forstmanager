@@ -141,8 +141,8 @@ const TYP_FARBEN: Record<string, string> = {
   foerdermittelberatung: "bg-purple-100 text-purple-800",
   zaunbau: "bg-orange-100 text-orange-800",
   kulturschutz: "bg-amber-100 text-amber-800",
-  kulturpflege: "bg-yellow-100 text-yellow-800",
-  saatguternte: "bg-lime-100 text-lime-800",
+  kulturpflege: "bg-amber-100 text-amber-800",
+  saatguternte: "bg-cyan-100 text-cyan-800",
 }
 
 // ─── Helper components ────────────────────────────────────────────────────────
@@ -464,9 +464,9 @@ function WizardKulturpflege({ w }: { w: WizardDaten }) {
 
       {/* Maßnahme highlight */}
       {w.massnahme && (
-        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-2">
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 mb-2">
           <span className="text-xs text-on-surface-variant block mb-0.5">Maßnahme</span>
-          <p className="text-yellow-300 text-sm font-medium">{w.massnahme}</p>
+          <p className="text-amber-300 text-sm font-medium">{w.massnahme}</p>
         </div>
       )}
 

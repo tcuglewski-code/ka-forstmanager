@@ -76,7 +76,7 @@ const TYP_FARBEN: Record<string, string> = {
   foerdermittelberatung: "bg-purple-100 text-purple-800",
   zaunbau: "bg-orange-100 text-orange-800",
   kulturschutz: "bg-amber-100 text-amber-800",
-  kulturpflege: "bg-yellow-100 text-yellow-800",
+  kulturpflege: "bg-amber-100 text-amber-800",
   saatguternte: "bg-cyan-100 text-cyan-800",
   pflanzenbeschaffung: "bg-teal-100 text-teal-800",
 }

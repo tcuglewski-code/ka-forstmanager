@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { ArrowLeft, UserPlus, Trash2 } from "lucide-react"
+import { toast } from "sonner"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
 
 interface Mitglied {
@@ -48,23 +49,44 @@ export default function GruppeDetailPage() {
   const addMitglied = async () => {
     if (!selectedMitarbeiterId) return
     setAdding(true)
-    await fetch(`/api/gruppen/${id}/mitglieder`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mitarbeiterId: selectedMitarbeiterId }),
-    })
-    setSelectedMitarbeiterId("")
-    setAdding(false)
-    load()
+    try {
+      const res = await fetch(`/api/gruppen/${id}/mitglieder`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mitarbeiterId: selectedMitarbeiterId }),
+      })
+      if (!res.ok) {
+        const err = await res.text()
+        toast.error(`Mitglied hinzufügen fehlgeschlagen: ${err}`)
+        return
+      }
+      toast.success("Mitglied hinzugefügt")
+      setSelectedMitarbeiterId("")
+      load()
+    } catch {
+      toast.error("Netzwerkfehler beim Hinzufügen des Mitglieds")
+    } finally {
+      setAdding(false)
+    }
   }
 
   const removeMitglied = async (mitarbeiterId: string) => {
-    await fetch(`/api/gruppen/${id}/mitglieder`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mitarbeiterId }),
-    })
-    load()
+    try {
+      const res = await fetch(`/api/gruppen/${id}/mitglieder`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mitarbeiterId }),
+      })
+      if (!res.ok) {
+        const err = await res.text()
+        toast.error(`Mitglied entfernen fehlgeschlagen: ${err}`)
+        return
+      }
+      toast.success("Mitglied entfernt")
+      load()
+    } catch {
+      toast.error("Netzwerkfehler beim Entfernen des Mitglieds")
+    }
   }
 
   if (!gruppe) return <div className="text-center py-16 text-zinc-600">Laden...</div>

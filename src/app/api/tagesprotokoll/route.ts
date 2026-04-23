@@ -40,13 +40,20 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
   const errors: string[] = []
   const mitarbeiterAnzahl = data.mitarbeiterAnzahl || 0
 
-  // Arbeitsstunden: max 10h pro Person
+  // Arbeitsstunden: max 10h pro Person + Mitternacht-Edge-Case
   if (data.arbeitsbeginn && data.arbeitsende) {
     const beginn = new Date(`1970-01-01T${data.arbeitsbeginn}`)
     const ende = new Date(`1970-01-01T${data.arbeitsende}`)
-    const stundenGesamt = (ende.getTime() - beginn.getTime()) / (1000 * 60 * 60)
+    let stundenGesamt = (ende.getTime() - beginn.getTime()) / (1000 * 60 * 60)
+    // FM-06: Mitternacht-Edge-Case — wenn Ende < Beginn, über Tagesgrenze rechnen
+    if (stundenGesamt < 0) {
+      stundenGesamt += 24
+    }
     if (stundenGesamt > 10) {
       errors.push('Arbeitszeit darf 10h pro Person nicht überschreiten')
+    }
+    if (stundenGesamt === 0) {
+      errors.push('Arbeitsbeginn und Arbeitsende dürfen nicht identisch sein')
     }
   }
 

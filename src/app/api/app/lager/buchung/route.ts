@@ -69,14 +69,22 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // FM-32 GoBD: Bei Korrektur altBestand für Audit-Trail speichern
+    let bewegungsNotiz = notiz || null
+    if (isKorrektur) {
+      const altBestand = artikel.bestand
+      const delta = menge - altBestand
+      bewegungsNotiz = `Korrektur: ${altBestand} → ${menge} (Delta: ${delta >= 0 ? "+" : ""}${delta})${notiz ? " | " + notiz : ""}`
+    }
+
     // Transaktion: Buchung erstellen + Bestand aktualisieren
     const [bewegung] = await prisma.$transaction([
       prisma.lagerBewegung.create({
         data: {
           artikelId,
           typ,
-          menge: Math.abs(menge),
-          notiz: notiz || null,
+          menge,
+          notiz: bewegungsNotiz,
           auftragId: auftragId || null,
           mitarbeiterId: mitarbeiterId || null,
           referenz: offlineId ? `offline:${offlineId}` : null
@@ -85,7 +93,7 @@ export async function POST(req: NextRequest) {
       // FM-32: Korrektur setzt Bestand absolut auf den eingegebenen Wert
       prisma.lagerArtikel.update({
         where: { id: artikelId },
-        data: isKorrektur ? { bestand: Math.abs(menge) } : { bestand: { increment: bestandsAenderung } }
+        data: isKorrektur ? { bestand: menge } : { bestand: { increment: bestandsAenderung } }
       })
     ])
 

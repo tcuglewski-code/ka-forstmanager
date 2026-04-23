@@ -55,13 +55,25 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       }
     }
 
+    // FM-32 GoBD: Bei Korrektur altBestand speichern für Audit-Trail
+    let notiz = body.notiz ?? null
+    if (body.typ === "korrektur") {
+      const artikel = await prisma.lagerArtikel.findUnique({
+        where: { id: artikelId },
+        select: { bestand: true },
+      })
+      const altBestand = artikel?.bestand ?? 0
+      const delta = menge - altBestand
+      notiz = `Korrektur: ${altBestand} → ${menge} (Delta: ${delta >= 0 ? "+" : ""}${delta})${body.notiz ? " | " + body.notiz : ""}`
+    }
+
     const bewegung = await prisma.lagerBewegung.create({
       data: {
         artikelId,
         typ: body.typ,
         menge,
         referenz: body.referenz ?? null,
-        notiz: body.notiz ?? null,
+        notiz,
         auftragId: body.auftragId || null,
         mitarbeiterId: body.mitarbeiterId || null,
       },

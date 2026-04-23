@@ -18,7 +18,7 @@ interface Props {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  offen: { label: "Offen", color: "bg-yellow-100 text-yellow-800" },
+  offen: { label: "Offen", color: "bg-amber-100 text-amber-800" },
   in_bearbeitung: { label: "In Bearbeitung", color: "bg-blue-100 text-blue-800" },
   abgeschlossen: { label: "Abgeschlossen", color: "bg-emerald-100 text-emerald-800" },
   storniert: { label: "Storniert", color: "bg-zinc-600/30 text-[var(--color-on-surface-variant)]" },
@@ -74,7 +74,7 @@ export function SaatgutErnteStatus({ ernteanfragen }: Props) {
                 <div className="w-full h-2 bg-[var(--color-surface-container-high)] rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all ${
-                      progress >= 100 ? "bg-emerald-500" : progress >= 50 ? "bg-blue-500" : "bg-yellow-500"
+                      progress >= 100 ? "bg-emerald-500" : progress >= 50 ? "bg-blue-500" : "bg-amber-500"
                     }`}
                     style={{ width: `${progress}%` }}
                   />
