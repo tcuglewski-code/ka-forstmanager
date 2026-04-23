@@ -212,7 +212,7 @@ export default function WochenplanungPage() {
             <ChevronLeft className="w-4 h-4" />
           </button>
           <div className="text-center min-w-[100px]">
-            <div className="text-white font-bold text-lg">KW {kw}</div>
+            <div className="text-[var(--color-on-surface)] font-bold text-lg">KW {kw}</div>
             <div className="text-[var(--color-on-surface-variant)] text-xs">{jahr}</div>
           </div>
           <button
@@ -227,7 +227,7 @@ export default function WochenplanungPage() {
         <select
           value={aktGruppeId ?? ""}
           onChange={(e) => setAktGruppeId(e.target.value || null)}
-          className="bg-[var(--color-surface-container-lowest)] border border-border rounded-lg px-3 py-2 text-white text-sm min-w-[160px]"
+          className="bg-[var(--color-surface-container-lowest)] border border-border rounded-lg px-3 py-2 text-[var(--color-on-surface)] text-sm min-w-[160px]"
         >
           <option value="">Alle Gruppen</option>
           {gruppen.map((g) => (
@@ -286,7 +286,7 @@ export default function WochenplanungPage() {
           {/* Plan-Header */}
           <div className="bg-[var(--color-surface-container-lowest)]/50 border border-border rounded-xl p-4 flex items-center justify-between">
             <div>
-              <h2 className="font-bold text-white">
+              <h2 className="font-bold text-[var(--color-on-surface)]">
                 Wochenplan KW {wochenplan.kalenderwoche}/{wochenplan.jahr}
                 {wochenplan.gruppe && ` — ${wochenplan.gruppe.name}`}
               </h2>
@@ -414,7 +414,7 @@ export default function WochenplanungPage() {
                               </span>
                             )}
                             {pos.flaeche && (
-                              <span className="text-sm text-white font-medium">{pos.flaeche}</span>
+                              <span className="text-sm text-[var(--color-on-surface)] font-medium">{pos.flaeche}</span>
                             )}
                             {/* Pflanzung-Details */}
                             {key === "pflanzung" && pos.baumart && (

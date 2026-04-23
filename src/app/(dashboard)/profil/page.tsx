@@ -429,7 +429,7 @@ export default function ProfilPage() {
 
       {/* Persönliche Daten */}
       <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-semibold text-[var(--color-on-surface)] mb-4 flex items-center gap-2">
           <User className="w-5 h-5 text-emerald-400" />
           Persönliche Daten
         </h2>
@@ -490,7 +490,7 @@ export default function ProfilPage() {
       {/* Kontaktdaten (nur wenn Mitarbeiter-Datensatz existiert) */}
       {profile?.mitarbeiter && (
         <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)] mb-4 flex items-center gap-2">
             <Phone className="w-5 h-5 text-emerald-400" />
             Kontaktdaten
           </h2>
@@ -554,7 +554,7 @@ export default function ProfilPage() {
       {/* Notfallkontakt (nur wenn Mitarbeiter-Datensatz existiert) */}
       {profile?.mitarbeiter && (
         <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)] mb-4 flex items-center gap-2">
             <Heart className="w-5 h-5 text-red-400" />
             Notfallkontakt
           </h2>
@@ -607,7 +607,7 @@ export default function ProfilPage() {
       {/* Arbeitszeitkonto (nur wenn Daten vorhanden) */}
       {profile?.arbeitszeitkonto && (
         <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)] mb-4 flex items-center gap-2">
             <Clock className="w-5 h-5 text-emerald-400" />
             Arbeitszeitkonto — {profile.arbeitszeitkonto.monat}
           </h2>
@@ -673,7 +673,7 @@ export default function ProfilPage() {
       {/* Urlaubstage (nur wenn Daten vorhanden) */}
       {profile?.urlaubstage && (
         <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)] mb-4 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-emerald-400" />
             Urlaubstage {profile.urlaubstage.jahr}
           </h2>
@@ -724,7 +724,7 @@ export default function ProfilPage() {
 
       {/* Passwort ändern */}
       <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-semibold text-[var(--color-on-surface)] mb-4 flex items-center gap-2">
           <Lock className="w-5 h-5 text-emerald-400" />
           Passwort ändern
         </h2>
@@ -810,7 +810,7 @@ export default function ProfilPage() {
 
       {/* Zwei-Faktor-Authentifizierung */}
       <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-semibold text-[var(--color-on-surface)] mb-4 flex items-center gap-2">
           <Smartphone className="w-5 h-5 text-emerald-400" />
           Zwei-Faktor-Authentifizierung (2FA)
         </h2>
@@ -879,7 +879,7 @@ export default function ProfilPage() {
                   onChange={(e) => setTotpToken(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="000000"
                   maxLength={6}
-                  className="w-full px-4 py-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white text-center text-2xl font-mono tracking-widest focus:border-emerald-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-[var(--color-on-surface)] text-center text-2xl font-mono tracking-widest focus:border-emerald-500 focus:outline-none"
                 />
               </div>
               <div className="flex gap-2">
@@ -922,7 +922,7 @@ export default function ProfilPage() {
                 value={disablePassword}
                 onChange={(e) => setDisablePassword(e.target.value)}
                 placeholder="Passwort eingeben"
-                className="w-full px-3 py-2 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-red-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-red-500 focus:outline-none"
               />
               <div className="flex gap-2">
                 <button
@@ -1027,7 +1027,7 @@ export default function ProfilPage() {
 
       {/* Benachrichtigungen */}
       <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-semibold text-[var(--color-on-surface)] mb-4 flex items-center gap-2">
           <Bell className="w-5 h-5 text-emerald-400" />
           Benachrichtigungen
         </h2>
@@ -1089,7 +1089,7 @@ export default function ProfilPage() {
 
       {/* DSGVO Datenexport */}
       <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-semibold text-[var(--color-on-surface)] mb-4 flex items-center gap-2">
           <Shield className="w-5 h-5 text-emerald-400" />
           Datenschutz (DSGVO)
         </h2>
@@ -1108,7 +1108,7 @@ export default function ProfilPage() {
 
       {/* Tour & Hilfe */}
       <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-semibold text-[var(--color-on-surface)] mb-4 flex items-center gap-2">
           <HelpCircle className="w-5 h-5 text-emerald-400" />
           Hilfe & Tour
         </h2>
@@ -1124,7 +1124,7 @@ export default function ProfilPage() {
 
       {/* Session Info */}
       <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-semibold text-[var(--color-on-surface)] mb-4 flex items-center gap-2">
           <Shield className="w-5 h-5 text-emerald-400" />
           Session-Informationen
         </h2>
@@ -1132,7 +1132,7 @@ export default function ProfilPage() {
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-[var(--color-on-surface-variant)]">Eingeloggt als</span>
-            <span className="text-white">{profile?.email}</span>
+            <span className="text-[var(--color-on-surface)]">{profile?.email}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-[var(--color-on-surface-variant)]">Rolle</span>
@@ -1158,7 +1158,7 @@ export default function ProfilPage() {
       {/* Admin Links */}
       {isAdmin && (
         <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)] mb-4 flex items-center gap-2">
             <Settings className="w-5 h-5 text-emerald-400" />
             Administration
           </h2>

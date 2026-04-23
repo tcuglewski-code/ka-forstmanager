@@ -167,7 +167,7 @@ export default function QualifikationenPage() {
                 <tr><td colSpan={5} className="px-6 py-12 text-center text-[var(--color-on-surface-variant)]">Keine Qualifikationen</td></tr>
               ) : qualifikationen.map((q) => (
                 <tr key={q.id} className="hover:bg-[#1c1c1c]">
-                  <td className="px-6 py-4 text-sm font-medium text-white">{q.name}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-[var(--color-on-surface)]">{q.name}</td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-0.5 rounded-full text-xs ${typBadge[q.typ] ?? "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]"}`}>
                       {typLabel[q.typ] ?? q.typ}
@@ -220,7 +220,7 @@ export default function QualifikationenPage() {
                   const st = ablaufStatus(mq.ablaufDatum)
                   return (
                     <tr key={mq.id} className="hover:bg-[#1c1c1c]">
-                      <td className="px-6 py-4 text-sm text-white">{mq.mitarbeiter.vorname} {mq.mitarbeiter.nachname}</td>
+                      <td className="px-6 py-4 text-sm text-[var(--color-on-surface)]">{mq.mitarbeiter.vorname} {mq.mitarbeiter.nachname}</td>
                       <td className="px-6 py-4 text-sm text-zinc-300">{mq.qualifikation.name}</td>
                       <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{mq.erworbenAm ? new Date(mq.erworbenAm).toLocaleDateString("de-DE") : "—"}</td>
                       <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{mq.ablaufDatum ? new Date(mq.ablaufDatum).toLocaleDateString("de-DE") : "—"}</td>
@@ -249,7 +249,7 @@ export default function QualifikationenPage() {
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Qualifikation anlegen</h2>
+            <h2 className="text-lg font-bold text-[var(--color-on-surface)] mb-4">Qualifikation anlegen</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Name</label>
@@ -283,7 +283,7 @@ export default function QualifikationenPage() {
       {showAssignModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Qualifikation zuweisen</h2>
+            <h2 className="text-lg font-bold text-[var(--color-on-surface)] mb-4">Qualifikation zuweisen</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Mitarbeiter</label>

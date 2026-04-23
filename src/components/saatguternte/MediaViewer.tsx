@@ -330,7 +330,7 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
       {/* Header */}
       <div className="flex items-center gap-3">
         <Camera className="w-5 h-5 text-emerald-400" />
-        <h2 className="text-lg font-semibold text-white">Medien &amp; Drohnenaufnahmen</h2>
+        <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">Medien &amp; Drohnenaufnahmen</h2>
         {medien.length > 0 && (
           <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-xs font-medium">
             {medien.length}
@@ -591,7 +591,7 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
 
                     {/* Info-Overlay */}
                     <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-2">
-                      <p className="text-white text-xs truncate">{m.dateiname}</p>
+                      <p className="text-[var(--color-on-surface)] text-xs truncate">{m.dateiname}</p>
                       <div className="flex items-center gap-2 mt-0.5">
                         {m.datum && (
                           <span className="text-white/50 text-xs">

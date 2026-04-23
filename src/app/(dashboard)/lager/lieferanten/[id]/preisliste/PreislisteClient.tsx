@@ -281,7 +281,7 @@ export default function PreislisteClient({ lieferant }: Props) {
       {csvPreview && (
         <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-white flex items-center gap-2">
+            <h3 className="text-sm font-medium text-[var(--color-on-surface)] flex items-center gap-2">
               <FileSpreadsheet className="w-4 h-4" />
               CSV-Vorschau
             </h3>
@@ -365,7 +365,7 @@ export default function PreislisteClient({ lieferant }: Props) {
       {/* Manuelles Hinzufügen */}
       {showAddForm && (
         <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
-          <h3 className="text-sm font-medium text-white mb-4">Neuen Artikel hinzufügen</h3>
+          <h3 className="text-sm font-medium text-[var(--color-on-surface)] mb-4">Neuen Artikel hinzufügen</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Artikelname *</label>
@@ -454,7 +454,7 @@ export default function PreislisteClient({ lieferant }: Props) {
       {/* Artikel-Liste */}
       <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <div className="p-4 border-b border-border">
-          <h3 className="text-sm font-medium text-white">
+          <h3 className="text-sm font-medium text-[var(--color-on-surface)]">
             {artikel.length} Artikel in der Preisliste
           </h3>
         </div>
@@ -473,7 +473,7 @@ export default function PreislisteClient({ lieferant }: Props) {
                 className="p-4 hover:bg-[#1c1c1c] transition-colors flex items-center gap-4"
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">{a.name}</p>
+                  <p className="text-sm font-medium text-[var(--color-on-surface)] truncate">{a.name}</p>
                   <div className="flex items-center gap-3 mt-1 text-xs text-[var(--color-on-surface-variant)]">
                     <span>{a.kategorie}</span>
                     <span>·</span>

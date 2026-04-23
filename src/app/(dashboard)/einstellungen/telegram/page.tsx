@@ -145,7 +145,7 @@ export default function TelegramEinstellungenPage() {
 
       {/* Interne Gruppe */}
       <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6 mb-6">
-        <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
+        <h3 className="font-semibold text-[var(--color-on-surface)] mb-3 flex items-center gap-2">
           <Users className="w-4 h-4 text-blue-400" />
           Interne Gruppe
         </h3>
@@ -175,7 +175,7 @@ export default function TelegramEinstellungenPage() {
 
       {/* Bot Info Card */}
       <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6 mb-6">
-        <h3 className="font-semibold text-white mb-3">Bot-Konfiguration</h3>
+        <h3 className="font-semibold text-[var(--color-on-surface)] mb-3">Bot-Konfiguration</h3>
         <div className="flex items-center gap-4 mb-4">
           <span className="text-sm text-[var(--color-on-surface-variant)]">Bot-Username:</span>
           <code className="bg-[var(--color-surface-container-low)] px-2 py-1 rounded text-emerald-400 text-sm">@{BOT_USERNAME}</code>
@@ -192,7 +192,7 @@ export default function TelegramEinstellungenPage() {
 
         {/* Deep-Link Generator */}
         <div className="border-t border-border pt-4 mt-4">
-          <h4 className="font-medium text-white mb-2">Deep-Link Generator</h4>
+          <h4 className="font-medium text-[var(--color-on-surface)] mb-2">Deep-Link Generator</h4>
           <p className="text-sm text-[var(--color-on-surface-variant)] mb-3">
             Generieren Sie einen Link für Kunden. Beim Klick wird der Bot geöffnet und der Kunde automatisch für Updates registriert.
           </p>
@@ -234,7 +234,7 @@ export default function TelegramEinstellungenPage() {
       {/* Waldbesitzer Registrierungen */}
       <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <div className="px-6 py-4 border-b border-border">
-          <h3 className="font-semibold text-white">Waldbesitzer-Übersicht</h3>
+          <h3 className="font-semibold text-[var(--color-on-surface)]">Waldbesitzer-Übersicht</h3>
           <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Kunden, die Telegram-Benachrichtigungen aktiviert haben</p>
         </div>
 
@@ -264,7 +264,7 @@ export default function TelegramEinstellungenPage() {
                 const auftrag = auftraege.find((a) => a.id === reg.auftragId)
                 return (
                   <tr key={reg.id} className="hover:bg-[#1c1c1c]">
-                    <td className="px-6 py-4 text-sm font-medium text-white">
+                    <td className="px-6 py-4 text-sm font-medium text-[var(--color-on-surface)]">
                       {reg.waldbesitzer}
                     </td>
                     <td className="px-6 py-4">
@@ -329,13 +329,13 @@ export default function TelegramEinstellungenPage() {
 
       {/* Anleitung */}
       <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6 mt-6">
-        <h3 className="font-semibold text-white mb-3">So funktioniert es</h3>
+        <h3 className="font-semibold text-[var(--color-on-surface)] mb-3">So funktioniert es</h3>
         <ol className="list-decimal list-inside space-y-2 text-sm text-[var(--color-on-surface-variant)]">
-          <li><strong className="text-white">Deep-Link generieren:</strong> Wählen Sie oben einen Auftrag aus und kopieren Sie den Link.</li>
-          <li><strong className="text-white">Link an Kunden senden:</strong> Per E-Mail, SMS oder auf der Rechnung.</li>
-          <li><strong className="text-white">Kunde klickt den Link:</strong> Der Telegram-Bot wird geöffnet und der Kunde automatisch registriert.</li>
+          <li><strong className="text-[var(--color-on-surface)]">Deep-Link generieren:</strong> Wählen Sie oben einen Auftrag aus und kopieren Sie den Link.</li>
+          <li><strong className="text-[var(--color-on-surface)]">Link an Kunden senden:</strong> Per E-Mail, SMS oder auf der Rechnung.</li>
+          <li><strong className="text-[var(--color-on-surface)]">Kunde klickt den Link:</strong> Der Telegram-Bot wird geöffnet und der Kunde automatisch registriert.</li>
           <li><strong className="text-[var(--color-on-surface)]">Alternativ:</strong> Kunde kann auch direkt <code className="bg-[var(--color-surface-container-low)] px-1 rounded text-zinc-300">/anmelden AU-2025-0001</code> im Bot eingeben.</li>
-          <li><strong className="text-white">Automatische Updates:</strong> Bei Statusänderungen erhält der Kunde eine Telegram-Nachricht.</li>
+          <li><strong className="text-[var(--color-on-surface)]">Automatische Updates:</strong> Bei Statusänderungen erhält der Kunde eine Telegram-Nachricht.</li>
         </ol>
 
         <div className="mt-4 p-3 bg-[var(--color-surface-container-low)] rounded-lg border border-border text-sm text-[var(--color-on-surface-variant)]">

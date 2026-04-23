@@ -226,8 +226,8 @@ function NeueLohnabrechnungModal({ mitarbeiter, saisons, onClose, onSave }: {
             <div className="bg-[var(--color-surface-container-low)] rounded-lg px-4 py-3 space-y-2">
               <p className="text-xs text-[var(--color-on-surface-variant)] font-medium mb-2">Vorschau</p>
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div><span className="text-[var(--color-on-surface-variant)]">Stunden:</span> <span className="text-white font-medium">{vorschau.stunden.toFixed(1)}h</span></div>
-                <div><span className="text-[var(--color-on-surface-variant)]">Bruttolohn:</span> <span className="text-white font-medium">{vorschau.bruttoLohn.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
+                <div><span className="text-[var(--color-on-surface-variant)]">Stunden:</span> <span className="text-[var(--color-on-surface)] font-medium">{vorschau.stunden.toFixed(1)}h</span></div>
+                <div><span className="text-[var(--color-on-surface-variant)]">Bruttolohn:</span> <span className="text-[var(--color-on-surface)] font-medium">{vorschau.bruttoLohn.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
                 <div><span className="text-[var(--color-on-surface-variant)]">Maschinenbonus:</span> <span className="text-emerald-400 font-medium">{vorschau.maschinenBonus.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
                 <div><span className="text-[var(--color-on-surface-variant)]">Vorschüsse:</span> <span className="text-amber-400 font-medium">{vorschau.vorschuesse.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
               </div>
@@ -339,7 +339,7 @@ function AbrechnungModal({ mitarbeiter, monat, jahr, onClose, onSave }: {
             <div className="bg-[var(--color-surface-container-low)] rounded-lg px-4 py-3">
               <div className="flex justify-between text-sm">
                 <span className="text-[var(--color-on-surface-variant)]">Brutto</span>
-                <span className="text-white font-semibold">{brutto.toFixed(2)} €</span>
+                <span className="text-[var(--color-on-surface)] font-semibold">{brutto.toFixed(2)} €</span>
               </div>
             </div>
           )}

@@ -101,7 +101,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
           <h4 className="text-xs font-semibold text-red-400 uppercase tracking-wider mb-2 flex items-center gap-1">
             <AlertTriangle className="w-3 h-3" /> Notfallkontakt
           </h4>
-          <p className="text-sm font-medium text-white">{ma.notfallName}</p>
+          <p className="text-sm font-medium text-[var(--color-on-surface)]">{ma.notfallName}</p>
           {ma.notfallBeziehung && <p className="text-xs text-[var(--color-on-surface-variant)]">{ma.notfallBeziehung}</p>}
           {ma.notfallTelefon && (
             <a
@@ -163,7 +163,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
                 return (
                   <div key={q.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                     <div>
-                      <p className="text-sm text-white">{q.qualifikation.name}</p>
+                      <p className="text-sm text-[var(--color-on-surface)]">{q.qualifikation.name}</p>
                       <p className="text-xs text-[var(--color-on-surface-variant)]">{q.qualifikation.typ}</p>
                     </div>
                     <div className="text-right">
@@ -190,7 +190,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
               {ma.schulungen.map((s) => (
                 <div key={s.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                   <div>
-                    <p className="text-sm text-white">{s.schulung.titel}</p>
+                    <p className="text-sm text-[var(--color-on-surface)]">{s.schulung.titel}</p>
                     <p className="text-xs text-[var(--color-on-surface-variant)]">{s.schulung.typ} • {s.schulung.datum ? new Date(s.schulung.datum).toLocaleDateString("de-DE") : "—"}</p>
                   </div>
                   <span className={`px-2 py-0.5 rounded-full text-xs ${s.status === "abgeschlossen" ? "bg-emerald-100 text-emerald-800" : s.status === "abgebrochen" ? "bg-red-100 text-red-800" : "bg-blue-100 text-blue-800"}`}>
@@ -252,7 +252,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
                   <tr key={l.id} className="border-b border-border last:border-0">
                     <td className="py-2 text-sm text-[var(--color-on-surface-variant)]">{l.monat}/{l.jahr}</td>
                     <td className="py-2 text-sm text-[var(--color-on-surface-variant)]">{l.stunden} h</td>
-                    <td className="py-2 text-sm font-medium text-white">{l.brutto.toFixed(2)} €</td>
+                    <td className="py-2 text-sm font-medium text-[var(--color-on-surface)]">{l.brutto.toFixed(2)} €</td>
                     <td className="py-2">
                       <span className={`text-xs ${l.ausgezahlt ? "text-emerald-400" : "text-amber-400"}`}>
                         {l.ausgezahlt ? "Ja" : "Nein"}
@@ -289,7 +289,7 @@ function Section({ title, children, link }: { title: string; children: React.Rea
   return (
     <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-semibold text-white">{title}</h2>
+        <h2 className="font-semibold text-[var(--color-on-surface)]">{title}</h2>
         {link && (
           <Link href={link} className="text-xs text-emerald-400 hover:text-emerald-300">
             Alle ansehen →

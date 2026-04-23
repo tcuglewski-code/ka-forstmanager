@@ -137,7 +137,7 @@ function NeueBestellungModal({
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
       <div className="bg-[var(--color-surface-container)] border border-border rounded-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between p-5 border-b border-border">
-          <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)] flex items-center gap-2">
             <ShoppingCart className="w-5 h-5 text-gold" />
             Neue Bestellung
           </h2>
@@ -175,7 +175,7 @@ function NeueBestellungModal({
                 return (
                   <div key={idx} className="flex items-center gap-3 bg-[var(--color-surface-container-highest)] rounded-lg p-3">
                     <div className="flex-1">
-                      <span className="text-white">{artikel?.name}</span>
+                      <span className="text-[var(--color-on-surface)]">{artikel?.name}</span>
                       <span className="text-[var(--color-on-surface-variant)] text-xs ml-2">
                         (Bestand: {artikel?.bestand}/{artikel?.mindestbestand})
                       </span>
@@ -192,7 +192,7 @@ function NeueBestellungModal({
                       className="w-20 bg-[var(--color-surface-container-low)] border border-border rounded px-2 py-1 text-sm text-[var(--color-on-surface)] text-right"
                     />
                     <span className="text-[var(--color-on-surface-variant)] text-xs">{artikel?.einheit}</span>
-                    <span className="text-white text-sm">
+                    <span className="text-[var(--color-on-surface)] text-sm">
                       {(pos.menge * pos.einzelpreis).toFixed(2)} €
                     </span>
                   </div>
@@ -366,11 +366,11 @@ export default function BestellungenPage() {
             <tbody>
               {filteredBestellungen.map(b => (
                 <tr key={b.id} className="border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors">
-                  <td className="px-5 py-4 text-white">
+                  <td className="px-5 py-4 text-[var(--color-on-surface)]">
                     {new Date(b.bestelldatum).toLocaleDateString("de-DE")}
                   </td>
                   <td className="px-5 py-4">
-                    <a href={`/lager/lieferanten/${b.lieferantId}`} className="text-white hover:text-emerald-400">
+                    <a href={`/lager/lieferanten/${b.lieferantId}`} className="text-[var(--color-on-surface)] hover:text-emerald-400">
                       {b.lieferant.name}
                     </a>
                   </td>

@@ -220,7 +220,7 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
                         className="accent-emerald-500 cursor-pointer"
                       />
                     </td>
-                    <td className="px-4 py-3 text-white font-medium font-mono text-xs">
+                    <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium font-mono text-xs">
                       <div className="flex items-center gap-1.5">
                         {f.registerNr}
                         {f.sonderherkunft && (
@@ -292,7 +292,7 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
       {/* Floating Action Bar — Zur Planung */}
       {ausgewaehlt.size > 0 && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-gray-800 border border-border rounded-xl shadow-2xl px-6 py-3 flex items-center gap-4">
-          <span className="text-white font-medium">
+          <span className="text-[var(--color-on-surface)] font-medium">
             {ausgewaehlt.size} Fläche{ausgewaehlt.size !== 1 ? "n" : ""} ausgewählt
           </span>
           <button

@@ -338,7 +338,7 @@ export default async function RegisterPage({
           name="search"
           defaultValue={params.search ?? ""}
           placeholder="Register-Nr, Forstamt, Revier..."
-          className="px-3 py-1.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 w-56"
+          className="px-3 py-1.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-sm text-[var(--color-on-surface)] placeholder-zinc-500 focus:outline-none focus:border-emerald-500 w-56"
         />
         <select
           name="bundesland"

@@ -89,7 +89,7 @@ export default function VorschuessePage() {
                 <tr><td colSpan={7} className="px-6 py-12 text-center text-zinc-600">Keine Vorschüsse</td></tr>
               ) : vorschuesse.map((v) => (
                 <tr key={v.id} className="hover:bg-[#1c1c1c]">
-                  <td className="px-6 py-4 text-sm text-white">{v.mitarbeiter.vorname} {v.mitarbeiter.nachname}</td>
+                  <td className="px-6 py-4 text-sm text-[var(--color-on-surface)]">{v.mitarbeiter.vorname} {v.mitarbeiter.nachname}</td>
                   <td className="px-6 py-4 text-sm font-medium text-amber-400">{v.betrag.toFixed(2)} €</td>
                   <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{new Date(v.datum).toLocaleDateString("de-DE")}</td>
                   <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{v.grund ?? "—"}</td>
@@ -118,7 +118,7 @@ export default function VorschuessePage() {
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Vorschuss eintragen</h2>
+            <h2 className="text-lg font-bold text-[var(--color-on-surface)] mb-4">Vorschuss eintragen</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Mitarbeiter</label>

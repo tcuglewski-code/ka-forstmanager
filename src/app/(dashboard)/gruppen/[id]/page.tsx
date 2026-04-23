@@ -95,7 +95,7 @@ export default function GruppeDetailPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Mitglieder */}
         <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
-          <h2 className="font-semibold text-white mb-4">Mitglieder ({gruppe.mitglieder.length})</h2>
+          <h2 className="font-semibold text-[var(--color-on-surface)] mb-4">Mitglieder ({gruppe.mitglieder.length})</h2>
 
           <div className="space-y-2 mb-4">
             {gruppe.mitglieder.length === 0 ? (
@@ -104,7 +104,7 @@ export default function GruppeDetailPage() {
               gruppe.mitglieder.map(m => (
                 <div key={m.id} className="flex items-center justify-between py-2 border-b border-border">
                   <div>
-                    <p className="text-sm text-white">{m.mitarbeiter.vorname} {m.mitarbeiter.nachname}</p>
+                    <p className="text-sm text-[var(--color-on-surface)]">{m.mitarbeiter.vorname} {m.mitarbeiter.nachname}</p>
                     <p className="text-xs text-[var(--color-on-surface-variant)]">{m.rolle}</p>
                   </div>
                   <button
@@ -142,14 +142,14 @@ export default function GruppeDetailPage() {
 
         {/* Aufträge */}
         <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
-          <h2 className="font-semibold text-white mb-4">Aufträge ({gruppe.auftraege.length})</h2>
+          <h2 className="font-semibold text-[var(--color-on-surface)] mb-4">Aufträge ({gruppe.auftraege.length})</h2>
           {gruppe.auftraege.length === 0 ? (
             <p className="text-zinc-600 text-sm">Keine Aufträge zugewiesen</p>
           ) : (
             <div className="space-y-2">
               {gruppe.auftraege.map(a => (
                 <div key={a.id} className="flex items-center justify-between py-2 border-b border-border">
-                  <p className="text-sm text-white">{a.titel}</p>
+                  <p className="text-sm text-[var(--color-on-surface)]">{a.titel}</p>
                   <span className="text-xs text-[var(--color-on-surface-variant)] bg-[var(--color-surface-container-low)] px-2 py-0.5 rounded">{a.status}</span>
                 </div>
               ))}

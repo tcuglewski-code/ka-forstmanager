@@ -179,7 +179,7 @@ export function SchutzMatrix({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Shield className="w-5 h-5 text-emerald-500" />
-          <h3 className="text-lg font-medium text-white">Schutzmaßnahmen-Matrix</h3>
+          <h3 className="text-lg font-medium text-[var(--color-on-surface)]">Schutzmaßnahmen-Matrix</h3>
         </div>
         
         <div className="flex items-center gap-3">
@@ -273,7 +273,7 @@ export function SchutzMatrix({
                 >
                   <td className="px-3 py-3">
                     <div className="flex flex-col">
-                      <span className="text-white font-medium">
+                      <span className="text-[var(--color-on-surface)] font-medium">
                         {flaeche.standort || `Fläche ${flaeche.id.slice(0, 6)}`}
                       </span>
                       <span className="text-xs text-[var(--color-on-surface-variant)]">
@@ -320,7 +320,7 @@ export function SchutzMatrix({
         <div className="flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
           <div>
-            <div className="text-sm font-medium text-white mb-1">
+            <div className="text-sm font-medium text-[var(--color-on-surface)] mb-1">
               Saisonale Empfehlung ({currentSeason === "sommer" ? "April–September" : "Oktober–März"})
             </div>
             <div className="text-xs text-[var(--color-on-surface-variant)] space-y-1">

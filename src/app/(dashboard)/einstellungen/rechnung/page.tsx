@@ -124,7 +124,7 @@ export default function RechnungsEinstellungenPage() {
       <form onSubmit={handleSave} className="space-y-6">
         {/* Bankdaten */}
         <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
-          <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+          <h3 className="text-[var(--color-on-surface)] font-semibold mb-4 flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-emerald-400" />
             Bankverbindung
           </h3>
@@ -137,7 +137,7 @@ export default function RechnungsEinstellungenPage() {
                 value={settings.company_iban}
                 onChange={(e) => setSettings({ ...settings, company_iban: e.target.value })}
                 placeholder="DE00 0000 0000 0000 0000 00"
-                className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
+                className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
@@ -147,7 +147,7 @@ export default function RechnungsEinstellungenPage() {
                 value={settings.company_bic}
                 onChange={(e) => setSettings({ ...settings, company_bic: e.target.value })}
                 placeholder="COBADEFFXXX"
-                className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
+                className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
               />
             </div>
           </div>
@@ -155,7 +155,7 @@ export default function RechnungsEinstellungenPage() {
 
         {/* Steuerdaten */}
         <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
-          <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+          <h3 className="text-[var(--color-on-surface)] font-semibold mb-4 flex items-center gap-2">
             <Building2 className="w-4 h-4 text-emerald-400" />
             Steuerdaten
           </h3>
@@ -168,7 +168,7 @@ export default function RechnungsEinstellungenPage() {
                 value={settings.company_vat_id}
                 onChange={(e) => setSettings({ ...settings, company_vat_id: e.target.value })}
                 placeholder="DE123456789"
-                className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
+                className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
               />
               <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Umsatzsteuer-Identifikationsnummer</p>
             </div>
@@ -179,7 +179,7 @@ export default function RechnungsEinstellungenPage() {
                 value={settings.company_tax_number}
                 onChange={(e) => setSettings({ ...settings, company_tax_number: e.target.value })}
                 placeholder="22/123/45678"
-                className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
+                className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
               />
               <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Finanzamt-Steuernummer</p>
             </div>

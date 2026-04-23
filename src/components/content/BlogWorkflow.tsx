@@ -137,7 +137,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
     <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-border">
-        <h3 className="text-sm font-medium text-white flex items-center gap-2">
+        <h3 className="text-sm font-medium text-[var(--color-on-surface)] flex items-center gap-2">
           <FileText className="w-4 h-4" />
           Bewertung & Content
         </h3>

@@ -34,7 +34,7 @@ export function PraxisStatistik() {
       <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
         <div className="flex items-center gap-2 mb-2">
           <TrendingUp className="w-4 h-4 text-emerald-400" />
-          <h3 className="text-sm font-semibold text-white">Betriebserfahrung</h3>
+          <h3 className="text-sm font-semibold text-[var(--color-on-surface)]">Betriebserfahrung</h3>
         </div>
         <p className="text-xs text-zinc-600">
           Noch keine Anträge erfasst. Trage gestellte Förderanträge ein um Erfolgsquoten zu tracken.
@@ -50,7 +50,7 @@ export function PraxisStatistik() {
           <TrendingUp className="w-4 h-4 text-emerald-400" />
         </div>
         <div>
-          <h3 className="text-sm font-semibold text-white">Betriebserfahrung</h3>
+          <h3 className="text-sm font-semibold text-[var(--color-on-surface)]">Betriebserfahrung</h3>
           <p className="text-xs text-[var(--color-on-surface-variant)]">Aus eigenen Antragsverläufen</p>
         </div>
       </div>
@@ -58,7 +58,7 @@ export function PraxisStatistik() {
       <div className="space-y-2">
         {statistiken.map(s => (
           <div key={s.programm_id} className="bg-[var(--color-surface-container-low)] rounded-lg px-3 py-2 border border-[var(--color-outline-variant)]">
-            <p className="text-xs font-medium text-white truncate mb-1">{s.programm_name}</p>
+            <p className="text-xs font-medium text-[var(--color-on-surface)] truncate mb-1">{s.programm_name}</p>
             <div className="flex items-center gap-3 text-xs">
               <span className="text-[var(--color-on-surface-variant)]">{s.anzahl_antraege}x beantragt</span>
               {s.erfolgsquote_pct !== null && (

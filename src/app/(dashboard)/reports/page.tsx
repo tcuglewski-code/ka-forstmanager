@@ -174,7 +174,7 @@ export default function ReportsPage() {
               </div>
               <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
                 <div className="px-6 py-4 border-b border-border">
-                  <h3 className="font-semibold text-white">Aufträge</h3>
+                  <h3 className="font-semibold text-[var(--color-on-surface)]">Aufträge</h3>
                 </div>
                 <div className="overflow-x-auto">
                 <table className="min-w-full">
@@ -187,7 +187,7 @@ export default function ReportsPage() {
                   <tbody className="divide-y divide-border">
                     {saisonReport.auftraege.map((a) => (
                       <tr key={a.id} className="hover:bg-[#1c1c1c]">
-                        <td className="px-6 py-3 text-sm text-white">
+                        <td className="px-6 py-3 text-sm text-[var(--color-on-surface)]">
                           {a.titel}
                           <a href={`/auftraege/${a.id}`} className="text-blue-400 hover:underline text-xs ml-2">
                             Details →
@@ -227,7 +227,7 @@ export default function ReportsPage() {
           {maReport && (
             <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
               <div className="px-6 py-4 border-b border-border">
-                <h3 className="font-semibold text-white">{monate[maReport.monat - 1]} {maReport.jahr}</h3>
+                <h3 className="font-semibold text-[var(--color-on-surface)]">{monate[maReport.monat - 1]} {maReport.jahr}</h3>
               </div>
               <div className="overflow-x-auto">
               <table className="min-w-full">
@@ -242,10 +242,10 @@ export default function ReportsPage() {
                     <tr><td colSpan={4} className="px-6 py-8 text-center text-zinc-600">Keine Stunden</td></tr>
                   ) : maReport.mitarbeiter.map((m, i) => (
                     <tr key={i} className="hover:bg-[#1c1c1c]">
-                      <td className="px-6 py-3 text-sm text-white">{m.mitarbeiter.vorname} {m.mitarbeiter.nachname}</td>
+                      <td className="px-6 py-3 text-sm text-[var(--color-on-surface)]">{m.mitarbeiter.vorname} {m.mitarbeiter.nachname}</td>
                       <td className="px-6 py-3 text-sm text-emerald-400">{m.stunden.toFixed(1)} h</td>
                       <td className="px-6 py-3 text-sm text-[var(--color-on-surface-variant)]">{m.mitarbeiter.stundenlohn?.toFixed(2) ?? "—"} €</td>
-                      <td className="px-6 py-3 text-sm font-medium text-white">{m.brutto.toFixed(2)} €</td>
+                      <td className="px-6 py-3 text-sm font-medium text-[var(--color-on-surface)]">{m.brutto.toFixed(2)} €</td>
                     </tr>
                   ))}
                 </tbody>
@@ -255,7 +255,7 @@ export default function ReportsPage() {
                       <td className="px-6 py-3 text-sm font-medium text-[var(--color-on-surface-variant)]">Gesamt</td>
                       <td className="px-6 py-3 text-sm font-medium text-emerald-400">{maReport.mitarbeiter.reduce((s, m) => s + m.stunden, 0).toFixed(1)} h</td>
                       <td></td>
-                      <td className="px-6 py-3 text-sm font-bold text-white">{maReport.mitarbeiter.reduce((s, m) => s + m.brutto, 0).toFixed(2)} €</td>
+                      <td className="px-6 py-3 text-sm font-bold text-[var(--color-on-surface)]">{maReport.mitarbeiter.reduce((s, m) => s + m.brutto, 0).toFixed(2)} €</td>
                     </tr>
                   </tfoot>
                 )}
@@ -317,8 +317,8 @@ export default function ReportsPage() {
                     <tr><td colSpan={5} className="px-6 py-12 text-center text-zinc-600">Kein Lager</td></tr>
                   ) : lagerItems.map((l) => (
                     <tr key={l.id} className="hover:bg-[#1c1c1c]">
-                      <td className="px-6 py-3 text-sm text-white">{l.name}</td>
-                      <td className="px-6 py-3 text-sm font-medium text-white">{l.bestand}</td>
+                      <td className="px-6 py-3 text-sm text-[var(--color-on-surface)]">{l.name}</td>
+                      <td className="px-6 py-3 text-sm font-medium text-[var(--color-on-surface)]">{l.bestand}</td>
                       <td className="px-6 py-3 text-sm text-[var(--color-on-surface-variant)]">{l.einheit}</td>
                       <td className="px-6 py-3 text-sm text-[var(--color-on-surface-variant)]">{l.mindestbestand}</td>
                       <td className="px-6 py-3">

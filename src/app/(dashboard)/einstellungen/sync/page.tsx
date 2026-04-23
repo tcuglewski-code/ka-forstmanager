@@ -165,7 +165,7 @@ export default function SyncSettingsPage() {
         </div>
         <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
           <p className="text-[var(--color-on-surface-variant)] text-xs mb-1">Letzte Sync</p>
-          <p className="text-sm font-medium text-white">
+          <p className="text-sm font-medium text-[var(--color-on-surface)]">
             {stats.lastSync 
               ? new Date(stats.lastSync).toLocaleString("de-DE", { 
                   day: "2-digit", 
@@ -233,7 +233,7 @@ export default function SyncSettingsPage() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-white">{log.entityType}</span>
+                    <span className="text-[var(--color-on-surface)]">{log.entityType}</span>
                     <span className="text-[var(--color-on-surface-variant)] text-xs ml-2">#{log.entityId.slice(0, 8)}</span>
                   </td>
                   <td className="px-4 py-3">
@@ -255,23 +255,23 @@ export default function SyncSettingsPage() {
 
       {/* Info-Box */}
       <div className="mt-6 p-4 rounded-xl bg-[var(--color-surface-container)] border border-border">
-        <h3 className="text-sm font-medium text-white mb-2">Sync-Konfiguration</h3>
+        <h3 className="text-sm font-medium text-[var(--color-on-surface)] mb-2">Sync-Konfiguration</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <span className="text-[var(--color-on-surface-variant)]">WordPress URL:</span>
-            <span className="text-white ml-2">peru-otter-113714.hostingersite.com</span>
+            <span className="text-[var(--color-on-surface)] ml-2">peru-otter-113714.hostingersite.com</span>
           </div>
           <div>
             <span className="text-[var(--color-on-surface-variant)]">Sync-Intervall:</span>
-            <span className="text-white ml-2">15 Minuten (Cron)</span>
+            <span className="text-[var(--color-on-surface)] ml-2">15 Minuten (Cron)</span>
           </div>
           <div>
             <span className="text-[var(--color-on-surface-variant)]">Konflikt-Strategie:</span>
-            <span className="text-white ml-2">Last-Write-Wins</span>
+            <span className="text-[var(--color-on-surface)] ml-2">Last-Write-Wins</span>
           </div>
           <div>
             <span className="text-[var(--color-on-surface-variant)]">Rate-Limit:</span>
-            <span className="text-white ml-2">100 Requests/Minute</span>
+            <span className="text-[var(--color-on-surface)] ml-2">100 Requests/Minute</span>
           </div>
         </div>
       </div>

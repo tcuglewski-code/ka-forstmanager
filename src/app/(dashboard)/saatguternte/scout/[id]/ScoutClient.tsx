@@ -97,7 +97,7 @@ export function ScoutClient({ flaeche }: { flaeche: Flaeche }) {
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div className="flex-1 min-w-0">
-          <div className="font-mono text-sm font-bold text-white truncate">{flaeche.registerNr}</div>
+          <div className="font-mono text-sm font-bold text-[var(--color-on-surface)] truncate">{flaeche.registerNr}</div>
           <div className="text-xs text-[var(--color-on-surface-variant)] truncate">{flaeche.baumart} · {flaeche.bundesland}</div>
         </div>
         {hasKoord && (

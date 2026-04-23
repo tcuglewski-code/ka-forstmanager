@@ -204,7 +204,7 @@ export default function EinstellungenPage() {
                     <tr><td colSpan={5} className="px-6 py-12 text-center text-zinc-600">Keine Benutzer</td></tr>
                   ) : users.map((u) => (
                     <tr key={u.id} className="hover:bg-[#1c1c1c]">
-                      <td className="px-6 py-4 text-sm font-medium text-white">{u.name}</td>
+                      <td className="px-6 py-4 text-sm font-medium text-[var(--color-on-surface)]">{u.name}</td>
                       <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{u.email}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2 py-0.5 rounded-full text-xs ${rolleBadge[u.role] ?? "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]"}`}>
@@ -429,14 +429,14 @@ export default function EinstellungenPage() {
           <BillingPortalCard />
           
           <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
-            <h3 className="font-semibold text-white mb-3">Abrechnungsdetails</h3>
+            <h3 className="font-semibold text-[var(--color-on-surface)] mb-3">Abrechnungsdetails</h3>
             <p className="text-sm text-[var(--color-on-surface-variant)] mb-4">
               Ihr aktuelles Abonnement und Abrechnungsinformationen.
             </p>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="p-3 bg-[var(--color-surface-container-low)] rounded-lg border border-border">
                 <span className="text-[var(--color-on-surface-variant)] block text-xs mb-1">Plan</span>
-                <span className="text-white font-medium">ForstManager Pro</span>
+                <span className="text-[var(--color-on-surface)] font-medium">ForstManager Pro</span>
               </div>
               <div className="p-3 bg-[var(--color-surface-container-low)] rounded-lg border border-border">
                 <span className="text-[var(--color-on-surface-variant)] block text-xs mb-1">Status</span>
@@ -444,11 +444,11 @@ export default function EinstellungenPage() {
               </div>
               <div className="p-3 bg-[var(--color-surface-container-low)] rounded-lg border border-border">
                 <span className="text-[var(--color-on-surface-variant)] block text-xs mb-1">Abrechnungszyklus</span>
-                <span className="text-white font-medium">Monatlich</span>
+                <span className="text-[var(--color-on-surface)] font-medium">Monatlich</span>
               </div>
               <div className="p-3 bg-[var(--color-surface-container-low)] rounded-lg border border-border">
                 <span className="text-[var(--color-on-surface-variant)] block text-xs mb-1">Nächste Abrechnung</span>
-                <span className="text-white font-medium">Im Stripe Portal einsehen</span>
+                <span className="text-[var(--color-on-surface)] font-medium">Im Stripe Portal einsehen</span>
               </div>
             </div>
           </div>
@@ -473,7 +473,7 @@ export default function EinstellungenPage() {
       {tab === "system" && (
         <div className="space-y-4">
           <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
-            <h3 className="font-semibold text-white mb-3">App-API</h3>
+            <h3 className="font-semibold text-[var(--color-on-surface)] mb-3">App-API</h3>
             <p className="text-sm text-[var(--color-on-surface-variant)] mb-4">REST API für die mobile App (ka-app). JWT-Token basierte Authentifizierung.</p>
             <div className="space-y-2">
               <div className="flex items-center justify-between p-3 bg-[var(--color-surface-container-low)] rounded-lg border border-border">
@@ -495,7 +495,7 @@ export default function EinstellungenPage() {
             </div>
           </div>
           <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
-            <h3 className="font-semibold text-white mb-3">Webhooks</h3>
+            <h3 className="font-semibold text-[var(--color-on-surface)] mb-3">Webhooks</h3>
             <p className="text-sm text-[var(--color-on-surface-variant)]">Webhook-Integration für externe Systeme (z.B. ERP, Buchhaltung).</p>
             <div className="mt-4 p-4 bg-[var(--color-surface-container-low)] rounded-lg border border-border text-sm text-zinc-600">
               🔧 Konfiguration folgt in einer späteren Version
@@ -508,7 +508,7 @@ export default function EinstellungenPage() {
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Benutzer anlegen</h2>
+            <h2 className="text-lg font-bold text-[var(--color-on-surface)] mb-4">Benutzer anlegen</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Name</label>
@@ -548,7 +548,7 @@ export default function EinstellungenPage() {
       {editUser && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Benutzer bearbeiten</h2>
+            <h2 className="text-lg font-bold text-[var(--color-on-surface)] mb-4">Benutzer bearbeiten</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Name</label>

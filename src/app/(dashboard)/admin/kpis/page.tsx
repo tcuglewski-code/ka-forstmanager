@@ -131,7 +131,7 @@ export default function KpiDashboardPage() {
 
       {/* MRR Chart */}
       <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">
+        <h2 className="text-lg font-semibold text-[var(--color-on-surface)] mb-4">
           MRR Verlauf
         </h2>
         <div className="h-64">
@@ -173,7 +173,7 @@ export default function KpiDashboardPage() {
 
       {/* MAU Chart */}
       <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">
+        <h2 className="text-lg font-semibold text-[var(--color-on-surface)] mb-4">
           Aktive Nutzer
         </h2>
         <div className="h-64">

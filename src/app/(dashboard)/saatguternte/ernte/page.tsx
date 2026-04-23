@@ -256,7 +256,7 @@ export default async function ErnteHistoriePage({
                         {e.profil?.flaeche?.bundesland ?? "—"}
                       </td>
                       <td className="px-4 py-3 text-zinc-300">{e.baumart}</td>
-                      <td className="px-4 py-3 text-right text-white font-medium">
+                      <td className="px-4 py-3 text-right text-[var(--color-on-surface)] font-medium">
                         {e.mengeKgGesamt !== null
                           ? e.mengeKgGesamt.toLocaleString("de-DE", { maximumFractionDigits: 1 })
                           : "—"}

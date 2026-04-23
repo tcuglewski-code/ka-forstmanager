@@ -358,7 +358,7 @@ export function BeratungsErgebnis({
             <ReactMarkdown
               components={{
                 h1: ({ children }) => (
-                  <h1 className="text-lg font-bold text-white mt-4 mb-2 first:mt-0">{children}</h1>
+                  <h1 className="text-lg font-bold text-[var(--color-on-surface)] mt-4 mb-2 first:mt-0">{children}</h1>
                 ),
                 h2: ({ children }) => (
                   <h2 className="text-base font-semibold text-emerald-200 mt-4 mb-2">{children}</h2>
@@ -414,7 +414,7 @@ export function BeratungsErgebnis({
           <div className="px-4 py-3 border-b border-[var(--color-outline-variant)] flex items-center justify-between">
             <div className="flex items-center gap-2">
               <TreePine className="w-4 h-4 text-emerald-400" />
-              <span className="text-sm font-medium text-white">Empfohlene Förderprogramme</span>
+              <span className="text-sm font-medium text-[var(--color-on-surface)]">Empfohlene Förderprogramme</span>
             </div>
             <span className="text-xs text-[var(--color-on-surface-variant)] bg-[var(--color-surface-container-lowest)] px-2 py-0.5 rounded">
               {ergebnis.programme.length} Programme
@@ -432,7 +432,7 @@ export function BeratungsErgebnis({
                       <span className="text-xs px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
                         #{idx + 1}
                       </span>
-                      <h4 className="text-sm font-medium text-white truncate group-hover:text-emerald-100 transition-colors">
+                      <h4 className="text-sm font-medium text-[var(--color-on-surface)] truncate group-hover:text-emerald-100 transition-colors">
                         {p.name || "Unbekanntes Programm"}
                       </h4>
                     </div>

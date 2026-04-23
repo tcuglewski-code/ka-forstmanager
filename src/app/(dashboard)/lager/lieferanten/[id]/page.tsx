@@ -150,19 +150,19 @@ Koch Aufforstung GmbH`
           <h2 className="text-sm font-medium text-[var(--color-on-surface-variant)] mb-4">Kontakt</h2>
           <div className="space-y-3">
             {lieferant.email && (
-              <a href={`mailto:${lieferant.email}`} className="flex items-center gap-3 text-white hover:text-emerald-400 transition-colors">
+              <a href={`mailto:${lieferant.email}`} className="flex items-center gap-3 text-[var(--color-on-surface)] hover:text-emerald-400 transition-colors">
                 <Mail className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
                 {lieferant.email}
               </a>
             )}
             {lieferant.telefon && (
-              <a href={`tel:${lieferant.telefon}`} className="flex items-center gap-3 text-white hover:text-emerald-400 transition-colors">
+              <a href={`tel:${lieferant.telefon}`} className="flex items-center gap-3 text-[var(--color-on-surface)] hover:text-emerald-400 transition-colors">
                 <Phone className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
                 {lieferant.telefon}
               </a>
             )}
             {lieferant.website && (
-              <a href={lieferant.website.startsWith("http") ? lieferant.website : `https://${lieferant.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-white hover:text-emerald-400 transition-colors">
+              <a href={lieferant.website.startsWith("http") ? lieferant.website : `https://${lieferant.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-[var(--color-on-surface)] hover:text-emerald-400 transition-colors">
                 <Globe className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
                 {lieferant.website}
                 <ExternalLink className="w-3 h-3" />
@@ -176,7 +176,7 @@ Koch Aufforstung GmbH`
           {lieferant.adresse || lieferant.plz || lieferant.ort ? (
             <div className="flex items-start gap-3">
               <MapPin className="w-4 h-4 text-[var(--color-on-surface-variant)] mt-0.5" />
-              <div className="text-white">
+              <div className="text-[var(--color-on-surface)]">
                 {lieferant.adresse && <p>{lieferant.adresse}</p>}
                 {(lieferant.plz || lieferant.ort) && (
                   <p>{[lieferant.plz, lieferant.ort].filter(Boolean).join(" ")}</p>
@@ -211,7 +211,7 @@ Koch Aufforstung GmbH`
       {/* Artikel-Liste */}
       <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <div className="px-5 py-4 border-b border-border flex items-center justify-between">
-          <h2 className="text-sm font-medium text-white flex items-center gap-2">
+          <h2 className="text-sm font-medium text-[var(--color-on-surface)] flex items-center gap-2">
             <Package className="w-4 h-4 text-emerald-400" />
             Artikel von diesem Lieferanten
           </h2>
@@ -241,7 +241,7 @@ Koch Aufforstung GmbH`
                     <BestandsAmpel bestand={a.bestand} mindestbestand={a.mindestbestand} />
                   </td>
                   <td className="px-5 py-3">
-                    <a href={`/lager?item=${a.id}`} className="text-white hover:text-emerald-400 transition-colors">
+                    <a href={`/lager?item=${a.id}`} className="text-[var(--color-on-surface)] hover:text-emerald-400 transition-colors">
                       {a.name}
                     </a>
                     <span className="ml-2 px-1.5 py-0.5 rounded text-xs bg-surface-container-highest text-[var(--color-on-surface-variant)]">
@@ -252,12 +252,12 @@ Koch Aufforstung GmbH`
                     {a.lieferantBestellnummer || "–"}
                   </td>
                   <td className="px-5 py-3 text-right">
-                    <span className={a.bestand <= a.mindestbestand ? "text-amber-400" : "text-white"}>
+                    <span className={a.bestand <= a.mindestbestand ? "text-amber-400" : "text-[var(--color-on-surface)]"}>
                       {a.bestand}
                     </span>
                     <span className="text-[var(--color-on-surface-variant)]">/{a.mindestbestand} {a.einheit}</span>
                   </td>
-                  <td className="px-5 py-3 text-right text-white">
+                  <td className="px-5 py-3 text-right text-[var(--color-on-surface)]">
                     {(a.lieferantPreis ?? a.einkaufspreis)?.toFixed(2) ?? "–"} €
                   </td>
                   <td className="px-5 py-3 text-right text-emerald-400">
@@ -275,7 +275,7 @@ Koch Aufforstung GmbH`
       {lieferant.notizen && (
         <div className="mt-6 bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
           <h2 className="text-sm font-medium text-[var(--color-on-surface-variant)] mb-2">Notizen</h2>
-          <p className="text-white whitespace-pre-wrap">{lieferant.notizen}</p>
+          <p className="text-[var(--color-on-surface)] whitespace-pre-wrap">{lieferant.notizen}</p>
         </div>
       )}
     </div>

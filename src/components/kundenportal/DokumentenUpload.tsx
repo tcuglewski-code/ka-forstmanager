@@ -256,7 +256,7 @@ export function DokumentenUpload({ kundeId, auftragId, maxMb = 20 }: DokumentenU
               >
                 <DateiIcon contentType={datei.contentType} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-white truncate">{datei.name}</p>
+                  <p className="text-sm text-[var(--color-on-surface)] truncate">{datei.name}</p>
                   <p className="text-xs text-[var(--color-on-surface-variant)]">
                     {formatGroesse(datei.groesse)}
                     {datei.geaendertAm && ` · ${new Date(datei.geaendertAm).toLocaleDateString("de-DE")}`}

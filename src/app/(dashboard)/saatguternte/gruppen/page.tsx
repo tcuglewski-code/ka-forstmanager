@@ -123,7 +123,7 @@ export default function GruppenPage() {
                     <TreePine className="w-5 h-5 text-emerald-400" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-semibold text-white truncate">{gruppe.name}</h3>
+                    <h3 className="text-base font-semibold text-[var(--color-on-surface)] truncate">{gruppe.name}</h3>
                     <p className="text-sm text-[var(--color-on-surface-variant)] mt-0.5">
                       Saison {gruppe.saison?.jahr ?? "—"}
                     </p>
@@ -137,21 +137,21 @@ export default function GruppenPage() {
                   <div className="flex items-center gap-2 text-sm">
                     <User className="w-4 h-4 text-[var(--color-on-surface-variant)] flex-shrink-0" />
                     <span className="text-[var(--color-on-surface-variant)]">Gruppenführer:</span>
-                    <span className="text-white font-medium">{gruppe.gruppenfuehrerName}</span>
+                    <span className="text-[var(--color-on-surface)] font-medium">{gruppe.gruppenfuehrerName}</span>
                   </div>
                 )}
 
                 {gruppe.stundenlohnGF && (
                   <div className="flex items-center gap-2 text-sm">
                     <span className="text-[var(--color-on-surface-variant)]">GF Stundenlohn:</span>
-                    <span className="text-white">{gruppe.stundenlohnGF.toFixed(2)} €/h</span>
+                    <span className="text-[var(--color-on-surface)]">{gruppe.stundenlohnGF.toFixed(2)} €/h</span>
                   </div>
                 )}
 
                 <div className="flex items-center gap-2 text-sm">
                   <Users className="w-4 h-4 text-[var(--color-on-surface-variant)] flex-shrink-0" />
                   <span className="text-[var(--color-on-surface-variant)]">Mitglieder:</span>
-                  <span className="text-white font-medium">{gruppe._count?.mitglieder ?? 0}</span>
+                  <span className="text-[var(--color-on-surface)] font-medium">{gruppe._count?.mitglieder ?? 0}</span>
                 </div>
 
                 {/* Mitglieder-Liste Toggle */}
@@ -191,7 +191,7 @@ export default function GruppenPage() {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--color-surface-container)] border border-border rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-border">
-              <h2 className="text-lg font-semibold text-white">Neue Erntegruppe</h2>
+              <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">Neue Erntegruppe</h2>
               <button onClick={() => setShowModal(false)} className="text-[var(--color-on-surface-variant)] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
@@ -204,7 +204,7 @@ export default function GruppenPage() {
                   required
                   value={form.saisonId}
                   onChange={(e) => setForm({ ...form, saisonId: e.target.value })}
-                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
                 >
                   <option value="">Saison wählen…</option>
                   {saisons.map((s) => (
@@ -221,7 +221,7 @@ export default function GruppenPage() {
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder="z.B. Gruppe Rumänien 2025"
-                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
                 />
               </div>
 
@@ -233,7 +233,7 @@ export default function GruppenPage() {
                     value={form.gruppenfuehrerName}
                     onChange={(e) => setForm({ ...form, gruppenfuehrerName: e.target.value })}
                     placeholder="Name"
-                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
                   />
                 </div>
                 <div>
@@ -243,7 +243,7 @@ export default function GruppenPage() {
                     step="0.01"
                     value={form.stundenlohnGF}
                     onChange={(e) => setForm({ ...form, stundenlohnGF: e.target.value })}
-                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
                   />
                 </div>
               </div>
@@ -269,7 +269,7 @@ export default function GruppenPage() {
                           ) : (
                             <Square className="w-4 h-4 text-zinc-600 flex-shrink-0" />
                           )}
-                          <span className={selected ? "text-white" : "text-[var(--color-on-surface-variant)]"}>{p.name}</span>
+                          <span className={selected ? "text-[var(--color-on-surface)]" : "text-[var(--color-on-surface-variant)]"}>{p.name}</span>
                           {p.nationalitaet && (
                             <span className="text-zinc-600 text-xs ml-auto">{p.nationalitaet}</span>
                           )}
@@ -286,7 +286,7 @@ export default function GruppenPage() {
                   value={form.notizen}
                   onChange={(e) => setForm({ ...form, notizen: e.target.value })}
                   rows={2}
-                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2 resize-none"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2 resize-none"
                 />
               </div>
 

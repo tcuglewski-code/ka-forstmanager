@@ -126,7 +126,7 @@ function BaumartGruppe({ baumart, items, collapsed, onToggle }: {
       {/* Rows */}
       {!collapsed && items.map((a) => (
         <tr key={a.id} className="border-b border-[var(--color-outline-variant)] hover:bg-[var(--color-surface-container-lowest)] transition">
-          <td className="px-4 py-3 text-white font-medium">
+          <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">
             <div>{a.baumschule?.name ?? "—"}</div>
             <div className="text-xs text-[var(--color-on-surface-variant)]">{a.saison?.jahr ?? ""}</div>
           </td>
@@ -282,7 +282,7 @@ export default function ErnteanfragenPage() {
         <select
           value={filterSaison}
           onChange={(e) => setFilterSaison(e.target.value)}
-          className="bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+          className="bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
         >
           <option value="">Alle Saisons</option>
           {saisons.map((s) => (
@@ -293,7 +293,7 @@ export default function ErnteanfragenPage() {
         <select
           value={filterBaumart}
           onChange={(e) => setFilterBaumart(e.target.value)}
-          className="bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+          className="bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
         >
           <option value="">Alle Baumarten</option>
           {BAUMARTEN.map((b) => (
@@ -306,7 +306,7 @@ export default function ErnteanfragenPage() {
           value={filterHerkunft}
           onChange={(e) => setFilterHerkunft(e.target.value)}
           placeholder="Herkunft-Code…"
-          className="bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2 w-36"
+          className="bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2 w-36"
         />
 
         <label className="flex items-center gap-2 cursor-pointer select-none text-sm text-zinc-300">
@@ -322,7 +322,7 @@ export default function ErnteanfragenPage() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+          className="bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
         >
           <option value="">Alle Status</option>
           {Object.entries(STATUS_CONFIG).map(([k, v]) => (
@@ -410,7 +410,7 @@ export default function ErnteanfragenPage() {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--color-surface-container)] border border-border rounded-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-border">
-              <h2 className="text-lg font-semibold text-white">Neue Ernteanfrage</h2>
+              <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">Neue Ernteanfrage</h2>
               <button onClick={() => setShowModal(false)} className="text-[var(--color-on-surface-variant)] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
@@ -424,7 +424,7 @@ export default function ErnteanfragenPage() {
                   required
                   value={form.baumschuleId}
                   onChange={(e) => setForm({ ...form, baumschuleId: e.target.value })}
-                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
                 >
                   <option value="">Baumschule wählen…</option>
                   {baumschulen.map((b) => (
@@ -439,7 +439,7 @@ export default function ErnteanfragenPage() {
                 <select
                   value={form.saisonId}
                   onChange={(e) => setForm({ ...form, saisonId: e.target.value })}
-                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
                 >
                   <option value="">Saison wählen…</option>
                   {saisons.map((s) => (
@@ -455,7 +455,7 @@ export default function ErnteanfragenPage() {
                   required
                   value={form.baumart}
                   onChange={(e) => setForm({ ...form, baumart: e.target.value })}
-                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
                 >
                   <option value="">Baumart wählen…</option>
                   {BAUMARTEN.map((b) => (
@@ -473,7 +473,7 @@ export default function ErnteanfragenPage() {
                     value={form.herkunftCode}
                     onChange={(e) => setForm({ ...form, herkunftCode: e.target.value })}
                     placeholder="z.B. 06, 818 07"
-                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
                   />
                 </div>
                 <div>
@@ -483,7 +483,7 @@ export default function ErnteanfragenPage() {
                     value={form.herkunftName}
                     onChange={(e) => setForm({ ...form, herkunftName: e.target.value })}
                     placeholder="optional"
-                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
                   />
                 </div>
               </div>
@@ -497,7 +497,7 @@ export default function ErnteanfragenPage() {
                     onChange={(e) => setForm({ ...form, sonderherkunft: e.target.checked })}
                     className="accent-yellow-400 w-4 h-4"
                   />
-                  <span className="text-sm text-white font-medium">⭐ Sonderherkunft (DKV)</span>
+                  <span className="text-sm text-[var(--color-on-surface)] font-medium">⭐ Sonderherkunft (DKV)</span>
                 </label>
                 {form.sonderherkunft && (
                   <div className="grid grid-cols-2 gap-3 pt-1">
@@ -508,7 +508,7 @@ export default function ErnteanfragenPage() {
                         value={form.sonderherkunftCode}
                         onChange={(e) => setForm({ ...form, sonderherkunftCode: e.target.value })}
                         placeholder="z.B. DKV-818-001"
-                        className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+                        className="w-full bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
                       />
                     </div>
                     <div>
@@ -518,7 +518,7 @@ export default function ErnteanfragenPage() {
                         value={form.sonderherkunftName}
                         onChange={(e) => setForm({ ...form, sonderherkunftName: e.target.value })}
                         placeholder="optional"
-                        className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+                        className="w-full bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
                       />
                     </div>
                   </div>
@@ -536,7 +536,7 @@ export default function ErnteanfragenPage() {
                     step="0.1"
                     value={form.zielmenge}
                     onChange={(e) => setForm({ ...form, zielmenge: e.target.value })}
-                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
                   />
                 </div>
                 <div>
@@ -545,7 +545,7 @@ export default function ErnteanfragenPage() {
                     type="date"
                     value={form.deadline}
                     onChange={(e) => setForm({ ...form, deadline: e.target.value })}
-                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2"
                   />
                 </div>
               </div>
@@ -557,7 +557,7 @@ export default function ErnteanfragenPage() {
                   value={form.notizen}
                   onChange={(e) => setForm({ ...form, notizen: e.target.value })}
                   rows={3}
-                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2 resize-none"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2 resize-none"
                 />
               </div>
 

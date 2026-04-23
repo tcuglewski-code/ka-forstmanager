@@ -208,7 +208,7 @@ function VertragPageInner() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Formular */}
           <div className="no-print lg:col-span-1 space-y-4 bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
-            <h2 className="text-base font-semibold text-white mb-4">Vertragsparameter</h2>
+            <h2 className="text-base font-semibold text-[var(--color-on-surface)] mb-4">Vertragsparameter</h2>
 
             <div className="space-y-3">
               <div>

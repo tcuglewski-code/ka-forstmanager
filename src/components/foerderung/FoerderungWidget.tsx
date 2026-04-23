@@ -33,7 +33,7 @@ export function FoerderungWidget() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <TreePine className="w-4 h-4 text-emerald-400" />
-          <h2 className="font-semibold text-white">Förderprogramme</h2>
+          <h2 className="font-semibold text-[var(--color-on-surface)]">Förderprogramme</h2>
         </div>
         <Link
           href="/foerderung"
@@ -59,7 +59,7 @@ export function FoerderungWidget() {
               className="block hover:bg-[var(--color-surface-container-highest)] rounded-lg p-2 -mx-2 transition-all group"
             >
               <div className="flex items-start justify-between gap-2">
-                <p className="text-sm text-white leading-snug group-hover:text-emerald-100 transition-colors line-clamp-2">
+                <p className="text-sm text-[var(--color-on-surface)] leading-snug group-hover:text-emerald-100 transition-colors line-clamp-2">
                   {p.name}
                 </p>
                 <span

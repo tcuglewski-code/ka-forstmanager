@@ -328,7 +328,7 @@ export default function StundenPage() {
                         <tbody className="divide-y divide-border">
                           {eintraege.map((s) => (
                             <tr key={s.id} className="hover:bg-[#1c1c1c]">
-                              <td className="px-4 py-3 text-sm text-white">{s.mitarbeiter.vorname} {s.mitarbeiter.nachname}</td>
+                              <td className="px-4 py-3 text-sm text-[var(--color-on-surface)]">{s.mitarbeiter.vorname} {s.mitarbeiter.nachname}</td>
                               <td className="px-4 py-3 text-sm font-medium text-emerald-400">{s.stunden} h</td>
                               <td className="px-4 py-3 text-sm text-[var(--color-on-surface-variant)]">{typLabel[s.typ] ?? s.typ}</td>
                               <td className="px-4 py-3 text-sm text-[var(--color-on-surface-variant)]">
@@ -385,7 +385,7 @@ export default function StundenPage() {
                     <tr><td colSpan={6} className="px-6 py-12 text-center text-zinc-600">Keine Abwesenheiten</td></tr>
                   ) : abwesenheiten.map((a) => (
                     <tr key={a.id} className="hover:bg-[#1c1c1c]">
-                      <td className="px-6 py-4 text-sm text-white">{a.mitarbeiter.vorname} {a.mitarbeiter.nachname}</td>
+                      <td className="px-6 py-4 text-sm text-[var(--color-on-surface)]">{a.mitarbeiter.vorname} {a.mitarbeiter.nachname}</td>
                       <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{new Date(a.von).toLocaleDateString("de-DE")}</td>
                       <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{new Date(a.bis).toLocaleDateString("de-DE")}</td>
                       <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{abwTypLabel[a.typ] ?? a.typ}</td>
@@ -421,7 +421,7 @@ export default function StundenPage() {
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg font-bold text-white mb-4">Stunden buchen</h2>
+            <h2 className="text-lg font-bold text-[var(--color-on-surface)] mb-4">Stunden buchen</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Mitarbeiter *</label>
@@ -500,7 +500,7 @@ export default function StundenPage() {
       {showAbwModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Abwesenheit eintragen</h2>
+            <h2 className="text-lg font-bold text-[var(--color-on-surface)] mb-4">Abwesenheit eintragen</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Mitarbeiter</label>

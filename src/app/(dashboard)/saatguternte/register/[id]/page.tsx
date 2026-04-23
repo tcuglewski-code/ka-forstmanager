@@ -99,7 +99,7 @@ export default async function FlaecheDetailPage({
       {/* Header */}
       <div className="flex items-start gap-2 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white font-mono">{flaeche.registerNr}</h1>
+          <h1 className="text-2xl font-bold text-[var(--color-on-surface)] font-mono">{flaeche.registerNr}</h1>
           <p className="text-[var(--color-on-surface-variant)] text-sm mt-0.5">
             {flaeche.baumart} · {flaeche.bundesland}
           </p>

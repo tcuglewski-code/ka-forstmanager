@@ -214,7 +214,7 @@ export default function ZipayoButton({
               {payment && status === "pending" && (
                 <div className="flex flex-col items-center">
                   {/* Amount */}
-                  <div className="text-3xl font-bold text-white mb-6">
+                  <div className="text-3xl font-bold text-[var(--color-on-surface)] mb-6">
                     {formatAmount(payment.amount)}
                   </div>
 
@@ -259,7 +259,7 @@ export default function ZipayoButton({
                   <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mb-4">
                     <CheckCircle className="w-10 h-10 text-emerald-400" />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-2">Zahlung erfolgreich!</h3>
+                  <h3 className="text-xl font-bold text-[var(--color-on-surface)] mb-2">Zahlung erfolgreich!</h3>
                   <p className="text-[var(--color-on-surface-variant)] text-center">
                     {formatAmount(payment?.amount || 0)} wurde bezahlt
                   </p>
@@ -277,7 +277,7 @@ export default function ZipayoButton({
                   <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4">
                     <XCircle className="w-10 h-10 text-red-400" />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-2">Zahlung fehlgeschlagen</h3>
+                  <h3 className="text-xl font-bold text-[var(--color-on-surface)] mb-2">Zahlung fehlgeschlagen</h3>
                   <p className="text-[var(--color-on-surface-variant)] text-center">
                     Die Zahlung konnte nicht abgeschlossen werden
                   </p>
@@ -295,7 +295,7 @@ export default function ZipayoButton({
                   <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mb-4">
                     <XCircle className="w-10 h-10 text-amber-400" />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-2">Zahlung abgelaufen</h3>
+                  <h3 className="text-xl font-bold text-[var(--color-on-surface)] mb-2">Zahlung abgelaufen</h3>
                   <p className="text-[var(--color-on-surface-variant)] text-center">
                     Der QR-Code ist nicht mehr gültig
                   </p>

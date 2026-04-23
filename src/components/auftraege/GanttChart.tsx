@@ -211,7 +211,7 @@ function MobileDateModal({ auftrag, onClose, onSave }: MobileDateModalProps) {
         <div className="flex gap-2">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 bg-[var(--color-surface-container-high)] hover:bg-zinc-600 rounded-lg text-white text-sm"
+            className="flex-1 px-4 py-2 bg-[var(--color-surface-container-high)] hover:bg-zinc-600 rounded-lg text-[var(--color-on-surface)] text-sm"
           >
             Abbrechen
           </button>

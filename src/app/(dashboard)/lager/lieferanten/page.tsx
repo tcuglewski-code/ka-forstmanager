@@ -116,7 +116,7 @@ export default function LieferantenPage() {
                 <tr key={l.id} className="hover:bg-[#1c1c1c]">
                   <td className="px-4 py-3">
                     <div>
-                      <p className="text-white font-medium">{l.name}</p>
+                      <p className="text-[var(--color-on-surface)] font-medium">{l.name}</p>
                       {l.website && (
                         <a
                           href={l.website}
@@ -266,7 +266,7 @@ function LieferantModal({
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
       <div className="bg-[var(--color-surface-container)] border border-border rounded-xl w-full max-w-lg">
         <div className="flex items-center justify-between p-4 border-b border-border">
-          <h2 className="text-lg font-semibold text-white">
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">
             {lieferant ? "Lieferant bearbeiten" : "Neuer Lieferant"}
           </h2>
           <button onClick={onClose} className="text-[var(--color-on-surface-variant)] hover:text-white">

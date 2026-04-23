@@ -155,7 +155,7 @@ export function ConsentBanner({ onConsentChange, showOnlyOnce = true }: ConsentB
             <Shield className="w-5 h-5 text-emerald-500" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-white">Datenschutz-Einstellungen</h2>
+            <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">Datenschutz-Einstellungen</h2>
             <p className="text-sm text-[var(--color-on-surface-variant)]">KI-Features benötigen Ihre Einwilligung</p>
           </div>
         </div>
@@ -186,7 +186,7 @@ export function ConsentBanner({ onConsentChange, showOnlyOnce = true }: ConsentB
                     className="mt-0.5 w-4 h-4 rounded border-zinc-600 bg-[var(--color-surface-container-low)] text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0"
                   />
                   <div className="flex-1">
-                    <div className="text-sm font-medium text-white">{config.label}</div>
+                    <div className="text-sm font-medium text-[var(--color-on-surface)]">{config.label}</div>
                     <div className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">{config.description}</div>
                   </div>
                 </label>

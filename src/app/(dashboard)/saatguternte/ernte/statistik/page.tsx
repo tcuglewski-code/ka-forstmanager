@@ -235,7 +235,7 @@ export default async function StatistikPage({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* B) Sammler-Ranking */}
         <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
-          <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+          <h2 className="text-[var(--color-on-surface)] font-semibold mb-4 flex items-center gap-2">
             <Users className="w-4 h-4 text-emerald-400" />
             Sammler-Ranking
           </h2>
@@ -248,7 +248,7 @@ export default async function StatistikPage({
                   <div key={s.sammlerName} className="flex items-center gap-3">
                     <span className="text-xl w-8">{rankEmojis[i]}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white font-medium truncate">{s.sammlerName}</p>
+                      <p className="text-[var(--color-on-surface)] font-medium truncate">{s.sammlerName}</p>
                       <p className="text-[var(--color-on-surface-variant)] text-xs">
                         {s.einsaetze} Einsätze · ∅ {s.avgKgEinsatz} kg/Einsatz
                         {s.avgKgTag !== null && ` · ∅ ${s.avgKgTag} kg/Tag`}
@@ -289,26 +289,26 @@ export default async function StatistikPage({
 
         {/* E) Durchschnitte */}
         <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
-          <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+          <h2 className="text-[var(--color-on-surface)] font-semibold mb-4 flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-emerald-400" />
             Durchschnitts-Statistiken
           </h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between py-3 border-b border-border">
               <span className="text-[var(--color-on-surface-variant)] text-sm">∅ kg pro Sammler / Saison</span>
-              <span className="text-white font-semibold">
+              <span className="text-[var(--color-on-surface)] font-semibold">
                 {avgKgSammler.toLocaleString("de-DE")} kg
               </span>
             </div>
             <div className="flex items-center justify-between py-3 border-b border-border">
               <span className="text-[var(--color-on-surface-variant)] text-sm">∅ kg pro Sammler / Tag</span>
-              <span className="text-white font-semibold">
+              <span className="text-[var(--color-on-surface)] font-semibold">
                 {avgKgTag !== null ? `${avgKgTag.toLocaleString("de-DE")} kg` : "keine Stunden erfasst"}
               </span>
             </div>
             <div className="flex items-center justify-between py-3">
               <span className="text-[var(--color-on-surface-variant)] text-sm">∅ kg pro Fläche</span>
-              <span className="text-white font-semibold">
+              <span className="text-[var(--color-on-surface)] font-semibold">
                 {avgKgFlaeche.toLocaleString("de-DE")} kg
               </span>
             </div>
@@ -319,7 +319,7 @@ export default async function StatistikPage({
       {/* C) Ertrag pro Baumart */}
       <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <div className="px-6 py-4 border-b border-border">
-          <h2 className="text-white font-semibold">Ertrag pro Baumart</h2>
+          <h2 className="text-[var(--color-on-surface)] font-semibold">Ertrag pro Baumart</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -343,7 +343,7 @@ export default async function StatistikPage({
                 baumartStats.map((b) => (
                   <tr key={b.baumart} className="border-b border-border hover:bg-[var(--color-surface-container-lowest)] transition-colors">
                     <td className="px-4 py-3 text-zinc-300 font-medium">{b.baumart}</td>
-                    <td className="px-4 py-3 text-right text-white">
+                    <td className="px-4 py-3 text-right text-[var(--color-on-surface)]">
                       {b.gesamtKg.toLocaleString("de-DE")}
                     </td>
                     <td className="px-4 py-3 text-right text-[var(--color-on-surface-variant)]">{b.anzahlErnten}</td>
@@ -374,7 +374,7 @@ export default async function StatistikPage({
       {/* D) Ertrag pro Bundesland */}
       <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <div className="px-6 py-4 border-b border-border">
-          <h2 className="text-white font-semibold">Ertrag pro Bundesland</h2>
+          <h2 className="text-[var(--color-on-surface)] font-semibold">Ertrag pro Bundesland</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -400,7 +400,7 @@ export default async function StatistikPage({
                     className="border-b border-border hover:bg-[var(--color-surface-container-lowest)] transition-colors"
                   >
                     <td className="px-4 py-3 text-zinc-300 font-medium">{b.bundesland}</td>
-                    <td className="px-4 py-3 text-right text-white">
+                    <td className="px-4 py-3 text-right text-[var(--color-on-surface)]">
                       {b.gesamtKg.toLocaleString("de-DE")}
                     </td>
                     <td className="px-4 py-3 text-right text-[var(--color-on-surface-variant)]">{b.anzahlFlaechen}</td>

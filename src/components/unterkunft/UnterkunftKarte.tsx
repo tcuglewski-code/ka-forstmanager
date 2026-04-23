@@ -164,7 +164,7 @@ export function UnterkunftKarte({ zentrum, unterkuenfte, auftragsName }: Props) 
       {/* Seitenleiste */}
       <div className="w-80 bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden flex flex-col">
         <div className="p-4 border-b border-border">
-          <h3 className="text-sm font-medium text-white flex items-center gap-2">
+          <h3 className="text-sm font-medium text-[var(--color-on-surface)] flex items-center gap-2">
             <Hotel className="w-4 h-4" />
             {unterkuenfte.length} Unterkünfte gefunden
           </h3>
@@ -184,7 +184,7 @@ export function UnterkunftKarte({ zentrum, unterkuenfte, auftragsName }: Props) 
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">{u.name}</p>
+                  <p className="text-sm font-medium text-[var(--color-on-surface)] truncate">{u.name}</p>
                   <p className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">
                     {typLabels[u.typ] || u.typ}
                     {u.sterne && (
@@ -208,7 +208,7 @@ export function UnterkunftKarte({ zentrum, unterkuenfte, auftragsName }: Props) 
         {/* Detail-Panel */}
         {selectedUnterkunft && (
           <div className="p-4 border-t border-border bg-[var(--color-surface-container-low)]">
-            <h4 className="text-sm font-medium text-white mb-2">{selectedUnterkunft.name}</h4>
+            <h4 className="text-sm font-medium text-[var(--color-on-surface)] mb-2">{selectedUnterkunft.name}</h4>
             <div className="space-y-2 text-xs">
               {selectedUnterkunft.adresse && (
                 <p className="flex items-start gap-2 text-[var(--color-on-surface-variant)]">

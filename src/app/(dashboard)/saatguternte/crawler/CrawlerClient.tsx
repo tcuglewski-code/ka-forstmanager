@@ -150,7 +150,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-1">
-                <h3 className="text-white font-semibold">NW-FVA Hessen EZR</h3>
+                <h3 className="text-[var(--color-on-surface)] font-semibold">NW-FVA Hessen EZR</h3>
                 <span className="px-2 py-0.5 bg-orange-500/20 text-orange-400 rounded text-xs font-medium">HE</span>
                 {hessenStatus && (
                   <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -278,7 +278,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-1">
-                    <h3 className="text-white font-semibold">{quelle.name}</h3>
+                    <h3 className="text-[var(--color-on-surface)] font-semibold">{quelle.name}</h3>
                     <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-xs font-medium">
                       {quelle.kuerzel}
                     </span>
@@ -360,7 +360,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
                         }))
                       }
                       placeholder="z.B. forstamt@example.de"
-                      className="w-full px-3 py-2 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                      className="w-full px-3 py-2 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-sm text-[var(--color-on-surface)] placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
@@ -376,7 +376,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
                           }))
                         }
                         placeholder="Passwort"
-                        className="w-full px-3 py-2 pr-10 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                        className="w-full px-3 py-2 pr-10 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-sm text-[var(--color-on-surface)] placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
                       />
                       <button
                         type="button"

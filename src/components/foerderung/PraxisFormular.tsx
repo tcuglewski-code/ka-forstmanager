@@ -129,7 +129,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
       <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border">
-          <h2 className="text-lg font-semibold text-white">
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">
             {editData ? "Antrag bearbeiten" : "Neuen Antrag dokumentieren"}
           </h2>
           <button
@@ -160,7 +160,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
                 required
                 value={formData.programm_id}
                 onChange={(e) => setFormData({ ...formData, programm_id: Number(e.target.value) })}
-                className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
               >
                 <option value={0}>Programm auswählen...</option>
                 {programme.map((p) => (
@@ -178,7 +178,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
             <select
               value={formData.bundesland}
               onChange={(e) => setFormData({ ...formData, bundesland: e.target.value })}
-              className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
             >
               <option value="">Bundesland auswählen...</option>
               {BUNDESLAENDER.map((bl) => (
@@ -197,7 +197,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
                 type="date"
                 value={formData.antrag_datum}
                 onChange={(e) => setFormData({ ...formData, antrag_datum: e.target.value })}
-                className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
@@ -206,7 +206,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
                 type="date"
                 value={formData.bewilligung_datum}
                 onChange={(e) => setFormData({ ...formData, bewilligung_datum: e.target.value })}
-                className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
               />
             </div>
           </div>
@@ -224,7 +224,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
               onChange={(e) =>
                 setFormData({ ...formData, bewilligungsdauer_wochen: e.target.value })
               }
-              className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
             />
           </div>
 
@@ -240,7 +240,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
                 onChange={(e) =>
                   setFormData({ ...formData, beantragter_betrag_eur: e.target.value })
                 }
-                className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
                 placeholder="0.00"
               />
             </div>
@@ -254,7 +254,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
                 onChange={(e) =>
                   setFormData({ ...formData, bewilligter_betrag_eur: e.target.value })
                 }
-                className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none"
                 placeholder="0.00"
               />
             </div>
@@ -281,7 +281,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
               rows={3}
               value={formData.hinweis}
               onChange={(e) => setFormData({ ...formData, hinweis: e.target.value })}
-              className="w-full px-3 py-2 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none resize-none"
+              className="w-full px-3 py-2 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none resize-none"
               placeholder="Was hat gut funktioniert? Worauf sollte man achten?"
             />
           </div>
@@ -293,7 +293,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
               rows={3}
               value={formData.fallstricke}
               onChange={(e) => setFormData({ ...formData, fallstricke: e.target.value })}
-              className="w-full px-3 py-2 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none resize-none"
+              className="w-full px-3 py-2 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-[var(--color-on-surface)] focus:border-emerald-500 focus:outline-none resize-none"
               placeholder="Welche Probleme gab es? Was sollte man vermeiden?"
             />
           </div>

@@ -120,8 +120,8 @@ export default function AbnahmenPage() {
               {abnahmen.length === 0 ? (
                 <tr><td colSpan={5} className="px-6 py-12 text-center text-zinc-600">Keine Abnahmen</td></tr>
               ) : abnahmen.map((a) => (
-                <tr key={a.id} className="hover:bg-[#1c1c1c] cursor-pointer" onClick={() => setSelectedAbnahme(selectedAbnahme?.id === a.id ? null : a)}>
-                  <td className="px-6 py-4 text-sm text-white">{a.auftrag.titel}</td>
+                <tr key={a.id} className="hover:bg-[var(--color-surface-container-high)] cursor-pointer" onClick={() => setSelectedAbnahme(selectedAbnahme?.id === a.id ? null : a)}>
+                  <td className="px-6 py-4 text-sm text-[var(--color-on-surface)]">{a.auftrag.titel}</td>
                   <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{new Date(a.datum).toLocaleDateString("de-DE")}</td>
                   <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{a.foersterId ?? "—"}</td>
                   <td className="px-6 py-4">
@@ -145,7 +145,7 @@ export default function AbnahmenPage() {
       {/* Detail Panel */}
       {selectedAbnahme && (
         <div className="mt-4 bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
-          <h3 className="font-semibold text-white mb-3">Details: {selectedAbnahme.auftrag.titel}</h3>
+          <h3 className="font-semibold text-[var(--color-on-surface)] mb-3">Details: {selectedAbnahme.auftrag.titel}</h3>
           <p className="text-sm text-[var(--color-on-surface-variant)] mb-2"><span className="text-[var(--color-on-surface-variant)]">Notizen:</span> {selectedAbnahme.notizen ?? "—"}</p>
           {selectedAbnahme.signaturUrl && (
             <div>
@@ -159,7 +159,7 @@ export default function AbnahmenPage() {
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto">
-            <h2 className="text-lg font-bold text-white mb-4">Abnahme erstellen</h2>
+            <h2 className="text-lg font-bold text-[var(--color-on-surface)] mb-4">Abnahme erstellen</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Auftrag</label>

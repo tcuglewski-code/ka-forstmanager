@@ -54,9 +54,9 @@ export function StatistikWidget({ mitarbeiterId, saisons }: { mitarbeiterId: str
         <>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { label: "Gesamtstunden", value: `${(statistik.gesamtStunden ?? 0).toFixed(1)}h`, color: "text-white" },
+              { label: "Gesamtstunden", value: `${(statistik.gesamtStunden ?? 0).toFixed(1)}h`, color: "text-[var(--color-on-surface)]" },
               { label: "Maschinenstunden", value: `${(statistik.maschinenStunden ?? 0).toFixed(1)}h`, color: "text-amber-400" },
-              { label: "Arbeitstage", value: String(statistik.arbeitsTage ?? 0), color: "text-white" },
+              { label: "Arbeitstage", value: String(statistik.arbeitsTage ?? 0), color: "text-[var(--color-on-surface)]" },
               {
                 label: "Vorschüsse",
                 value: (statistik.vorschussGesamt ?? 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" }),

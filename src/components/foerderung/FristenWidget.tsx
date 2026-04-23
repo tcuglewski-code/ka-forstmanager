@@ -42,7 +42,7 @@ export function FristenWidget() {
           <Clock className="w-4 h-4 text-amber-400" />
         </div>
         <div className="flex-1">
-          <h3 className="text-sm font-semibold text-white">Antragsfristen</h3>
+          <h3 className="text-sm font-semibold text-[var(--color-on-surface)]">Antragsfristen</h3>
           <p className="text-xs text-[var(--color-on-surface-variant)]">{programme.length} Programme mit Fristangabe</p>
         </div>
         <AlertTriangle className="w-4 h-4 text-amber-400/60" />
@@ -52,7 +52,7 @@ export function FristenWidget() {
         {sichtbar.map(p => (
           <div key={p.id} className="flex items-start justify-between gap-2 bg-[var(--color-surface-container-low)] rounded-lg px-3 py-2 border border-[var(--color-outline-variant)]">
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-white truncate">{p.name}</p>
+              <p className="text-xs font-medium text-[var(--color-on-surface)] truncate">{p.name}</p>
               <p className="text-xs text-amber-400 mt-0.5">📅 {p.antragsfrist}</p>
               {p.bundesland && <p className="text-xs text-zinc-600">{p.bundesland}</p>}
             </div>
