@@ -256,7 +256,7 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
   const gesamtStd = stdFields.reduce((sum: number, v) => sum + (v ?? 0), 0)
 
   const hasRevier = hasValue(p.forstamt) || hasValue(p.revier) || hasValue(p.revierleiter) || hasValue(p.abteilung) || hasValue(p.waldbesitzerName)
-  const hasArbeitszeit = hasValue(p.zeitBeginn) || hasValue(p.zeitEnde) || hasValue(p.pausezeit)
+  const hasArbeitszeit = hasValue(p.zeitBeginn) || hasValue(p.zeitEnde) || hasValue(p.pausezeit) || hasValue(p.arbeitsbeginn) || hasValue(p.arbeitsende) || hasValue(p.pauseMinuten)
   const hasHandpflanzung = hasValue(p.std_einschlag) || hasValue(p.std_handpflanzung) || hasValue(p.stk_pflanzung)
   const hasBohrer = hasValue(p.std_zum_bohrer) || hasValue(p.std_mit_bohrer) || hasValue(p.stk_pflanzung_mit_bohrer)
   const hasFreischneider = hasValue(p.std_freischneider) || hasValue(p.std_motorsaege)
@@ -303,9 +303,10 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
       {/* Arbeitszeit */}
       {hasArbeitszeit && (
         <DetailSection icon={<Clock className="w-4 h-4" />} title="Arbeitszeit vor Ort">
-          {p.zeitBeginn && <Row label="Beginn" value={fmt(p.zeitBeginn)} />}
-          {p.zeitEnde && <Row label="Ende" value={fmt(p.zeitEnde)} />}
-          <Row label="Pause" value={p.pausezeit} unit="Min." />
+          {p.arbeitsbeginn ? <Row label="Beginn" value={p.arbeitsbeginn} unit="Uhr" /> : p.zeitBeginn ? <Row label="Beginn" value={fmt(p.zeitBeginn)} /> : null}
+          {p.arbeitsende ? <Row label="Ende" value={p.arbeitsende} unit="Uhr" /> : p.zeitEnde ? <Row label="Ende" value={fmt(p.zeitEnde)} /> : null}
+          {hasValue(p.pauseMinuten) ? <Row label="Pause" value={p.pauseMinuten} unit="Min." /> : <Row label="Pause" value={p.pausezeit} unit="Min." />}
+          <Row label="Mitarbeiter" value={p.mitarbeiterAnzahl} unit="MA" />
         </DetailSection>
       )}
 
