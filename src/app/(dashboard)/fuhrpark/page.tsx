@@ -310,6 +310,84 @@ function GeraetModal({ onClose, onSave }: { onClose: () => void; onSave: () => v
   )
 }
 
+// ─── Modal: Gerät bearbeiten (FM-37) ──────────────────────────────────────────
+
+function GeraetEditModal({
+  geraet,
+  onClose,
+  onSave,
+}: {
+  geraet: Geraet
+  onClose: () => void
+  onSave: () => void
+}) {
+  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({
+    typ: geraet.typ,
+    bezeichnung: geraet.bezeichnung,
+    seriennummer: geraet.seriennummer ?? "",
+    status: geraet.status,
+    naechsteWartung: geraet.naechsteWartung ? geraet.naechsteWartung.split("T")[0] : "",
+  })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/geraete/${geraet.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+      if (!res.ok) throw new Error("Fehler beim Speichern")
+      toast.success("Gerät aktualisiert")
+    } catch {
+      toast.error("Fehler beim Speichern")
+    }
+    setLoading(false)
+    onSave()
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-surface-container border border-border rounded-xl w-full max-w-md">
+        <div className="flex items-center justify-between p-6 border-b border-border">
+          <h2 className="text-lg font-semibold text-on-surface">Gerät bearbeiten</h2>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-on-surface-variant hover:text-on-surface" /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {[["Typ *", "typ"], ["Bezeichnung *", "bezeichnung"], ["Seriennummer", "seriennummer"]].map(([label, key]) => (
+            <div key={key}>
+              <label className="block text-xs text-on-surface-variant mb-1">{label}</label>
+              <input type="text" value={(form as Record<string, string>)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
+                className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
+            </div>
+          ))}
+          <div>
+            <label className="block text-xs text-on-surface-variant mb-1">Status</label>
+            <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
+              {["verfuegbar", "im_einsatz", "in_wartung", "defekt"].map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs text-on-surface-variant mb-1">Nächste Wartung</label>
+            <input type="date" value={form.naechsteWartung} onChange={e => setForm(f => ({ ...f, naechsteWartung: e.target.value }))}
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-on-surface-variant hover:text-on-surface transition-all">Abbrechen</button>
+            <button type="submit" disabled={loading || !form.bezeichnung || !form.typ}
+              className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
+              {loading ? "Speichern..." : "Aktualisieren"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 // ─── Modal: Einsatz buchen ────────────────────────────────────────────────────
 
 function EinsatzModal({
@@ -436,6 +514,8 @@ export default function FuhrparkPage() {
   const [modal, setModal] = useState<"fahrzeug" | "geraet" | "einsatz" | null>(null)
   // Y2: Edit-State für Fahrzeuge
   const [editFahrzeug, setEditFahrzeug] = useState<Fahrzeug | null>(null)
+  // FM-37: Edit-State für Geräte
+  const [editGeraet, setEditGeraet] = useState<Geraet | null>(null)
   const heute = new Date()
 
   const load = useCallback(async () => {
@@ -578,11 +658,12 @@ export default function FuhrparkPage() {
                     <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Typ</th>
                     <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Status</th>
                     <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Nächste Wartung</th>
+                    <th className="px-4 py-3" />
                   </tr>
                 </thead>
                 <tbody>
                   {geraete.length === 0 ? (
-                    <tr><td colSpan={4} className="text-center py-12 text-on-surface-variant">Keine Geräte</td></tr>
+                    <tr><td colSpan={5} className="text-center py-12 text-on-surface-variant">Keine Geräte</td></tr>
                   ) : geraete.map(g => (
                     <tr key={g.id} className="border-b border-outline-variant hover:bg-surface-container-high transition-colors cursor-default">
                       <td className="px-4 py-3 text-on-surface font-medium">
@@ -603,6 +684,14 @@ export default function FuhrparkPage() {
                             {new Date(g.naechsteWartung).toLocaleDateString("de-DE")}
                           </span>
                         ) : <span className="text-on-surface-variant">–</span>}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <button
+                          onClick={() => setEditGeraet(g)}
+                          className="text-on-surface-variant hover:text-emerald-400 transition-colors text-xs px-2 py-1 rounded hover:bg-surface-container-highest"
+                        >
+                          Bearbeiten
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -666,6 +755,14 @@ export default function FuhrparkPage() {
           fahrzeug={editFahrzeug}
           onClose={() => setEditFahrzeug(null)}
           onSave={() => { setEditFahrzeug(null); load() }}
+        />
+      )}
+      {/* FM-37: Gerät Edit-Modal */}
+      {editGeraet && (
+        <GeraetEditModal
+          geraet={editGeraet}
+          onClose={() => setEditGeraet(null)}
+          onSave={() => { setEditGeraet(null); load() }}
         />
       )}
       {modal === "geraet" && (

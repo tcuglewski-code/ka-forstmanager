@@ -57,6 +57,12 @@ export interface TagesprotokollFull {
   // Sektion 10
   kommentar?: string | null
   bericht?: string | null
+  // Neue Felder (Sprint BP)
+  arbeitsbeginn?: string | null
+  arbeitsende?: string | null
+  pauseMinuten?: number | null
+  gepflanztGesamt?: number | null
+  mitarbeiterAnzahl?: number | null
   // meta
   eingereichtAm?: string | null
   genehmigungsKommentar?: string | null
@@ -391,6 +397,41 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
           <span className="text-lg font-bold text-emerald-400">{gesamtStd.toFixed(2)} Std.</span>
         </div>
       )}
+
+      {/* FM-13: Pflanzrate Kennzahl */}
+      {(() => {
+        const totalPflanzen = (p.gepflanztGesamt ?? 0) || ((p.stk_pflanzung ?? 0) + (p.stk_pflanzung_mit_bohrer ?? 0))
+        if (totalPflanzen <= 0) return null
+        const ma = p.mitarbeiterAnzahl ?? 1
+        let nettoStd = 0
+        if (p.arbeitsbeginn && p.arbeitsende) {
+          const b = new Date(`1970-01-01T${p.arbeitsbeginn}`)
+          const e = new Date(`1970-01-01T${p.arbeitsende}`)
+          let diff = (e.getTime() - b.getTime()) / (1000 * 60 * 60)
+          if (diff < 0) diff += 24
+          nettoStd = diff - (p.pauseMinuten ?? 0) / 60
+        } else if (p.zeitBeginn && p.zeitEnde) {
+          const b = new Date(p.zeitBeginn)
+          const e = new Date(p.zeitEnde)
+          let diff = (e.getTime() - b.getTime()) / (1000 * 60 * 60)
+          if (diff < 0) diff += 24
+          nettoStd = diff - (p.pausezeit ?? 0) / 60
+        }
+        if (nettoStd <= 0) return null
+        const rate = totalPflanzen / (ma * nettoStd)
+        const isHigh = rate > 70
+        const isLow = rate < 5
+        return (
+          <div className={`rounded-lg px-4 py-3 flex items-center justify-between border ${isHigh ? 'bg-amber-500/10 border-amber-500/30' : isLow ? 'bg-red-500/10 border-red-500/30' : 'bg-blue-500/10 border-blue-500/30'}`}>
+            <span className={`text-sm font-medium ${isHigh ? 'text-amber-400' : isLow ? 'text-red-400' : 'text-blue-400'}`}>
+              Pflanzrate {isHigh ? '(hoch!)' : isLow ? '(gering)' : ''}
+            </span>
+            <span className={`text-lg font-bold ${isHigh ? 'text-amber-400' : isLow ? 'text-red-400' : 'text-blue-400'}`}>
+              {Math.round(rate)} Pfl/h/MA
+            </span>
+          </div>
+        )
+      })()}
 
       {/* Genehmigungs-Kommentar anzeigen */}
       {localKommentar && (

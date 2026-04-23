@@ -148,6 +148,27 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
     warnings.push('Motorsäge über 6h/Person — Vibrations-/Lärmgrenzwert überschritten')
   }
 
+  // FM-10: Pflanzrate Plausibilitätsprüfung (Warnung, nicht blockierend)
+  if (data.gepflanztGesamt && data.gepflanztGesamt > 0 && mitarbeiterAnzahl > 0) {
+    let nettoStunden = 0
+    if (data.arbeitsbeginn && data.arbeitsende) {
+      const beginn = new Date(`1970-01-01T${data.arbeitsbeginn}`)
+      const ende = new Date(`1970-01-01T${data.arbeitsende}`)
+      let diff = (ende.getTime() - beginn.getTime()) / (1000 * 60 * 60)
+      if (diff < 0) diff += 24
+      const pause = (data.pauseMinuten || 0) / 60
+      nettoStunden = diff - pause
+    }
+    if (nettoStunden > 0) {
+      const rate = data.gepflanztGesamt / (mitarbeiterAnzahl * nettoStunden)
+      if (rate > 70) {
+        warnings.push(`Sehr hohe Pflanzrate (${Math.round(rate)} Pfl/h/MA). Bitte prüfen.`)
+      } else if (rate < 5) {
+        warnings.push(`Sehr geringe Pflanzrate (${Math.round(rate)} Pfl/h/MA). Bitte prüfen.`)
+      }
+    }
+  }
+
   // Doppeleintrag-Check
   if (data.auftragId && data.datum) {
     const existing = await prisma.tagesprotokoll.findFirst({
