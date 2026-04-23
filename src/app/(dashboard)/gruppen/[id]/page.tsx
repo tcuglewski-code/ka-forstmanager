@@ -29,13 +29,19 @@ export default function GruppeDetailPage() {
   const [adding, setAdding] = useState(false)
 
   const load = useCallback(async () => {
-    const [g, ma] = await Promise.all([
-      fetch(`/api/gruppen/${id}`).then(r => r.json()),
-      fetch("/api/mitarbeiter").then(r => r.json()),
-    ])
-    setGruppe(g)
-    setAllMitarbeiter(ma)
-  }, [id])
+    try {
+      const [gRes, maRes] = await Promise.all([
+        fetch(`/api/gruppen/${id}`),
+        fetch("/api/mitarbeiter"),
+      ])
+      if (!gRes.ok) { router.push("/gruppen"); return }
+      const [g, ma] = await Promise.all([gRes.json(), maRes.json()])
+      setGruppe(g)
+      setAllMitarbeiter(Array.isArray(ma) ? ma : [])
+    } catch {
+      router.push("/gruppen")
+    }
+  }, [id, router])
 
   useEffect(() => { load() }, [load])
 

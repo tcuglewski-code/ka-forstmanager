@@ -38,18 +38,18 @@ interface Saison {
 
 const STATUS_FARBEN: Record<string, string> = {
   anfrage: "bg-blue-100 text-blue-800",
-  geplant: "bg-cyan-500/20 text-cyan-400",  // QA-01: Neuer Status
-  aktiv: "bg-lime-500/20 text-lime-400",  // QA-01: Neuer Status
-  geprueft: "bg-sky-500/20 text-sky-400",
+  geplant: "bg-cyan-100 text-cyan-800",  // QA-01: WCAG AA
+  aktiv: "bg-lime-100 text-lime-800",  // QA-01: WCAG AA
+  geprueft: "bg-sky-100 text-sky-800",
   angebot: "bg-violet-100 text-violet-800",
   bestaetigt: "bg-amber-100 text-amber-800",
-  angenommen: "bg-green-500/20 text-green-400",  // Sprint FP (A2)
+  angenommen: "bg-green-100 text-green-800",  // Sprint FP (A2): WCAG AA
   in_ausfuehrung: "bg-emerald-100 text-emerald-800",
-  abgeschlossen: "bg-green-600/30 text-green-300",  // Sprint FP (A2): grüner Badge
+  abgeschlossen: "bg-green-100 text-green-800",  // Sprint FP (A2): WCAG AA
   laufend: "bg-emerald-100 text-emerald-800",
   auftrag: "bg-amber-100 text-amber-800",
   maengel_offen: "bg-red-100 text-red-800",  // Sprint FV
-  abnahme: "bg-purple-500/20 text-purple-400",  // Sprint FV
+  abnahme: "bg-purple-100 text-purple-800",  // Sprint FV: WCAG AA
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -72,13 +72,13 @@ const TYP_FARBEN: Record<string, string> = {
   pflanzung: "bg-emerald-100 text-emerald-800",
   flaechenvorbereitung: "bg-blue-100 text-blue-800",
   flachenvorbereitung: "bg-blue-100 text-blue-800",
-  foerderberatung: "bg-purple-500/20 text-purple-400",
-  foerdermittelberatung: "bg-purple-500/20 text-purple-400",
-  zaunbau: "bg-orange-500/20 text-orange-400",
+  foerderberatung: "bg-purple-100 text-purple-800",
+  foerdermittelberatung: "bg-purple-100 text-purple-800",
+  zaunbau: "bg-orange-100 text-orange-800",
   kulturschutz: "bg-amber-100 text-amber-800",
-  kulturpflege: "bg-yellow-500/20 text-yellow-400",
-  saatguternte: "bg-cyan-500/20 text-cyan-400",
-  pflanzenbeschaffung: "bg-teal-500/20 text-teal-400",
+  kulturpflege: "bg-yellow-100 text-yellow-800",
+  saatguternte: "bg-cyan-100 text-cyan-800",
+  pflanzenbeschaffung: "bg-teal-100 text-teal-800",
 }
 
 function typLabel(typ: string): string {

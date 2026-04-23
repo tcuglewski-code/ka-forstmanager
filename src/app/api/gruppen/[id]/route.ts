@@ -8,14 +8,24 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
     where: { id },
     include: {
       saison: true,
-      auftraege: true,
+      auftraege: { select: { id: true, titel: true, status: true } },
       mitglieder: {
-        include: { mitarbeiter: true },
+        include: { mitarbeiter: { select: { id: true, vorname: true, nachname: true, rolle: true } } },
       },
     },
   })
   if (!gruppe) return NextResponse.json({ error: "Not found" }, { status: 404 })
-  return NextResponse.json(gruppe)
+
+  // Enrich with Gruppenführer details
+  let gruppenfuehrer = null
+  if (gruppe.gruppenfuehrerId) {
+    gruppenfuehrer = await prisma.mitarbeiter.findUnique({
+      where: { id: gruppe.gruppenfuehrerId },
+      select: { id: true, vorname: true, nachname: true },
+    })
+  }
+
+  return NextResponse.json({ ...gruppe, gruppenfuehrer })
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

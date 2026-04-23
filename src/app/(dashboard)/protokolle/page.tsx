@@ -70,7 +70,7 @@ export default function ProtokolleSeite() {
     if (filterBis) params.set("bis", filterBis)
     const [p, a] = await Promise.all([
       fetch(`/api/tagesprotokoll?${params}`).then((r) => r.json()),
-      fetch("/api/auftraege").then((r) => r.json()),
+      fetch("/api/auftraege?statusIn=in_ausfuehrung,bestaetigt,laufend,aktiv&limit=200").then((r) => r.json()),
     ])
     setProtokolle(Array.isArray(p) ? p : [])
     setAuftraege(Array.isArray(a) ? a : [])

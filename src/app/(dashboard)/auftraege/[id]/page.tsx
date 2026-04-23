@@ -105,17 +105,17 @@ interface Auftrag {
 
 const STATUS_LIST = [
   { value: "anfrage", label: "Anfrage", color: "bg-blue-100 text-blue-800 border-blue-500/30" },
-  { value: "geplant", label: "Geplant", color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" },  // QA-01
-  { value: "aktiv", label: "Aktiv", color: "bg-lime-500/20 text-lime-400 border-lime-500/30" },  // QA-01
-  { value: "geprueft", label: "Geprüft", color: "bg-sky-500/20 text-sky-400 border-sky-500/30" },
+  { value: "geplant", label: "Geplant", color: "bg-cyan-100 text-cyan-800 border-cyan-500/30" },  // QA-01: WCAG AA
+  { value: "aktiv", label: "Aktiv", color: "bg-lime-100 text-lime-800 border-lime-500/30" },  // QA-01: WCAG AA
+  { value: "geprueft", label: "Geprüft", color: "bg-sky-100 text-sky-800 border-sky-500/30" },
   { value: "angebot", label: "Angebot", color: "bg-violet-100 text-violet-800 border-violet-500/30" },
   { value: "bestaetigt", label: "Bestätigt", color: "bg-amber-100 text-amber-800 border-amber-500/30" },
-  { value: "angenommen", label: "Angenommen", color: "bg-green-500/20 text-green-400 border-green-500/30" },
+  { value: "angenommen", label: "Angenommen", color: "bg-green-100 text-green-800 border-green-500/30" },
   { value: "auftrag", label: "Auftrag", color: "bg-amber-100 text-amber-800 border-amber-500/30" },
   { value: "in_ausfuehrung", label: "In Ausführung", color: "bg-emerald-100 text-emerald-800 border-emerald-500/30" },
   { value: "laufend", label: "Laufend", color: "bg-emerald-100 text-emerald-800 border-emerald-500/30" },
   { value: "maengel_offen", label: "Mängel offen", color: "bg-red-100 text-red-800 border-red-500/30" },
-  { value: "abnahme", label: "Abnahme", color: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
+  { value: "abnahme", label: "Abnahme", color: "bg-purple-100 text-purple-800 border-purple-500/30" },
   { value: "abgeschlossen", label: "Abgeschlossen", color: "bg-gray-100 text-gray-700 border-zinc-500/30" },
 ]
 
@@ -137,12 +137,12 @@ const TYP_FARBEN: Record<string, string> = {
   pflanzung: "bg-emerald-100 text-emerald-800",
   flaechenvorbereitung: "bg-blue-100 text-blue-800",
   flachenvorbereitung: "bg-blue-100 text-blue-800",
-  foerderberatung: "bg-purple-500/20 text-purple-400",
-  foerdermittelberatung: "bg-purple-500/20 text-purple-400",
-  zaunbau: "bg-orange-500/20 text-orange-400",
+  foerderberatung: "bg-purple-100 text-purple-800",
+  foerdermittelberatung: "bg-purple-100 text-purple-800",
+  zaunbau: "bg-orange-100 text-orange-800",
   kulturschutz: "bg-amber-100 text-amber-800",
-  kulturpflege: "bg-yellow-500/20 text-yellow-400",
-  saatguternte: "bg-lime-500/20 text-lime-400",
+  kulturpflege: "bg-yellow-100 text-yellow-800",
+  saatguternte: "bg-lime-100 text-lime-800",
 }
 
 // ─── Helper components ────────────────────────────────────────────────────────

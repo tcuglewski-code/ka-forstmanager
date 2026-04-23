@@ -224,11 +224,17 @@ function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onC
     e.preventDefault()
     setLoading(true)
     try {
-      await fetch(`/api/lager/${artikel.id}/bewegung`, {
+      const res = await fetch(`/api/lager/${artikel.id}/bewegung`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       })
+      if (!res.ok) {
+        const err = await res.json()
+        toast.error(err.message || err.error || "Fehler beim Speichern")
+        setLoading(false)
+        return
+      }
       toast.success("Bestand aktualisiert")
     } catch {
       toast.error("Fehler beim Speichern")
@@ -251,11 +257,11 @@ function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onC
               className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
               <option value="ausgang">Ausgabe (-)</option>
               <option value="eingang">Eingang (+)</option>
-              <option value="korrektur">Korrektur</option>
+              <option value="korrektur">Korrektur (Sollbestand setzen)</option>
             </select>
           </div>
           <div>
-            <label className="block text-xs text-on-surface-variant mb-1">Menge ({artikel.einheit})</label>
+            <label className="block text-xs text-on-surface-variant mb-1">{form.typ === "korrektur" ? "Neuer Sollbestand" : "Menge"} ({artikel.einheit})</label>
             <input type="number" min="0.01" step="0.01" value={form.menge} onChange={e => setForm(f => ({ ...f, menge: e.target.value }))}
               className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500" />
           </div>

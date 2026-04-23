@@ -50,15 +50,16 @@ export async function POST(req: NextRequest) {
 
     // Bestandsänderung berechnen
     let bestandsAenderung = 0
-    if (typ === "eingang" || typ === "rueckgabe" || typ === "korrektur") {
+    const isKorrektur = typ === "korrektur"
+    if (typ === "eingang" || typ === "rueckgabe") {
       bestandsAenderung = Math.abs(menge)
     } else if (typ === "ausgang" || typ === "reserve") {
       bestandsAenderung = -Math.abs(menge)
-      
+
       // Prüfe ob genug Bestand vorhanden
       if (artikel.bestand + bestandsAenderung < 0) {
         return NextResponse.json(
-          { 
+          {
             error: "Nicht genügend Bestand",
             verfuegbar: artikel.bestand,
             angefordert: Math.abs(menge)
@@ -81,9 +82,10 @@ export async function POST(req: NextRequest) {
           referenz: offlineId ? `offline:${offlineId}` : null
         }
       }),
+      // FM-32: Korrektur setzt Bestand absolut auf den eingegebenen Wert
       prisma.lagerArtikel.update({
         where: { id: artikelId },
-        data: { bestand: { increment: bestandsAenderung } }
+        data: isKorrektur ? { bestand: Math.abs(menge) } : { bestand: { increment: bestandsAenderung } }
       })
     ])
 

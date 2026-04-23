@@ -119,10 +119,10 @@ export default function TagesprotokollFormular({
     abteilung: s('abteilung', defaultAbteilung),
     waldbesitzerName: s('waldbesitzerName', waldbesitzer || ''),
     gruppe: '',
-    // Arbeitszeit
-    zeitBeginn: editId ? sDateTime('zeitBeginn') : '',
-    zeitEnde: editId ? sDateTime('zeitEnde') : '',
-    pausezeit: s('pausezeit', ''),
+    // Arbeitszeit (FM-06: type="time" mit Defaults)
+    arbeitsBeginn: editId ? (d.arbeitsBeginn as string || sDateTime('zeitBeginn')?.slice(11, 16) || '07:00') : '07:00',
+    arbeitsEnde: editId ? (d.arbeitsEnde as string || sDateTime('zeitEnde')?.slice(11, 16) || '17:00') : '17:00',
+    pausezeit: s('pausezeit', '60'),
     // Pflanzung Hand
     std_einschlag: s('std_einschlag', ''), std_handpflanzung: s('std_handpflanzung', ''), stk_pflanzung: s('stk_pflanzung', ''),
     // Pflanzung Bohrer
@@ -181,34 +181,39 @@ export default function TagesprotokollFormular({
   // ──────────────────────────────────────────────────────────────────────────
   // FIX 2: Arbeitszeit — max. 10h + gesetzliche Pause (ArbZG §4)
   // ──────────────────────────────────────────────────────────────────────────
-  const berechnePause = (beginn: string, ende: string) => {
-    if (!beginn || !ende) return
-    const start = new Date(beginn).getTime()
-    const endTime = new Date(ende).getTime()
-    if (isNaN(start) || isNaN(endTime) || endTime <= start) return
-
-    const diffStunden = (endTime - start) / (1000 * 60 * 60)
-
-    if (diffStunden > 10) {
-      toast.warning('Arbeitszeit darf 10 Stunden nicht überschreiten (gesetzliche Vorgabe, ArbZG §3).')
-      const maxEnde = new Date(start + 10 * 60 * 60 * 1000)
-      setForm(f => ({ ...f, zeitEnde: maxEnde.toISOString().slice(0, 16) }))
-      return
-    }
-
-    let gesetzlichePause = 0
-    if (diffStunden > 9) gesetzlichePause = 45
-    else if (diffStunden > 6) gesetzlichePause = 30
-
-    setForm(f => ({ ...f, pausezeit: gesetzlichePause.toString() }))
+  // FM-06: Nettoarbeitszeit berechnen aus time-Inputs
+  const berechneNettoStunden = (beginn: string, ende: string, pause: string): number => {
+    if (!beginn || !ende) return 0
+    const [bH, bM] = beginn.split(':').map(Number)
+    const [eH, eM] = ende.split(':').map(Number)
+    const startMin = bH * 60 + bM
+    const endMin = eH * 60 + eM
+    if (endMin <= startMin) return 0
+    const nettoMin = (endMin - startMin) - (parseInt(pause) || 0)
+    return Math.max(0, nettoMin / 60)
   }
 
-  const handleZeitChange = (field: 'zeitBeginn' | 'zeitEnde', value: string) => {
+  const handleZeitChange = (field: 'arbeitsBeginn' | 'arbeitsEnde', value: string) => {
     setForm(f => {
       const updated = { ...f, [field]: value }
-      const b = field === 'zeitBeginn' ? value : f.zeitBeginn
-      const e = field === 'zeitEnde' ? value : f.zeitEnde
-      if (b && e) setTimeout(() => berechnePause(b, e), 0)
+      const b = field === 'arbeitsBeginn' ? value : f.arbeitsBeginn
+      const e = field === 'arbeitsEnde' ? value : f.arbeitsEnde
+      if (b && e) {
+        const [bH, bM] = b.split(':').map(Number)
+        const [eH, eM] = e.split(':').map(Number)
+        const diffMin = (eH * 60 + eM) - (bH * 60 + bM)
+        const diffStunden = diffMin / 60
+        if (diffStunden > 10) {
+          toast.warning('Arbeitszeit darf 10 Stunden nicht überschreiten (ArbZG §3).')
+        }
+        // Auto-Pause nach ArbZG §4
+        let gesetzlichePause = 0
+        if (diffStunden > 9) gesetzlichePause = 45
+        else if (diffStunden > 6) gesetzlichePause = 30
+        if (gesetzlichePause > 0 && (parseInt(updated.pausezeit) || 0) < gesetzlichePause) {
+          updated.pausezeit = gesetzlichePause.toString()
+        }
+      }
       return updated
     })
   }
@@ -273,10 +278,8 @@ export default function TagesprotokollFormular({
       errors.push('Datum darf nicht in der Zukunft liegen')
     }
     
-    if (form.zeitBeginn && form.zeitEnde) {
-      const beginn = new Date(form.zeitBeginn)
-      const ende = new Date(form.zeitEnde)
-      if (beginn >= ende) {
+    if (form.arbeitsBeginn && form.arbeitsEnde) {
+      if (form.arbeitsBeginn >= form.arbeitsEnde) {
         errors.push('Beginn muss vor Ende liegen')
       }
     }
@@ -343,10 +346,12 @@ export default function TagesprotokollFormular({
         revierleiter: form.revierleiter || null,
         abteilung: form.abteilung || null,
         waldbesitzerName: form.waldbesitzerName || null,
-        // Arbeitszeit
-        zeitBeginn: form.zeitBeginn ? new Date(form.zeitBeginn).toISOString() : null,
-        zeitEnde: form.zeitEnde ? new Date(form.zeitEnde).toISOString() : null,
-        pausezeit: n(form.pausezeit),
+        // Arbeitszeit (FM-06: time strings + Nettoarbeitszeit)
+        arbeitsbeginn: form.arbeitsBeginn || null,
+        arbeitsende: form.arbeitsEnde || null,
+        pauseMinuten: parseInt(form.pausezeit) || 0,
+        pausezeit: parseInt(form.pausezeit) || 0,
+        arbeitsstunden: berechneNettoStunden(form.arbeitsBeginn, form.arbeitsEnde, form.pausezeit) || null,
         // Pflanzung Hand
         std_einschlag: n(form.std_einschlag),
         std_handpflanzung: n(form.std_handpflanzung),
@@ -488,42 +493,54 @@ export default function TagesprotokollFormular({
         {field('Gruppe', inp('gruppe', 'text', 'Gruppe A'))}
       </>)}
 
-      {/* FIX 2: Arbeitszeit mit max 10h + Auto-Pause */}
+      {/* FM-06: Arbeitszeit Start/Ende/Pause mit Netto-Berechnung */}
       <div className="mb-6 bg-[var(--color-surface-container)] rounded-xl border border-border overflow-hidden">
         <div className="bg-[var(--color-surface-container-highest)] px-4 py-3 border-b border-border flex items-center gap-2">
           <span>⏰</span>
           <h3 className="font-semibold text-[var(--color-on-surface)] text-sm">Arbeitszeit vor Ort</h3>
         </div>
-        <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">Beginn</label>
+            <label className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">Arbeitsbeginn</label>
             <input
-              type="datetime-local"
-              value={form.zeitBeginn}
-              onChange={e => handleZeitChange('zeitBeginn', e.target.value)}
+              type="time"
+              value={form.arbeitsBeginn}
+              onChange={e => handleZeitChange('arbeitsBeginn', e.target.value)}
               className="w-full border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] focus:outline-none focus:ring-2 focus:ring-green-600"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">Ende</label>
+            <label className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">Arbeitsende</label>
             <input
-              type="datetime-local"
-              value={form.zeitEnde}
-              onChange={e => handleZeitChange('zeitEnde', e.target.value)}
+              type="time"
+              value={form.arbeitsEnde}
+              onChange={e => handleZeitChange('arbeitsEnde', e.target.value)}
               className="w-full border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] focus:outline-none focus:ring-2 focus:ring-green-600"
             />
           </div>
-          <div className="md:col-span-2">
+          <div>
             <label className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">Pause (Minuten)</label>
             <input
               type="number"
+              min={0}
+              max={120}
               value={form.pausezeit}
               onChange={e => setForm(f => ({ ...f, pausezeit: e.target.value }))}
-              placeholder="30"
+              placeholder="60"
               className="w-full border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] placeholder-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-green-600"
             />
+          </div>
+          <div className="md:col-span-3">
+            {(() => {
+              const netto = berechneNettoStunden(form.arbeitsBeginn, form.arbeitsEnde, form.pausezeit)
+              return netto > 0 ? (
+                <div className="flex items-center gap-2 px-3 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                  <span className="text-emerald-400 font-medium text-sm">Nettoarbeitszeit: {netto.toFixed(1)} Stunden</span>
+                </div>
+              ) : null
+            })()}
             <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">
-              Automatisch nach ArbZG §4: &gt;6h = 30 min, &gt;9h = 45 min. Max. Arbeitszeit: 10h.
+              Pause wird automatisch nach ArbZG §4 vorgeschlagen: &gt;6h = 30 min, &gt;9h = 45 min.
             </p>
           </div>
         </div>

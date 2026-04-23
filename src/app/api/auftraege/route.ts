@@ -82,6 +82,7 @@ export async function GET(req: NextRequest) {
 
   const { searchParams } = new URL(req.url)
   const status = searchParams.get("status")
+  const statusIn = searchParams.get("statusIn") // FM-28: comma-separated list
   const typ = searchParams.get("typ")
   const search = searchParams.get("search")
 
@@ -92,6 +93,7 @@ export async function GET(req: NextRequest) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = {}
   if (status) where.status = status
+  else if (statusIn) where.status = { in: statusIn.split(",") }
   if (typ) where.typ = typ
 
   // Sprint UX: Schnellsuche

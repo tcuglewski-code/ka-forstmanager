@@ -168,7 +168,11 @@ export default function RechnungenPage() {
             Offene Summe: <span className="text-amber-400 font-medium">{gesamtOffen.toFixed(2)} €</span>
           </p>
         </div>
-        <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
+        <button onClick={() => {
+          const d = new Date(); d.setDate(d.getDate() + 30);
+          setForm(f => ({ ...f, faelligAm: f.faelligAm || d.toISOString().slice(0, 10) }));
+          setShowModal(true)
+        }} className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
           <Plus className="w-4 h-4" /> Rechnung erstellen
         </button>
       </div>

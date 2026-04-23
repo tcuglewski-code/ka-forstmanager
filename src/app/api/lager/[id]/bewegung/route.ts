@@ -67,16 +67,22 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       },
     })
 
-    // Update bestand: eingang/rueckgabe addieren, ausgang/reserve/zuweisung subtrahieren
-    const delta = (body.typ === "eingang" || body.typ === "rueckgabe")
-      ? menge
-      : (body.typ === "ausgang" || body.typ === "reserve" || body.typ === "zuweisung")
-      ? -menge
-      : menge // korrektur + andere = positiv
-    await prisma.lagerArtikel.update({
-      where: { id: artikelId },
-      data: { bestand: { increment: delta } },
-    })
+    // Update bestand
+    if (body.typ === "korrektur") {
+      // FM-32: Korrektur setzt Bestand absolut auf den eingegebenen Wert
+      await prisma.lagerArtikel.update({
+        where: { id: artikelId },
+        data: { bestand: menge },
+      })
+    } else {
+      const delta = (body.typ === "eingang" || body.typ === "rueckgabe")
+        ? menge
+        : -menge // ausgang/reserve/zuweisung
+      await prisma.lagerArtikel.update({
+        where: { id: artikelId },
+        data: { bestand: { increment: delta } },
+      })
+    }
 
     return NextResponse.json(bewegung, { status: 201 })
   } catch (error) {

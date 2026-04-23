@@ -63,7 +63,8 @@ export default function BenutzerVerwaltungPage() {
   const [formPermissions, setFormPermissions] = useState<string[]>([])
   const [showPassword, setShowPassword] = useState(false)
 
-  const isAdmin = session?.user && (session.user as { role?: string }).role === "ka_admin"
+  const userRole = session?.user && (session.user as { role?: string }).role
+  const isAdmin = userRole === "ka_admin" || userRole === "admin"
 
   // Redirect wenn kein Admin
   useEffect(() => {

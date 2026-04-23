@@ -77,8 +77,8 @@ export default auth((req) => {
       "/vorschuesse": ["admin", "ka_admin"],
       "/fuhrpark": ["admin", "ka_admin"],
       "/rechnungen": ["admin", "ka_admin", "ka_gruppenführer"],
-      "/einstellungen": ["admin"],
-      "/admin": ["admin"],
+      "/einstellungen": ["admin", "ka_admin"],
+      "/admin": ["admin", "ka_admin"],
     }
 
     for (const [route, allowedRoles] of Object.entries(rbacRules)) {
