@@ -92,7 +92,7 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Package className="w-4 h-4 text-gold" />
-          <h3 className="text-sm font-medium text-white">Materialien</h3>
+          <h3 className="text-sm font-medium text-[var(--color-on-surface)]">Materialien</h3>
         </div>
         {!readOnly && (
           <button
@@ -127,12 +127,12 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
                 <tr key={index} className="border-b border-[var(--color-outline-variant)]">
                   <td className="px-4 py-3">
                     {readOnly ? (
-                      <span className="text-white">{pos.artikelName}</span>
+                      <span className="text-[var(--color-on-surface)]">{pos.artikelName}</span>
                     ) : (
                       <select
                         value={pos.artikelId}
                         onChange={e => handleArtikelChange(index, e.target.value)}
-                        className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-gold"
+                        className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-gold"
                       >
                         <option value="">Artikel wählen...</option>
                         {artikel.map(a => (
@@ -145,7 +145,7 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
                   </td>
                   <td className="px-4 py-3">
                     {readOnly ? (
-                      <span className="text-white text-right block">{pos.menge} {pos.einheit}</span>
+                      <span className="text-[var(--color-on-surface)] text-right block">{pos.menge} {pos.einheit}</span>
                     ) : (
                       <div className="flex items-center gap-1">
                         <input
@@ -154,7 +154,7 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
                           step="0.01"
                           value={pos.menge}
                           onChange={e => updatePosition(index, { menge: parseFloat(e.target.value) || 0 })}
-                          className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-2 py-1.5 text-sm text-white text-right focus:outline-none focus:border-gold"
+                          className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-2 py-1.5 text-sm text-[var(--color-on-surface)] text-right focus:outline-none focus:border-gold"
                         />
                         <span className="text-xs text-[var(--color-on-surface-variant)]">{pos.einheit}</span>
                       </div>
@@ -162,7 +162,7 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
                   </td>
                   <td className="px-4 py-3">
                     {readOnly ? (
-                      <span className="text-white text-right block">{pos.einzelpreis.toFixed(2)} €</span>
+                      <span className="text-[var(--color-on-surface)] text-right block">{pos.einzelpreis.toFixed(2)} €</span>
                     ) : (
                       <input
                         type="number"
@@ -170,11 +170,11 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
                         step="0.01"
                         value={pos.einzelpreis}
                         onChange={e => updatePosition(index, { einzelpreis: parseFloat(e.target.value) || 0 })}
-                        className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-2 py-1.5 text-sm text-white text-right focus:outline-none focus:border-gold"
+                        className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-2 py-1.5 text-sm text-[var(--color-on-surface)] text-right focus:outline-none focus:border-gold"
                       />
                     )}
                   </td>
-                  <td className="px-4 py-3 text-right text-white font-medium">
+                  <td className="px-4 py-3 text-right text-[var(--color-on-surface)] font-medium">
                     {pos.gesamt.toFixed(2)} €
                   </td>
                   {!readOnly && (

@@ -36,28 +36,59 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
 
   const data = await req.json()
 
-  // Plausibilitätschecks (Warnings, nicht blockierend)
-  // Forstwirtschaftliche Richtwerte (Tomek bestätigt)
-  const warnings: string[] = []
+  // FM-08: Server-seitige Validierung (BLOCKIEREND — nicht umgehbar)
+  const errors: string[] = []
   const mitarbeiterAnzahl = data.mitarbeiterAnzahl || 0
 
-  // Arbeitszeit: max 10h/Person/Tag
+  // Arbeitsstunden: max 10h pro Person
   if (data.arbeitsbeginn && data.arbeitsende) {
     const beginn = new Date(`1970-01-01T${data.arbeitsbeginn}`)
     const ende = new Date(`1970-01-01T${data.arbeitsende}`)
     const stundenGesamt = (ende.getTime() - beginn.getTime()) / (1000 * 60 * 60)
-    if (stundenGesamt > 10) warnings.push('Arbeitszeit über 10h — bitte prüfen')
+    if (stundenGesamt > 10) {
+      errors.push('Arbeitszeit darf 10h pro Person nicht überschreiten')
+    }
   }
 
-  // Pflanzung: max 70 Pflanzen/h/Person → dynamisches Limit
+  // Maschinenstunden: max 10h
+  if (data.stdFreischneider && data.stdFreischneider > 10) {
+    errors.push('Freischneider-Stunden dürfen 10h nicht überschreiten')
+  }
+  if (data.stdMotorsaege && data.stdMotorsaege > 10) {
+    errors.push('Motorsäge-Stunden dürfen 10h nicht überschreiten')
+  }
+
+  // Pflanzung: max mitarbeiterAnzahl * 10h * 70 Pflanzen/h
   if (data.gepflanztGesamt) {
     const pflanzLimit = mitarbeiterAnzahl > 0
       ? mitarbeiterAnzahl * 10 * 70
       : 700
     if (data.gepflanztGesamt > pflanzLimit) {
-      warnings.push(`Mehr als ${pflanzLimit} Pflanzen (${mitarbeiterAnzahl || 1} MA × 10h × 70/h) — bitte prüfen`)
+      errors.push(`Gepflanzt (${data.gepflanztGesamt}) überschreitet Limit von ${pflanzLimit} (${mitarbeiterAnzahl || 1} MA × 10h × 70/h)`)
     }
   }
+
+  // Konsistenzprüfung: Krank + Stunden > 0 = Widerspruch
+  if (data.status === 'krank' || data.krankmeldung) {
+    const hasWork = (data.arbeitsbeginn && data.arbeitsende) ||
+      (data.stdFreischneider && data.stdFreischneider > 0) ||
+      (data.stdMotorsaege && data.stdMotorsaege > 0) ||
+      (data.gepflanztGesamt && data.gepflanztGesamt > 0)
+    if (hasWork) {
+      errors.push('Widerspruch: Krankmeldung mit Arbeitsstunden/Leistung ist nicht zulässig')
+    }
+  }
+
+  // Bei Validierungsfehlern: 400 Bad Request
+  if (errors.length > 0) {
+    return NextResponse.json({
+      error: 'Validierungsfehler',
+      details: errors,
+    }, { status: 400 })
+  }
+
+  // Plausibilitätschecks (Warnings, nicht blockierend)
+  const warnings: string[] = []
 
   // Fläche: dynamisch basierend auf Team-Größe
   if (data.flaecheBearbeitetHa) {
@@ -65,18 +96,18 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
     if (mitarbeiterAnzahl > 10) flaecheLimit = 5
     else if (mitarbeiterAnzahl >= 5) flaecheLimit = 2
     else if (mitarbeiterAnzahl >= 1) flaecheLimit = 0.8
-    else flaecheLimit = 3 // Fallback ohne MA-Zahl
+    else flaecheLimit = 3
     if (data.flaecheBearbeitetHa > flaecheLimit) {
       warnings.push(`Mehr als ${flaecheLimit} ha für ${mitarbeiterAnzahl || '?'} Mitarbeiter — bitte prüfen`)
     }
   }
 
-  // Freischneider: max 8h/Person/Tag (ArbSchG)
+  // Freischneider: Warnung ab 8h (ArbSchG)
   if (data.stdFreischneider && data.stdFreischneider > 8) {
     warnings.push('Freischneider über 8h/Person — ArbSchG-Limit überschritten')
   }
 
-  // Motorsäge: max 6h/Person/Tag (Vibration/Lärm-Grenzwerte)
+  // Motorsäge: Warnung ab 6h (Vibration/Lärm)
   if (data.stdMotorsaege && data.stdMotorsaege > 6) {
     warnings.push('Motorsäge über 6h/Person — Vibrations-/Lärmgrenzwert überschritten')
   }

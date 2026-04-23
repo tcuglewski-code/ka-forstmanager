@@ -89,7 +89,7 @@ export function AbnahmeStatus({ auftragId }: AbnahmeStatusProps) {
   return (
     <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-white uppercase tracking-wide flex items-center gap-2">
+        <h3 className="text-sm font-semibold text-[var(--color-on-surface)] uppercase tracking-wide flex items-center gap-2">
           <CheckCircle className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
           Abnahme
           {abnahmen.length > 0 && (
@@ -119,7 +119,7 @@ export function AbnahmeStatus({ auftragId }: AbnahmeStatusProps) {
                 <StatusIcon status={a.status} />
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="text-sm text-white">{new Date(a.datum).toLocaleDateString("de-DE")}</p>
+                    <p className="text-sm text-[var(--color-on-surface)]">{new Date(a.datum).toLocaleDateString("de-DE")}</p>
                     {a.rechnungFreigegeben && (
                       <span className="text-xs bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 px-1.5 py-0.5 rounded-full">
                         Rechnung freigegeben
@@ -134,7 +134,7 @@ export function AbnahmeStatus({ auftragId }: AbnahmeStatusProps) {
                 <StatusLabel status={a.status} />
                 <button
                   onClick={() => { setEditId(a.id); setFormOpen(true) }}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-[var(--color-on-surface-variant)] hover:text-white"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]"
                   title="Bearbeiten"
                 >
                   <ChevronRight className="w-4 h-4" />

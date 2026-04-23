@@ -312,7 +312,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
     <div className="space-y-6">
       {/* Status-Badge */}
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white uppercase tracking-wide">
+        <h3 className="text-sm font-semibold text-[var(--color-on-surface)] uppercase tracking-wide">
           {isNeu ? "Neue Abnahme" : "Abnahme bearbeiten"}
         </h3>
         <StatusBadge status={existingStatus} />
@@ -326,7 +326,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
             type="date"
             value={form.datum}
             onChange={e => setForm(p => ({ ...p, datum: e.target.value }))}
-            className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
+            className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
           />
         </div>
         <div>
@@ -365,7 +365,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
                 setFoersterDropdownOpen(true)
               }}
               onFocus={() => setFoersterDropdownOpen(true)}
-              className="flex-1 bg-transparent text-sm text-white placeholder-zinc-600 outline-none"
+              className="flex-1 bg-transparent text-sm text-[var(--color-on-surface)] placeholder-zinc-600 outline-none"
             />
           </div>
           {foersterDropdownOpen && gefilterteFoerster.length > 0 && (
@@ -377,7 +377,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
                   onClick={() => foersterAuswaehlen(f)}
                   className="w-full text-left px-3 py-2 hover:bg-[#222] transition-colors"
                 >
-                  <p className="text-sm text-white">{f.name}</p>
+                  <p className="text-sm text-[var(--color-on-surface)]">{f.name}</p>
                   <p className="text-xs text-[var(--color-on-surface-variant)]">
                     {[f.forstamt, f.revier].filter(Boolean).join(" · ")}
                   </p>
@@ -395,7 +395,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
               placeholder="E-Mail"
               value={form.foersterEmail}
               onChange={e => setForm(p => ({ ...p, foersterEmail: e.target.value }))}
-              className="flex-1 bg-transparent text-xs text-white placeholder-zinc-600 outline-none"
+              className="flex-1 bg-transparent text-xs text-[var(--color-on-surface)] placeholder-zinc-600 outline-none"
             />
           </div>
           <div className="flex items-center gap-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2">
@@ -405,7 +405,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
               placeholder="Telefon"
               value={form.foersterTelefon}
               onChange={e => setForm(p => ({ ...p, foersterTelefon: e.target.value }))}
-              className="flex-1 bg-transparent text-xs text-white placeholder-zinc-600 outline-none"
+              className="flex-1 bg-transparent text-xs text-[var(--color-on-surface)] placeholder-zinc-600 outline-none"
             />
           </div>
         </div>
@@ -421,7 +421,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
           placeholder="Detailliertes Abnahmeprotokoll..."
           value={form.abnahmeProtokoll}
           onChange={e => setForm(p => ({ ...p, abnahmeProtokoll: e.target.value }))}
-          className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 resize-none"
+          className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder-zinc-600 resize-none"
         />
       </div>
 
@@ -429,7 +429,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
       <div className="border border-border rounded-xl p-4 bg-[var(--color-surface-container-lowest)]">
         <div className="flex items-center gap-2 mb-3">
           <PenTool className="w-4 h-4 text-emerald-400" />
-          <h4 className="text-sm font-medium text-white">Unterschrift</h4>
+          <h4 className="text-sm font-medium text-[var(--color-on-surface)]">Unterschrift</h4>
         </div>
         <SignaturPad
           initialSignatur={form.signaturUrl}
@@ -449,7 +449,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
           placeholder="Kurze Notizen zur Abnahme..."
           value={form.notizen}
           onChange={e => setForm(p => ({ ...p, notizen: e.target.value }))}
-          className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 resize-none"
+          className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder-zinc-600 resize-none"
         />
       </div>
 
@@ -462,7 +462,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
         >
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-            <span className="text-sm text-white font-medium">
+            <span className="text-sm text-[var(--color-on-surface)] font-medium">
               Mängelliste
               {form.maengel.length > 0 && (
                 <span className="ml-2 text-xs bg-red-100 text-red-800 border border-red-200 px-1.5 py-0.5 rounded-full">
@@ -487,7 +487,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
                     placeholder="Mangel beschreiben..."
                     value={m.beschreibung}
                     onChange={e => mangelAendern(idx, "beschreibung", e.target.value)}
-                    className="flex-1 bg-[var(--color-surface-container-low)] border border-border rounded px-2 py-1.5 text-sm text-white placeholder-zinc-600 outline-none"
+                    className="flex-1 bg-[var(--color-surface-container-low)] border border-border rounded px-2 py-1.5 text-sm text-[var(--color-on-surface)] placeholder-zinc-600 outline-none"
                   />
                   <button type="button" onClick={() => mangelEntfernen(idx)} className="text-red-400 hover:text-red-300 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center">
                     <Trash2 className="w-3.5 h-3.5" />
@@ -497,7 +497,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
                   <select
                     value={m.prioritaet}
                     onChange={e => mangelAendern(idx, "prioritaet", e.target.value)}
-                    className="bg-[var(--color-surface-container-low)] border border-border rounded px-2 py-1 text-xs text-white outline-none"
+                    className="bg-[var(--color-surface-container-low)] border border-border rounded px-2 py-1 text-xs text-[var(--color-on-surface)] outline-none"
                   >
                     <option value="hoch">Hoch</option>
                     <option value="mittel">Mittel</option>
@@ -508,7 +508,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
                     type="date"
                     value={m.erledigtAm ?? ""}
                     onChange={e => mangelAendern(idx, "erledigtAm", e.target.value || null)}
-                    className="ml-auto bg-[var(--color-surface-container-low)] border border-border rounded px-2 py-1 text-xs text-white outline-none"
+                    className="ml-auto bg-[var(--color-surface-container-low)] border border-border rounded px-2 py-1 text-xs text-[var(--color-on-surface)] outline-none"
                     title="Erledigt am"
                   />
                 </div>
@@ -518,7 +518,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
               <button
                 type="button"
                 onClick={mangelHinzufuegen}
-                className="flex items-center gap-1 text-xs text-[var(--color-on-surface-variant)] hover:text-white border border-border hover:border-zinc-600 px-3 py-1.5 rounded-lg transition-all"
+                className="flex items-center gap-1 text-xs text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] border border-border hover:border-zinc-600 px-3 py-1.5 rounded-lg transition-all"
               >
                 <Plus className="w-3 h-3" /> Mangel hinzufügen
               </button>
@@ -529,7 +529,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
                     type="date"
                     value={form.maengelFrist}
                     onChange={e => setForm(p => ({ ...p, maengelFrist: e.target.value }))}
-                    className="bg-[var(--color-surface-container-low)] border border-border rounded px-2 py-1 text-xs text-white outline-none"
+                    className="bg-[var(--color-surface-container-low)] border border-border rounded px-2 py-1 text-xs text-[var(--color-on-surface)] outline-none"
                   />
                 </div>
               )}
@@ -542,7 +542,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
       <div className="border border-border rounded-xl p-4 bg-[var(--color-surface-container-lowest)]">
         <div className="flex items-center gap-2 mb-3">
           <Camera className="w-4 h-4 text-emerald-400" />
-          <h4 className="text-sm font-medium text-white">Fotos</h4>
+          <h4 className="text-sm font-medium text-[var(--color-on-surface)]">Fotos</h4>
         </div>
         <FotoUpload
           folder={`/Koch-Aufforstung/Abnahmen/${auftragId}`}
@@ -582,7 +582,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
 
         <div className="ml-auto flex items-center gap-2">
           {onCancel && (
-            <button type="button" onClick={onCancel} disabled={saving} className="text-xs text-[var(--color-on-surface-variant)] hover:text-zinc-300 px-3 py-2">
+            <button type="button" onClick={onCancel} disabled={saving} className="text-xs text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface-variant)] px-3 py-2">
               Abbrechen
             </button>
           )}
@@ -590,7 +590,7 @@ export function AbnahmeFormular({ auftragId, abnahmeId, onSaved, onCancel }: Abn
             type="button"
             onClick={() => speichern()}
             disabled={saving}
-            className="flex items-center gap-1.5 text-xs px-3 py-2 bg-[var(--color-surface-container-high)]/50 border border-zinc-600/40 rounded-lg text-zinc-300 hover:bg-[var(--color-surface-container-high)] transition-all disabled:opacity-50"
+            className="flex items-center gap-1.5 text-xs px-3 py-2 bg-[var(--color-surface-container-high)]/50 border border-zinc-600/40 rounded-lg text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-high)] transition-all disabled:opacity-50"
           >
             Entwurf speichern
           </button>

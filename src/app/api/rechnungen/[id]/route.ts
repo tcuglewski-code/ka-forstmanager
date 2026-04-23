@@ -283,8 +283,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!aktuelleRechnung) {
     return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 })
   }
-  
-  if (isRechnungLocked(aktuelleRechnung)) {
+
+  // FM-22: Status-Änderungen sind auch bei gesperrten Rechnungen erlaubt
+  // GoBD sperrt nur den Rechnungsinhalt (Betrag, Positionen), nicht den Status-Workflow
+  const ALLOWED_WHEN_LOCKED = ['status', 'paidAt', 'paidViaMittel']
+  const bodyFields = Object.keys(body).filter(k => k !== 'aenderungsgrund')
+  const isStatusChangeOnly = bodyFields.every(f => ALLOWED_WHEN_LOCKED.includes(f))
+
+  if (isRechnungLocked(aktuelleRechnung) && !isStatusChangeOnly) {
     await createAuditLog(
       id,
       'UPDATE_ATTEMPT_BLOCKED',
@@ -294,21 +300,48 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     )
     return NextResponse.json(LOCK_ERROR, { status: 423 })
   }
-  
+
   // Sprint GB-03: Version-Snapshot VOR der Änderung erstellen
-  await createVersionSnapshot(
-    aktuelleRechnung,
-    session.user?.id || null,
-    session.user?.name || null,
-    body.aenderungsgrund
-  )
-  
+  if (!isRechnungLocked(aktuelleRechnung)) {
+    await createVersionSnapshot(
+      aktuelleRechnung,
+      session.user?.id || null,
+      session.user?.name || null,
+      body.aenderungsgrund
+    )
+  }
+
   const updateData: Record<string, any> = {}
   const changes: Array<{ field: string; old: any; new: any }> = []
-  
+
   if (body.status !== undefined && body.status !== aktuelleRechnung.status) {
+    // FM-22: Status-Workflow validieren
+    const validTransitions: Record<string, string[]> = {
+      'offen': ['bezahlt', 'storniert', 'freigegeben', 'ueberfaellig'],
+      'freigegeben': ['bezahlt', 'storniert', 'ueberfaellig'],
+      'ueberfaellig': ['bezahlt', 'storniert'],
+      'bezahlt': [], // Endstatus
+      'storniert': [], // Endstatus
+    }
+    const allowed = validTransitions[aktuelleRechnung.status] ?? []
+    if (!allowed.includes(body.status)) {
+      return NextResponse.json({
+        error: `Statuswechsel von '${aktuelleRechnung.status}' nach '${body.status}' nicht erlaubt`,
+        code: 'INVALID_STATUS_TRANSITION',
+      }, { status: 400 })
+    }
     changes.push({ field: 'status', old: aktuelleRechnung.status, new: body.status })
     updateData.status = body.status
+
+    // Automatisch paidAt setzen bei Statuswechsel zu bezahlt
+    if (body.status === 'bezahlt' && !aktuelleRechnung.paidAt) {
+      updateData.paidAt = new Date()
+      changes.push({ field: 'paidAt', old: null, new: updateData.paidAt })
+    }
+  }
+  if (body.paidViaMittel !== undefined && body.paidViaMittel !== aktuelleRechnung.paidViaMittel) {
+    changes.push({ field: 'paidViaMittel', old: aktuelleRechnung.paidViaMittel, new: body.paidViaMittel })
+    updateData.paidViaMittel = body.paidViaMittel
   }
   if (body.notizen !== undefined && body.notizen !== aktuelleRechnung.notizen) {
     changes.push({ field: 'notizen', old: aktuelleRechnung.notizen, new: body.notizen })
@@ -472,7 +505,8 @@ export async function PUT(
   }
 
   const nettoNachRabatt = nettoBetrag - rabattBetrag
-  const bruttoBetrag = nettoNachRabatt * (1 + mwst)
+  // FM-23: MwSt korrekt berechnen (mwst ist Prozent, z.B. 19, nicht 0.19)
+  const bruttoBetrag = nettoNachRabatt * (1 + mwst / 100)
 
   const updateData: Record<string, any> = {
     nettoBetrag,

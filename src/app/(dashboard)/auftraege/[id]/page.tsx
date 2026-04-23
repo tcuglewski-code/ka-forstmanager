@@ -688,8 +688,14 @@ export default function AuftragDetailPage() {
       setLat(a.lat != null ? String(a.lat) : "")
       setLng(a.lng != null ? String(a.lng) : "")
       setPlusCode(a.plusCode ?? "")
-      setSaisons(saionsRes.ok ? await saionsRes.json() : [])
-      setGruppen(gruppenRes.ok ? await gruppenRes.json() : [])
+      if (saionsRes.ok) {
+        const sData = await saionsRes.json()
+        setSaisons(Array.isArray(sData) ? sData : (sData.items ?? []))
+      }
+      if (gruppenRes.ok) {
+        const gData = await gruppenRes.json()
+        setGruppen(Array.isArray(gData) ? gData : (gData.items ?? []))
+      }
       if (materialRes.ok) { const mat = await materialRes.json(); setMaterial(Array.isArray(mat) ? mat : []) }
       setMaterialLoading(false)
       setLoading(false)

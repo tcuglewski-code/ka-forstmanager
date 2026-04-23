@@ -406,12 +406,13 @@ export default function TagesprotokollFormular({
   // ──────────────────────────────────────────────────────────────────────────
   // FIX 3: Helper-Funktionen mit hellen Design-Klassen
   // ──────────────────────────────────────────────────────────────────────────
-  const inp = (field: keyof typeof form, type = 'text', placeholder = '') => (
+  const inp = (field: keyof typeof form, type = 'text', placeholder = '', opts?: { min?: number; max?: number; step?: number }) => (
     <input
       type={type}
       value={form[field]}
       onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
       placeholder={placeholder}
+      {...(type === 'number' ? { min: opts?.min ?? 0, max: opts?.max ?? 10000, step: opts?.step ?? 0.5 } : {})}
       className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
     />
   )
@@ -529,20 +530,20 @@ export default function TagesprotokollFormular({
       </div>
 
       {section('Pflanzung mit Hand', '🤲', <>
-        {field('Einschlag (Stunden)', inp('std_einschlag', 'number', '0'))}
-        {field('Stunden Pflanzung', inp('std_handpflanzung', 'number', '0'))}
-        {field('Stückzahl Handpflanzung', inp('stk_pflanzung', 'number', '0'))}
+        {field('Einschlag (Stunden)', inp('std_einschlag', 'number', '0', { max: 10 }))}
+        {field('Stunden Pflanzung', inp('std_handpflanzung', 'number', '0', { max: 10 }))}
+        {field('Stückzahl Handpflanzung', inp('stk_pflanzung', 'number', '0', { max: 50000, step: 1 }))}
       </>)}
 
       {section('Pflanzung mit Bohrer', '🔩', <>
-        {field('Handpflanzung zum Bohrer (Std)', inp('std_zum_bohrer', 'number', '0'))}
-        {field('Laufzeit des Bohrers (Std)', inp('std_mit_bohrer', 'number', '0'))}
-        {field('Stückzahl Bohrerpflanzung', inp('stk_pflanzung_mit_bohrer', 'number', '0'))}
+        {field('Handpflanzung zum Bohrer (Std)', inp('std_zum_bohrer', 'number', '0', { max: 10 }))}
+        {field('Laufzeit des Bohrers (Std)', inp('std_mit_bohrer', 'number', '0', { max: 10 }))}
+        {field('Stückzahl Bohrerpflanzung', inp('stk_pflanzung_mit_bohrer', 'number', '0', { max: 50000, step: 1 }))}
       </>)}
 
       {section('Freischneider und Motorsäge', '⚙️', <>
-        {field('Stunden Freischneider', inp('std_freischneider', 'number', '0'))}
-        {field('Stunden Motorsäge', inp('std_motorsaege', 'number', '0'))}
+        {field('Stunden Freischneider', inp('std_freischneider', 'number', '0', { max: 10 }))}
+        {field('Stunden Motorsäge', inp('std_motorsaege', 'number', '0', { max: 10 }))}
       </>)}
 
       {section('Pflanzenschutz', '🛡️', <>

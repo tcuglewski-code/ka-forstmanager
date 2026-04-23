@@ -12,6 +12,13 @@ const RechnungCreateSchema = z.object({
   mwst: z.union([z.number(), z.string().transform(Number)]).pipe(z.number().min(0).max(100)).optional(),
   faelligAm: z.string().optional().nullable(),
   notizen: z.string().max(5000).optional().nullable(),
+  positionen: z.array(z.object({
+    beschreibung: z.string().min(1),
+    menge: z.number().positive(),
+    einheit: z.string().default("Stk"),
+    preisProEinheit: z.number().min(0),
+    typ: z.string().default("leistung"),
+  })).optional(),
 })
 
 // Sprint GB-01: GoBD-Compliance-Konstanten
@@ -139,17 +146,42 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const mwstSatz = validData.mwst ?? 19
+
+    // FM-23: Positionen-basierte Betragsberechnung
+    // Wenn Positionen mitgeliefert, betrag = SUM(menge * preisProEinheit)
+    let nettoBetrag = validData.betrag
+    const positionenData = validData.positionen?.map(p => ({
+      beschreibung: p.beschreibung,
+      menge: p.menge,
+      einheit: p.einheit,
+      preisProEinheit: p.preisProEinheit,
+      gesamt: p.menge * p.preisProEinheit,
+      typ: p.typ,
+    }))
+
+    if (positionenData && positionenData.length > 0) {
+      nettoBetrag = positionenData.reduce((sum, p) => sum + p.gesamt, 0)
+    }
+
+    const bruttoBetrag = nettoBetrag * (1 + mwstSatz / 100)
+
     const rechnung = await prisma.rechnung.create({
       data: {
         nummer,
         auftragId: validData.auftragId || null,
-        betrag: validData.betrag,
-        mwst: validData.mwst ?? 19,
+        betrag: bruttoBetrag,
+        nettoBetrag,
+        bruttoBetrag,
+        mwst: mwstSatz,
         status: "offen",
         faelligAm: validData.faelligAm ? new Date(validData.faelligAm) : null,
         notizen: validData.notizen ?? null,
+        ...(positionenData && positionenData.length > 0 ? {
+          positionen: { create: positionenData },
+        } : {}),
       },
-      include: { auftrag: { select: { id: true, titel: true } } },
+      include: { auftrag: { select: { id: true, titel: true } }, positionen: true },
     })
 
     // Sprint GB-01: Audit-Log für Erstellung

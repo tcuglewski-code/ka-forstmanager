@@ -175,10 +175,10 @@ export function MaterialTab({ auftragId }: MaterialTabProps) {
                       bestand={r.artikel.bestand} 
                       mindestbestand={r.artikel.mindestbestand} 
                     />
-                    <span className="text-white">{r.artikel.name}</span>
+                    <span className="text-[var(--color-on-surface)]">{r.artikel.name}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-right text-white">
+                <td className="px-4 py-3 text-right text-[var(--color-on-surface)]">
                   {r.menge} {r.artikel.einheit}
                 </td>
                 <td className="px-4 py-3 text-center">

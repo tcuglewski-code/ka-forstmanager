@@ -65,7 +65,7 @@ export function KritischeBestaendeWidget({ artikel }: KritischeBestaendeWidgetPr
       <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
         <div className="flex items-center gap-2 mb-3">
           <span className="w-2 h-2 rounded-full bg-emerald-500" />
-          <h3 className="text-sm font-medium text-white">Kritische Bestände</h3>
+          <h3 className="text-sm font-medium text-[var(--color-on-surface)]">Kritische Bestände</h3>
         </div>
         <p className="text-sm text-[var(--color-on-surface-variant)]">Alle Bestände im grünen Bereich ✓</p>
       </div>
@@ -77,7 +77,7 @@ export function KritischeBestaendeWidget({ artikel }: KritischeBestaendeWidgetPr
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-          <h3 className="text-sm font-medium text-white">Kritische Bestände</h3>
+          <h3 className="text-sm font-medium text-[var(--color-on-surface)]">Kritische Bestände</h3>
         </div>
         <span className="px-2 py-0.5 rounded text-xs bg-red-100 text-red-800">
           {kritisch.length} Artikel
@@ -91,7 +91,7 @@ export function KritischeBestaendeWidget({ artikel }: KritischeBestaendeWidgetPr
           >
             <div className="flex items-center gap-2">
               <BestandsAmpel bestand={a.bestand} mindestbestand={a.mindestbestand} />
-              <span className="text-sm text-white truncate max-w-[150px]">{a.name}</span>
+              <span className="text-sm text-[var(--color-on-surface)] truncate max-w-[150px]">{a.name}</span>
               <span className="text-xs text-[var(--color-on-surface-variant)] px-1.5 py-0.5 rounded bg-surface-container-highest">
                 {a.kategorie}
               </span>

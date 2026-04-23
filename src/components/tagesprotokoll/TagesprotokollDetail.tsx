@@ -72,7 +72,7 @@ function hasValue(v: unknown): boolean {
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
-    entwurf: "bg-[var(--color-surface-container-high)] text-zinc-300 border-zinc-600",
+    entwurf: "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)] border-zinc-600",
     eingereicht: "bg-emerald-100 text-emerald-800 border-emerald-500/40",
     genehmigt: "bg-blue-100 text-blue-800 border-blue-500/40",
     abgelehnt: "bg-red-100 text-red-800 border-red-500/40",
@@ -119,7 +119,7 @@ function Row({ label, value, unit = "" }: { label: string; value: unknown; unit?
   return (
     <>
       <span className="text-xs text-[var(--color-on-surface-variant)]">{label}</span>
-      <span className="text-sm text-white text-right">
+      <span className="text-sm text-[var(--color-on-surface)] text-right">
         {typeof value === "number"
           ? `${value.toLocaleString("de-DE")}${unit ? " " + unit : ""}`
           : String(value)}
@@ -265,7 +265,7 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="font-semibold text-white text-base">
+          <h3 className="font-semibold text-[var(--color-on-surface)] text-base">
             {p.auftrag?.titel ?? "Protokoll"}
           </h3>
           <p className="text-sm text-[var(--color-on-surface-variant)] mt-0.5">
@@ -280,7 +280,7 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
         <StatusBadge status={localStatus} />
       </div>
       {p.ersteller && (
-        <p className="text-xs text-[var(--color-on-surface-variant)]">Gruppenführer: <span className="text-zinc-300">{p.ersteller}</span></p>
+        <p className="text-xs text-[var(--color-on-surface-variant)]">Gruppenführer: <span className="text-[var(--color-on-surface)]">{p.ersteller}</span></p>
       )}
 
       {/* Revier */}
@@ -372,7 +372,7 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
           {p.kommentar && (
             <div className="col-span-2">
               <p className="text-xs text-[var(--color-on-surface-variant)] mb-1">Kommentar</p>
-              <p className="text-sm text-zinc-300 whitespace-pre-wrap">{p.kommentar}</p>
+              <p className="text-sm text-[var(--color-on-surface-variant)] whitespace-pre-wrap">{p.kommentar}</p>
             </div>
           )}
           {p.bericht && (
@@ -425,7 +425,7 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
       {(localStatus === 'eingereicht' || localStatus === 'genehmigt') && (
         <button
           onClick={() => window.open(`/api/tagesprotokoll/${p.id}/pdf`, '_blank')}
-          className="flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)] hover:text-white border border-border px-4 py-2 rounded-lg hover:bg-[var(--color-surface-container-lowest)] transition-colors"
+          className="flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] border border-border px-4 py-2 rounded-lg hover:bg-[var(--color-surface-container-lowest)] transition-colors"
         >
           <FileText className="w-4 h-4" />
           PDF exportieren
@@ -450,7 +450,7 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
                 <Bot className="w-4 h-4 text-emerald-400" />
                 <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">KI-Zusammenfassung</span>
               </div>
-              <p className="text-sm text-zinc-300 whitespace-pre-wrap">{zusammenfassung}</p>
+              <p className="text-sm text-[var(--color-on-surface-variant)] whitespace-pre-wrap">{zusammenfassung}</p>
             </div>
           )}
         </div>
@@ -460,13 +460,13 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
       {showRejectModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setShowRejectModal(false)}>
           <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-base font-bold text-white mb-3">Protokoll ablehnen</h3>
+            <h3 className="text-base font-bold text-[var(--color-on-surface)] mb-3">Protokoll ablehnen</h3>
             <p className="text-sm text-[var(--color-on-surface-variant)] mb-3">Bitte geben Sie einen Grund für die Ablehnung an (Pflicht):</p>
             <textarea
               value={rejectComment}
               onChange={(e) => setRejectComment(e.target.value)}
               rows={3}
-              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500"
               placeholder="Ablehnungsgrund..."
               autoFocus
             />

@@ -230,7 +230,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
           className={`flex items-center gap-1.5 px-2 py-1 text-xs rounded transition-colors ${
             showDiff 
               ? 'bg-blue-50 border border-blue-200 text-blue-700' 
-              : 'bg-[#222] border border-border text-[var(--color-on-surface-variant)] hover:text-white'
+              : 'bg-[#222] border border-border text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]'
           }`}
         >
           {showDiff ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
@@ -258,7 +258,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                     ? 'bg-blue-500/20 border-2 border-blue-500' 
                     : 'bg-[#222] border border-border'
                 }`}>
-                  <span className="text-xs font-medium text-zinc-300">
+                  <span className="text-xs font-medium text-[var(--color-on-surface-variant)]">
                     {version.versionNummer}
                   </span>
                 </div>
@@ -275,7 +275,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                   {/* Version Header */}
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
-                      <span className="text-white font-medium">Version {version.versionNummer}</span>
+                      <span className="text-[var(--color-on-surface)] font-medium">Version {version.versionNummer}</span>
                       <span className={`text-sm ${statusConfig.color}`}>
                         {statusConfig.label}
                       </span>
@@ -328,19 +328,19 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                       <div className="grid grid-cols-2 gap-3 text-sm">
                         <div>
                           <span className="text-[var(--color-on-surface-variant)]">Rechnungsnr.:</span>
-                          <span className="ml-2 text-white">{version.nummer}</span>
+                          <span className="ml-2 text-[var(--color-on-surface)]">{version.nummer}</span>
                         </div>
                         <div>
                           <span className="text-[var(--color-on-surface-variant)]">MwSt.:</span>
-                          <span className="ml-2 text-white">{version.mwst}%</span>
+                          <span className="ml-2 text-[var(--color-on-surface)]">{version.mwst}%</span>
                         </div>
                         <div>
                           <span className="text-[var(--color-on-surface-variant)]">Netto:</span>
-                          <span className="ml-2 text-white">{formatCurrency(version.nettoBetrag)}</span>
+                          <span className="ml-2 text-[var(--color-on-surface)]">{formatCurrency(version.nettoBetrag)}</span>
                         </div>
                         <div>
                           <span className="text-[var(--color-on-surface-variant)]">Brutto:</span>
-                          <span className="ml-2 text-white">{formatCurrency(version.bruttoBetrag)}</span>
+                          <span className="ml-2 text-[var(--color-on-surface)]">{formatCurrency(version.bruttoBetrag)}</span>
                         </div>
                         {version.rabatt && version.rabatt > 0 && (
                           <>
@@ -356,11 +356,11 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                         )}
                         <div>
                           <span className="text-[var(--color-on-surface-variant)]">Fällig am:</span>
-                          <span className="ml-2 text-white">{formatDate(version.faelligAm)}</span>
+                          <span className="ml-2 text-[var(--color-on-surface)]">{formatDate(version.faelligAm)}</span>
                         </div>
                         <div>
                           <span className="text-[var(--color-on-surface-variant)]">Rechnungsdatum:</span>
-                          <span className="ml-2 text-white">{formatDate(version.rechnungsDatum)}</span>
+                          <span className="ml-2 text-[var(--color-on-surface)]">{formatDate(version.rechnungsDatum)}</span>
                         </div>
                       </div>
                       
@@ -374,7 +374,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                             {version.positionen.map((pos, i) => (
                               <div key={i} className="flex justify-between text-sm py-1 border-b border-[#252525] last:border-0">
                                 <span className="text-[var(--color-on-surface-variant)]">{pos.beschreibung}</span>
-                                <span className="text-white">
+                                <span className="text-[var(--color-on-surface)]">
                                   {pos.menge} {pos.einheit} × {formatCurrency(pos.preisProEinheit)} = {formatCurrency(pos.gesamt)}
                                 </span>
                               </div>
@@ -395,7 +395,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
       {data.versions.length > 3 && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-2 w-full mt-4 px-3 py-2 bg-[var(--color-surface-container-lowest)] border border-[#252525] text-[var(--color-on-surface-variant)] rounded-lg hover:bg-[#222] hover:text-white transition-colors text-sm"
+          className="flex items-center gap-2 w-full mt-4 px-3 py-2 bg-[var(--color-surface-container-lowest)] border border-[#252525] text-[var(--color-on-surface-variant)] rounded-lg hover:bg-[#222] hover:text-[var(--color-on-surface)] transition-colors text-sm"
         >
           {expanded ? (
             <>

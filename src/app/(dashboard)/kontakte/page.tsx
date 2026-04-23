@@ -207,11 +207,18 @@ export default function KontaktePage() {
 
   const load = useCallback(async () => {
     setLoading(true)
-    const params = new URLSearchParams()
-    if (search) params.set("search", search)
-    if (filterTyp) params.set("typ", filterTyp)
-    const res = await fetch(`/api/kontakte?${params}`)
-    setKontakte(await res.json())
+    try {
+      const params = new URLSearchParams()
+      if (search) params.set("search", search)
+      if (filterTyp) params.set("typ", filterTyp)
+      const res = await fetch(`/api/kontakte?${params}`)
+      const data = await res.json()
+      // API returns paginated { items, total } or plain array
+      setKontakte(Array.isArray(data) ? data : (data.items ?? []))
+    } catch (err) {
+      console.error("[Kontakte] Ladefehler:", err)
+      setKontakte([])
+    }
     setLoading(false)
   }, [search, filterTyp])
 
@@ -245,7 +252,7 @@ export default function KontaktePage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Suchen..."
-            className="w-full bg-[var(--color-surface-container)] border border-border rounded-lg pl-9 pr-3 py-2 text-sm text-white placeholder-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
+            className="w-full bg-[var(--color-surface-container)] border border-border rounded-lg pl-9 pr-3 py-2 text-sm text-[var(--color-on-surface)] placeholder-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
           />
         </div>
         <select value={filterTyp} onChange={e => setFilterTyp(e.target.value)}
@@ -268,7 +275,7 @@ export default function KontaktePage() {
               className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5 hover:border-zinc-600 cursor-pointer transition-all"
             >
               <div className="flex items-start justify-between mb-3">
-                <h3 className="font-semibold text-white leading-tight">{k.name}</h3>
+                <h3 className="font-semibold text-[var(--color-on-surface)] leading-tight">{k.name}</h3>
                 <span className={`ml-2 flex-shrink-0 px-2 py-0.5 rounded-full text-xs ${TYP_FARBEN[k.typ] ?? "bg-gray-100 text-gray-700"}`}>
                   {k.typ}
                 </span>

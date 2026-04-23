@@ -141,7 +141,7 @@ export function AddressAutofill({
               onFocus={() => kontaktSuggestions.length > 0 && setShowKontaktDropdown(true)}
               placeholder="Name eingeben..."
               disabled={disabled}
-              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg pl-10 pr-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg pl-10 pr-3 py-2 text-sm text-[var(--color-on-surface)] placeholder-zinc-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
             />
             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)]">
               {kontaktLoading ? (
@@ -162,7 +162,7 @@ export function AddressAutofill({
                   onClick={() => handleKontaktSelect(k)}
                   className="w-full px-3 py-2 text-left hover:bg-emerald-500/10 border-b border-border last:border-b-0 transition-colors"
                 >
-                  <div className="text-sm text-white font-medium">{k.name}</div>
+                  <div className="text-sm text-[var(--color-on-surface)] font-medium">{k.name}</div>
                   <div className="text-xs text-[var(--color-on-surface-variant)] flex gap-2">
                     {k.plz && <span>{k.plz}</span>}
                     {k.ort && <span>{k.ort}</span>}
@@ -190,7 +190,7 @@ export function AddressAutofill({
               placeholder="12345"
               maxLength={5}
               disabled={disabled}
-              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder-zinc-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
             />
             {plzLoading && (
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -209,7 +209,7 @@ export function AddressAutofill({
               onChange={(e) => onOrtChange(e.target.value)}
               placeholder="Ort"
               disabled={disabled}
-              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg pl-10 pr-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg pl-10 pr-3 py-2 text-sm text-[var(--color-on-surface)] placeholder-zinc-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
             />
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)]" />
           </div>
