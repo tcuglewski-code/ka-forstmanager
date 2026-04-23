@@ -9,7 +9,7 @@ import { auth } from '@/lib/auth'
  * eines Auftrags. Aggregiert Pflanzstückzahlen, Zaunbau (lfm) und Material.
  * 
  * Body: {
- *   mwstSatz?: number     // default 0.19
+ *   mwstSatz?: number     // default 19 (Prozent), akzeptiert auch 0.19 (Dezimal)
  *   rabatt?: number       // Prozent 0-100, default 0
  *   rabattGrund?: string
  *   zahlungsBedingung?: string  // default "30 Tage netto"
@@ -31,7 +31,9 @@ export async function POST(
     // Body optional
   }
 
-  const mwst = data.mwstSatz ?? 0.19
+  // FM-23: MwSt normalisieren — intern immer als Prozent (19), nie als Dezimal (0.19)
+  const rawMwst = data.mwstSatz ?? 19
+  const mwst = rawMwst < 1 ? rawMwst * 100 : rawMwst  // 0.19 → 19, 19 → 19
   const rabatt = data.rabatt ?? 0
 
   const auftrag = await prisma.auftrag.findUnique({
@@ -124,7 +126,8 @@ export async function POST(
   const nettoBetrag = positionen.reduce((s, p) => s + p.gesamt, 0)
   const rabattBetrag = nettoBetrag * (rabatt / 100)
   const nettoNachRabatt = nettoBetrag - rabattBetrag
-  const bruttoBetrag = nettoNachRabatt * (1 + mwst)
+  // FM-23: MwSt korrekt berechnen (mwst ist Prozent, z.B. 19)
+  const bruttoBetrag = nettoNachRabatt * (1 + mwst / 100)
 
   // Rechnungsnummer generieren
   const nummer = `RE-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`
