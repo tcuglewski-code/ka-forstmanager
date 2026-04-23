@@ -31,7 +31,7 @@ export function PraxisStatistik() {
 
   if (loading || statistiken.length === 0) {
     return (
-      <div className="bg-[#161616] border border-border rounded-xl p-4">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
         <div className="flex items-center gap-2 mb-2">
           <TrendingUp className="w-4 h-4 text-emerald-400" />
           <h3 className="text-sm font-semibold text-white">Betriebserfahrung</h3>
@@ -44,23 +44,23 @@ export function PraxisStatistik() {
   }
 
   return (
-    <div className="bg-[#161616] border border-border rounded-xl p-4">
+    <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
       <div className="flex items-center gap-2 mb-3">
         <div className="p-1.5 bg-emerald-500/15 rounded-lg">
           <TrendingUp className="w-4 h-4 text-emerald-400" />
         </div>
         <div>
           <h3 className="text-sm font-semibold text-white">Betriebserfahrung</h3>
-          <p className="text-xs text-zinc-500">Aus eigenen Antragsverläufen</p>
+          <p className="text-xs text-[var(--color-on-surface-variant)]">Aus eigenen Antragsverläufen</p>
         </div>
       </div>
 
       <div className="space-y-2">
         {statistiken.map(s => (
-          <div key={s.programm_id} className="bg-[#0f0f0f] rounded-lg px-3 py-2 border border-[#1e1e1e]">
+          <div key={s.programm_id} className="bg-[var(--color-surface-container-low)] rounded-lg px-3 py-2 border border-[var(--color-outline-variant)]">
             <p className="text-xs font-medium text-white truncate mb-1">{s.programm_name}</p>
             <div className="flex items-center gap-3 text-xs">
-              <span className="text-zinc-500">{s.anzahl_antraege}x beantragt</span>
+              <span className="text-[var(--color-on-surface-variant)]">{s.anzahl_antraege}x beantragt</span>
               {s.erfolgsquote_pct !== null && (
                 <span className={`flex items-center gap-1 ${s.erfolgsquote_pct >= 70 ? 'text-emerald-400' : s.erfolgsquote_pct >= 40 ? 'text-amber-400' : 'text-red-400'}`}>
                   <CheckCircle className="w-3 h-3" />
@@ -68,7 +68,7 @@ export function PraxisStatistik() {
                 </span>
               )}
               {s.avg_bearbeitungstage && (
-                <span className="flex items-center gap-1 text-zinc-500">
+                <span className="flex items-center gap-1 text-[var(--color-on-surface-variant)]">
                   <Clock className="w-3 h-3" />
                   Ø {s.avg_bearbeitungstage} Tage
                 </span>

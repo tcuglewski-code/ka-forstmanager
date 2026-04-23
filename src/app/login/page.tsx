@@ -131,7 +131,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--color-surface-container-low)] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
@@ -139,15 +139,15 @@ export default function LoginPage() {
             <TreePine className="w-8 h-8 text-emerald-400" />
           </div>
           <h1 className="text-2xl font-bold text-white">ForstManager</h1>
-          <p className="text-sm text-zinc-400 mt-1">Koch Aufforstung GmbH</p>
+          <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">Koch Aufforstung GmbH</p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-[#161616] border border-border rounded-2xl p-8">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-2xl p-8">
           {!requiresTwoFactor ? (
             <>
               <h2 className="text-lg font-semibold text-white mb-1">Anmelden</h2>
-              <p className="text-sm text-zinc-500 mb-6">
+              <p className="text-sm text-[var(--color-on-surface-variant)] mb-6">
                 Melden Sie sich mit Ihren Zugangsdaten an
               </p>
             </>
@@ -157,7 +157,7 @@ export default function LoginPage() {
                 <Shield className="w-5 h-5 text-emerald-400" />
                 <h2 className="text-lg font-semibold text-white">Zwei-Faktor-Authentifizierung</h2>
               </div>
-              <p className="text-sm text-zinc-500 mb-6">
+              <p className="text-sm text-[var(--color-on-surface-variant)] mb-6">
                 {useBackupCode 
                   ? "Geben Sie einen Ihrer Backup-Codes ein" 
                   : "Geben Sie den Code aus Ihrer Authenticator-App ein"}
@@ -176,7 +176,7 @@ export default function LoginPage() {
               // Schritt 1: Email & Passwort
               <>
                 <div>
-                  <label htmlFor="login-email" className="block text-sm font-medium text-zinc-400 mb-1.5">
+                  <label htmlFor="login-email" className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">
                     E-Mail-Adresse
                   </label>
                   <input
@@ -187,12 +187,12 @@ export default function LoginPage() {
                     required
                     autoComplete="email"
                     placeholder="name@koch-aufforstung.de"
-                    className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="login-password" className="block text-sm font-medium text-zinc-400 mb-1.5">
+                  <label htmlFor="login-password" className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">
                     Passwort
                   </label>
                   <input
@@ -203,7 +203,7 @@ export default function LoginPage() {
                     required
                     autoComplete="current-password"
                     placeholder="••••••••"
-                    className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
                   />
                 </div>
               </>
@@ -211,7 +211,7 @@ export default function LoginPage() {
               // Schritt 2: 2FA Token
               <>
                 <div>
-                  <label htmlFor="login-2fa-token" className="block text-sm font-medium text-zinc-400 mb-1.5">
+                  <label htmlFor="login-2fa-token" className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">
                     {useBackupCode ? "Backup-Code" : "Authentifizierungscode"}
                   </label>
                   <input
@@ -225,14 +225,14 @@ export default function LoginPage() {
                     inputMode="numeric"
                     placeholder={useBackupCode ? "XXXX-XXXX" : "000000"}
                     maxLength={useBackupCode ? 9 : 6}
-                    className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white text-center text-2xl font-mono tracking-widest placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white text-center text-2xl font-mono tracking-widest placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
                   />
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setUseBackupCode(!useBackupCode)}
-                  className="w-full flex items-center justify-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+                  className="w-full flex items-center justify-center gap-2 text-sm text-[var(--color-on-surface-variant)] hover:text-white transition-colors"
                 >
                   <Key className="w-4 h-4" />
                   {useBackupCode 
@@ -261,7 +261,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={handleBackToLogin}
-                className="w-full text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
+                className="w-full text-sm text-[var(--color-on-surface-variant)] hover:text-zinc-300 transition-colors"
               >
                 Zurück zur Anmeldung
               </button>
@@ -269,7 +269,7 @@ export default function LoginPage() {
 
             {!requiresTwoFactor && (
               <p className="text-center text-xs text-zinc-600 mt-3">
-                <a href="/forgot-password" className="hover:text-zinc-400 underline transition-colors">
+                <a href="/forgot-password" className="hover:text-[var(--color-on-surface-variant)] underline transition-colors">
                   Passwort vergessen?
                 </a>
               </p>
@@ -285,7 +285,7 @@ export default function LoginPage() {
             href="https://peru-otter-113714.hostingersite.com/datenschutz/" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="hover:text-zinc-400 underline transition-colors"
+            className="hover:text-[var(--color-on-surface-variant)] underline transition-colors"
           >
             Datenschutzerklärung
           </a>
@@ -294,7 +294,7 @@ export default function LoginPage() {
             href="https://peru-otter-113714.hostingersite.com/impressum/" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="hover:text-zinc-400 underline transition-colors"
+            className="hover:text-[var(--color-on-surface-variant)] underline transition-colors"
           >
             Impressum
           </a>

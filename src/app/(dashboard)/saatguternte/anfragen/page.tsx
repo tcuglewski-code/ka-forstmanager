@@ -12,7 +12,7 @@ const BAUMARTEN = [
 ]
 
 const STATUS_CONFIG = {
-  offen:         { label: "Offen",            color: "bg-zinc-700 text-zinc-300" },
+  offen:         { label: "Offen",            color: "bg-[var(--color-surface-container-high)] text-zinc-300" },
   in_ernte:      { label: "In Ernte",         color: "bg-blue-900/60 text-blue-300" },
   "erfüllt":     { label: "Erfüllt ✅",       color: "bg-emerald-900/60 text-emerald-300" },
   teilerfüllt:   { label: "Teilerfüllt 🟡",   color: "bg-yellow-900/60 text-yellow-300" },
@@ -21,7 +21,7 @@ const STATUS_CONFIG = {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const cfg = STATUS_CONFIG[status] ?? { label: status, color: "bg-zinc-700 text-zinc-300" }
+  const cfg = STATUS_CONFIG[status] ?? { label: status, color: "bg-[var(--color-surface-container-high)] text-zinc-300" }
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${cfg.color}`}>
       {cfg.label}
@@ -37,10 +37,10 @@ function ProgressBar({ gesammelt, ziel }: { gesammelt: number; ziel: number }) {
   const blocks = "█".repeat(filled) + "░".repeat(empty)
   return (
     <div className="space-y-1 min-w-[160px]">
-      <div className="w-full bg-zinc-700 rounded-full h-2">
+      <div className="w-full bg-[var(--color-surface-container-high)] rounded-full h-2">
         <div className={`h-2 rounded-full transition-all ${color}`} style={{ width: `${pct}%` }} />
       </div>
-      <p className="text-xs text-zinc-400 font-mono">
+      <p className="text-xs text-[var(--color-on-surface-variant)] font-mono">
         {blocks} {gesammelt.toLocaleString("de-DE")} / {ziel.toLocaleString("de-DE")} kg ({pct.toFixed(0)}%)
       </p>
     </div>
@@ -57,7 +57,7 @@ function SHKBadge({ anfrage }: { anfrage: any }) {
         ⭐ SHK
       </span>
       {anfrage.sonderherkunftCode && (
-        <p className="text-xs text-zinc-500 mt-0.5">{anfrage.sonderherkunftCode}</p>
+        <p className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">{anfrage.sonderherkunftCode}</p>
       )}
     </div>
   )
@@ -69,9 +69,9 @@ function HerkunftCell({ anfrage }: { anfrage: any }) {
   }
   return (
     <div>
-      <span className="text-zinc-200 font-medium">{anfrage.herkunftCode ?? anfrage.herkunft}</span>
+      <span className="text-[var(--color-on-surface)] font-medium">{anfrage.herkunftCode ?? anfrage.herkunft}</span>
       {anfrage.herkunftName && (
-        <p className="text-xs text-zinc-500 mt-0.5">{anfrage.herkunftName}</p>
+        <p className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">{anfrage.herkunftName}</p>
       )}
     </div>
   )
@@ -117,7 +117,7 @@ function BaumartGruppe({ baumart, items, collapsed, onToggle }: {
             <span className="text-emerald-300 font-semibold text-sm tracking-wide uppercase">
               {baumart}
             </span>
-            <span className="text-zinc-500 text-xs">
+            <span className="text-[var(--color-on-surface-variant)] text-xs">
               ({items.length} {items.length === 1 ? "Anfrage" : "Anfragen"} · {totalZiel.toLocaleString("de-DE")} kg gesamt)
             </span>
           </div>
@@ -125,10 +125,10 @@ function BaumartGruppe({ baumart, items, collapsed, onToggle }: {
       </tr>
       {/* Rows */}
       {!collapsed && items.map((a) => (
-        <tr key={a.id} className="border-b border-[#1e1e1e] hover:bg-[#1a1a1a] transition">
+        <tr key={a.id} className="border-b border-[var(--color-outline-variant)] hover:bg-[var(--color-surface-container-lowest)] transition">
           <td className="px-4 py-3 text-white font-medium">
             <div>{a.baumschule?.name ?? "—"}</div>
-            <div className="text-xs text-zinc-500">{a.saison?.jahr ?? ""}</div>
+            <div className="text-xs text-[var(--color-on-surface-variant)]">{a.saison?.jahr ?? ""}</div>
           </td>
           <td className="px-4 py-3 text-zinc-300">{a.baumart}</td>
           <td className="px-4 py-3">
@@ -141,7 +141,7 @@ function BaumartGruppe({ baumart, items, collapsed, onToggle }: {
           <td className="px-4 py-3 text-right text-zinc-300 tabular-nums">
             {a.zielmenge.toLocaleString("de-DE")} kg
           </td>
-          <td className="px-4 py-3 text-right text-zinc-400 tabular-nums">
+          <td className="px-4 py-3 text-right text-[var(--color-on-surface-variant)] tabular-nums">
             {a.gesammelteKg.toLocaleString("de-DE")} kg
           </td>
           <td className="px-4 py-3">
@@ -150,7 +150,7 @@ function BaumartGruppe({ baumart, items, collapsed, onToggle }: {
           <td className="px-4 py-3">
             <StatusBadge status={a.status} />
           </td>
-          <td className="px-4 py-3 text-zinc-500 text-xs">
+          <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-xs">
             {a.deadline ? new Date(a.deadline).toLocaleDateString("de-DE") : "—"}
           </td>
         </tr>
@@ -264,7 +264,7 @@ export default function ErnteanfragenPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Ernteanfragen</h1>
-          <p className="text-sm text-zinc-400 mt-1">
+          <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">
             Baumschul-Aufträge · Herkunftsgebiet · Sonderherkünfte
           </p>
         </div>
@@ -282,7 +282,7 @@ export default function ErnteanfragenPage() {
         <select
           value={filterSaison}
           onChange={(e) => setFilterSaison(e.target.value)}
-          className="bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+          className="bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
         >
           <option value="">Alle Saisons</option>
           {saisons.map((s) => (
@@ -293,7 +293,7 @@ export default function ErnteanfragenPage() {
         <select
           value={filterBaumart}
           onChange={(e) => setFilterBaumart(e.target.value)}
-          className="bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+          className="bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
         >
           <option value="">Alle Baumarten</option>
           {BAUMARTEN.map((b) => (
@@ -306,7 +306,7 @@ export default function ErnteanfragenPage() {
           value={filterHerkunft}
           onChange={(e) => setFilterHerkunft(e.target.value)}
           placeholder="Herkunft-Code…"
-          className="bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2 w-36"
+          className="bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2 w-36"
         />
 
         <label className="flex items-center gap-2 cursor-pointer select-none text-sm text-zinc-300">
@@ -322,7 +322,7 @@ export default function ErnteanfragenPage() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+          className="bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
         >
           <option value="">Alle Status</option>
           {Object.entries(STATUS_CONFIG).map(([k, v]) => (
@@ -339,7 +339,7 @@ export default function ErnteanfragenPage() {
               setFilterHerkunft("")
               setFilterNurSHK(false)
             }}
-            className="flex items-center gap-1 px-3 py-2 text-xs text-zinc-400 hover:text-white border border-border rounded-lg"
+            className="flex items-center gap-1 px-3 py-2 text-xs text-[var(--color-on-surface-variant)] hover:text-white border border-border rounded-lg"
           >
             <X className="w-3 h-3" /> Filter zurücksetzen
           </button>
@@ -347,20 +347,20 @@ export default function ErnteanfragenPage() {
       </div>
 
       {/* Tabelle */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="w-6 h-6 text-emerald-500 animate-spin" />
           </div>
         ) : anfragen.length === 0 ? (
-          <div className="text-center py-16 text-zinc-500">
+          <div className="text-center py-16 text-[var(--color-on-surface-variant)]">
             Keine Anfragen gefunden.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border text-zinc-400 text-xs uppercase tracking-wide">
+                <tr className="border-b border-border text-[var(--color-on-surface-variant)] text-xs uppercase tracking-wide">
                   <th className="text-left px-4 py-3">Baumschule</th>
                   <th className="text-left px-4 py-3">Baumart</th>
                   <th className="text-left px-4 py-3">Herkunft</th>
@@ -397,8 +397,8 @@ export default function ErnteanfragenPage() {
             { label: "Gesamt Gesammelt", value: `${anfragen.reduce((s, a) => s + a.gesammelteKg, 0).toLocaleString("de-DE")} kg` },
             { label: "Sonderherkünfte", value: anfragen.filter((a) => a.sonderherkunft).length },
           ].map((stat) => (
-            <div key={stat.label} className="bg-[#161616] border border-border rounded-xl p-4">
-              <p className="text-xs text-zinc-500 mb-1">{stat.label}</p>
+            <div key={stat.label} className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
+              <p className="text-xs text-[var(--color-on-surface-variant)] mb-1">{stat.label}</p>
               <p className="text-xl font-bold" style={{ color: "var(--color-on-surface)" }}>{stat.value}</p>
             </div>
           ))}
@@ -408,10 +408,10 @@ export default function ErnteanfragenPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#161616] border border-border rounded-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto">
+          <div className="bg-[var(--color-surface-container)] border border-border rounded-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-border">
               <h2 className="text-lg font-semibold text-white">Neue Ernteanfrage</h2>
-              <button onClick={() => setShowModal(false)} className="text-zinc-400 hover:text-white">
+              <button onClick={() => setShowModal(false)} className="text-[var(--color-on-surface-variant)] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -419,12 +419,12 @@ export default function ErnteanfragenPage() {
 
               {/* Baumschule */}
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Baumschule *</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Baumschule *</label>
                 <select
                   required
                   value={form.baumschuleId}
                   onChange={(e) => setForm({ ...form, baumschuleId: e.target.value })}
-                  className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
                 >
                   <option value="">Baumschule wählen…</option>
                   {baumschulen.map((b) => (
@@ -435,11 +435,11 @@ export default function ErnteanfragenPage() {
 
               {/* Saison */}
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Saison</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Saison</label>
                 <select
                   value={form.saisonId}
                   onChange={(e) => setForm({ ...form, saisonId: e.target.value })}
-                  className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
                 >
                   <option value="">Saison wählen…</option>
                   {saisons.map((s) => (
@@ -450,12 +450,12 @@ export default function ErnteanfragenPage() {
 
               {/* Baumart */}
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Baumart *</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Baumart *</label>
                 <select
                   required
                   value={form.baumart}
                   onChange={(e) => setForm({ ...form, baumart: e.target.value })}
-                  className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
                 >
                   <option value="">Baumart wählen…</option>
                   {BAUMARTEN.map((b) => (
@@ -467,23 +467,23 @@ export default function ErnteanfragenPage() {
               {/* Herkunft */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Herkunftsgebiet-Code</label>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Herkunftsgebiet-Code</label>
                   <input
                     type="text"
                     value={form.herkunftCode}
                     onChange={(e) => setForm({ ...form, herkunftCode: e.target.value })}
                     placeholder="z.B. 06, 818 07"
-                    className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Herkunftsgebiet-Name</label>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Herkunftsgebiet-Name</label>
                   <input
                     type="text"
                     value={form.herkunftName}
                     onChange={(e) => setForm({ ...form, herkunftName: e.target.value })}
                     placeholder="optional"
-                    className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
                   />
                 </div>
               </div>
@@ -502,23 +502,23 @@ export default function ErnteanfragenPage() {
                 {form.sonderherkunft && (
                   <div className="grid grid-cols-2 gap-3 pt-1">
                     <div>
-                      <label className="block text-xs text-zinc-400 mb-1">Sonderherkunft-Code</label>
+                      <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Sonderherkunft-Code</label>
                       <input
                         type="text"
                         value={form.sonderherkunftCode}
                         onChange={(e) => setForm({ ...form, sonderherkunftCode: e.target.value })}
                         placeholder="z.B. DKV-818-001"
-                        className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+                        className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-zinc-400 mb-1">Sonderherkunft-Name</label>
+                      <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Sonderherkunft-Name</label>
                       <input
                         type="text"
                         value={form.sonderherkunftName}
                         onChange={(e) => setForm({ ...form, sonderherkunftName: e.target.value })}
                         placeholder="optional"
-                        className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+                        className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
                       />
                     </div>
                   </div>
@@ -528,7 +528,7 @@ export default function ErnteanfragenPage() {
               {/* Zielmenge + Deadline */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Zielmenge (kg) *</label>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Zielmenge (kg) *</label>
                   <input
                     type="number"
                     required
@@ -536,28 +536,28 @@ export default function ErnteanfragenPage() {
                     step="0.1"
                     value={form.zielmenge}
                     onChange={(e) => setForm({ ...form, zielmenge: e.target.value })}
-                    className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Deadline</label>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Deadline</label>
                   <input
                     type="date"
                     value={form.deadline}
                     onChange={(e) => setForm({ ...form, deadline: e.target.value })}
-                    className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
                   />
                 </div>
               </div>
 
               {/* Notizen */}
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Notizen</label>
                 <textarea
                   value={form.notizen}
                   onChange={(e) => setForm({ ...form, notizen: e.target.value })}
                   rows={3}
-                  className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2 resize-none"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2 resize-none"
                 />
               </div>
 
@@ -565,7 +565,7 @@ export default function ErnteanfragenPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 border border-border text-zinc-400 hover:text-white rounded-lg text-sm"
+                  className="flex-1 px-4 py-2 border border-border text-[var(--color-on-surface-variant)] hover:text-white rounded-lg text-sm"
                 >
                   Abbrechen
                 </button>

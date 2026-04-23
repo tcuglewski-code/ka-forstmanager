@@ -428,7 +428,7 @@ export default function ProfilPage() {
       )}
 
       {/* Persönliche Daten */}
-      <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+      <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <User className="w-5 h-5 text-emerald-400" />
           Persönliche Daten
@@ -442,7 +442,7 @@ export default function ProfilPage() {
                 {avatar ? (
                   <img src={avatar} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
-                  <User className="w-8 h-8 text-zinc-500" />
+                  <User className="w-8 h-8 text-[var(--color-on-surface-variant)]" />
                 )}
               </div>
               <button
@@ -460,26 +460,26 @@ export default function ProfilPage() {
               />
             </div>
             <div>
-              <p className="text-sm text-zinc-400">Profilbild</p>
+              <p className="text-sm text-[var(--color-on-surface-variant)]">Profilbild</p>
               <p className="text-xs text-zinc-600">Max 500KB, JPG/PNG</p>
             </div>
           </div>
 
           {/* Name */}
           <div>
-            <label className="block text-sm text-zinc-400 mb-1">Name</label>
+            <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
             />
           </div>
 
           {/* Email (readonly) */}
           <div>
-            <label className="block text-sm text-zinc-400 mb-1">E-Mail</label>
-            <div className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-zinc-500">
+            <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">E-Mail</label>
+            <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface-variant)]">
               <Mail className="w-4 h-4" />
               {profile?.email}
             </div>
@@ -489,7 +489,7 @@ export default function ProfilPage() {
 
       {/* Kontaktdaten (nur wenn Mitarbeiter-Datensatz existiert) */}
       {profile?.mitarbeiter && (
-        <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+        <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Phone className="w-5 h-5 text-emerald-400" />
             Kontaktdaten
@@ -497,54 +497,54 @@ export default function ProfilPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-zinc-400 mb-1">Telefon (Festnetz)</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Telefon (Festnetz)</label>
               <input
                 type="tel"
                 value={telefon}
                 onChange={(e) => setTelefon(e.target.value)}
                 placeholder="+49 123 456789"
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm text-zinc-400 mb-1">Mobil</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Mobil</label>
               <input
                 type="tel"
                 value={mobil}
                 onChange={(e) => setMobil(e.target.value)}
                 placeholder="+49 170 1234567"
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm text-zinc-400 mb-1">Adresse</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Adresse</label>
               <input
                 type="text"
                 value={adresse}
                 onChange={(e) => setAdresse(e.target.value)}
                 placeholder="Straße und Hausnummer"
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm text-zinc-400 mb-1">PLZ</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">PLZ</label>
               <input
                 type="text"
                 value={plz}
                 onChange={(e) => setPlz(e.target.value)}
                 placeholder="12345"
                 maxLength={5}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm text-zinc-400 mb-1">Ort</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Ort</label>
               <input
                 type="text"
                 value={ort}
                 onChange={(e) => setOrt(e.target.value)}
                 placeholder="Musterstadt"
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
           </div>
@@ -553,42 +553,42 @@ export default function ProfilPage() {
 
       {/* Notfallkontakt (nur wenn Mitarbeiter-Datensatz existiert) */}
       {profile?.mitarbeiter && (
-        <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+        <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Heart className="w-5 h-5 text-red-400" />
             Notfallkontakt
           </h2>
-          <p className="text-sm text-zinc-500 mb-4">
+          <p className="text-sm text-[var(--color-on-surface-variant)] mb-4">
             Diese Person wird im Notfall kontaktiert. Bitte halten Sie die Daten aktuell.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm text-zinc-400 mb-1">Name</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Name</label>
               <input
                 type="text"
                 value={notfallName}
                 onChange={(e) => setNotfallName(e.target.value)}
                 placeholder="Max Mustermann"
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm text-zinc-400 mb-1">Telefon</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Telefon</label>
               <input
                 type="tel"
                 value={notfallTelefon}
                 onChange={(e) => setNotfallTelefon(e.target.value)}
                 placeholder="+49 170 1234567"
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm text-zinc-400 mb-1">Beziehung</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Beziehung</label>
               <select
                 value={notfallBeziehung}
                 onChange={(e) => setNotfallBeziehung(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               >
                 <option value="">Bitte wählen</option>
                 <option value="partner">Partner/in</option>
@@ -606,34 +606,34 @@ export default function ProfilPage() {
 
       {/* Arbeitszeitkonto (nur wenn Daten vorhanden) */}
       {profile?.arbeitszeitkonto && (
-        <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+        <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Clock className="w-5 h-5 text-emerald-400" />
             Arbeitszeitkonto — {profile.arbeitszeitkonto.monat}
           </h2>
 
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-[#0f0f0f] rounded-lg p-4 text-center">
-              <p className="text-sm text-zinc-500 mb-1">Soll-Stunden</p>
+            <div className="bg-[var(--color-surface-container-low)] rounded-lg p-4 text-center">
+              <p className="text-sm text-[var(--color-on-surface-variant)] mb-1">Soll-Stunden</p>
               <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>
                 {profile.arbeitszeitkonto.sollStunden}h
               </p>
             </div>
-            <div className="bg-[#0f0f0f] rounded-lg p-4 text-center">
-              <p className="text-sm text-zinc-500 mb-1">Ist-Stunden</p>
+            <div className="bg-[var(--color-surface-container-low)] rounded-lg p-4 text-center">
+              <p className="text-sm text-[var(--color-on-surface-variant)] mb-1">Ist-Stunden</p>
               <p className="text-2xl font-bold text-emerald-400">
                 {profile.arbeitszeitkonto.istStunden.toFixed(1)}h
               </p>
             </div>
-            <div className="bg-[#0f0f0f] rounded-lg p-4 text-center">
-              <p className="text-sm text-zinc-500 mb-1">Differenz</p>
+            <div className="bg-[var(--color-surface-container-low)] rounded-lg p-4 text-center">
+              <p className="text-sm text-[var(--color-on-surface-variant)] mb-1">Differenz</p>
               <div className="flex items-center justify-center gap-1">
                 {profile.arbeitszeitkonto.differenz > 0 ? (
                   <TrendingUp className="w-5 h-5 text-emerald-400" />
                 ) : profile.arbeitszeitkonto.differenz < 0 ? (
                   <TrendingDown className="w-5 h-5 text-red-400" />
                 ) : (
-                  <Minus className="w-5 h-5 text-zinc-400" />
+                  <Minus className="w-5 h-5 text-[var(--color-on-surface-variant)]" />
                 )}
                 <p className={cn(
                   "text-2xl font-bold",
@@ -641,7 +641,7 @@ export default function ProfilPage() {
                     ? "text-emerald-400" 
                     : profile.arbeitszeitkonto.differenz < 0 
                       ? "text-red-400" 
-                      : "text-zinc-400"
+                      : "text-[var(--color-on-surface-variant)]"
                 )}>
                   {profile.arbeitszeitkonto.differenz > 0 ? "+" : ""}
                   {profile.arbeitszeitkonto.differenz.toFixed(1)}h
@@ -652,13 +652,13 @@ export default function ProfilPage() {
 
           {/* Fortschrittsbalken */}
           <div className="mt-4">
-            <div className="flex justify-between text-xs text-zinc-500 mb-1">
+            <div className="flex justify-between text-xs text-[var(--color-on-surface-variant)] mb-1">
               <span>Erfüllt</span>
               <span>
                 {Math.min(100, Math.round((profile.arbeitszeitkonto.istStunden / profile.arbeitszeitkonto.sollStunden) * 100))}%
               </span>
             </div>
-            <div className="h-2 bg-[#0f0f0f] rounded-full overflow-hidden">
+            <div className="h-2 bg-[var(--color-surface-container-low)] rounded-full overflow-hidden">
               <div 
                 className="h-full bg-emerald-500 rounded-full transition-all"
                 style={{ 
@@ -672,27 +672,27 @@ export default function ProfilPage() {
 
       {/* Urlaubstage (nur wenn Daten vorhanden) */}
       {profile?.urlaubstage && (
-        <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+        <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-emerald-400" />
             Urlaubstage {profile.urlaubstage.jahr}
           </h2>
 
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-[#0f0f0f] rounded-lg p-4 text-center">
-              <p className="text-sm text-zinc-500 mb-1">Anspruch</p>
+            <div className="bg-[var(--color-surface-container-low)] rounded-lg p-4 text-center">
+              <p className="text-sm text-[var(--color-on-surface-variant)] mb-1">Anspruch</p>
               <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>
                 {profile.urlaubstage.anspruch} Tage
               </p>
             </div>
-            <div className="bg-[#0f0f0f] rounded-lg p-4 text-center">
-              <p className="text-sm text-zinc-500 mb-1">Genommen</p>
+            <div className="bg-[var(--color-surface-container-low)] rounded-lg p-4 text-center">
+              <p className="text-sm text-[var(--color-on-surface-variant)] mb-1">Genommen</p>
               <p className="text-2xl font-bold text-yellow-400">
                 {profile.urlaubstage.genommen} Tage
               </p>
             </div>
-            <div className="bg-[#0f0f0f] rounded-lg p-4 text-center">
-              <p className="text-sm text-zinc-500 mb-1">Restanspruch</p>
+            <div className="bg-[var(--color-surface-container-low)] rounded-lg p-4 text-center">
+              <p className="text-sm text-[var(--color-on-surface-variant)] mb-1">Restanspruch</p>
               <p className={cn(
                 "text-2xl font-bold",
                 profile.urlaubstage.rest > 0 ? "text-emerald-400" : "text-red-400"
@@ -704,13 +704,13 @@ export default function ProfilPage() {
 
           {/* Fortschrittsbalken */}
           <div className="mt-4">
-            <div className="flex justify-between text-xs text-zinc-500 mb-1">
+            <div className="flex justify-between text-xs text-[var(--color-on-surface-variant)] mb-1">
               <span>Urlaubsnutzung</span>
               <span>
                 {Math.round((profile.urlaubstage.genommen / profile.urlaubstage.anspruch) * 100)}%
               </span>
             </div>
-            <div className="h-2 bg-[#0f0f0f] rounded-full overflow-hidden">
+            <div className="h-2 bg-[var(--color-surface-container-low)] rounded-full overflow-hidden">
               <div 
                 className="h-full bg-yellow-500 rounded-full transition-all"
                 style={{ 
@@ -723,7 +723,7 @@ export default function ProfilPage() {
       )}
 
       {/* Passwort ändern */}
-      <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+      <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Lock className="w-5 h-5 text-emerald-400" />
           Passwort ändern
@@ -739,48 +739,48 @@ export default function ProfilPage() {
         ) : (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm text-zinc-400 mb-1">Aktuelles Passwort</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Aktuelles Passwort</label>
               <div className="relative">
                 <input
                   type={showOldPassword ? "text" : "password"}
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none pr-10"
+                  className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowOldPassword(!showOldPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)] hover:text-white"
                 >
                   {showOldPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
             <div>
-              <label className="block text-sm text-zinc-400 mb-1">Neues Passwort</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Neues Passwort</label>
               <div className="relative">
                 <input
                   type={showNewPassword ? "text" : "password"}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none pr-10"
+                  className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)] hover:text-white"
                 >
                   {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
             <div>
-              <label className="block text-sm text-zinc-400 mb-1">Passwort bestätigen</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Passwort bestätigen</label>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div className="flex gap-2">
@@ -809,7 +809,7 @@ export default function ProfilPage() {
       </section>
 
       {/* Zwei-Faktor-Authentifizierung */}
-      <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+      <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Smartphone className="w-5 h-5 text-emerald-400" />
           Zwei-Faktor-Authentifizierung (2FA)
@@ -828,7 +828,7 @@ export default function ProfilPage() {
                 <ShieldCheck className="w-5 h-5 text-emerald-400" />
                 <div>
                   <p className="text-emerald-400 font-medium">2FA ist aktiviert</p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-[var(--color-on-surface-variant)]">
                     Ihr Konto ist durch einen zusätzlichen Sicherheitsschritt geschützt
                   </p>
                 </div>
@@ -838,7 +838,7 @@ export default function ProfilPage() {
                 <AlertTriangle className="w-5 h-5 text-yellow-400" />
                 <div>
                   <p className="text-yellow-400 font-medium">2FA ist nicht aktiviert</p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-[var(--color-on-surface-variant)]">
                     Aktivieren Sie 2FA für zusätzliche Kontosicherheit
                   </p>
                 </div>
@@ -848,29 +848,29 @@ export default function ProfilPage() {
 
           {/* Setup Flow */}
           {show2FASetup && qrCode && (
-            <div className="space-y-4 p-4 bg-[#0f0f0f] rounded-lg border border-border">
-              <p className="text-sm text-zinc-400">
+            <div className="space-y-4 p-4 bg-[var(--color-surface-container-low)] rounded-lg border border-border">
+              <p className="text-sm text-[var(--color-on-surface-variant)]">
                 1. Scannen Sie diesen QR-Code mit Ihrer Authenticator-App (Google Authenticator, Authy, etc.)
               </p>
               <div className="flex justify-center">
                 <img src={qrCode} alt="2FA QR Code" className="w-48 h-48 rounded-lg" />
               </div>
               <div className="text-center">
-                <p className="text-xs text-zinc-500 mb-1">Oder geben Sie diesen Code manuell ein:</p>
+                <p className="text-xs text-[var(--color-on-surface-variant)] mb-1">Oder geben Sie diesen Code manuell ein:</p>
                 <div className="flex items-center justify-center gap-2">
-                  <code className="px-3 py-1 bg-[#1a1a1a] rounded text-emerald-400 font-mono text-sm">
+                  <code className="px-3 py-1 bg-[var(--color-surface-container-lowest)] rounded text-emerald-400 font-mono text-sm">
                     {totpSecret}
                   </code>
                   <button
                     onClick={() => totpSecret && copyToClipboard(totpSecret)}
-                    className="p-1.5 text-zinc-400 hover:text-white"
+                    className="p-1.5 text-[var(--color-on-surface-variant)] hover:text-white"
                   >
                     <Copy className="w-4 h-4" />
                   </button>
                 </div>
               </div>
               <div>
-                <p className="text-sm text-zinc-400 mb-2">
+                <p className="text-sm text-[var(--color-on-surface-variant)] mb-2">
                   2. Geben Sie den 6-stelligen Code aus der App ein:
                 </p>
                 <input
@@ -879,7 +879,7 @@ export default function ProfilPage() {
                   onChange={(e) => setTotpToken(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="000000"
                   maxLength={6}
-                  className="w-full px-4 py-3 bg-[#1a1a1a] border border-border rounded-lg text-white text-center text-2xl font-mono tracking-widest focus:border-emerald-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white text-center text-2xl font-mono tracking-widest focus:border-emerald-500 focus:outline-none"
                 />
               </div>
               <div className="flex gap-2">
@@ -908,12 +908,12 @@ export default function ProfilPage() {
 
           {/* Disable Flow */}
           {show2FADisable && (
-            <div className="space-y-4 p-4 bg-[#0f0f0f] rounded-lg border border-red-500/30">
+            <div className="space-y-4 p-4 bg-[var(--color-surface-container-low)] rounded-lg border border-red-500/30">
               <div className="flex items-center gap-2 text-red-400">
                 <ShieldOff className="w-5 h-5" />
                 <p className="font-medium">2FA deaktivieren</p>
               </div>
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-[var(--color-on-surface-variant)]">
                 Geben Sie Ihr Passwort ein, um 2FA zu deaktivieren. 
                 Dies verringert die Sicherheit Ihres Kontos.
               </p>
@@ -922,7 +922,7 @@ export default function ProfilPage() {
                 value={disablePassword}
                 onChange={(e) => setDisablePassword(e.target.value)}
                 placeholder="Passwort eingeben"
-                className="w-full px-3 py-2 bg-[#1a1a1a] border border-border rounded-lg text-white focus:border-red-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-red-500 focus:outline-none"
               />
               <div className="flex gap-2">
                 <button
@@ -948,12 +948,12 @@ export default function ProfilPage() {
 
           {/* Backup Codes Modal */}
           {showBackupCodes && backupCodes.length > 0 && (
-            <div className="space-y-4 p-4 bg-[#0f0f0f] rounded-lg border border-emerald-500/30">
+            <div className="space-y-4 p-4 bg-[var(--color-surface-container-low)] rounded-lg border border-emerald-500/30">
               <div className="flex items-center gap-2 text-emerald-400">
                 <Key className="w-5 h-5" />
                 <p className="font-medium">Ihre Backup-Codes</p>
               </div>
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-[var(--color-on-surface-variant)]">
                 <strong>Wichtig:</strong> Speichern Sie diese Codes sicher ab. 
                 Sie werden nur einmal angezeigt und können für den Notfall-Login verwendet werden.
               </p>
@@ -961,7 +961,7 @@ export default function ProfilPage() {
                 {backupCodes.map((code, i) => (
                   <code 
                     key={i}
-                    className="px-3 py-2 bg-[#1a1a1a] rounded text-center font-mono text-emerald-400"
+                    className="px-3 py-2 bg-[var(--color-surface-container-lowest)] rounded text-center font-mono text-emerald-400"
                   >
                     {code}
                   </code>
@@ -1026,7 +1026,7 @@ export default function ProfilPage() {
       </section>
 
       {/* Benachrichtigungen */}
-      <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+      <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Bell className="w-5 h-5 text-emerald-400" />
           Benachrichtigungen
@@ -1088,12 +1088,12 @@ export default function ProfilPage() {
       </section>
 
       {/* DSGVO Datenexport */}
-      <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+      <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Shield className="w-5 h-5 text-emerald-400" />
           Datenschutz (DSGVO)
         </h2>
-        <p className="text-sm text-zinc-400 mb-4">
+        <p className="text-sm text-[var(--color-on-surface-variant)] mb-4">
           Gemäß DSGVO Art. 15 können Sie alle über Sie gespeicherten personenbezogenen Daten exportieren.
         </p>
         <a
@@ -1107,7 +1107,7 @@ export default function ProfilPage() {
       </section>
 
       {/* Tour & Hilfe */}
-      <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+      <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <HelpCircle className="w-5 h-5 text-emerald-400" />
           Hilfe & Tour
@@ -1123,7 +1123,7 @@ export default function ProfilPage() {
       </section>
 
       {/* Session Info */}
-      <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+      <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Shield className="w-5 h-5 text-emerald-400" />
           Session-Informationen
@@ -1131,23 +1131,23 @@ export default function ProfilPage() {
 
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-zinc-400">Eingeloggt als</span>
+            <span className="text-[var(--color-on-surface-variant)]">Eingeloggt als</span>
             <span className="text-white">{profile?.email}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-zinc-400">Rolle</span>
+            <span className="text-[var(--color-on-surface-variant)]">Rolle</span>
             <span className="text-emerald-400">{getRoleLabel(profile?.role)}</span>
           </div>
           {profile?.lastLoginAt && (
             <div className="flex justify-between">
-              <span className="text-zinc-400">Letzte Aktivität</span>
+              <span className="text-[var(--color-on-surface-variant)]">Letzte Aktivität</span>
               <span className="text-zinc-300">
                 {new Date(profile.lastLoginAt).toLocaleString("de-DE")}
               </span>
             </div>
           )}
           <div className="flex justify-between">
-            <span className="text-zinc-400">Konto erstellt</span>
+            <span className="text-[var(--color-on-surface-variant)]">Konto erstellt</span>
             <span className="text-zinc-300">
               {profile?.createdAt && new Date(profile.createdAt).toLocaleDateString("de-DE")}
             </span>
@@ -1157,7 +1157,7 @@ export default function ProfilPage() {
 
       {/* Admin Links */}
       {isAdmin && (
-        <section className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+        <section className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Settings className="w-5 h-5 text-emerald-400" />
             Administration

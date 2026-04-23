@@ -218,13 +218,13 @@ export default function StundenPage() {
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Clock className="w-6 h-6 text-emerald-400" /> Stunden & Abwesenheiten
           </h1>
-          <p className="text-zinc-500 text-sm mt-1">Stundenerfassung und Abwesenheitsverwaltung</p>
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">Stundenerfassung und Abwesenheitsverwaltung</p>
         </div>
         <div className="flex items-center gap-2">
           {tab === "stunden" && (
             <button
               onClick={() => exportStundenCSV(stunden, `stunden-export-${new Date().toISOString().slice(0, 10)}.csv`)}
-              className="flex items-center gap-2 px-3 py-2 border border-border rounded-lg text-sm text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 border border-border rounded-lg text-sm text-[var(--color-on-surface-variant)] hover:text-white hover:border-zinc-500 transition-colors"
               title="Stunden als CSV exportieren"
             >
               <Download className="w-4 h-4" />
@@ -239,9 +239,9 @@ export default function StundenPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-[#161616] border border-border rounded-lg p-1 w-fit">
+      <div className="flex gap-1 mb-6 bg-[var(--color-surface-container)] border border-border rounded-lg p-1 w-fit">
         {(["stunden", "abwesenheiten"] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${tab === t ? "bg-forest text-emerald-400" : "text-zinc-400 hover:text-white"}`}>
+          <button key={t} onClick={() => setTab(t)} className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${tab === t ? "bg-forest text-emerald-400" : "text-[var(--color-on-surface-variant)] hover:text-white"}`}>
             {t === "stunden" ? "Stundenerfassung" : "Abwesenheiten"}
           </button>
         ))}
@@ -251,21 +251,21 @@ export default function StundenPage() {
         <>
           {/* Filter */}
           <div className="flex flex-wrap gap-3 mb-4">
-            <select value={filterMitarbeiter} onChange={(e) => setFilterMitarbeiter(e.target.value)} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white">
+            <select value={filterMitarbeiter} onChange={(e) => setFilterMitarbeiter(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white">
               <option value="">Alle Mitarbeiter</option>
               {mitarbeiter.map((m) => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
             </select>
-            <select value={filterMonat} onChange={(e) => setFilterMonat(e.target.value)} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white">
+            <select value={filterMonat} onChange={(e) => setFilterMonat(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white">
               <option value="">Alle Monate</option>
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                 <option key={m} value={m}>{new Date(2024, m - 1).toLocaleString("de-DE", { month: "long" })}</option>
               ))}
             </select>
-            <select value={filterJahr} onChange={(e) => setFilterJahr(e.target.value)} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white">
+            <select value={filterJahr} onChange={(e) => setFilterJahr(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white">
               <option value="">Alle Jahre</option>
               {jahre.map((y) => <option key={y} value={y}>{y}</option>)}
             </select>
-            <select value={filterGenehmigt} onChange={(e) => setFilterGenehmigt(e.target.value)} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white">
+            <select value={filterGenehmigt} onChange={(e) => setFilterGenehmigt(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white">
               <option value="">Alle Status</option>
               <option value="true">Genehmigt</option>
               <option value="false">Ausstehend</option>
@@ -276,8 +276,8 @@ export default function StundenPage() {
           {Object.keys(stundenProMitarbeiter).length > 0 && (
             <div className="flex flex-wrap gap-3 mb-4">
               {Object.values(stundenProMitarbeiter).map((s) => (
-                <div key={s.name} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm">
-                  <span className="text-zinc-400">{s.name}: </span>
+                <div key={s.name} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm">
+                  <span className="text-[var(--color-on-surface-variant)]">{s.name}: </span>
                   <span className="text-emerald-400 font-medium">{s.summe.toFixed(1)} h</span>
                 </div>
               ))}
@@ -287,7 +287,7 @@ export default function StundenPage() {
           {loading ? (
             <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
           ) : stunden.length === 0 ? (
-            <div className="bg-[#161616] border border-border rounded-xl px-6 py-12 text-center text-zinc-600">
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl px-6 py-12 text-center text-zinc-600">
               Keine Einträge
             </div>
           ) : (
@@ -312,17 +312,17 @@ export default function StundenPage() {
                       </span>
                     </div>
                     {/* Einträge des Tages */}
-                    <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+                    <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
                       <div className="overflow-x-auto">
                       <table className="min-w-full">
                         <thead>
                           <tr className="border-b border-border">
-                            <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">Mitarbeiter</th>
-                            <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">Stunden</th>
-                            <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">Tätigkeit</th>
-                            <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">Auftrag</th>
-                            <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">Notiz</th>
-                            <th className="text-left px-4 py-2 text-xs text-zinc-500 uppercase tracking-wider">✓</th>
+                            <th className="text-left px-4 py-2 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Mitarbeiter</th>
+                            <th className="text-left px-4 py-2 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Stunden</th>
+                            <th className="text-left px-4 py-2 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Tätigkeit</th>
+                            <th className="text-left px-4 py-2 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Auftrag</th>
+                            <th className="text-left px-4 py-2 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Notiz</th>
+                            <th className="text-left px-4 py-2 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">✓</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
@@ -330,8 +330,8 @@ export default function StundenPage() {
                             <tr key={s.id} className="hover:bg-[#1c1c1c]">
                               <td className="px-4 py-3 text-sm text-white">{s.mitarbeiter.vorname} {s.mitarbeiter.nachname}</td>
                               <td className="px-4 py-3 text-sm font-medium text-emerald-400">{s.stunden} h</td>
-                              <td className="px-4 py-3 text-sm text-zinc-400">{typLabel[s.typ] ?? s.typ}</td>
-                              <td className="px-4 py-3 text-sm text-zinc-400">
+                              <td className="px-4 py-3 text-sm text-[var(--color-on-surface-variant)]">{typLabel[s.typ] ?? s.typ}</td>
+                              <td className="px-4 py-3 text-sm text-[var(--color-on-surface-variant)]">
                                 {s.auftrag ? (
                                   <a
                                     href={`/auftraege/${s.auftragId}`}
@@ -343,9 +343,9 @@ export default function StundenPage() {
                                   <span className="text-zinc-600">—</span>
                                 )}
                               </td>
-                              <td className="px-4 py-3 text-sm text-zinc-500">{s.notiz ?? "—"}</td>
+                              <td className="px-4 py-3 text-sm text-[var(--color-on-surface-variant)]">{s.notiz ?? "—"}</td>
                               <td className="px-4 py-3">
-                                <button onClick={() => toggleGenehmigt(s.id, s.genehmigt)} className={`w-8 h-5 rounded-full transition-all ${s.genehmigt ? "bg-emerald-500" : "bg-zinc-700"}`}>
+                                <button onClick={() => toggleGenehmigt(s.id, s.genehmigt)} className={`w-8 h-5 rounded-full transition-all ${s.genehmigt ? "bg-emerald-500" : "bg-[var(--color-surface-container-high)]"}`}>
                                   <span className="block w-3 h-3 rounded-full bg-white mx-auto" />
                                 </button>
                               </td>
@@ -367,17 +367,17 @@ export default function StundenPage() {
           {loading ? (
             <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
           ) : (
-            <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
               <div className="overflow-x-auto">
               <table className="min-w-full">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Mitarbeiter</th>
-                    <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Von</th>
-                    <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Bis</th>
-                    <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Typ</th>
-                    <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Status</th>
-                    <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Aktion</th>
+                    <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Mitarbeiter</th>
+                    <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Von</th>
+                    <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Bis</th>
+                    <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Typ</th>
+                    <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Status</th>
+                    <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Aktion</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -386,9 +386,9 @@ export default function StundenPage() {
                   ) : abwesenheiten.map((a) => (
                     <tr key={a.id} className="hover:bg-[#1c1c1c]">
                       <td className="px-6 py-4 text-sm text-white">{a.mitarbeiter.vorname} {a.mitarbeiter.nachname}</td>
-                      <td className="px-6 py-4 text-sm text-zinc-400">{new Date(a.von).toLocaleDateString("de-DE")}</td>
-                      <td className="px-6 py-4 text-sm text-zinc-400">{new Date(a.bis).toLocaleDateString("de-DE")}</td>
-                      <td className="px-6 py-4 text-sm text-zinc-400">{abwTypLabel[a.typ] ?? a.typ}</td>
+                      <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{new Date(a.von).toLocaleDateString("de-DE")}</td>
+                      <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{new Date(a.bis).toLocaleDateString("de-DE")}</td>
+                      <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{abwTypLabel[a.typ] ?? a.typ}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2 py-0.5 rounded-full text-xs ${a.genehmigt ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
                           {a.genehmigt ? "Genehmigt" : "Ausstehend"}
@@ -402,7 +402,7 @@ export default function StundenPage() {
                             </button>
                           </div>
                         ) : (
-                          <button onClick={() => toggleAbwGenehmigt(a.id, true)} className="flex items-center gap-1 px-2 py-1 bg-zinc-700/50 text-zinc-400 rounded text-xs hover:bg-red-500/20 hover:text-red-400">
+                          <button onClick={() => toggleAbwGenehmigt(a.id, true)} className="flex items-center gap-1 px-2 py-1 bg-[var(--color-surface-container-high)]/50 text-[var(--color-on-surface-variant)] rounded text-xs hover:bg-red-500/20 hover:text-red-400">
                             <X className="w-3 h-3" /> Ablehnen
                           </button>
                         )}
@@ -420,32 +420,32 @@ export default function StundenPage() {
       {/* Stunden Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
             <h2 className="text-lg font-bold text-white mb-4">Stunden buchen</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Mitarbeiter *</label>
-                <select value={stundenForm.mitarbeiterId} onChange={(e) => setStundenForm({ ...stundenForm, mitarbeiterId: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Mitarbeiter *</label>
+                <select value={stundenForm.mitarbeiterId} onChange={(e) => setStundenForm({ ...stundenForm, mitarbeiterId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
                   <option value="">— auswählen —</option>
                   {mitarbeiter.map((m) => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Datum *</label>
-                  <input type="date" value={stundenForm.datum} onChange={(e) => setStundenForm({ ...stundenForm, datum: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Datum *</label>
+                  <input type="date" value={stundenForm.datum} onChange={(e) => setStundenForm({ ...stundenForm, datum: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Stunden *</label>
-                  <input type="number" step="0.5" min="0.5" max="24" value={stundenForm.stunden} onChange={(e) => setStundenForm({ ...stundenForm, stunden: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Stunden *</label>
+                  <input type="number" step="0.5" min="0.5" max="24" value={stundenForm.stunden} onChange={(e) => setStundenForm({ ...stundenForm, stunden: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Tätigkeit</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Tätigkeit</label>
                 <select
                   value={stundenForm.typ}
                   onChange={(e) => handleTypChange(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white"
+                  className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white"
                 >
                   <option value="arbeit">Allgemeine Arbeit</option>
                   <option value="pflanzung">Pflanzung</option>
@@ -459,35 +459,35 @@ export default function StundenPage() {
               </div>
               {stundenForm.typ === "freischneider" && (
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Maschinenzuschlag (€/h)</label>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Maschinenzuschlag (€/h)</label>
                   <input
                     type="number"
                     step="0.5"
                     value={stundenForm.maschinenzuschlag}
                     onChange={(e) => setStundenForm({ ...stundenForm, maschinenzuschlag: e.target.value })}
-                    className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white"
+                    className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
                     placeholder="1.00"
                   />
                 </div>
               )}
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Auftrag (optional)</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Auftrag (optional)</label>
                 <select
                   value={stundenForm.auftragId}
                   onChange={(e) => setStundenForm({ ...stundenForm, auftragId: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white"
+                  className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white"
                 >
                   <option value="">Kein Auftrag</option>
                   {auftraege.map((a) => <option key={a.id} value={a.id}>{a.titel}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Notiz</label>
-                <input value={stundenForm.notiz} onChange={(e) => setStundenForm({ ...stundenForm, notiz: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Notiz</label>
+                <input value={stundenForm.notiz} onChange={(e) => setStundenForm({ ...stundenForm, notiz: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 rounded-lg border border-[#333] text-zinc-400 text-sm hover:bg-[#222]">Abbrechen</button>
+              <button onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 rounded-lg border border-border text-[var(--color-on-surface-variant)] text-sm hover:bg-[#222]">Abbrechen</button>
               <button onClick={saveStunden} disabled={saving || !stundenForm.mitarbeiterId || !stundenForm.stunden} className="flex-1 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium disabled:opacity-50">
                 {saving ? "Speichern..." : "Buchen"}
               </button>
@@ -499,29 +499,29 @@ export default function StundenPage() {
       {/* Abwesenheit Modal */}
       {showAbwModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6">
+          <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6">
             <h2 className="text-lg font-bold text-white mb-4">Abwesenheit eintragen</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Mitarbeiter</label>
-                <select value={abwForm.mitarbeiterId} onChange={(e) => setAbwForm({ ...abwForm, mitarbeiterId: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Mitarbeiter</label>
+                <select value={abwForm.mitarbeiterId} onChange={(e) => setAbwForm({ ...abwForm, mitarbeiterId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
                   <option value="">— auswählen —</option>
                   {mitarbeiter.map((m) => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Von</label>
-                  <input type="date" value={abwForm.von} onChange={(e) => setAbwForm({ ...abwForm, von: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Von</label>
+                  <input type="date" value={abwForm.von} onChange={(e) => setAbwForm({ ...abwForm, von: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Bis</label>
-                  <input type="date" value={abwForm.bis} onChange={(e) => setAbwForm({ ...abwForm, bis: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Bis</label>
+                  <input type="date" value={abwForm.bis} onChange={(e) => setAbwForm({ ...abwForm, bis: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Typ</label>
-                <select value={abwForm.typ} onChange={(e) => setAbwForm({ ...abwForm, typ: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Typ</label>
+                <select value={abwForm.typ} onChange={(e) => setAbwForm({ ...abwForm, typ: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
                   <option value="urlaub">Urlaub</option>
                   <option value="krank">Krankheit</option>
                   <option value="schlechtwetter">Schlechtwetter</option>
@@ -531,12 +531,12 @@ export default function StundenPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Notiz</label>
-                <input value={abwForm.notiz} onChange={(e) => setAbwForm({ ...abwForm, notiz: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Notiz</label>
+                <input value={abwForm.notiz} onChange={(e) => setAbwForm({ ...abwForm, notiz: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowAbwModal(false)} className="flex-1 px-4 py-2 rounded-lg border border-[#333] text-zinc-400 text-sm hover:bg-[#222]">Abbrechen</button>
+              <button onClick={() => setShowAbwModal(false)} className="flex-1 px-4 py-2 rounded-lg border border-border text-[var(--color-on-surface-variant)] text-sm hover:bg-[#222]">Abbrechen</button>
               <button onClick={saveAbwesenheit} disabled={saving || !abwForm.mitarbeiterId || !abwForm.von || !abwForm.bis} className="flex-1 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium disabled:opacity-50">
                 {saving ? "Speichern..." : "Eintragen"}
               </button>

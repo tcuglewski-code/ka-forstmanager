@@ -28,7 +28,7 @@ const typLabel: Record<string, string> = {
 const statusBadge: Record<string, string> = {
   planung: "bg-blue-100 text-blue-800 border-blue-500/30",
   aktiv: "bg-emerald-100 text-emerald-800 border-emerald-500/30",
-  abgeschlossen: "bg-zinc-700/50 text-zinc-400 border-zinc-600/30",
+  abgeschlossen: "bg-[var(--color-surface-container-high)]/50 text-[var(--color-on-surface-variant)] border-zinc-600/30",
 }
 
 const typIcon: Record<string, string> = {
@@ -63,7 +63,7 @@ export default function SaisonsPage() {
     try {
       const res = await fetch("/api/saisons")
       const data = await res.json()
-      setSaisons(data)
+      setSaisons(Array.isArray(data) ? data : data.items ?? [])
     } catch {
       setSaisons([])
     } finally {
@@ -155,11 +155,11 @@ export default function SaisonsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Saisons</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">{saisons.length} Saisons</p>
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-0.5">{saisons.length} Saisons</p>
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2.5 bg-forest hover:bg-[#3a4d26] text-white text-sm font-medium rounded-lg transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 bg-forest hover:bg-[#3a4d26] text-[var(--color-on-surface)] text-sm font-medium rounded-lg transition-all"
         >
           <Plus className="w-4 h-4" />
           Neue Saison
@@ -172,10 +172,10 @@ export default function SaisonsPage() {
           <Loader2 className="w-6 h-6 animate-spin text-emerald-400" />
         </div>
       ) : saisons.length === 0 ? (
-        <div className="text-center py-16 bg-[#161616] border border-border rounded-xl">
-          <Sprout className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
-          <p className="text-zinc-400 font-medium">Noch keine Saisons angelegt</p>
-          <p className="text-zinc-600 text-sm mt-1">Erstellen Sie die erste Saison</p>
+        <div className="text-center py-16 bg-[var(--color-surface-container)] border border-border rounded-xl">
+          <Sprout className="w-10 h-10 text-[var(--color-on-surface-variant)] mx-auto mb-3" />
+          <p className="text-[var(--color-on-surface-variant)] font-medium">Noch keine Saisons angelegt</p>
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">Erstellen Sie die erste Saison</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -184,20 +184,20 @@ export default function SaisonsPage() {
             <Link
               key={s.id}
               href={`/saisons/${s.id}`}
-              className="block bg-[#161616] border border-border rounded-xl p-5 hover:border-emerald-700/50 hover:bg-[#1a1a1a] transition-all cursor-pointer"
+              className="block bg-[var(--color-surface-container)] border border-border rounded-xl p-5 hover:border-emerald-700/50 hover:bg-[var(--color-surface-container-low)] transition-all cursor-pointer"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">{typIcon[s.typ] || "📋"}</span>
                   <div>
-                    <h3 className="font-semibold text-white">{s.name}</h3>
-                    <p className="text-xs text-zinc-500">{typLabel[s.typ] || s.typ}</p>
+                    <h3 className="font-semibold text-[var(--color-on-surface)]">{s.name}</h3>
+                    <p className="text-xs text-[var(--color-on-surface-variant)]">{typLabel[s.typ] || s.typ}</p>
                   </div>
                 </div>
                 <span
                   className={cn(
                     "inline-flex items-center px-2 py-0.5 rounded text-xs border",
-                    statusBadge[s.status] || "bg-zinc-700/50 text-zinc-400 border-zinc-600/30"
+                    statusBadge[s.status] || "bg-[var(--color-surface-container-high)]/50 text-[var(--color-on-surface-variant)] border-zinc-600/30"
                   )}
                 >
                   {s.status}
@@ -205,7 +205,7 @@ export default function SaisonsPage() {
               </div>
 
               {(s.startDatum || s.endDatum) && (
-                <div className="flex items-center gap-1.5 text-xs text-zinc-500 mb-3">
+                <div className="flex items-center gap-1.5 text-xs text-[var(--color-on-surface-variant)] mb-3">
                   <Calendar className="w-3 h-3" />
                   <span>
                     {s.startDatum
@@ -220,14 +220,14 @@ export default function SaisonsPage() {
               )}
 
               {s.beschreibung && (
-                <p className="text-xs text-zinc-500 mb-3 line-clamp-2">{s.beschreibung}</p>
+                <p className="text-xs text-[var(--color-on-surface-variant)] mb-3 line-clamp-2">{s.beschreibung}</p>
               )}
 
               {/* Buttons mit stopPropagation damit Klick nicht zur Detailseite navigiert */}
               <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
                 <button
                   onClick={(e) => openEdit(e, s)}
-                  className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-white transition-colors px-2 py-1 rounded hover:bg-surface-container-highest"
+                  className="flex items-center gap-1.5 text-xs text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors px-2 py-1 rounded hover:bg-surface-container-highest"
                 >
                   <Pencil className="w-3 h-3" />
                   Bearbeiten
@@ -235,7 +235,7 @@ export default function SaisonsPage() {
                 <button
                   onClick={(e) => handleDelete(e, s.id)}
                   disabled={deleting === s.id}
-                  className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-red-400 transition-colors px-2 py-1 rounded hover:bg-red-500/10 ml-auto disabled:opacity-50"
+                  className="flex items-center gap-1.5 text-xs text-[var(--color-on-surface-variant)] hover:text-red-400 transition-colors px-2 py-1 rounded hover:bg-red-500/10 ml-auto disabled:opacity-50"
                 >
                   {deleting === s.id ? (
                     <Loader2 className="w-3 h-3 animate-spin" />
@@ -259,14 +259,14 @@ export default function SaisonsPage() {
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setModalOpen(false)}
           />
-          <div className="relative bg-[#161616] border border-border rounded-2xl w-full max-w-lg shadow-2xl">
+          <div className="relative bg-[var(--color-surface-container)] border border-border rounded-2xl w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between p-6 border-b border-border">
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">
                 {editItem ? "Saison bearbeiten" : "Neue Saison"}
               </h2>
               <button
                 onClick={() => setModalOpen(false)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 hover:bg-[#1e1e1e] hover:text-white transition-all"
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-highest)] hover:text-[var(--color-on-surface)] transition-all"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -274,7 +274,7 @@ export default function SaisonsPage() {
 
             <form onSubmit={handleSave} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+                <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">
                   Name <span className="text-red-400">*</span>
                 </label>
                 <input
@@ -283,17 +283,17 @@ export default function SaisonsPage() {
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                   placeholder="z.B. Pflanzung Frühjahr 2026"
-                  className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                  className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-1.5">Typ</label>
+                  <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">Typ</label>
                   <select
                     value={form.typ}
                     onChange={(e) => setForm((f) => ({ ...f, typ: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                    className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
                   >
                     <option value="pflanzung">Pflanzung</option>
                     <option value="ernte">Ernte</option>
@@ -302,11 +302,11 @@ export default function SaisonsPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-1.5">Status</label>
+                  <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">Status</label>
                   <select
                     value={form.status}
                     onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                    className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
                   >
                     <option value="planung">Planung</option>
                     <option value="aktiv">Aktiv</option>
@@ -317,39 +317,39 @@ export default function SaisonsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-1.5">Start</label>
+                  <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">Start</label>
                   <input
                     type="date"
                     value={form.startDatum}
                     onChange={(e) => setForm((f) => ({ ...f, startDatum: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                    className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-1.5">Ende</label>
+                  <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">Ende</label>
                   <input
                     type="date"
                     value={form.endDatum}
                     onChange={(e) => setForm((f) => ({ ...f, endDatum: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                    className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+                <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">
                   Beschreibung
                 </label>
                 <textarea
                   rows={2}
                   value={form.beschreibung}
                   onChange={(e) => setForm((f) => ({ ...f, beschreibung: e.target.value }))}
-                  className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm resize-none"
+                  className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm resize-none"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+                <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">
                   Ziel / Sollmenge
                 </label>
                 <input
@@ -357,7 +357,7 @@ export default function SaisonsPage() {
                   value={form.ziel}
                   onChange={(e) => setForm((f) => ({ ...f, ziel: e.target.value }))}
                   placeholder="z.B. 50.000 Pflanzen"
-                  className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                  className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
                 />
               </div>
 
@@ -365,14 +365,14 @@ export default function SaisonsPage() {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="flex-1 py-2.5 px-4 bg-[#0f0f0f] border border-border text-zinc-400 hover:text-white rounded-lg text-sm transition-all"
+                  className="flex-1 py-2.5 px-4 bg-[var(--color-surface-container-low)] border border-border text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] rounded-lg text-sm transition-all"
                 >
                   Abbrechen
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 py-2.5 px-4 bg-forest hover:bg-[#3a4d26] text-white rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+                  className="flex-1 py-2.5 px-4 bg-forest hover:bg-[#3a4d26] text-[var(--color-on-surface)] rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                 >
                   {saving ? (
                     <>

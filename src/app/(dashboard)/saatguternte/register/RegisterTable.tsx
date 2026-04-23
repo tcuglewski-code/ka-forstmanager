@@ -159,12 +159,12 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
 
   return (
     <div>
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="px-4 py-3 text-zinc-500 font-medium w-10">
+                <th className="px-4 py-3 text-[var(--color-on-surface-variant)] font-medium w-10">
                   <input
                     type="checkbox"
                     checked={data.length > 0 && ausgewaehlt.size === data.length}
@@ -173,29 +173,29 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
                     title="Alle auswählen"
                   />
                 </th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">
                   <SortHeader label="Register-Nr" field="registerNr" currentSort={sortBy} currentDir={sortDir} onClick={handleSort} />
                 </th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">
                   <SortHeader label="Bundesland" field="bundesland" currentSort={sortBy} currentDir={sortDir} onClick={handleSort} />
                 </th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">
                   <SortHeader label="Baumart" field="baumart" currentSort={sortBy} currentDir={sortDir} onClick={handleSort} />
                 </th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">
                   <SortHeader label="Fläche ha" field="flaecheHa" currentSort={sortBy} currentDir={sortDir} onClick={handleSort} />
                 </th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Koordinaten</th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Koordinaten</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">
                   <SortHeader label="Forstamt" field="forstamt" currentSort={sortBy} currentDir={sortDir} onClick={handleSort} />
                 </th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Höhe</th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Höhe</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">
                   <SortHeader label="Zulassung bis" field="zulassungBis" currentSort={sortBy} currentDir={sortDir} onClick={handleSort} />
                 </th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Quelle</th>
-                <th className="text-center px-4 py-3 text-zinc-500 font-medium" title="Wetterdaten vorhanden">Wetter</th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Medien</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Quelle</th>
+                <th className="text-center px-4 py-3 text-[var(--color-on-surface-variant)] font-medium" title="Wetterdaten vorhanden">Wetter</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Medien</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -210,7 +210,7 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
                 data.map((f) => (
                   <tr
                     key={f.id}
-                    className={`border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors ${ausgewaehlt.has(f.id) ? "bg-emerald-900/10" : ""}`}
+                    className={`border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors ${ausgewaehlt.has(f.id) ? "bg-emerald-900/10" : ""}`}
                   >
                     <td className="px-4 py-3">
                       <input
@@ -228,28 +228,28 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
                         )}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-zinc-400">{f.bundesland}</td>
+                    <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">{f.bundesland}</td>
                     <td className="px-4 py-3 text-zinc-300">{f.baumart}</td>
-                    <td className="px-4 py-3 text-zinc-400">
+                    <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">
                       {f.flaecheRedHa != null
                         ? `${f.flaecheRedHa.toFixed(2)} ha`
                         : f.flaecheHa != null
                           ? `${f.flaecheHa.toFixed(2)} ha`
                           : "–"}
                     </td>
-                    <td className="px-4 py-3 text-zinc-500 text-xs font-mono">
+                    <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-xs font-mono">
                       {formatKoord(f.latDez, f.lonDez)}
                     </td>
-                    <td className="px-4 py-3 text-zinc-400">{f.forstamt ?? "–"}</td>
-                    <td className="px-4 py-3 text-zinc-400 text-xs whitespace-nowrap">
+                    <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">{f.forstamt ?? "–"}</td>
+                    <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-xs whitespace-nowrap">
                       {formatHoehe(f.hoeheVon, f.hoeheBis)}
                     </td>
-                    <td className="px-4 py-3 text-zinc-400 text-xs whitespace-nowrap">
+                    <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-xs whitespace-nowrap">
                       {formatZulassung(f)}
                     </td>
                     <td className="px-4 py-3">
                       <span
-                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${QUELLEFARBEN[f.quelle.kuerzel] ?? "bg-zinc-700/50 text-zinc-400"}`}
+                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${QUELLEFARBEN[f.quelle.kuerzel] ?? "bg-[var(--color-surface-container-high)]/50 text-[var(--color-on-surface-variant)]"}`}
                       >
                         {f.quelle.kuerzel}
                       </span>
@@ -314,22 +314,22 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between mt-4">
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-[var(--color-on-surface-variant)]">
             {(page - 1) * limit + 1}–{Math.min(page * limit, total)} von {total} Flächen
           </p>
           <div className="flex items-center gap-2">
             <Link
               href={buildUrl({ page: page - 1 })}
-              className={`p-2 rounded-lg border border-border text-zinc-400 hover:text-white hover:bg-surface-container-highest transition-colors ${page <= 1 ? "pointer-events-none opacity-30" : ""}`}
+              className={`p-2 rounded-lg border border-border text-[var(--color-on-surface-variant)] hover:text-white hover:bg-surface-container-highest transition-colors ${page <= 1 ? "pointer-events-none opacity-30" : ""}`}
             >
               <ChevronLeft className="w-4 h-4" />
             </Link>
-            <span className="text-sm text-zinc-400 px-2">
+            <span className="text-sm text-[var(--color-on-surface-variant)] px-2">
               Seite {page} / {totalPages}
             </span>
             <Link
               href={buildUrl({ page: page + 1 })}
-              className={`p-2 rounded-lg border border-border text-zinc-400 hover:text-white hover:bg-surface-container-highest transition-colors ${page >= totalPages ? "pointer-events-none opacity-30" : ""}`}
+              className={`p-2 rounded-lg border border-border text-[var(--color-on-surface-variant)] hover:text-white hover:bg-surface-container-highest transition-colors ${page >= totalPages ? "pointer-events-none opacity-30" : ""}`}
             >
               <ChevronRight className="w-4 h-4" />
             </Link>

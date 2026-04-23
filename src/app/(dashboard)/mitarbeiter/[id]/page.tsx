@@ -24,7 +24,7 @@ function RolleBadge({ rolle }: { rolle: string }) {
   if (rolle === "ka_mitarbeiter" || rolle === "mitarbeiter") {
     return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-500/20">Mitarbeiter</span>
   }
-  return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs text-zinc-500 border border-border">{rolle}</span>
+  return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs text-[var(--color-on-surface-variant)] border border-border">{rolle}</span>
 }
 
 const statusBadge: Record<string, string> = {
@@ -69,12 +69,12 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
   return (
     <div className="max-w-5xl mx-auto">
       <Breadcrumb items={[{ label: "Mitarbeiter", href: "/mitarbeiter" }, { label: `${ma.vorname} ${ma.nachname}` }]} />
-      <Link href="/mitarbeiter" className="flex items-center gap-2 text-zinc-400 hover:text-white text-sm mb-6 transition-all">
+      <Link href="/mitarbeiter" className="flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:text-white text-sm mb-6 transition-all">
         <ArrowLeft className="w-4 h-4" /> Zurück zu Mitarbeiter
       </Link>
 
       {/* Profil Header */}
-      <div className="bg-[#161616] border border-border rounded-xl p-6 mb-6">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6 mb-6">
         <div className="flex items-start gap-5">
           <div className="w-16 h-16 rounded-2xl bg-forest flex items-center justify-center flex-shrink-0">
             <User className="w-8 h-8 text-emerald-400" />
@@ -83,9 +83,9 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
             <div className="flex items-center gap-3 mb-2 flex-wrap">
               <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{ma.vorname} {ma.nachname}</h1>
               <RolleBadge rolle={ma.rolle} />
-              <span className={`px-2 py-0.5 rounded-full text-xs border ${statusBadge[ma.status] ?? "bg-zinc-700 text-zinc-400"}`}>{ma.status}</span>
+              <span className={`px-2 py-0.5 rounded-full text-xs border ${statusBadge[ma.status] ?? "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]"}`}>{ma.status}</span>
             </div>
-            <div className="flex flex-wrap gap-4 text-sm text-zinc-400">
+            <div className="flex flex-wrap gap-4 text-sm text-[var(--color-on-surface-variant)]">
               {ma.email && <span className="flex items-center gap-1"><Mail className="w-3 h-3" /> {ma.email}</span>}
               {ma.telefon && <span className="flex items-center gap-1"><Phone className="w-3 h-3" /> {ma.telefon}</span>}
               {ma.ort && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {ma.ort}</span>}
@@ -102,7 +102,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
             <AlertTriangle className="w-3 h-3" /> Notfallkontakt
           </h4>
           <p className="text-sm font-medium text-white">{ma.notfallName}</p>
-          {ma.notfallBeziehung && <p className="text-xs text-zinc-400">{ma.notfallBeziehung}</p>}
+          {ma.notfallBeziehung && <p className="text-xs text-[var(--color-on-surface-variant)]">{ma.notfallBeziehung}</p>}
           {ma.notfallTelefon && (
             <a
               href={`tel:${ma.notfallTelefon}`}
@@ -143,7 +143,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
           </div>
           {ma.notizen && (
             <div className="mt-4">
-              <p className="text-xs text-zinc-500 mb-1">Notizen</p>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mb-1">Notizen</p>
               <p className="text-sm text-zinc-300 whitespace-pre-wrap">{ma.notizen}</p>
             </div>
           )}
@@ -164,12 +164,12 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
                   <div key={q.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                     <div>
                       <p className="text-sm text-white">{q.qualifikation.name}</p>
-                      <p className="text-xs text-zinc-500">{q.qualifikation.typ}</p>
+                      <p className="text-xs text-[var(--color-on-surface-variant)]">{q.qualifikation.typ}</p>
                     </div>
                     <div className="text-right">
-                      {q.erworbenAm && <p className="text-xs text-zinc-500">Erworben: {new Date(q.erworbenAm).toLocaleDateString("de-DE")}</p>}
+                      {q.erworbenAm && <p className="text-xs text-[var(--color-on-surface-variant)]">Erworben: {new Date(q.erworbenAm).toLocaleDateString("de-DE")}</p>}
                       {ablauf && (
-                        <p className={`text-xs ${abgelaufen ? "text-red-400" : kritisch ? "text-amber-400" : "text-zinc-500"}`}>
+                        <p className={`text-xs ${abgelaufen ? "text-red-400" : kritisch ? "text-amber-400" : "text-[var(--color-on-surface-variant)]"}`}>
                           Ablauf: {ablauf.toLocaleDateString("de-DE")}
                         </p>
                       )}
@@ -191,7 +191,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
                 <div key={s.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                   <div>
                     <p className="text-sm text-white">{s.schulung.titel}</p>
-                    <p className="text-xs text-zinc-500">{s.schulung.typ} • {s.schulung.datum ? new Date(s.schulung.datum).toLocaleDateString("de-DE") : "—"}</p>
+                    <p className="text-xs text-[var(--color-on-surface-variant)]">{s.schulung.typ} • {s.schulung.datum ? new Date(s.schulung.datum).toLocaleDateString("de-DE") : "—"}</p>
                   </div>
                   <span className={`px-2 py-0.5 rounded-full text-xs ${s.status === "abgeschlossen" ? "bg-emerald-100 text-emerald-800" : s.status === "abgebrochen" ? "bg-red-100 text-red-800" : "bg-blue-100 text-blue-800"}`}>
                     {s.status}
@@ -210,17 +210,17 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
             <div className="overflow-x-auto">
             <table className="min-w-full">
               <thead><tr className="border-b border-border">
-                <th className="text-left py-2 text-xs text-zinc-500">Datum</th>
-                <th className="text-left py-2 text-xs text-zinc-500">Stunden</th>
-                <th className="text-left py-2 text-xs text-zinc-500">Typ</th>
-                <th className="text-left py-2 text-xs text-zinc-500">Status</th>
+                <th className="text-left py-2 text-xs text-[var(--color-on-surface-variant)]">Datum</th>
+                <th className="text-left py-2 text-xs text-[var(--color-on-surface-variant)]">Stunden</th>
+                <th className="text-left py-2 text-xs text-[var(--color-on-surface-variant)]">Typ</th>
+                <th className="text-left py-2 text-xs text-[var(--color-on-surface-variant)]">Status</th>
               </tr></thead>
               <tbody>
                 {ma.stundeneintraege.map((s) => (
                   <tr key={s.id} className="border-b border-border last:border-0">
-                    <td className="py-2 text-sm text-zinc-400">{new Date(s.datum).toLocaleDateString("de-DE")}</td>
+                    <td className="py-2 text-sm text-[var(--color-on-surface-variant)]">{new Date(s.datum).toLocaleDateString("de-DE")}</td>
                     <td className="py-2 text-sm font-medium text-emerald-400">{s.stunden} h</td>
-                    <td className="py-2 text-sm text-zinc-400">{s.typ}</td>
+                    <td className="py-2 text-sm text-[var(--color-on-surface-variant)]">{s.typ}</td>
                     <td className="py-2">
                       <span className={`text-xs ${s.genehmigt ? "text-emerald-400" : "text-amber-400"}`}>
                         {s.genehmigt ? "✓" : "○"}
@@ -242,16 +242,16 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
             <div className="overflow-x-auto">
             <table className="min-w-full">
               <thead><tr className="border-b border-border">
-                <th className="text-left py-2 text-xs text-zinc-500">Monat/Jahr</th>
-                <th className="text-left py-2 text-xs text-zinc-500">Stunden</th>
-                <th className="text-left py-2 text-xs text-zinc-500">Brutto</th>
-                <th className="text-left py-2 text-xs text-zinc-500">Ausgezahlt</th>
+                <th className="text-left py-2 text-xs text-[var(--color-on-surface-variant)]">Monat/Jahr</th>
+                <th className="text-left py-2 text-xs text-[var(--color-on-surface-variant)]">Stunden</th>
+                <th className="text-left py-2 text-xs text-[var(--color-on-surface-variant)]">Brutto</th>
+                <th className="text-left py-2 text-xs text-[var(--color-on-surface-variant)]">Ausgezahlt</th>
               </tr></thead>
               <tbody>
                 {ma.lohneintraege.map((l) => (
                   <tr key={l.id} className="border-b border-border last:border-0">
-                    <td className="py-2 text-sm text-zinc-400">{l.monat}/{l.jahr}</td>
-                    <td className="py-2 text-sm text-zinc-400">{l.stunden} h</td>
+                    <td className="py-2 text-sm text-[var(--color-on-surface-variant)]">{l.monat}/{l.jahr}</td>
+                    <td className="py-2 text-sm text-[var(--color-on-surface-variant)]">{l.stunden} h</td>
                     <td className="py-2 text-sm font-medium text-white">{l.brutto.toFixed(2)} €</td>
                     <td className="py-2">
                       <span className={`text-xs ${l.ausgezahlt ? "text-emerald-400" : "text-amber-400"}`}>
@@ -287,7 +287,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
 
 function Section({ title, children, link }: { title: string; children: React.ReactNode; link?: string }) {
   return (
-    <div className="bg-[#161616] border border-border rounded-xl p-6">
+    <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-semibold text-white">{title}</h2>
         {link && (
@@ -304,7 +304,7 @@ function Section({ title, children, link }: { title: string; children: React.Rea
 function Field({ label, value }: { label: string; value?: string | null }) {
   return (
     <div>
-      <p className="text-xs text-zinc-500 mb-0.5">{label}</p>
+      <p className="text-xs text-[var(--color-on-surface-variant)] mb-0.5">{label}</p>
       <p className="text-sm text-zinc-300">{value ?? "—"}</p>
     </div>
   )

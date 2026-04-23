@@ -90,15 +90,15 @@ export function ScoutClient({ flaeche }: { flaeche: Flaeche }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] flex flex-col" style={{ maxWidth: 480, margin: "0 auto" }}>
+    <div className="min-h-screen bg-[var(--color-surface-container-low)] flex flex-col" style={{ maxWidth: 480, margin: "0 auto" }}>
       {/* Top Bar */}
-      <div className="bg-[#161616] border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
-        <Link href={`/saatguternte/register/${flaeche.id}`} className="text-zinc-500 hover:text-zinc-300">
+      <div className="bg-[var(--color-surface-container)] border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
+        <Link href={`/saatguternte/register/${flaeche.id}`} className="text-[var(--color-on-surface-variant)] hover:text-zinc-300">
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div className="flex-1 min-w-0">
           <div className="font-mono text-sm font-bold text-white truncate">{flaeche.registerNr}</div>
-          <div className="text-xs text-zinc-500 truncate">{flaeche.baumart} · {flaeche.bundesland}</div>
+          <div className="text-xs text-[var(--color-on-surface-variant)] truncate">{flaeche.baumart} · {flaeche.bundesland}</div>
         </div>
         {hasKoord && (
           <a
@@ -114,7 +114,7 @@ export function ScoutClient({ flaeche }: { flaeche: Flaeche }) {
       </div>
 
       {/* Flächen-Info */}
-      <div className="bg-[#1a1a1a] border-b border-border px-4 py-4">
+      <div className="bg-[var(--color-surface-container-lowest)] border-b border-border px-4 py-4">
         <div className="grid grid-cols-2 gap-3 text-sm">
           {[
             ["Forstamt", flaeche.forstamt ?? "–"],
@@ -139,7 +139,7 @@ export function ScoutClient({ flaeche }: { flaeche: Flaeche }) {
       <div className="flex-1 px-4 py-5 space-y-6">
         {/* Status */}
         <div>
-          <label className="block text-sm font-semibold text-zinc-400 mb-3">Status</label>
+          <label className="block text-sm font-semibold text-[var(--color-on-surface-variant)] mb-3">Status</label>
           <div className="grid grid-cols-3 gap-2">
             {STATUS_OPTIONS.map((opt) => (
               <button
@@ -158,7 +158,7 @@ export function ScoutClient({ flaeche }: { flaeche: Flaeche }) {
 
         {/* Bewertung */}
         <div>
-          <label className="block text-sm font-semibold text-zinc-400 mb-3 text-center">Bewertung</label>
+          <label className="block text-sm font-semibold text-[var(--color-on-surface-variant)] mb-3 text-center">Bewertung</label>
           <StarInput value={bewertung} onChange={setBewertung} />
           {bewertung > 0 && (
             <p className="text-center text-xs text-zinc-600 mt-2">
@@ -176,7 +176,7 @@ export function ScoutClient({ flaeche }: { flaeche: Flaeche }) {
 
         {/* Notizen */}
         <div>
-          <label className="block text-sm font-semibold text-zinc-400 mb-2">
+          <label className="block text-sm font-semibold text-[var(--color-on-surface-variant)] mb-2">
             Notizen / Beobachtungen
           </label>
           <textarea
@@ -184,14 +184,14 @@ export function ScoutClient({ flaeche }: { flaeche: Flaeche }) {
             onChange={(e) => setNotizen(e.target.value)}
             rows={6}
             placeholder="z.B. Reife des Saatguts, Zugangssituation, Wetterbeobachtung, Besonderheiten..."
-            className="w-full bg-[#1e1e1e] border border-border rounded-xl px-4 py-3 text-base text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
+            className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-xl px-4 py-3 text-base text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
             style={{ fontSize: 16 }}
           />
         </div>
       </div>
 
       {/* Bottom Actions */}
-      <div className="sticky bottom-0 bg-[#161616] border-t border-border px-4 py-4 space-y-3">
+      <div className="sticky bottom-0 bg-[var(--color-surface-container)] border-t border-border px-4 py-4 space-y-3">
         {/* Toast messages */}
         {saved && (
           <div className="flex items-center gap-2 px-4 py-3 bg-emerald-900/50 border border-emerald-600/30 rounded-xl text-emerald-400 text-sm">

@@ -71,10 +71,10 @@ export function AbwesenheitenSection({ mitarbeiterId, initialAbwesenheiten }: Pr
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <span className="text-sm text-zinc-500">{abwesenheiten.length} Einträge</span>
+        <span className="text-sm text-[var(--color-on-surface-variant)]">{abwesenheiten.length} Einträge</span>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-[#1a1a1a] border border-[#333] text-zinc-400 hover:text-white rounded-lg transition-colors"
+          className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-[var(--color-surface-container-lowest)] border border-border text-[var(--color-on-surface-variant)] hover:text-white rounded-lg transition-colors"
         >
           <Plus className="w-3 h-3" />
           Abwesenheit eintragen
@@ -89,7 +89,7 @@ export function AbwesenheitenSection({ mitarbeiterId, initialAbwesenheiten }: Pr
             <div key={a.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
               <div>
                 <p className="text-sm text-white">{typLabel[a.typ] ?? a.typ}</p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-[var(--color-on-surface-variant)]">
                   {new Date(a.von).toLocaleDateString("de-DE")} – {new Date(a.bis).toLocaleDateString("de-DE")}
                   {a.notiz && <span className="ml-2 text-zinc-600">· {a.notiz}</span>}
                 </p>
@@ -115,20 +115,20 @@ export function AbwesenheitenSection({ mitarbeiterId, initialAbwesenheiten }: Pr
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-sm p-6">
+          <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-sm p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-bold text-white">Abwesenheit eintragen</h3>
-              <button onClick={() => setShowModal(false)} className="text-zinc-500 hover:text-white">
+              <button onClick={() => setShowModal(false)} className="text-[var(--color-on-surface-variant)] hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             </div>
             <div className="space-y-3">
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Typ</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Typ</label>
                 <select
                   value={form.typ}
                   onChange={(e) => setForm({ ...form, typ: e.target.value })}
-                  className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white"
+                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
                 >
                   <option value="urlaub">Urlaub</option>
                   <option value="krank">Krankheit</option>
@@ -140,36 +140,36 @@ export function AbwesenheitenSection({ mitarbeiterId, initialAbwesenheiten }: Pr
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Von *</label>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Von *</label>
                   <input
                     type="date"
                     value={form.von}
                     onChange={(e) => setForm({ ...form, von: e.target.value })}
-                    className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white"
+                    className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Bis *</label>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Bis *</label>
                   <input
                     type="date"
                     value={form.bis}
                     onChange={(e) => setForm({ ...form, bis: e.target.value })}
-                    className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white"
+                    className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Notiz (optional)</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Notiz (optional)</label>
                 <input
                   value={form.notiz}
                   onChange={(e) => setForm({ ...form, notiz: e.target.value })}
                   placeholder="z.B. Arbeitsunfähigkeitsbescheinigung eingereicht"
-                  className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white"
+                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
                 />
               </div>
             </div>
             <div className="flex gap-3 mt-5">
-              <button onClick={() => setShowModal(false)} className="flex-1 px-3 py-2 rounded-lg border border-[#333] text-zinc-400 text-sm hover:bg-[#222]">
+              <button onClick={() => setShowModal(false)} className="flex-1 px-3 py-2 rounded-lg border border-border text-[var(--color-on-surface-variant)] text-sm hover:bg-[#222]">
                 Abbrechen
               </button>
               <button

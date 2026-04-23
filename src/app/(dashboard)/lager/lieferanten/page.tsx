@@ -71,7 +71,7 @@ export default function LieferantenPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Lieferanten</h1>
-          <p className="text-sm text-zinc-400 mt-1">
+          <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">
             {lieferanten.length} Lieferanten
           </p>
         </div>
@@ -88,7 +88,7 @@ export default function LieferantenPage() {
       </div>
 
       {/* Liste */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         {loading ? (
           <div className="p-8 text-center">
             <Loader2 className="w-8 h-8 text-zinc-600 animate-spin mx-auto" />
@@ -96,7 +96,7 @@ export default function LieferantenPage() {
         ) : lieferanten.length === 0 ? (
           <div className="p-8 text-center">
             <Package className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
-            <p className="text-zinc-400">Keine Lieferanten vorhanden</p>
+            <p className="text-[var(--color-on-surface-variant)]">Keine Lieferanten vorhanden</p>
             <p className="text-zinc-600 text-sm mt-1">Erstelle deinen ersten Lieferanten</p>
           </div>
         ) : (
@@ -104,10 +104,10 @@ export default function LieferantenPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-4 py-3 text-xs text-zinc-500">Name</th>
-                <th className="text-left px-4 py-3 text-xs text-zinc-500">Kontakt</th>
-                <th className="text-left px-4 py-3 text-xs text-zinc-500">Ort</th>
-                <th className="text-right px-4 py-3 text-xs text-zinc-500">Artikel</th>
+                <th className="text-left px-4 py-3 text-xs text-[var(--color-on-surface-variant)]">Name</th>
+                <th className="text-left px-4 py-3 text-xs text-[var(--color-on-surface-variant)]">Kontakt</th>
+                <th className="text-left px-4 py-3 text-xs text-[var(--color-on-surface-variant)]">Ort</th>
+                <th className="text-right px-4 py-3 text-xs text-[var(--color-on-surface-variant)]">Artikel</th>
                 <th className="px-4 py-3"></th>
               </tr>
             </thead>
@@ -122,7 +122,7 @@ export default function LieferantenPage() {
                           href={l.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs text-zinc-500 hover:text-emerald-400 flex items-center gap-1"
+                          className="text-xs text-[var(--color-on-surface-variant)] hover:text-emerald-400 flex items-center gap-1"
                         >
                           <ExternalLink className="w-3 h-3" />
                           Website
@@ -133,20 +133,20 @@ export default function LieferantenPage() {
                   <td className="px-4 py-3">
                     <div className="space-y-1">
                       {l.email && (
-                        <a href={`mailto:${l.email}`} className="flex items-center gap-1.5 text-zinc-400 hover:text-white text-xs">
+                        <a href={`mailto:${l.email}`} className="flex items-center gap-1.5 text-[var(--color-on-surface-variant)] hover:text-white text-xs">
                           <Mail className="w-3 h-3" />
                           {l.email}
                         </a>
                       )}
                       {l.telefon && (
-                        <a href={`tel:${l.telefon}`} className="flex items-center gap-1.5 text-zinc-400 hover:text-white text-xs">
+                        <a href={`tel:${l.telefon}`} className="flex items-center gap-1.5 text-[var(--color-on-surface-variant)] hover:text-white text-xs">
                           <Phone className="w-3 h-3" />
                           {l.telefon}
                         </a>
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-zinc-400">
+                  <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">
                     {l.ort ? (
                       <span className="flex items-center gap-1.5">
                         <MapPin className="w-3 h-3" />
@@ -168,13 +168,13 @@ export default function LieferantenPage() {
                           setEditingLieferant(l)
                           setShowModal(true)
                         }}
-                        className="p-1.5 text-zinc-500 hover:text-white transition-colors"
+                        className="p-1.5 text-[var(--color-on-surface-variant)] hover:text-white transition-colors"
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(l.id, l.name)}
-                        className="p-1.5 text-zinc-500 hover:text-red-400 transition-colors"
+                        className="p-1.5 text-[var(--color-on-surface-variant)] hover:text-red-400 transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -264,98 +264,98 @@ function LieferantModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-lg">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl w-full max-w-lg">
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h2 className="text-lg font-semibold text-white">
             {lieferant ? "Lieferant bearbeiten" : "Neuer Lieferant"}
           </h2>
-          <button onClick={onClose} className="text-zinc-500 hover:text-white">
+          <button onClick={onClose} className="text-[var(--color-on-surface-variant)] hover:text-white">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Name *</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Name *</label>
             <input
               type="text"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
               autoFocus
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">E-Mail</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">E-Mail</label>
               <input
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Telefon</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Telefon</label>
               <input
                 type="tel"
                 value={form.telefon}
                 onChange={(e) => setForm((f) => ({ ...f, telefon: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Website</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Website</label>
             <input
               type="url"
               value={form.website}
               onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))}
               placeholder="https://"
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
             />
           </div>
 
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Adresse</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Adresse</label>
             <input
               type="text"
               value={form.adresse}
               onChange={(e) => setForm((f) => ({ ...f, adresse: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
             />
           </div>
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">PLZ</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">PLZ</label>
               <input
                 type="text"
                 value={form.plz}
                 onChange={(e) => setForm((f) => ({ ...f, plz: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
             <div className="col-span-2">
-              <label className="block text-xs text-zinc-400 mb-1">Ort</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Ort</label>
               <input
                 type="text"
                 value={form.ort}
                 onChange={(e) => setForm((f) => ({ ...f, ort: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Notizen</label>
             <textarea
               value={form.notizen}
               onChange={(e) => setForm((f) => ({ ...f, notizen: e.target.value }))}
               rows={2}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white resize-none"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white resize-none"
             />
           </div>
 
@@ -363,7 +363,7 @@ function LieferantModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-border rounded-lg text-zinc-400 hover:text-white text-sm"
+              className="flex-1 px-4 py-2 border border-border rounded-lg text-[var(--color-on-surface-variant)] hover:text-white text-sm"
             >
               Abbrechen
             </button>

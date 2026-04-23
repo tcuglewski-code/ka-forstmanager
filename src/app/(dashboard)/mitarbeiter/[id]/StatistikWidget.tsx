@@ -33,13 +33,13 @@ export function StatistikWidget({ mitarbeiterId, saisons }: { mitarbeiterId: str
   }, [mitarbeiterId, statSaisonId])
 
   return (
-    <div className="bg-[#161616] border border-border rounded-xl p-6 mb-6">
+    <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6 mb-6">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">Statistik</h3>
+        <h3 className="text-sm font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider">Statistik</h3>
         <select
           value={statSaisonId}
           onChange={(e) => setStatSaisonId(e.target.value)}
-          className="text-xs px-2 py-1 bg-[#1e1e1e] border border-border rounded text-zinc-400 focus:outline-none focus:border-emerald-500"
+          className="text-xs px-2 py-1 bg-[var(--color-surface-container-highest)] border border-border rounded text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Saisons</option>
           {saisons.map((s) => (
@@ -63,15 +63,15 @@ export function StatistikWidget({ mitarbeiterId, saisons }: { mitarbeiterId: str
                 color: "text-red-400",
               },
             ].map(({ label, value, color }) => (
-              <div key={label} className="bg-[#0f0f0f] border border-border rounded-xl p-3">
-                <p className="text-xs text-zinc-500 mb-1">{label}</p>
+              <div key={label} className="bg-[var(--color-surface-container-low)] border border-border rounded-xl p-3">
+                <p className="text-xs text-[var(--color-on-surface-variant)] mb-1">{label}</p>
                 <p className={`text-lg font-bold ${color}`}>{value}</p>
               </div>
             ))}
           </div>
 
           {statistik.abrechnungenAnzahl > 0 && (
-            <p className="text-xs text-zinc-500 mt-3">
+            <p className="text-xs text-[var(--color-on-surface-variant)] mt-3">
               {statistik.abrechnungenAnzahl} Abrechnung{statistik.abrechnungenAnzahl !== 1 ? "en" : ""} erstellt
             </p>
           )}
@@ -81,7 +81,7 @@ export function StatistikWidget({ mitarbeiterId, saisons }: { mitarbeiterId: str
               {Object.entries(statistik.nachTyp).map(([typ, std]) => (
                 <span
                   key={typ}
-                  className="text-xs px-2 py-1 bg-[#1a1a1a] border border-border rounded text-zinc-400"
+                  className="text-xs px-2 py-1 bg-[var(--color-surface-container-lowest)] border border-border rounded text-[var(--color-on-surface-variant)]"
                 >
                   {typ}: {(std as number).toFixed(1)}h
                 </span>

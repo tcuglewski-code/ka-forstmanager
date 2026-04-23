@@ -92,7 +92,7 @@ export default function RechnungsEinstellungenPage() {
       <div className="flex items-center gap-4 mb-8">
         <button
           onClick={() => router.push("/einstellungen")}
-          className="p-2 rounded-lg bg-[#1e1e1e] border border-border text-zinc-400 hover:text-white hover:bg-[#252525] transition-colors"
+          className="p-2 rounded-lg bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface-variant)] hover:text-white hover:bg-[#252525] transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -101,7 +101,7 @@ export default function RechnungsEinstellungenPage() {
             <FileText className="w-6 h-6 text-emerald-400" />
             Rechnungseinstellungen
           </h1>
-          <p className="text-zinc-500 text-sm mt-1">
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">
             ZUGFeRD / E-Rechnung Stammdaten
           </p>
         </div>
@@ -123,7 +123,7 @@ export default function RechnungsEinstellungenPage() {
       {/* Form */}
       <form onSubmit={handleSave} className="space-y-6">
         {/* Bankdaten */}
-        <div className="bg-[#161616] border border-border rounded-xl p-6">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
           <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-emerald-400" />
             Bankverbindung
@@ -131,30 +131,30 @@ export default function RechnungsEinstellungenPage() {
           
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-zinc-400 mb-1.5">IBAN</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1.5">IBAN</label>
               <input
                 type="text"
                 value={settings.company_iban}
                 onChange={(e) => setSettings({ ...settings, company_iban: e.target.value })}
                 placeholder="DE00 0000 0000 0000 0000 00"
-                className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-[#333] rounded-lg text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
+                className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm text-zinc-400 mb-1.5">BIC</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1.5">BIC</label>
               <input
                 type="text"
                 value={settings.company_bic}
                 onChange={(e) => setSettings({ ...settings, company_bic: e.target.value })}
                 placeholder="COBADEFFXXX"
-                className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-[#333] rounded-lg text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
+                className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
               />
             </div>
           </div>
         </div>
 
         {/* Steuerdaten */}
-        <div className="bg-[#161616] border border-border rounded-xl p-6">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
           <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
             <Building2 className="w-4 h-4 text-emerald-400" />
             Steuerdaten
@@ -162,26 +162,26 @@ export default function RechnungsEinstellungenPage() {
           
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-zinc-400 mb-1.5">USt-IdNr.</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1.5">USt-IdNr.</label>
               <input
                 type="text"
                 value={settings.company_vat_id}
                 onChange={(e) => setSettings({ ...settings, company_vat_id: e.target.value })}
                 placeholder="DE123456789"
-                className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-[#333] rounded-lg text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
+                className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
               />
-              <p className="text-xs text-zinc-500 mt-1">Umsatzsteuer-Identifikationsnummer</p>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Umsatzsteuer-Identifikationsnummer</p>
             </div>
             <div>
-              <label className="block text-sm text-zinc-400 mb-1.5">Steuernummer</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1.5">Steuernummer</label>
               <input
                 type="text"
                 value={settings.company_tax_number}
                 onChange={(e) => setSettings({ ...settings, company_tax_number: e.target.value })}
                 placeholder="22/123/45678"
-                className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-[#333] rounded-lg text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
+                className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
               />
-              <p className="text-xs text-zinc-500 mt-1">Finanzamt-Steuernummer</p>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Finanzamt-Steuernummer</p>
             </div>
           </div>
         </div>

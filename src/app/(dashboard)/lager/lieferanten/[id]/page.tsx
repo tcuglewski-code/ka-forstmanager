@@ -103,7 +103,7 @@ Koch Aufforstung GmbH`
   if (!lieferant) {
     return (
       <div className="text-center py-20">
-        <p className="text-zinc-500">Lieferant nicht gefunden</p>
+        <p className="text-[var(--color-on-surface-variant)]">Lieferant nicht gefunden</p>
         <button onClick={() => router.back()} className="mt-4 text-emerald-400 hover:underline">
           Zurück
         </button>
@@ -120,9 +120,9 @@ Koch Aufforstung GmbH`
         <div className="flex items-center gap-4">
           <button 
             onClick={() => router.back()}
-            className="p-2 rounded-lg bg-[#1e1e1e] hover:bg-surface-container-highest transition-colors"
+            className="p-2 rounded-lg bg-[var(--color-surface-container-highest)] hover:bg-surface-container-highest transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-zinc-400" />
+            <ArrowLeft className="w-5 h-5 text-[var(--color-on-surface-variant)]" />
           </button>
           <div>
             <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{lieferant.name}</h1>
@@ -130,7 +130,7 @@ Koch Aufforstung GmbH`
               <span className={`px-2 py-0.5 rounded text-xs ${lieferant.aktiv ? "bg-emerald-100 text-emerald-800" : "bg-gray-100 text-gray-700"}`}>
                 {lieferant.aktiv ? "Aktiv" : "Inaktiv"}
               </span>
-              <span className="text-zinc-500 text-sm">{artikel.length} Artikel</span>
+              <span className="text-[var(--color-on-surface-variant)] text-sm">{artikel.length} Artikel</span>
             </div>
           </div>
         </div>
@@ -146,24 +146,24 @@ Koch Aufforstung GmbH`
 
       {/* Kontaktdaten */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-[#161616] border border-border rounded-xl p-5">
-          <h2 className="text-sm font-medium text-zinc-400 mb-4">Kontakt</h2>
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
+          <h2 className="text-sm font-medium text-[var(--color-on-surface-variant)] mb-4">Kontakt</h2>
           <div className="space-y-3">
             {lieferant.email && (
               <a href={`mailto:${lieferant.email}`} className="flex items-center gap-3 text-white hover:text-emerald-400 transition-colors">
-                <Mail className="w-4 h-4 text-zinc-500" />
+                <Mail className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
                 {lieferant.email}
               </a>
             )}
             {lieferant.telefon && (
               <a href={`tel:${lieferant.telefon}`} className="flex items-center gap-3 text-white hover:text-emerald-400 transition-colors">
-                <Phone className="w-4 h-4 text-zinc-500" />
+                <Phone className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
                 {lieferant.telefon}
               </a>
             )}
             {lieferant.website && (
               <a href={lieferant.website.startsWith("http") ? lieferant.website : `https://${lieferant.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-white hover:text-emerald-400 transition-colors">
-                <Globe className="w-4 h-4 text-zinc-500" />
+                <Globe className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
                 {lieferant.website}
                 <ExternalLink className="w-3 h-3" />
               </a>
@@ -171,21 +171,21 @@ Koch Aufforstung GmbH`
           </div>
         </div>
 
-        <div className="bg-[#161616] border border-border rounded-xl p-5">
-          <h2 className="text-sm font-medium text-zinc-400 mb-4">Adresse</h2>
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
+          <h2 className="text-sm font-medium text-[var(--color-on-surface-variant)] mb-4">Adresse</h2>
           {lieferant.adresse || lieferant.plz || lieferant.ort ? (
             <div className="flex items-start gap-3">
-              <MapPin className="w-4 h-4 text-zinc-500 mt-0.5" />
+              <MapPin className="w-4 h-4 text-[var(--color-on-surface-variant)] mt-0.5" />
               <div className="text-white">
                 {lieferant.adresse && <p>{lieferant.adresse}</p>}
                 {(lieferant.plz || lieferant.ort) && (
                   <p>{[lieferant.plz, lieferant.ort].filter(Boolean).join(" ")}</p>
                 )}
-                {lieferant.land && <p className="text-zinc-500">{lieferant.land}</p>}
+                {lieferant.land && <p className="text-[var(--color-on-surface-variant)]">{lieferant.land}</p>}
               </div>
             </div>
           ) : (
-            <p className="text-zinc-500 text-sm">Keine Adresse hinterlegt</p>
+            <p className="text-[var(--color-on-surface-variant)] text-sm">Keine Adresse hinterlegt</p>
           )}
         </div>
       </div>
@@ -209,7 +209,7 @@ Koch Aufforstung GmbH`
       )}
 
       {/* Artikel-Liste */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <div className="px-5 py-4 border-b border-border flex items-center justify-between">
           <h2 className="text-sm font-medium text-white flex items-center gap-2">
             <Package className="w-4 h-4 text-emerald-400" />
@@ -218,7 +218,7 @@ Koch Aufforstung GmbH`
         </div>
         
         {artikel.length === 0 ? (
-          <div className="text-center py-12 text-zinc-500 text-sm">
+          <div className="text-center py-12 text-[var(--color-on-surface-variant)] text-sm">
             Keine Artikel zugeordnet
           </div>
         ) : (
@@ -226,17 +226,17 @@ Koch Aufforstung GmbH`
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-5 py-3 text-zinc-500 font-medium"></th>
-                <th className="text-left px-5 py-3 text-zinc-500 font-medium">Artikel</th>
-                <th className="text-left px-5 py-3 text-zinc-500 font-medium">Lieferant-Nr.</th>
-                <th className="text-right px-5 py-3 text-zinc-500 font-medium">Bestand</th>
-                <th className="text-right px-5 py-3 text-zinc-500 font-medium">EK-Preis</th>
-                <th className="text-right px-5 py-3 text-zinc-500 font-medium">VK-Preis</th>
+                <th className="text-left px-5 py-3 text-[var(--color-on-surface-variant)] font-medium"></th>
+                <th className="text-left px-5 py-3 text-[var(--color-on-surface-variant)] font-medium">Artikel</th>
+                <th className="text-left px-5 py-3 text-[var(--color-on-surface-variant)] font-medium">Lieferant-Nr.</th>
+                <th className="text-right px-5 py-3 text-[var(--color-on-surface-variant)] font-medium">Bestand</th>
+                <th className="text-right px-5 py-3 text-[var(--color-on-surface-variant)] font-medium">EK-Preis</th>
+                <th className="text-right px-5 py-3 text-[var(--color-on-surface-variant)] font-medium">VK-Preis</th>
               </tr>
             </thead>
             <tbody>
               {artikel.map(a => (
-                <tr key={a.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors">
+                <tr key={a.id} className="border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors">
                   <td className="px-5 py-3">
                     <BestandsAmpel bestand={a.bestand} mindestbestand={a.mindestbestand} />
                   </td>
@@ -244,18 +244,18 @@ Koch Aufforstung GmbH`
                     <a href={`/lager?item=${a.id}`} className="text-white hover:text-emerald-400 transition-colors">
                       {a.name}
                     </a>
-                    <span className="ml-2 px-1.5 py-0.5 rounded text-xs bg-surface-container-highest text-zinc-500">
+                    <span className="ml-2 px-1.5 py-0.5 rounded text-xs bg-surface-container-highest text-[var(--color-on-surface-variant)]">
                       {a.kategorie}
                     </span>
                   </td>
-                  <td className="px-5 py-3 text-zinc-500">
+                  <td className="px-5 py-3 text-[var(--color-on-surface-variant)]">
                     {a.lieferantBestellnummer || "–"}
                   </td>
                   <td className="px-5 py-3 text-right">
                     <span className={a.bestand <= a.mindestbestand ? "text-amber-400" : "text-white"}>
                       {a.bestand}
                     </span>
-                    <span className="text-zinc-500">/{a.mindestbestand} {a.einheit}</span>
+                    <span className="text-[var(--color-on-surface-variant)]">/{a.mindestbestand} {a.einheit}</span>
                   </td>
                   <td className="px-5 py-3 text-right text-white">
                     {(a.lieferantPreis ?? a.einkaufspreis)?.toFixed(2) ?? "–"} €
@@ -273,8 +273,8 @@ Koch Aufforstung GmbH`
 
       {/* Notizen */}
       {lieferant.notizen && (
-        <div className="mt-6 bg-[#161616] border border-border rounded-xl p-5">
-          <h2 className="text-sm font-medium text-zinc-400 mb-2">Notizen</h2>
+        <div className="mt-6 bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
+          <h2 className="text-sm font-medium text-[var(--color-on-surface-variant)] mb-2">Notizen</h2>
           <p className="text-white whitespace-pre-wrap">{lieferant.notizen}</p>
         </div>
       )}

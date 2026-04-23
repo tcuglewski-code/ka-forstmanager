@@ -190,15 +190,15 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
             onChange={(e) => setFrage(e.target.value)}
             placeholder="z.B. Kalamitätsfläche nach Borkenkäfer"
             rows={2}
-            className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 resize-none"
+            className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 resize-none"
           />
 
-          <label className="flex items-center gap-2 text-sm text-zinc-400 cursor-pointer hover:text-zinc-300 transition-colors">
+          <label className="flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)] cursor-pointer hover:text-zinc-300 transition-colors">
             <input
               type="checkbox"
               checked={kalamitaet}
               onChange={(e) => setKalamitaet(e.target.checked)}
-              className="w-4 h-4 rounded border-border bg-[#0f0f0f] text-emerald-500 focus:ring-emerald-500/50 focus:ring-offset-0"
+              className="w-4 h-4 rounded border-border bg-[var(--color-surface-container-low)] text-emerald-500 focus:ring-emerald-500/50 focus:ring-offset-0"
             />
             Kalamität / Schaden
           </label>
@@ -253,19 +253,19 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
           {/* Programme-Liste */}
           {result.programme.length > 0 && (
             <div className="space-y-2">
-              <p className="text-xs text-zinc-500 uppercase tracking-wide">
+              <p className="text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wide">
                 {result.programme.length} passende Programme
               </p>
               <div className="space-y-2">
                 {result.programme.map((p) => (
                   <div
                     key={p.id}
-                    className="flex items-start justify-between gap-3 p-3 bg-[#0f0f0f] rounded-lg border border-border"
+                    className="flex items-start justify-between gap-3 p-3 bg-[var(--color-surface-container-low)] rounded-lg border border-border"
                   >
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-white font-medium truncate">{p.name}</p>
                       <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        <span className="text-xs text-zinc-500">{p.bundesland || "Bund"}</span>
+                        <span className="text-xs text-[var(--color-on-surface-variant)]">{p.bundesland || "Bund"}</span>
                         {p.foerdersatz && (
                           <span className="inline-flex items-center gap-1 text-xs text-emerald-400">
                             <Euro className="w-3 h-3" />
@@ -302,9 +302,9 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
                           href={p.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-1.5 rounded-lg hover:bg-[#1e1e1e] transition-colors"
+                          className="p-1.5 rounded-lg hover:bg-[var(--color-surface-container-highest)] transition-colors"
                         >
-                          <ExternalLink className="w-4 h-4 text-zinc-500 hover:text-emerald-400" />
+                          <ExternalLink className="w-4 h-4 text-[var(--color-on-surface-variant)] hover:text-emerald-400" />
                         </a>
                       )}
                     </div>
@@ -322,7 +322,7 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
               </p>
               <div className="space-y-1">
                 {result.kombinationen.map((k, i) => (
-                  <p key={i} className="text-xs text-zinc-400">
+                  <p key={i} className="text-xs text-[var(--color-on-surface-variant)]">
                     {k.prog_a_name} + {k.prog_b_name}
                     {k.bedingung && <span className="text-zinc-600"> — {k.bedingung}</span>}
                   </p>
@@ -351,7 +351,7 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
                 setFrage("")
                 setKalamitaet(false)
               }}
-              className="px-4 py-2.5 bg-[#1e1e1e] border border-border rounded-lg text-zinc-400 text-sm hover:bg-[#252525] transition-all"
+              className="px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-[var(--color-on-surface-variant)] text-sm hover:bg-[#252525] transition-all"
             >
               Neue Prüfung
             </button>

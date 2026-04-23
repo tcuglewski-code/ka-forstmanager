@@ -110,8 +110,8 @@ export default function AuditLogSection({ rechnungId }: AuditLogSectionProps) {
 
   if (loading) {
     return (
-      <div className="bg-[#161616] border border-border rounded-xl p-6">
-        <div className="flex items-center gap-3 text-zinc-400">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
+        <div className="flex items-center gap-3 text-[var(--color-on-surface-variant)]">
           <Loader2 className="w-5 h-5 animate-spin" />
           <span>Lade Änderungsprotokoll...</span>
         </div>
@@ -121,8 +121,8 @@ export default function AuditLogSection({ rechnungId }: AuditLogSectionProps) {
 
   if (error) {
     return (
-      <div className="bg-[#161616] border border-border rounded-xl p-6">
-        <div className="flex items-center gap-3 text-zinc-500">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
+        <div className="flex items-center gap-3 text-[var(--color-on-surface-variant)]">
           <Shield className="w-5 h-5" />
           <span>{error}</span>
         </div>
@@ -132,12 +132,12 @@ export default function AuditLogSection({ rechnungId }: AuditLogSectionProps) {
 
   if (!data || data.entries.length === 0) {
     return (
-      <div className="bg-[#161616] border border-border rounded-xl p-6">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
         <div className="flex items-center gap-3">
-          <History className="w-5 h-5 text-zinc-500" />
-          <h3 className="text-sm text-zinc-500 uppercase tracking-wider">Änderungsprotokoll</h3>
+          <History className="w-5 h-5 text-[var(--color-on-surface-variant)]" />
+          <h3 className="text-sm text-[var(--color-on-surface-variant)] uppercase tracking-wider">Änderungsprotokoll</h3>
         </div>
-        <p className="text-zinc-500 text-sm mt-3">Keine Änderungen protokolliert.</p>
+        <p className="text-[var(--color-on-surface-variant)] text-sm mt-3">Keine Änderungen protokolliert.</p>
       </div>
     )
   }
@@ -145,15 +145,15 @@ export default function AuditLogSection({ rechnungId }: AuditLogSectionProps) {
   const displayEntries = expanded ? data.entries : data.entries.slice(0, 5)
 
   return (
-    <div className="bg-[#161616] border border-border rounded-xl p-6">
+    <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <History className="w-5 h-5 text-emerald-400" />
-          <h3 className="text-sm text-zinc-500 uppercase tracking-wider">
+          <h3 className="text-sm text-[var(--color-on-surface-variant)] uppercase tracking-wider">
             Änderungsprotokoll
           </h3>
-          <span className="px-2 py-0.5 bg-[#222] border border-[#333] text-zinc-400 text-xs rounded-full">
+          <span className="px-2 py-0.5 bg-[#222] border border-border text-[var(--color-on-surface-variant)] text-xs rounded-full">
             {data.totalEntries} Einträge
           </span>
         </div>
@@ -169,14 +169,14 @@ export default function AuditLogSection({ rechnungId }: AuditLogSectionProps) {
           const config = actionConfig[entry.action] || { 
             label: entry.action, 
             icon: FileEdit, 
-            color: 'text-zinc-400' 
+            color: 'text-[var(--color-on-surface-variant)]' 
           }
           const ActionIcon = config.icon
           
           return (
             <div 
               key={entry.id}
-              className="flex items-start gap-3 p-3 bg-[#1a1a1a] border border-[#252525] rounded-lg"
+              className="flex items-start gap-3 p-3 bg-[var(--color-surface-container-lowest)] border border-[#252525] rounded-lg"
             >
               {/* Icon */}
               <div className={`mt-0.5 ${config.color}`}>
@@ -190,7 +190,7 @@ export default function AuditLogSection({ rechnungId }: AuditLogSectionProps) {
                   {entry.field && (
                     <>
                       <span className="text-zinc-600">·</span>
-                      <span className="text-zinc-400 text-sm">
+                      <span className="text-[var(--color-on-surface-variant)] text-sm">
                         {fieldLabels[entry.field] || entry.field}
                       </span>
                     </>
@@ -214,7 +214,7 @@ export default function AuditLogSection({ rechnungId }: AuditLogSectionProps) {
                 )}
                 
                 {/* Meta Info */}
-                <div className="flex items-center gap-3 mt-2 text-xs text-zinc-500">
+                <div className="flex items-center gap-3 mt-2 text-xs text-[var(--color-on-surface-variant)]">
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     {new Date(entry.timestamp).toLocaleString('de-DE', {
@@ -247,7 +247,7 @@ export default function AuditLogSection({ rechnungId }: AuditLogSectionProps) {
       {data.entries.length > 5 && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-2 w-full mt-4 px-3 py-2 bg-[#1a1a1a] border border-[#252525] text-zinc-400 rounded-lg hover:bg-[#222] hover:text-white transition-colors text-sm"
+          className="flex items-center gap-2 w-full mt-4 px-3 py-2 bg-[var(--color-surface-container-lowest)] border border-[#252525] text-[var(--color-on-surface-variant)] rounded-lg hover:bg-[#222] hover:text-white transition-colors text-sm"
         >
           {expanded ? (
             <>

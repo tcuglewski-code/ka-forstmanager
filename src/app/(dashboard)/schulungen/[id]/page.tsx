@@ -91,7 +91,7 @@ export default function SchulungDetailPage() {
   }
 
   if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
-  if (!schulung) return <div className="text-zinc-500 text-center py-20">Schulung nicht gefunden</div>
+  if (!schulung) return <div className="text-[var(--color-on-surface-variant)] text-center py-20">Schulung nicht gefunden</div>
 
   const angemeldete = schulung.teilnehmer.filter((t) => t.status === "angemeldet")
   const bereitsAngemeldetIds = schulung.teilnehmer.map((t) => t.mitarbeiter.id)
@@ -100,19 +100,19 @@ export default function SchulungDetailPage() {
   return (
     <div className="max-w-4xl mx-auto">
       {ConfirmDialogElement}
-      <Link href="/schulungen" className="flex items-center gap-2 text-zinc-400 hover:text-white text-sm mb-6 transition-all">
+      <Link href="/schulungen" className="flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] text-sm mb-6 transition-all">
         <ArrowLeft className="w-4 h-4" /> Zurück zu Schulungen
       </Link>
 
-      <div className="bg-[#161616] border border-border rounded-xl p-6 mb-6">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6 mb-6">
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <BookOpen className="w-5 h-5 text-emerald-400" />
               <h1 className="text-xl font-bold" style={{ color: "var(--color-on-surface)" }}>{schulung.titel}</h1>
             </div>
-            {schulung.beschreibung && <p className="text-zinc-400 text-sm mb-3">{schulung.beschreibung}</p>}
-            <div className="flex gap-4 text-sm text-zinc-400">
+            {schulung.beschreibung && <p className="text-[var(--color-on-surface-variant)] text-sm mb-3">{schulung.beschreibung}</p>}
+            <div className="flex gap-4 text-sm text-[var(--color-on-surface-variant)]">
               {schulung.datum && <span>📅 {new Date(schulung.datum).toLocaleDateString("de-DE")}</span>}
               {schulung.ort && <span>📍 {schulung.ort}</span>}
               {schulung.maxTeilnehmer && <span>👥 Max. {schulung.maxTeilnehmer}</span>}
@@ -128,10 +128,10 @@ export default function SchulungDetailPage() {
 
       {/* Mitarbeiter anmelden */}
       {schulung.status !== "abgeschlossen" && (
-        <div className="bg-[#161616] border border-border rounded-xl p-5 mb-6">
-          <h2 className="font-semibold text-white mb-3">Mitarbeiter anmelden</h2>
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5 mb-6">
+          <h2 className="font-semibold text-[var(--color-on-surface)] mb-3">Mitarbeiter anmelden</h2>
           <div className="flex gap-3">
-            <select value={selectedMitarbeiter} onChange={(e) => setSelectedMitarbeiter(e.target.value)} className="flex-1 bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
+            <select value={selectedMitarbeiter} onChange={(e) => setSelectedMitarbeiter(e.target.value)} className="flex-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
               <option value="">— Mitarbeiter auswählen —</option>
               {verfuegbar.map((m) => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
             </select>
@@ -143,35 +143,35 @@ export default function SchulungDetailPage() {
       )}
 
       {/* Teilnehmerliste */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <div className="px-6 py-4 border-b border-border">
-          <h2 className="font-semibold text-white">Teilnehmer ({schulung.teilnehmer.length})</h2>
+          <h2 className="font-semibold text-[var(--color-on-surface)]">Teilnehmer ({schulung.teilnehmer.length})</h2>
         </div>
         <div className="overflow-x-auto">
         <table className="min-w-full">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Name</th>
-              <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Rolle</th>
-              <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Status</th>
+              <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Name</th>
+              <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Rolle</th>
+              <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Status</th>
               <th className="px-6 py-3"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {schulung.teilnehmer.length === 0 ? (
-              <tr><td colSpan={4} className="px-6 py-12 text-center text-zinc-600">Keine Teilnehmer</td></tr>
+              <tr><td colSpan={4} className="px-6 py-12 text-center text-[var(--color-on-surface-variant)]">Keine Teilnehmer</td></tr>
             ) : schulung.teilnehmer.map((t) => (
               <tr key={t.id} className="hover:bg-[#1c1c1c]">
-                <td className="px-6 py-4 text-sm text-white">{t.mitarbeiter.vorname} {t.mitarbeiter.nachname}</td>
-                <td className="px-6 py-4 text-sm text-zinc-400">{t.mitarbeiter.rolle}</td>
+                <td className="px-6 py-4 text-sm text-[var(--color-on-surface)]">{t.mitarbeiter.vorname} {t.mitarbeiter.nachname}</td>
+                <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{t.mitarbeiter.rolle}</td>
                 <td className="px-6 py-4">
-                  <span className={`px-2 py-0.5 rounded-full text-xs ${statusBadge[t.status] ?? "bg-zinc-700 text-zinc-400"}`}>
+                  <span className={`px-2 py-0.5 rounded-full text-xs ${statusBadge[t.status] ?? "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]"}`}>
                     {t.status.charAt(0).toUpperCase() + t.status.slice(1)}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-right">
                   {schulung.status !== "abgeschlossen" && (
-                    <button onClick={() => removeTeilnehmer(t.mitarbeiter.id)} className="text-zinc-600 hover:text-red-400 transition-all">
+                    <button onClick={() => removeTeilnehmer(t.mitarbeiter.id)} className="text-[var(--color-on-surface-variant)] hover:text-red-400 transition-all">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   )}

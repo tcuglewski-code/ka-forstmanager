@@ -89,14 +89,14 @@ export default function FoerderungPraxisPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Unsere Erfahrungen</h1>
-          <p className="text-zinc-500 text-sm mt-1">
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">
             Dokumentierte Förderanträge und Praxis-Hinweise
           </p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={loadData}
-            className="p-2 text-zinc-400 hover:text-white hover:bg-[#1e1e1e] rounded-lg transition"
+            className="p-2 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-highest)] rounded-lg transition"
             title="Aktualisieren"
           >
             <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
@@ -113,61 +113,61 @@ export default function FoerderungPraxisPage() {
 
       {/* Statistik-Karten */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-[#161616] border border-border rounded-xl p-4">
-          <p className="text-zinc-500 text-sm">Gesamt</p>
-          <p className="text-2xl font-bold text-white mt-1">{stats.gesamt}</p>
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
+          <p className="text-[var(--color-on-surface-variant)] text-sm">Gesamt</p>
+          <p className="text-2xl font-bold text-[var(--color-on-surface)] mt-1">{stats.gesamt}</p>
         </div>
-        <div className="bg-[#161616] border border-border rounded-xl p-4">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
           <div className="flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-emerald-500" />
-            <p className="text-zinc-500 text-sm">Erfolgreich</p>
+            <p className="text-[var(--color-on-surface-variant)] text-sm">Erfolgreich</p>
           </div>
           <p className="text-2xl font-bold text-emerald-500 mt-1">{stats.erfolgreich}</p>
         </div>
-        <div className="bg-[#161616] border border-border rounded-xl p-4">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-yellow-500" />
-            <p className="text-zinc-500 text-sm">Laufend</p>
+            <p className="text-[var(--color-on-surface-variant)] text-sm">Laufend</p>
           </div>
           <p className="text-2xl font-bold text-yellow-500 mt-1">{stats.laufend}</p>
         </div>
-        <div className="bg-[#161616] border border-border rounded-xl p-4">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
           <div className="flex items-center gap-2">
             <XCircle className="w-4 h-4 text-red-500" />
-            <p className="text-zinc-500 text-sm">Abgelehnt</p>
+            <p className="text-[var(--color-on-surface-variant)] text-sm">Abgelehnt</p>
           </div>
           <p className="text-2xl font-bold text-red-500 mt-1">{stats.abgelehnt}</p>
         </div>
       </div>
 
       {/* Tabelle */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-border text-left">
-                <th className="px-4 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-4 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
                   Programm
                 </th>
-                <th className="px-4 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
                   BL
                 </th>
-                <th className="px-4 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
                   Antrag
                 </th>
-                <th className="px-4 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
                   Dauer
                 </th>
-                <th className="px-4 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
                   Beantragt
                 </th>
-                <th className="px-4 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
                   Bewilligt
                 </th>
-                <th className="px-4 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
                   Aktionen
                 </th>
               </tr>
@@ -175,19 +175,19 @@ export default function FoerderungPraxisPage() {
             <tbody className="divide-y divide-border">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-zinc-500">
+                  <td colSpan={8} className="px-4 py-8 text-center text-[var(--color-on-surface-variant)]">
                     Lade Daten...
                   </td>
                 </tr>
               ) : eintraege.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-zinc-500">
+                  <td colSpan={8} className="px-4 py-8 text-center text-[var(--color-on-surface-variant)]">
                     Noch keine Erfahrungen dokumentiert. Starte jetzt!
                   </td>
                 </tr>
               ) : (
                 eintraege.map((e) => (
-                  <tr key={e.id} className="hover:bg-[#1e1e1e] transition">
+                  <tr key={e.id} className="hover:bg-[var(--color-surface-container-highest)] transition">
                     <td className="px-4 py-3">
                       {e.erfolgreich === false ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-500/10 text-red-500 rounded-full text-xs font-medium">
@@ -207,20 +207,20 @@ export default function FoerderungPraxisPage() {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-white text-sm font-medium truncate max-w-[200px]">
+                      <p className="text-[var(--color-on-surface)] text-sm font-medium truncate max-w-[200px]">
                         {e.programm_name || `Programm #${e.programm_id}`}
                       </p>
                     </td>
-                    <td className="px-4 py-3 text-zinc-400 text-sm">
+                    <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-sm">
                       {e.bundesland || "—"}
                     </td>
-                    <td className="px-4 py-3 text-zinc-400 text-sm">
+                    <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-sm">
                       {formatDate(e.antrag_datum)}
                     </td>
-                    <td className="px-4 py-3 text-zinc-400 text-sm">
+                    <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-sm">
                       {e.bewilligungsdauer_wochen ? `${e.bewilligungsdauer_wochen} Wo.` : "—"}
                     </td>
-                    <td className="px-4 py-3 text-zinc-400 text-sm">
+                    <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-sm">
                       {formatEuro(e.beantragter_betrag_eur)}
                     </td>
                     <td className="px-4 py-3 text-sm">
@@ -228,7 +228,7 @@ export default function FoerderungPraxisPage() {
                         className={
                           e.bewilligter_betrag_eur
                             ? "text-emerald-400 font-medium"
-                            : "text-zinc-500"
+                            : "text-[var(--color-on-surface-variant)]"
                         }
                       >
                         {formatEuro(e.bewilligter_betrag_eur)}
@@ -237,7 +237,7 @@ export default function FoerderungPraxisPage() {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => handleEdit(e)}
-                        className="p-1.5 text-zinc-400 hover:text-white hover:bg-surface-container-highest rounded-lg transition"
+                        className="p-1.5 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-surface-container-highest rounded-lg transition"
                         title="Bearbeiten"
                       >
                         <Pencil className="w-4 h-4" />

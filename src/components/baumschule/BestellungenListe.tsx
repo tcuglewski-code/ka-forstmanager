@@ -25,8 +25,8 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   anfrage: { label: "Anfrage", color: "bg-yellow-100 text-yellow-800" },
   geplant: { label: "Geplant", color: "bg-blue-100 text-blue-800" },
   aktiv: { label: "Aktiv", color: "bg-emerald-100 text-emerald-800" },
-  abgeschlossen: { label: "Abgeschlossen", color: "bg-zinc-600/30 text-zinc-400" },
-  storniert: { label: "Storniert", color: "bg-zinc-600/30 text-zinc-500" },
+  abgeschlossen: { label: "Abgeschlossen", color: "bg-zinc-600/30 text-[var(--color-on-surface-variant)]" },
+  storniert: { label: "Storniert", color: "bg-zinc-600/30 text-[var(--color-on-surface-variant)]" },
 }
 
 export function BestellungenListe({ baumschuleId }: Props) {
@@ -59,29 +59,29 @@ export function BestellungenListe({ baumschuleId }: Props) {
   }
 
   if (loading) {
-    return <div className="py-8 text-center text-zinc-500">Lade Pflanzanfragen...</div>
+    return <div className="py-8 text-center text-[var(--color-on-surface-variant)]">Lade Pflanzanfragen...</div>
   }
 
   return (
     <div className="space-y-4">
       <div>
         <h2 className="text-lg font-semibold">Pflanzanfragen ({anfragen.length})</h2>
-        <p className="text-sm text-zinc-400 mt-1">
+        <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">
           Waldbesitzer-Anfragen die Baumarten aus Ihrem Sortiment enthalten
         </p>
       </div>
 
       {anfragen.length === 0 ? (
-        <div className="py-8 text-center text-zinc-500">
+        <div className="py-8 text-center text-[var(--color-on-surface-variant)]">
           Keine passenden Pflanzanfragen vorhanden.
         </div>
       ) : (
         <div className="space-y-3">
           {anfragen.map((a) => {
-            const config = STATUS_CONFIG[a.status] || { label: a.status, color: "bg-zinc-700 text-zinc-400" }
+            const config = STATUS_CONFIG[a.status] || { label: a.status, color: "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]" }
 
             return (
-              <div key={a.id} className="bg-zinc-800/50 border border-border rounded-lg p-4">
+              <div key={a.id} className="bg-[var(--color-surface-container-lowest)]/50 border border-border rounded-lg p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3">
@@ -90,7 +90,7 @@ export function BestellungenListe({ baumschuleId }: Props) {
                         {config.label}
                       </span>
                     </div>
-                    <div className="text-sm text-zinc-400 mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                    <div className="text-sm text-[var(--color-on-surface-variant)] mt-1 flex flex-wrap gap-x-3 gap-y-1">
                       {a.waldbesitzer && <span>Waldbesitzer: {a.waldbesitzer}</span>}
                       {a.flaeche_ha != null && <span>{a.flaeche_ha} ha</span>}
                       {a.standort && <span>{a.standort}</span>}
@@ -103,7 +103,7 @@ export function BestellungenListe({ baumschuleId }: Props) {
                       </p>
                     )}
                     {a.zeitraum && (
-                      <p className="text-xs text-zinc-500 mt-0.5">Zeitraum: {a.zeitraum}</p>
+                      <p className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">Zeitraum: {a.zeitraum}</p>
                     )}
                   </div>
                 </div>

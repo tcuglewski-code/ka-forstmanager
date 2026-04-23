@@ -270,12 +270,12 @@ export function PflanzverbandVorschau({
   const pflanzNum = pflanzenzahl ?? null
 
   return (
-    <div className="bg-[#161616] border border-border rounded-xl p-5 mt-4">
+    <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5 mt-4">
       {/* Header */}
       <h3 className="text-xs font-semibold tracking-widest text-emerald-400 uppercase mb-1 flex items-center gap-2">
         🌲 Pflanzverband-Vorschau
       </h3>
-      <p className="text-zinc-500 text-xs mb-4">
+      <p className="text-[var(--color-on-surface-variant)] text-xs mb-4">
         {typLabel[typ]}
         {hasAussenreihe && (
           <span className="ml-2 px-1.5 py-0.5 rounded text-xs" style={{ background: "#e07b3922", color: AUSSENREIHE_FARBE }}>
@@ -285,7 +285,7 @@ export function PflanzverbandVorschau({
       </p>
 
       {/* SVG */}
-      <div className="overflow-x-auto rounded-lg bg-[#0f0f0f] border border-[#222]">
+      <div className="overflow-x-auto rounded-lg bg-[var(--color-surface-container-low)] border border-border">
         <svg
           width={svgWidth}
           height={svgHeight}
@@ -377,23 +377,23 @@ export function PflanzverbandVorschau({
       </div>
 
       {/* Summary */}
-      <div className="mt-3 text-xs text-zinc-500 space-y-1">
+      <div className="mt-3 text-xs text-[var(--color-on-surface-variant)] space-y-1">
         {(pflanzNum || flaecheNum) && (
           <p>
             Ca.{" "}
             {pflanzNum != null
-              ? <span className="text-zinc-300 font-medium">{pflanzNum.toLocaleString("de-DE")} Pflanzen</span>
+              ? <span className="text-[var(--color-on-surface)] font-medium">{pflanzNum.toLocaleString("de-DE")} Pflanzen</span>
               : null}
             {flaecheNum != null && pflanzNum != null ? " auf " : null}
             {flaecheNum != null
-              ? <span className="text-zinc-300 font-medium">{flaecheNum} ha</span>
+              ? <span className="text-[var(--color-on-surface)] font-medium">{flaecheNum} ha</span>
               : null}
             {" "}bei{" "}
-            <span className="text-zinc-300">{pa}m × {ra}m</span> Abstand
+            <span className="text-[var(--color-on-surface)]">{pa}m × {ra}m</span> Abstand
           </p>
         )}
         {!(pflanzNum || flaecheNum) && (
-          <p>Abstand: <span className="text-zinc-300">{pa}m × {ra}m</span></p>
+          <p>Abstand: <span className="text-[var(--color-on-surface)]">{pa}m × {ra}m</span></p>
         )}
       </div>
 
@@ -406,12 +406,12 @@ export function PflanzverbandVorschau({
               <svg width={12} height={12} viewBox="0 0 12 12">
                 <circle cx={6} cy={6} r={5} fill={art.color} />
               </svg>
-              <span className="text-xs text-zinc-300">{art.name}</span>
+              <span className="text-xs text-[var(--color-on-surface)]">{art.name}</span>
               {art.count > 0 && (
-                <span className="text-xs text-zinc-500">({art.count.toLocaleString("de-DE")} Stk.)</span>
+                <span className="text-xs text-[var(--color-on-surface-variant)]">({art.count.toLocaleString("de-DE")} Stk.)</span>
               )}
               {rowCount > 0 && (
-                <span className="text-xs text-zinc-600">· {rowCount}× / Reihe</span>
+                <span className="text-xs text-[var(--color-on-surface-variant)]">· {rowCount}× / Reihe</span>
               )}
             </div>
           )

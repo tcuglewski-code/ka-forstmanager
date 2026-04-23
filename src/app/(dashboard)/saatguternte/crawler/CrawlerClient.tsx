@@ -145,7 +145,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
   return (
     <div className="space-y-4">
       {/* Hessen-Crawler Panel */}
-      <div className="bg-[#161616] border border-amber-500/30 rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-amber-500/30 rounded-xl overflow-hidden">
         <div className="p-5">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
@@ -165,7 +165,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-4 text-xs text-zinc-500">
+              <div className="flex items-center gap-4 text-xs text-[var(--color-on-surface-variant)]">
                 <span>Hessen</span>
                 <span>·</span>
                 {hessenStatus ? (
@@ -201,7 +201,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
               <button
                 onClick={loadHessenStatus}
                 disabled={hessenLoading}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-highest hover:bg-[#333] text-zinc-400 rounded-lg text-xs transition-all"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-highest hover:bg-[#333] text-[var(--color-on-surface-variant)] rounded-lg text-xs transition-all"
                 title="Status laden"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${hessenLoading ? "animate-spin" : ""}`} />
@@ -226,13 +226,13 @@ export function CrawlerClient({ initialQuellen }: Props) {
             <div className="mt-3">
               <button
                 onClick={() => setShowHessenLog((v) => !v)}
-                className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors flex items-center gap-1"
+                className="text-xs text-zinc-600 hover:text-[var(--color-on-surface-variant)] transition-colors flex items-center gap-1"
               >
                 <Terminal className="w-3 h-3" />
                 {showHessenLog ? "Log ausblenden" : "Log anzeigen"}
               </button>
               {showHessenLog && (
-                <pre className="mt-2 p-3 bg-[#0a0a0a] border border-border rounded-lg text-xs text-zinc-400 font-mono overflow-x-auto whitespace-pre-wrap">
+                <pre className="mt-2 p-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-xs text-[var(--color-on-surface-variant)] font-mono overflow-x-auto whitespace-pre-wrap">
                   {hessenStatus.crawlLog}
                 </pre>
               )}
@@ -273,7 +273,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
         const [showPass, setShowPass] = useState(false)
 
         return (
-          <div key={quelle.id} className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+          <div key={quelle.id} className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
             <div className="p-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
@@ -292,7 +292,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-4 text-xs text-zinc-500">
+                  <div className="flex items-center gap-4 text-xs text-[var(--color-on-surface-variant)]">
                     <span>{quelle.bundeslaender.join(", ")}</span>
                     <span>·</span>
                     <span>{quelle._count.flaechen.toLocaleString("de-DE")} Flächen</span>
@@ -319,7 +319,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
                   {quelle.loginRequired && (
                     <button
                       onClick={() => toggleCredForm(quelle.id)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-highest hover:bg-[#333] text-zinc-400 rounded-lg text-xs transition-all"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-highest hover:bg-[#333] text-[var(--color-on-surface-variant)] rounded-lg text-xs transition-all"
                     >
                       <Key className="w-3.5 h-3.5" />
                       Credentials
@@ -343,8 +343,8 @@ export function CrawlerClient({ initialQuellen }: Props) {
 
             {/* Credential-Formular */}
             {form?.open && (
-              <div className="border-t border-border p-5 bg-[#0f0f0f]">
-                <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">
+              <div className="border-t border-border p-5 bg-[var(--color-surface-container-low)]">
+                <h4 className="text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide mb-3">
                   Zugangsdaten (AES-256-GCM verschlüsselt)
                 </h4>
                 <div className="grid grid-cols-2 gap-3 mb-3">
@@ -360,7 +360,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
                         }))
                       }
                       placeholder="z.B. forstamt@example.de"
-                      className="w-full px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                      className="w-full px-3 py-2 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
@@ -376,12 +376,12 @@ export function CrawlerClient({ initialQuellen }: Props) {
                           }))
                         }
                         placeholder="Passwort"
-                        className="w-full px-3 py-2 pr-10 bg-[#1e1e1e] border border-border rounded-lg text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                        className="w-full px-3 py-2 pr-10 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPass((v) => !v)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-400"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-[var(--color-on-surface-variant)]"
                       >
                         {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -398,7 +398,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
                   </button>
                   <button
                     onClick={() => toggleCredForm(quelle.id)}
-                    className="px-3 py-1.5 text-zinc-500 hover:text-zinc-300 text-xs transition-colors"
+                    className="px-3 py-1.5 text-[var(--color-on-surface-variant)] hover:text-zinc-300 text-xs transition-colors"
                   >
                     Abbrechen
                   </button>
@@ -413,7 +413,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
       })}
 
       {quellen.length === 0 && (
-        <div className="bg-[#161616] border border-border rounded-xl p-12 text-center">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-12 text-center">
           <p className="text-zinc-600">Keine Registerquellen vorhanden</p>
           <p className="text-zinc-700 text-xs mt-1">Erstelle zuerst eine Quelle über die API</p>
         </div>

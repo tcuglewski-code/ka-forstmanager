@@ -62,13 +62,13 @@ export function BaumschulePortal({ baumschule, sortiment, ernteanfragen }: Props
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
       {/* Header */}
-      <header className="border-b border-border bg-zinc-900/50">
+      <header className="border-b border-border bg-[var(--color-surface-container-low)]/50">
         <div className="max-w-6xl mx-auto px-4 py-5">
           <div className="flex items-center gap-3">
             <span className="text-3xl">🌲</span>
             <div>
               <h1 className="text-xl font-bold">{baumschule.name}</h1>
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-[var(--color-on-surface-variant)]">
                 {[baumschule.ort, baumschule.bundesland].filter(Boolean).join(", ") || "Baumschul-Portal"}
               </p>
             </div>
@@ -89,14 +89,14 @@ export function BaumschulePortal({ baumschule, sortiment, ernteanfragen }: Props
                   className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                     activeTab === tab.key
                       ? "border-emerald-500 text-emerald-400"
-                      : "border-transparent text-zinc-400 hover:text-zinc-200"
+                      : "border-transparent text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]"
                   }`}
                 >
                   {tab.label}
                   {tab.count != null && tab.count > 0 && (
                     <span
                       className={`ml-2 px-1.5 py-0.5 text-xs rounded-full ${
-                        activeTab === tab.key ? "bg-emerald-100 text-emerald-800" : "bg-zinc-700 text-zinc-400"
+                        activeTab === tab.key ? "bg-emerald-100 text-emerald-800" : "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]"
                       }`}
                     >
                       {tab.count}

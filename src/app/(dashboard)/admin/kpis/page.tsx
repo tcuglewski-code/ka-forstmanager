@@ -49,7 +49,7 @@ function KpiCard({
   color: string
 }) {
   return (
-    <div className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+    <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
         <div
           className="w-10 h-10 rounded-xl flex items-center justify-center"
@@ -63,7 +63,7 @@ function KpiCard({
           </span>
         )}
       </div>
-      <p className="text-sm text-zinc-500 mb-1">{title}</p>
+      <p className="text-sm text-[var(--color-on-surface-variant)] mb-1">{title}</p>
       <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{value}</p>
     </div>
   )
@@ -83,11 +83,11 @@ export default function KpiDashboardPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>KPI Dashboard</h1>
-            <p className="text-sm text-zinc-500">Business Metriken</p>
+            <p className="text-sm text-[var(--color-on-surface-variant)]">Business Metriken</p>
           </div>
         </div>
         {/* Period Selector */}
-        <div className="flex items-center gap-1 bg-[#1a1a1a] border border-border rounded-lg p-1">
+        <div className="flex items-center gap-1 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg p-1">
           {(["7d", "30d", "90d"] as Period[]).map((p) => (
             <button
               key={p}
@@ -96,7 +96,7 @@ export default function KpiDashboardPage() {
                 "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
                 period === p
                   ? "bg-emerald-600 text-white"
-                  : "text-zinc-400 hover:text-white hover:bg-surface-container-highest"
+                  : "text-[var(--color-on-surface-variant)] hover:text-white hover:bg-surface-container-highest"
               )}
             >
               {p}
@@ -130,7 +130,7 @@ export default function KpiDashboardPage() {
       </div>
 
       {/* MRR Chart */}
-      <div className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+      <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4">
           MRR Verlauf
         </h2>
@@ -172,7 +172,7 @@ export default function KpiDashboardPage() {
       </div>
 
       {/* MAU Chart */}
-      <div className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+      <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-4">
           Aktive Nutzer
         </h2>

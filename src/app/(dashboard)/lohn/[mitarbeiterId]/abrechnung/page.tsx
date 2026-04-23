@@ -146,7 +146,7 @@ export default async function LohnabrechnungPage({
         <PrintButton abrechnungId={lohnabrechnung?.id} />
         <a
           href={`/lohn`}
-          className="px-4 py-2 border border-zinc-600 text-zinc-400 rounded-lg hover:border-zinc-400 hover:text-white transition-colors"
+          className="px-4 py-2 border border-zinc-600 text-[var(--color-on-surface-variant)] rounded-lg hover:border-zinc-400 hover:text-white transition-colors"
         >
           ← Zurück zum Lohn
         </a>

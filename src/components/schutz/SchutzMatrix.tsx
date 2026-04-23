@@ -105,7 +105,7 @@ const STATUS_COLORS = {
   geplant: "bg-blue-100 text-blue-800",
   aktiv: "bg-emerald-100 text-emerald-800",
   abgeschlossen: "bg-gray-100 text-gray-700",
-  nicht_erforderlich: "bg-zinc-700/20 text-zinc-500",
+  nicht_erforderlich: "bg-[var(--color-surface-container-high)]/20 text-[var(--color-on-surface-variant)]",
 }
 
 const STATUS_LABELS = {
@@ -203,7 +203,7 @@ export function SchutzMatrix({
           <button
             type="button"
             onClick={() => setShowLegend(!showLegend)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1e1e1e] rounded-lg text-sm text-zinc-400 hover:text-white transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--color-surface-container-highest)] rounded-lg text-sm text-[var(--color-on-surface-variant)] hover:text-white transition-colors"
           >
             <Info className="w-4 h-4" />
             Legende
@@ -213,8 +213,8 @@ export function SchutzMatrix({
 
       {/* Legende */}
       {showLegend && (
-        <div className="bg-[#0f0f0f] border border-border rounded-lg p-4 space-y-3">
-          <div className="text-xs text-zinc-500 font-medium">Priorität nach Saison:</div>
+        <div className="bg-[var(--color-surface-container-low)] border border-border rounded-lg p-4 space-y-3">
+          <div className="text-xs text-[var(--color-on-surface-variant)] font-medium">Priorität nach Saison:</div>
           <div className="flex gap-4 flex-wrap">
             {Object.entries(PRIO_COLORS).map(([prio, color]) => (
               <div key={prio} className={`flex items-center gap-2 px-2 py-1 rounded ${color}`}>
@@ -222,7 +222,7 @@ export function SchutzMatrix({
               </div>
             ))}
           </div>
-          <div className="text-xs text-zinc-500 font-medium mt-2">Status:</div>
+          <div className="text-xs text-[var(--color-on-surface-variant)] font-medium mt-2">Status:</div>
           <div className="flex gap-4 flex-wrap">
             {Object.entries(STATUS_COLORS).map(([status, color]) => (
               <div key={status} className={`flex items-center gap-2 px-2 py-1 rounded ${color}`}>
@@ -230,7 +230,7 @@ export function SchutzMatrix({
               </div>
             ))}
           </div>
-          <div className="text-xs text-zinc-500 mt-2">
+          <div className="text-xs text-[var(--color-on-surface-variant)] mt-2">
             💡 Klicken Sie auf eine Zelle, um den Status zu ändern
           </div>
         </div>
@@ -241,14 +241,14 @@ export function SchutzMatrix({
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left px-3 py-2 text-zinc-500 font-medium min-w-[150px]">Fläche</th>
+              <th className="text-left px-3 py-2 text-[var(--color-on-surface-variant)] font-medium min-w-[150px]">Fläche</th>
               {SCHUTZ_TYPEN.map((schutz) => {
                 const prio = currentSeason === "sommer" ? schutz.sommerPrio : schutz.winterPrio
                 return (
                   <th key={schutz.id} className="text-center px-2 py-2 min-w-[100px]">
                     <div className="flex flex-col items-center gap-1">
                       <span className="text-lg">{schutz.icon}</span>
-                      <span className="text-xs text-zinc-400">{schutz.label}</span>
+                      <span className="text-xs text-[var(--color-on-surface-variant)]">{schutz.label}</span>
                       <span className={`text-[10px] px-1.5 py-0.5 rounded ${PRIO_COLORS[prio]}`}>
                         {prio}
                       </span>
@@ -269,14 +269,14 @@ export function SchutzMatrix({
               flaechen.map((flaeche) => (
                 <tr
                   key={flaeche.id}
-                  className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors"
+                  className="border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors"
                 >
                   <td className="px-3 py-3">
                     <div className="flex flex-col">
                       <span className="text-white font-medium">
                         {flaeche.standort || `Fläche ${flaeche.id.slice(0, 6)}`}
                       </span>
-                      <span className="text-xs text-zinc-500">
+                      <span className="text-xs text-[var(--color-on-surface-variant)]">
                         {flaeche.flaeche_ha ? `${flaeche.flaeche_ha} ha` : ""}
                         {flaeche.forstamt && ` • ${flaeche.forstamt}`}
                       </span>
@@ -294,7 +294,7 @@ export function SchutzMatrix({
                           disabled={readOnly}
                           className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
                             !status
-                              ? "bg-[#1e1e1e] text-zinc-600 hover:bg-surface-container-highest"
+                              ? "bg-[var(--color-surface-container-highest)] text-zinc-600 hover:bg-surface-container-highest"
                               : STATUS_COLORS[status]
                           } ${readOnly ? "cursor-default" : "cursor-pointer hover:scale-110"}`}
                           title={status ? STATUS_LABELS[status] : "Nicht gesetzt"}
@@ -316,14 +316,14 @@ export function SchutzMatrix({
       </div>
 
       {/* Saisonale Empfehlungen */}
-      <div className="bg-[#0f0f0f] border border-border rounded-lg p-4">
+      <div className="bg-[var(--color-surface-container-low)] border border-border rounded-lg p-4">
         <div className="flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
           <div>
             <div className="text-sm font-medium text-white mb-1">
               Saisonale Empfehlung ({currentSeason === "sommer" ? "April–September" : "Oktober–März"})
             </div>
-            <div className="text-xs text-zinc-400 space-y-1">
+            <div className="text-xs text-[var(--color-on-surface-variant)] space-y-1">
               {currentSeason === "sommer" ? (
                 <>
                   <p>• <strong>Fegeschutz</strong> und <strong>Wuchshüllen</strong> haben hohe Priorität</p>

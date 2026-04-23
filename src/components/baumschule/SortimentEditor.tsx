@@ -206,7 +206,7 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
 
       {/* Add Modal */}
       {showAdd && (
-        <div className="bg-zinc-800 border border-border rounded-lg p-4 space-y-3">
+        <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-lg p-4 space-y-3">
           <h3 className="font-medium">Neue Baumart hinzufügen</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="relative">
@@ -215,10 +215,10 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
                 placeholder="Baumart"
                 value={newBaumart}
                 onChange={(e) => handleBaumartInput(e.target.value)}
-                className="w-full px-3 py-2 bg-zinc-900 border border-zinc-600 rounded-lg text-sm focus:outline-none focus:border-emerald-500"
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg text-sm focus:outline-none focus:border-emerald-500"
               />
               {suggestions.length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-zinc-800 border border-zinc-600 rounded-lg max-h-40 overflow-y-auto">
+                <div className="absolute z-10 w-full mt-1 bg-[var(--color-surface-container-lowest)] border border-zinc-600 rounded-lg max-h-40 overflow-y-auto">
                   {suggestions.map((s) => (
                     <button
                       key={s}
@@ -226,7 +226,7 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
                         setNewBaumart(s)
                         setSuggestions([])
                       }}
-                      className="block w-full text-left px-3 py-1.5 text-sm hover:bg-zinc-700"
+                      className="block w-full text-left px-3 py-1.5 text-sm hover:bg-[var(--color-surface-container-high)]"
                     >
                       {s}
                     </button>
@@ -240,12 +240,12 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
               placeholder="Preis (€)"
               value={newPreis}
               onChange={(e) => setNewPreis(e.target.value)}
-              className="px-3 py-2 bg-zinc-900 border border-zinc-600 rounded-lg text-sm focus:outline-none focus:border-emerald-500"
+              className="px-3 py-2 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg text-sm focus:outline-none focus:border-emerald-500"
             />
             <select
               value={newEinheit}
               onChange={(e) => setNewEinheit(e.target.value)}
-              className="px-3 py-2 bg-zinc-900 border border-zinc-600 rounded-lg text-sm focus:outline-none focus:border-emerald-500"
+              className="px-3 py-2 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg text-sm focus:outline-none focus:border-emerald-500"
             >
               <option value="Stück">Stück</option>
               <option value="kg">kg</option>
@@ -256,7 +256,7 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
               placeholder="Menge (optional)"
               value={newMenge}
               onChange={(e) => setNewMenge(e.target.value)}
-              className="px-3 py-2 bg-zinc-900 border border-zinc-600 rounded-lg text-sm focus:outline-none focus:border-emerald-500"
+              className="px-3 py-2 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg text-sm focus:outline-none focus:border-emerald-500"
             />
           </div>
           <div className="flex gap-2">
@@ -267,7 +267,7 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
             >
               {saving ? "Speichern..." : "Hinzufügen"}
             </button>
-            <button onClick={() => setShowAdd(false)} className="px-4 py-2 text-sm bg-zinc-700 hover:bg-zinc-600 rounded-lg transition-colors">
+            <button onClick={() => setShowAdd(false)} className="px-4 py-2 text-sm bg-[var(--color-surface-container-high)] hover:bg-zinc-600 rounded-lg transition-colors">
               Abbrechen
             </button>
           </div>
@@ -278,7 +278,7 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border text-zinc-400 text-left">
+            <tr className="border-b border-border text-[var(--color-on-surface-variant)] text-left">
               <th className="py-2 pr-4">Baumart</th>
               <th className="py-2 pr-4">Preis</th>
               <th className="py-2 pr-4">Einheit</th>
@@ -289,7 +289,7 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
           </thead>
           <tbody>
             {sortiment.map((eintrag) => (
-              <tr key={eintrag.id} className="border-b border-border hover:bg-zinc-900/50">
+              <tr key={eintrag.id} className="border-b border-border hover:bg-[var(--color-surface-container-low)]/50">
                 <td className="py-2.5 pr-4 font-medium">{eintrag.baumart}</td>
                 <td className="py-2.5 pr-4">
                   {editId === eintrag.id ? (
@@ -298,7 +298,7 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
                       step="0.01"
                       value={editPreis}
                       onChange={(e) => setEditPreis(e.target.value)}
-                      className="w-20 px-2 py-1 bg-zinc-900 border border-zinc-600 rounded text-sm"
+                      className="w-20 px-2 py-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded text-sm"
                     />
                   ) : (
                     `${eintrag.preis.toFixed(2)} €`
@@ -309,7 +309,7 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
                     <select
                       value={editEinheit}
                       onChange={(e) => setEditEinheit(e.target.value)}
-                      className="px-2 py-1 bg-zinc-900 border border-zinc-600 rounded text-sm"
+                      className="px-2 py-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded text-sm"
                     >
                       <option value="Stück">Stück</option>
                       <option value="kg">kg</option>
@@ -326,7 +326,7 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
                       value={editMenge}
                       onChange={(e) => setEditMenge(e.target.value)}
                       placeholder="—"
-                      className="w-20 px-2 py-1 bg-zinc-900 border border-zinc-600 rounded text-sm"
+                      className="w-20 px-2 py-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded text-sm"
                     />
                   ) : (
                     eintrag.menge ?? "—"
@@ -336,7 +336,7 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
                   <button
                     onClick={() => toggleVerfuegbar(eintrag)}
                     className={`px-2 py-0.5 text-xs rounded-full transition-colors ${
-                      eintrag.verfuegbar ? "bg-emerald-100 text-emerald-800" : "bg-zinc-700 text-zinc-500"
+                      eintrag.verfuegbar ? "bg-emerald-100 text-emerald-800" : "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]"
                     }`}
                   >
                     {eintrag.verfuegbar ? "Ja" : "Nein"}
@@ -352,13 +352,13 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
                       >
                         OK
                       </button>
-                      <button onClick={() => setEditId(null)} className="px-2 py-1 text-xs bg-zinc-700 hover:bg-zinc-600 rounded transition-colors">
+                      <button onClick={() => setEditId(null)} className="px-2 py-1 text-xs bg-[var(--color-surface-container-high)] hover:bg-zinc-600 rounded transition-colors">
                         X
                       </button>
                     </div>
                   ) : (
                     <div className="flex gap-1">
-                      <button onClick={() => startEdit(eintrag)} className="px-2 py-1 text-xs bg-zinc-700 hover:bg-zinc-600 rounded transition-colors">
+                      <button onClick={() => startEdit(eintrag)} className="px-2 py-1 text-xs bg-[var(--color-surface-container-high)] hover:bg-zinc-600 rounded transition-colors">
                         Bearbeiten
                       </button>
                       <button
@@ -374,7 +374,7 @@ export function SortimentEditor({ baumschuleId, initialSortiment }: Props) {
             ))}
             {sortiment.length === 0 && (
               <tr>
-                <td colSpan={6} className="py-8 text-center text-zinc-500">
+                <td colSpan={6} className="py-8 text-center text-[var(--color-on-surface-variant)]">
                   Noch keine Baumarten im Sortiment. Klicken Sie auf &quot;+ Baumart hinzufügen&quot;.
                 </td>
               </tr>

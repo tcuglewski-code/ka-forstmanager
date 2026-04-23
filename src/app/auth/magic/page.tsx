@@ -99,7 +99,7 @@ function MagicLinkContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--color-surface-container-low)] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -107,16 +107,16 @@ function MagicLinkContent() {
             <TreePine className="w-8 h-8 text-emerald-400" />
           </div>
           <h1 className="text-2xl font-bold text-white">ForstManager</h1>
-          <p className="text-sm text-zinc-400 mt-1">Koch Aufforstung GmbH</p>
+          <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">Koch Aufforstung GmbH</p>
         </div>
 
         {/* Content Card */}
-        <div className="bg-[#161616] border border-border rounded-2xl p-8">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-2xl p-8">
           {/* Loading State */}
           {status === "loading" && (
             <div className="text-center py-8">
               <Loader2 className="w-8 h-8 animate-spin text-emerald-400 mx-auto mb-4" />
-              <p className="text-zinc-400">Link wird überprüft...</p>
+              <p className="text-[var(--color-on-surface-variant)]">Link wird überprüft...</p>
             </div>
           )}
 
@@ -127,7 +127,7 @@ function MagicLinkContent() {
                 <Mail className="w-5 h-5 text-emerald-400" />
                 <h2 className="text-lg font-semibold text-white">Kundenbereich</h2>
               </div>
-              <p className="text-sm text-zinc-500 mb-6">
+              <p className="text-sm text-[var(--color-on-surface-variant)] mb-6">
                 Geben Sie Ihre E-Mail-Adresse ein. Wir senden Ihnen einen Login-Link.
               </p>
 
@@ -139,7 +139,7 @@ function MagicLinkContent() {
 
               <form onSubmit={handleRequestLink} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+                  <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">
                     E-Mail-Adresse
                   </label>
                   <input
@@ -148,7 +148,7 @@ function MagicLinkContent() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     placeholder="ihre-email@beispiel.de"
-                    className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
                   />
                 </div>
 
@@ -181,10 +181,10 @@ function MagicLinkContent() {
                 <Mail className="w-8 h-8 text-emerald-400" />
               </div>
               <h2 className="text-lg font-semibold text-white mb-2">E-Mail gesendet!</h2>
-              <p className="text-sm text-zinc-400 mb-4">
+              <p className="text-sm text-[var(--color-on-surface-variant)] mb-4">
                 Falls ein Konto mit dieser E-Mail existiert, haben wir Ihnen einen Login-Link gesendet.
               </p>
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm text-[var(--color-on-surface-variant)]">
                 Bitte prüfen Sie auch Ihren Spam-Ordner.
               </p>
 
@@ -205,7 +205,7 @@ function MagicLinkContent() {
 
               <button
                 onClick={() => setStatus("request")}
-                className="mt-6 text-sm text-zinc-400 hover:text-white transition-colors"
+                className="mt-6 text-sm text-[var(--color-on-surface-variant)] hover:text-white transition-colors"
               >
                 Andere E-Mail-Adresse verwenden
               </button>
@@ -219,7 +219,7 @@ function MagicLinkContent() {
                 <CheckCircle className="w-8 h-8 text-emerald-400" />
               </div>
               <h2 className="text-lg font-semibold text-white mb-2">Erfolgreich angemeldet!</h2>
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-[var(--color-on-surface-variant)]">
                 Sie werden zum Dashboard weitergeleitet...
               </p>
             </div>
@@ -232,7 +232,7 @@ function MagicLinkContent() {
                 <XCircle className="w-8 h-8 text-red-400" />
               </div>
               <h2 className="text-lg font-semibold text-white mb-2">Link ungültig</h2>
-              <p className="text-sm text-zinc-400 mb-4">
+              <p className="text-sm text-[var(--color-on-surface-variant)] mb-4">
                 {error || "Der Link ist ungültig oder abgelaufen."}
               </p>
               <button
@@ -259,7 +259,7 @@ function MagicLinkContent() {
 export default function MagicLinkPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--color-surface-container-low)] flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-emerald-400" />
       </div>
     }>

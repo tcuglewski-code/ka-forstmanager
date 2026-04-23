@@ -34,11 +34,11 @@ export function FlaechenProfilForm({ flaecheId, initialStatus, initialNotizen }:
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-xs text-zinc-500 mb-1.5">Status</label>
+        <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1.5">Status</label>
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
         >
           <option value="ungeprüft">Ungeprüft</option>
           <option value="interessant">Interessant</option>
@@ -50,13 +50,13 @@ export function FlaechenProfilForm({ flaecheId, initialStatus, initialNotizen }:
         </select>
       </div>
       <div>
-        <label className="block text-xs text-zinc-500 mb-1.5">Notizen</label>
+        <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1.5">Notizen</label>
         <textarea
           value={notizen}
           onChange={(e) => setNotizen(e.target.value)}
           rows={4}
           placeholder="Interne Notizen zu dieser Fläche..."
-          className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
+          className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
         />
       </div>
       <button

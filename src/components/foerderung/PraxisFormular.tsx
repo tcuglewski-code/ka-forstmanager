@@ -126,7 +126,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h2 className="text-lg font-semibold text-white">
@@ -134,7 +134,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
           </h2>
           <button
             onClick={onClose}
-            className="p-1 text-zinc-400 hover:text-white rounded-lg hover:bg-surface-container-highest"
+            className="p-1 text-[var(--color-on-surface-variant)] hover:text-white rounded-lg hover:bg-surface-container-highest"
           >
             <X className="w-5 h-5" />
           </button>
@@ -150,17 +150,17 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
 
           {/* Programm */}
           <div>
-            <label className="block text-sm text-zinc-400 mb-1">Förderprogramm *</label>
+            <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Förderprogramm *</label>
             {loadingProgramme ? (
-              <div className="h-10 bg-[#0a0a0a] rounded-lg flex items-center justify-center">
-                <Loader2 className="w-4 h-4 animate-spin text-zinc-500" />
+              <div className="h-10 bg-[var(--color-surface-container-lowest)] rounded-lg flex items-center justify-center">
+                <Loader2 className="w-4 h-4 animate-spin text-[var(--color-on-surface-variant)]" />
               </div>
             ) : (
               <select
                 required
                 value={formData.programm_id}
                 onChange={(e) => setFormData({ ...formData, programm_id: Number(e.target.value) })}
-                className="w-full h-10 px-3 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               >
                 <option value={0}>Programm auswählen...</option>
                 {programme.map((p) => (
@@ -174,11 +174,11 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
 
           {/* Bundesland */}
           <div>
-            <label className="block text-sm text-zinc-400 mb-1">Bundesland</label>
+            <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Bundesland</label>
             <select
               value={formData.bundesland}
               onChange={(e) => setFormData({ ...formData, bundesland: e.target.value })}
-              className="w-full h-10 px-3 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
             >
               <option value="">Bundesland auswählen...</option>
               {BUNDESLAENDER.map((bl) => (
@@ -192,28 +192,28 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
           {/* Datums-Row */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-zinc-400 mb-1">Antrag gestellt am</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Antrag gestellt am</label>
               <input
                 type="date"
                 value={formData.antrag_datum}
                 onChange={(e) => setFormData({ ...formData, antrag_datum: e.target.value })}
-                className="w-full h-10 px-3 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm text-zinc-400 mb-1">Bewilligung am</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Bewilligung am</label>
               <input
                 type="date"
                 value={formData.bewilligung_datum}
                 onChange={(e) => setFormData({ ...formData, bewilligung_datum: e.target.value })}
-                className="w-full h-10 px-3 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
               />
             </div>
           </div>
 
           {/* Bewilligungsdauer */}
           <div>
-            <label className="block text-sm text-zinc-400 mb-1">
+            <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">
               Bewilligungsdauer (Wochen)
               <span className="text-zinc-600 ml-1 text-xs">— automatisch berechnet</span>
             </label>
@@ -224,14 +224,14 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
               onChange={(e) =>
                 setFormData({ ...formData, bewilligungsdauer_wochen: e.target.value })
               }
-              className="w-full h-10 px-3 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+              className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
             />
           </div>
 
           {/* Beträge */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-zinc-400 mb-1">Beantragter Betrag (€)</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Beantragter Betrag (€)</label>
               <input
                 type="number"
                 min={0}
@@ -240,12 +240,12 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
                 onChange={(e) =>
                   setFormData({ ...formData, beantragter_betrag_eur: e.target.value })
                 }
-                className="w-full h-10 px-3 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
                 placeholder="0.00"
               />
             </div>
             <div>
-              <label className="block text-sm text-zinc-400 mb-1">Bewilligter Betrag (€)</label>
+              <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Bewilligter Betrag (€)</label>
               <input
                 type="number"
                 min={0}
@@ -254,7 +254,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
                 onChange={(e) =>
                   setFormData({ ...formData, bewilligter_betrag_eur: e.target.value })
                 }
-                className="w-full h-10 px-3 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full h-10 px-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none"
                 placeholder="0.00"
               />
             </div>
@@ -276,24 +276,24 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
 
           {/* Hinweis */}
           <div>
-            <label className="block text-sm text-zinc-400 mb-1">Besonderheiten / Praxis-Hinweis</label>
+            <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Besonderheiten / Praxis-Hinweis</label>
             <textarea
               rows={3}
               value={formData.hinweis}
               onChange={(e) => setFormData({ ...formData, hinweis: e.target.value })}
-              className="w-full px-3 py-2 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none resize-none"
+              className="w-full px-3 py-2 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none resize-none"
               placeholder="Was hat gut funktioniert? Worauf sollte man achten?"
             />
           </div>
 
           {/* Fallstricke */}
           <div>
-            <label className="block text-sm text-zinc-400 mb-1">Fallstricke</label>
+            <label className="block text-sm text-[var(--color-on-surface-variant)] mb-1">Fallstricke</label>
             <textarea
               rows={3}
               value={formData.fallstricke}
               onChange={(e) => setFormData({ ...formData, fallstricke: e.target.value })}
-              className="w-full px-3 py-2 bg-[#0a0a0a] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none resize-none"
+              className="w-full px-3 py-2 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg text-white focus:border-emerald-500 focus:outline-none resize-none"
               placeholder="Welche Probleme gab es? Was sollte man vermeiden?"
             />
           </div>
@@ -303,14 +303,14 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm text-zinc-400 hover:text-white transition"
+              className="px-4 py-2 text-sm text-[var(--color-on-surface-variant)] hover:text-white transition"
             >
               Abbrechen
             </button>
             <button
               type="submit"
               disabled={loading || formData.programm_id === 0}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-zinc-700 disabled:text-zinc-500 text-white text-sm font-medium rounded-lg flex items-center gap-2 transition"
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-[var(--color-surface-container-high)] disabled:text-[var(--color-on-surface-variant)] text-white text-sm font-medium rounded-lg flex items-center gap-2 transition"
             >
               {loading ? (
                 <>

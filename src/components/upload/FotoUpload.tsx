@@ -121,10 +121,10 @@ export function FotoUpload({
           disabled={disabled || uploading}
           className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed transition-all ${
             disabled
-              ? "border-border text-zinc-600 cursor-not-allowed"
+              ? "border-border text-[var(--color-on-surface-variant)] cursor-not-allowed"
               : uploading
                 ? "border-emerald-500/50 text-emerald-400 bg-emerald-500/10"
-                : "border-border text-zinc-400 hover:border-emerald-500/50 hover:text-emerald-400 hover:bg-emerald-500/5"
+                : "border-border text-[var(--color-on-surface-variant)] hover:border-emerald-500/50 hover:text-emerald-400 hover:bg-emerald-500/5"
           }`}
         >
           {uploading ? (
@@ -144,20 +144,20 @@ export function FotoUpload({
       {/* Hochgeladene Dateien */}
       {uploadedFiles.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs text-zinc-500">Hochgeladen:</p>
+          <p className="text-xs text-[var(--color-on-surface-variant)]">Hochgeladen:</p>
           <div className="space-y-1">
             {uploadedFiles.map((file, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-2 px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg"
+                className="flex items-center gap-2 px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg"
               >
                 <ImageIcon className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                <span className="text-xs text-white truncate flex-1">{file.filename}</span>
+                <span className="text-xs text-[var(--color-on-surface)] truncate flex-1">{file.filename}</span>
                 <Check className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
                 <button
                   type="button"
                   onClick={() => removeFile(idx)}
-                  className="text-zinc-500 hover:text-red-400 transition-colors"
+                  className="text-[var(--color-on-surface-variant)] hover:text-red-400 transition-colors"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -214,7 +214,7 @@ export function FotoUploadButton({
 
   return (
     <label className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg cursor-pointer transition-all ${
-      disabled ? "opacity-50 cursor-not-allowed" : "bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white"
+      disabled ? "opacity-50 cursor-not-allowed" : "bg-[var(--color-surface-container-lowest)] hover:bg-[var(--color-surface-container-high)] text-[var(--color-on-surface)] hover:text-[var(--color-on-surface)]"
     }`}>
       <input
         ref={inputRef}

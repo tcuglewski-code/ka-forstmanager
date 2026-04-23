@@ -140,7 +140,7 @@ export default function FeatureFlagsPage() {
       case "admin":
         return "bg-gray-100 text-gray-700"
       default:
-        return "bg-zinc-700 text-zinc-300"
+        return "bg-[var(--color-surface-container-high)] text-zinc-300"
     }
   }
 
@@ -164,7 +164,7 @@ export default function FeatureFlagsPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Feature Flags</h1>
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-[var(--color-on-surface-variant)]">
               {flags.length} Flags konfiguriert
             </p>
           </div>
@@ -193,29 +193,29 @@ export default function FeatureFlagsPage() {
       )}
 
       {/* Flags Table */}
-      <div className="bg-[#1a1a1a] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl overflow-hidden">
         <table className="w-full">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">
+              <th className="text-left px-4 py-3 text-sm font-medium text-[var(--color-on-surface-variant)]">
                 Key
               </th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">
+              <th className="text-left px-4 py-3 text-sm font-medium text-[var(--color-on-surface-variant)]">
                 Status
               </th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">
+              <th className="text-left px-4 py-3 text-sm font-medium text-[var(--color-on-surface-variant)]">
                 Typ
               </th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">
+              <th className="text-left px-4 py-3 text-sm font-medium text-[var(--color-on-surface-variant)]">
                 Rollout %
               </th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">
+              <th className="text-left px-4 py-3 text-sm font-medium text-[var(--color-on-surface-variant)]">
                 Kategorie
               </th>
-              <th className="text-left px-4 py-3 text-sm font-medium text-zinc-400">
+              <th className="text-left px-4 py-3 text-sm font-medium text-[var(--color-on-surface-variant)]">
                 Beschreibung
               </th>
-              <th className="text-right px-4 py-3 text-sm font-medium text-zinc-400">
+              <th className="text-right px-4 py-3 text-sm font-medium text-[var(--color-on-surface-variant)]">
                 24h Nutzung
               </th>
             </tr>
@@ -239,10 +239,10 @@ export default function FeatureFlagsPage() {
                   />
                 </td>
                 <td className="px-4 py-3">
-                  <span className="text-sm text-zinc-400">{flag.type}</span>
+                  <span className="text-sm text-[var(--color-on-surface-variant)]">{flag.type}</span>
                 </td>
                 <td className="px-4 py-3">
-                  <span className="text-sm text-zinc-400">
+                  <span className="text-sm text-[var(--color-on-surface-variant)]">
                     {flag.percentage !== null ? `${flag.percentage}%` : "---"}
                   </span>
                 </td>
@@ -258,10 +258,10 @@ export default function FeatureFlagsPage() {
                     </span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-sm text-zinc-500 max-w-xs truncate">
+                <td className="px-4 py-3 text-sm text-[var(--color-on-surface-variant)] max-w-xs truncate">
                   {flag.description || "---"}
                 </td>
-                <td className="px-4 py-3 text-right text-sm text-zinc-400">
+                <td className="px-4 py-3 text-right text-sm text-[var(--color-on-surface-variant)]">
                   {flag._stats?.usageLast24h ?? 0}
                 </td>
               </tr>

@@ -237,7 +237,7 @@ export function GpsKarte({ einsatzId, bearbeitbar = false, hoehe = 400 }: GpsKar
 
   if (laden) {
     return (
-      <div className="flex items-center justify-center h-40 text-zinc-400">
+      <div className="flex items-center justify-center h-40 text-[var(--color-on-surface-variant)]">
         GPS-Daten werden geladen...
       </div>
     )
@@ -255,7 +255,7 @@ export function GpsKarte({ einsatzId, bearbeitbar = false, hoehe = 400 }: GpsKar
     <div className="space-y-3">
       {/* Steuerleiste */}
       <div className="flex items-center justify-between text-sm">
-        <span className="text-zinc-400">
+        <span className="text-[var(--color-on-surface-variant)]">
           {punkte.length} GPS-Punkt{punkte.length !== 1 ? "e" : ""} aufgezeichnet
         </span>
         {bearbeitbar && (
@@ -287,7 +287,7 @@ export function GpsKarte({ einsatzId, bearbeitbar = false, hoehe = 400 }: GpsKar
       />
 
       {bearbeitbar && (
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-[var(--color-on-surface-variant)]">
           💡 Tipp: Klicke auf die Karte um manuell einen GPS-Punkt hinzuzufügen
         </p>
       )}

@@ -58,9 +58,9 @@ function ResetPasswordForm() {
 
   if (!token) {
     return (
-      <div className="bg-[#161616] border border-border rounded-2xl p-8">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-2xl p-8">
         <h2 className="text-lg font-semibold text-white mb-1">Ungültiger Link</h2>
-        <p className="text-sm text-zinc-400 mt-4">
+        <p className="text-sm text-[var(--color-on-surface-variant)] mt-4">
           Der Link zum Zurücksetzen des Passworts ist ungültig oder fehlt.
         </p>
         <a
@@ -75,12 +75,12 @@ function ResetPasswordForm() {
 
   if (success) {
     return (
-      <div className="bg-[#161616] border border-border rounded-2xl p-8">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-2xl p-8">
         <div className="flex items-center gap-3 mb-4">
           <CheckCircle className="w-6 h-6 text-emerald-400" />
           <h2 className="text-lg font-semibold text-white">Passwort zurückgesetzt</h2>
         </div>
-        <p className="text-sm text-zinc-400">
+        <p className="text-sm text-[var(--color-on-surface-variant)]">
           Dein Passwort wurde erfolgreich geändert. Du wirst zur Anmeldung weitergeleitet...
         </p>
       </div>
@@ -88,9 +88,9 @@ function ResetPasswordForm() {
   }
 
   return (
-    <div className="bg-[#161616] border border-border rounded-2xl p-8">
+    <div className="bg-[var(--color-surface-container)] border border-border rounded-2xl p-8">
       <h2 className="text-lg font-semibold text-white mb-1">Neues Passwort vergeben</h2>
-      <p className="text-sm text-zinc-500 mb-6">
+      <p className="text-sm text-[var(--color-on-surface-variant)] mb-6">
         Gib dein neues Passwort ein (mindestens 8 Zeichen).
       </p>
 
@@ -102,7 +102,7 @@ function ResetPasswordForm() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="reset-password" className="block text-sm font-medium text-zinc-400 mb-1.5">
+          <label htmlFor="reset-password" className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">
             Neues Passwort
           </label>
           <input
@@ -114,12 +114,12 @@ function ResetPasswordForm() {
             autoComplete="new-password"
             autoFocus
             placeholder="Mindestens 8 Zeichen"
-            className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+            className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
           />
         </div>
 
         <div>
-          <label htmlFor="reset-confirm-password" className="block text-sm font-medium text-zinc-400 mb-1.5">
+          <label htmlFor="reset-confirm-password" className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">
             Passwort bestätigen
           </label>
           <input
@@ -130,7 +130,7 @@ function ResetPasswordForm() {
             required
             autoComplete="new-password"
             placeholder="Passwort wiederholen"
-            className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+            className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
           />
         </div>
 
@@ -151,7 +151,7 @@ function ResetPasswordForm() {
 
         <a
           href="/login"
-          className="w-full flex items-center justify-center gap-2 text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
+          className="w-full flex items-center justify-center gap-2 text-sm text-[var(--color-on-surface-variant)] hover:text-zinc-300 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Zurück zur Anmeldung
@@ -163,7 +163,7 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--color-surface-container-low)] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
@@ -171,13 +171,13 @@ export default function ResetPasswordPage() {
             <TreePine className="w-8 h-8 text-emerald-400" />
           </div>
           <h1 className="text-2xl font-bold text-white">ForstManager</h1>
-          <p className="text-sm text-zinc-400 mt-1">Koch Aufforstung GmbH</p>
+          <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">Koch Aufforstung GmbH</p>
         </div>
 
         <Suspense
           fallback={
-            <div className="bg-[#161616] border border-border rounded-2xl p-8 flex items-center justify-center">
-              <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-2xl p-8 flex items-center justify-center">
+              <Loader2 className="w-6 h-6 animate-spin text-[var(--color-on-surface-variant)]" />
             </div>
           }
         >

@@ -142,7 +142,7 @@ function PlanungPageInner() {
       <div className="flex items-center gap-3 mb-6">
         <button
           onClick={() => router.push("/saatguternte/register")}
-          className="flex items-center gap-2 text-zinc-500 hover:text-zinc-300 text-sm transition-colors"
+          className="flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:text-zinc-300 text-sm transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Zurück zur Register-Übersicht
@@ -154,7 +154,7 @@ function PlanungPageInner() {
           <Map className="w-6 h-6 text-emerald-400" />
           <div>
             <h1 className="text-2xl font-bold text-foreground">Flächenplanung</h1>
-            <p className="text-sm text-zinc-500 mt-0.5">
+            <p className="text-sm text-[var(--color-on-surface-variant)] mt-0.5">
               {planungFlaechen.length} Fläche{planungFlaechen.length !== 1 ? "n" : ""}
               {mitKoords > 0 && ` · ${mitKoords} mit Koordinaten`}
               {gesKm > 0 && ` · ${gesKm.toFixed(0)} km Gesamtstrecke`}
@@ -196,9 +196,9 @@ function PlanungPageInner() {
 
       {/* Leer-Zustand */}
       {!loading && planungFlaechen.length === 0 && (
-        <div className="bg-[#161616] border border-border rounded-xl p-16 flex flex-col items-center justify-center text-center">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-16 flex flex-col items-center justify-center text-center">
           <MapPin className="w-12 h-12 text-zinc-800 mb-4" />
-          <p className="text-zinc-400 font-medium mb-2">Keine Flächen in der Planung</p>
+          <p className="text-[var(--color-on-surface-variant)] font-medium mb-2">Keine Flächen in der Planung</p>
           <p className="text-zinc-600 text-sm mb-6">Wähle Flächen in der Register-Übersicht aus und klicke auf „Zur Planung →"</p>
           <button
             onClick={() => router.push("/saatguternte/register")}
@@ -212,14 +212,14 @@ function PlanungPageInner() {
 
       {/* Laden */}
       {loading && (
-        <div className="bg-[#161616] border border-border rounded-xl p-16 text-center text-zinc-600">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-16 text-center text-zinc-600">
           Lade Flächen...
         </div>
       )}
 
       {/* Planungs-Liste */}
       {!loading && planungFlaechen.length > 0 && (
-        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
           <div className="divide-y divide-[#1e1e1e]">
             {planungFlaechen.map((f, idx) => {
               const prev = idx > 0 ? planungFlaechen[idx - 1] : null
@@ -229,14 +229,14 @@ function PlanungPageInner() {
               }
 
               return (
-                <div key={f.id} className="flex items-start gap-4 px-4 py-4 hover:bg-[#1a1a1a] transition-colors">
+                <div key={f.id} className="flex items-start gap-4 px-4 py-4 hover:bg-[var(--color-surface-container-lowest)] transition-colors">
                   {/* Rang + Pfeile */}
                   <div className="flex flex-col items-center gap-0.5 pt-0.5 min-w-[28px]">
                     <span className="text-xs font-mono text-zinc-600 text-center">{idx + 1}</span>
-                    <button onClick={() => moveUp(idx)} disabled={idx === 0} className="text-zinc-700 hover:text-zinc-400 disabled:opacity-20">
+                    <button onClick={() => moveUp(idx)} disabled={idx === 0} className="text-zinc-700 hover:text-[var(--color-on-surface-variant)] disabled:opacity-20">
                       <ChevronUp className="w-4 h-4" />
                     </button>
-                    <button onClick={() => moveDown(idx)} disabled={idx === planungFlaechen.length - 1} className="text-zinc-700 hover:text-zinc-400 disabled:opacity-20">
+                    <button onClick={() => moveDown(idx)} disabled={idx === planungFlaechen.length - 1} className="text-zinc-700 hover:text-[var(--color-on-surface-variant)] disabled:opacity-20">
                       <ChevronDown className="w-4 h-4" />
                     </button>
                   </div>
@@ -247,14 +247,14 @@ function PlanungPageInner() {
                   {/* Infos */}
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                      <span className="font-mono text-sm text-zinc-200">{f.registerNr}</span>
-                      <span className="text-sm text-zinc-400">{f.baumart}</span>
+                      <span className="font-mono text-sm text-[var(--color-on-surface)]">{f.registerNr}</span>
+                      <span className="text-sm text-[var(--color-on-surface-variant)]">{f.baumart}</span>
                       {f.flaecheHa && (
                         <span className="text-xs text-zinc-600">{f.flaecheHa.toFixed(1)} ha</span>
                       )}
                     </div>
                     <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
-                      <span className="text-xs text-zinc-500">{f.bundesland}</span>
+                      <span className="text-xs text-[var(--color-on-surface-variant)]">{f.bundesland}</span>
                       {f.forstamt && <span className="text-xs text-zinc-600">{f.forstamt}</span>}
                     </div>
                     {f.latDez != null && (
@@ -286,21 +286,21 @@ function PlanungPageInner() {
             <button
               onClick={optimizeRoute}
               disabled={mitKoords < 2}
-              className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-border hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
+              className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
             >
               🗺️ Optimale Route berechnen (TSP)
             </button>
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={exportEinsatzliste}
-                className="px-4 py-2.5 bg-[#1e1e1e] border border-border hover:border-blue-500 text-zinc-300 hover:text-blue-400 rounded-lg text-sm font-medium transition-all"
+                className="px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-blue-500 text-zinc-300 hover:text-blue-400 rounded-lg text-sm font-medium transition-all"
               >
                 📋 Einsatzliste exportieren
               </button>
               <button
                 onClick={openGoogleMaps}
                 disabled={mitKoords === 0}
-                className="px-4 py-2.5 bg-[#1e1e1e] border border-border hover:border-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-orange-400 rounded-lg text-sm font-medium transition-all"
+                className="px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-orange-400 rounded-lg text-sm font-medium transition-all"
               >
                 🌍 Google Maps öffnen
               </button>
@@ -311,7 +311,7 @@ function PlanungPageInner() {
                 router.push(`/saatguternte/vertrag?flaechenIds=${ids}`)
               }}
               disabled={planungFlaechen.length === 0}
-              className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-border hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
+              className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
             >
               📄 Vertrag generieren
             </button>
@@ -324,7 +324,7 @@ function PlanungPageInner() {
 
 export default function PlanungPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-zinc-500">Lade Planung...</div>}>
+    <Suspense fallback={<div className="p-8 text-[var(--color-on-surface-variant)]">Lade Planung...</div>}>
       <PlanungPageInner />
     </Suspense>
   )

@@ -32,7 +32,7 @@ const typBadge: Record<string, string> = {
   fuehrerschein: "bg-blue-100 text-blue-800",
   sicherheit: "bg-red-100 text-red-800",
   zertifikat: "bg-emerald-100 text-emerald-800",
-  sonstiges: "bg-zinc-700/50 text-zinc-400",
+  sonstiges: "bg-[var(--color-surface-container-high)]/50 text-[var(--color-on-surface-variant)]",
 }
 
 const typLabel: Record<string, string> = {
@@ -121,7 +121,7 @@ export default function QualifikationenPage() {
           <h1 className="text-2xl font-bold flex items-center gap-2" style={{ color: "var(--color-on-surface)" }}>
             <GraduationCap className="w-6 h-6 text-emerald-400" /> Qualifikationen
           </h1>
-          <p className="text-zinc-500 text-sm mt-1">Zertifikate, Führerscheine, Sicherheitsnachweise</p>
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">Zertifikate, Führerscheine, Sicherheitsnachweise</p>
         </div>
         <button
           onClick={() => tab === "katalog" ? setShowModal(true) : setShowAssignModal(true)}
@@ -133,12 +133,12 @@ export default function QualifikationenPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-[#161616] border border-border rounded-lg p-1 w-fit">
+      <div className="flex gap-1 mb-6 bg-[var(--color-surface-container)] border border-border rounded-lg p-1 w-fit">
         {(["katalog", "mitarbeiter"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${tab === t ? "bg-forest text-emerald-400" : "text-zinc-400 hover:text-white"}`}
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${tab === t ? "bg-forest text-emerald-400" : "text-[var(--color-on-surface-variant)] hover:text-white"}`}
           >
             {t === "katalog" ? "Katalog" : "Mitarbeiter-Qualifikationen"}
           </button>
@@ -150,31 +150,31 @@ export default function QualifikationenPage() {
           <Loader2 className="w-6 h-6 text-emerald-400 animate-spin" />
         </div>
       ) : tab === "katalog" ? (
-        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Name</th>
-                <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Typ</th>
-                <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Beschreibung</th>
-                <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Mitarbeiter</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Name</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Typ</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Beschreibung</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Mitarbeiter</th>
                 <th className="px-6 py-3"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {qualifikationen.length === 0 ? (
-                <tr><td colSpan={5} className="px-6 py-12 text-center text-zinc-600">Keine Qualifikationen</td></tr>
+                <tr><td colSpan={5} className="px-6 py-12 text-center text-[var(--color-on-surface-variant)]">Keine Qualifikationen</td></tr>
               ) : qualifikationen.map((q) => (
                 <tr key={q.id} className="hover:bg-[#1c1c1c]">
                   <td className="px-6 py-4 text-sm font-medium text-white">{q.name}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${typBadge[q.typ] ?? "bg-zinc-700 text-zinc-400"}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-xs ${typBadge[q.typ] ?? "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]"}`}>
                       {typLabel[q.typ] ?? q.typ}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-zinc-400">{q.beschreibung ?? "—"}</td>
-                  <td className="px-6 py-4 text-sm text-zinc-400">{q.mitarbeiterCount}</td>
+                  <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{q.beschreibung ?? "—"}</td>
+                  <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{q.mitarbeiterCount}</td>
                   <td className="px-6 py-4 text-right">
                     <button onClick={() => deleteQual(q.id)} className="text-zinc-600 hover:text-red-400 transition-all">
                       <Trash2 className="w-4 h-4" />
@@ -194,36 +194,36 @@ export default function QualifikationenPage() {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${filter === f ? "bg-emerald-100 text-emerald-800 border border-emerald-500/30" : "bg-[#161616] text-zinc-400 border border-border hover:border-zinc-600"}`}
+                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${filter === f ? "bg-emerald-100 text-emerald-800 border border-emerald-500/30" : "bg-[var(--color-surface-container)] text-[var(--color-on-surface-variant)] border border-border hover:border-zinc-600"}`}
               >
                 {f === "" ? "Alle" : `Ablauf in ${f} Tagen`}
               </button>
             ))}
           </div>
-          <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+          <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
             <table className="min-w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Mitarbeiter</th>
-                  <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Qualifikation</th>
-                  <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Erworben</th>
-                  <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Ablauf</th>
-                  <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Status</th>
+                  <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Mitarbeiter</th>
+                  <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Qualifikation</th>
+                  <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Erworben</th>
+                  <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Ablauf</th>
+                  <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Status</th>
                   <th className="px-6 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {mitarbeiterQuals.length === 0 ? (
-                  <tr><td colSpan={6} className="px-6 py-12 text-center text-zinc-600">Keine Einträge</td></tr>
+                  <tr><td colSpan={6} className="px-6 py-12 text-center text-[var(--color-on-surface-variant)]">Keine Einträge</td></tr>
                 ) : mitarbeiterQuals.map((mq) => {
                   const st = ablaufStatus(mq.ablaufDatum)
                   return (
                     <tr key={mq.id} className="hover:bg-[#1c1c1c]">
                       <td className="px-6 py-4 text-sm text-white">{mq.mitarbeiter.vorname} {mq.mitarbeiter.nachname}</td>
                       <td className="px-6 py-4 text-sm text-zinc-300">{mq.qualifikation.name}</td>
-                      <td className="px-6 py-4 text-sm text-zinc-400">{mq.erworbenAm ? new Date(mq.erworbenAm).toLocaleDateString("de-DE") : "—"}</td>
-                      <td className="px-6 py-4 text-sm text-zinc-400">{mq.ablaufDatum ? new Date(mq.ablaufDatum).toLocaleDateString("de-DE") : "—"}</td>
+                      <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{mq.erworbenAm ? new Date(mq.erworbenAm).toLocaleDateString("de-DE") : "—"}</td>
+                      <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{mq.ablaufDatum ? new Date(mq.ablaufDatum).toLocaleDateString("de-DE") : "—"}</td>
                       <td className="px-6 py-4">
                         {st === "abgelaufen" && <span className="px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-800">Abgelaufen</span>}
                         {st === "kritisch" && <span className="px-2 py-0.5 rounded-full text-xs bg-amber-100 text-amber-800">&lt; 30 Tage</span>}
@@ -248,16 +248,16 @@ export default function QualifikationenPage() {
       {/* Create Qual Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6">
+          <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6">
             <h2 className="text-lg font-bold text-white mb-4">Qualifikation anlegen</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Name</label>
-                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" placeholder="z.B. Motorsäge Klasse B" />
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Name</label>
+                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" placeholder="z.B. Motorsäge Klasse B" />
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Typ</label>
-                <select value={form.typ} onChange={(e) => setForm({ ...form, typ: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Typ</label>
+                <select value={form.typ} onChange={(e) => setForm({ ...form, typ: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
                   <option value="fuehrerschein">Führerschein</option>
                   <option value="sicherheit">Sicherheit</option>
                   <option value="zertifikat">Zertifikat</option>
@@ -265,12 +265,12 @@ export default function QualifikationenPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Beschreibung</label>
-                <textarea value={form.beschreibung} onChange={(e) => setForm({ ...form, beschreibung: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" rows={2} />
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Beschreibung</label>
+                <textarea value={form.beschreibung} onChange={(e) => setForm({ ...form, beschreibung: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" rows={2} />
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 rounded-lg border border-[#333] text-zinc-400 text-sm hover:bg-[#222]">Abbrechen</button>
+              <button onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 rounded-lg border border-border text-[var(--color-on-surface-variant)] text-sm hover:bg-[#222]">Abbrechen</button>
               <button onClick={createQual} disabled={saving || !form.name} className="flex-1 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium disabled:opacity-50">
                 {saving ? "Speichern..." : "Anlegen"}
               </button>
@@ -282,34 +282,34 @@ export default function QualifikationenPage() {
       {/* Assign Modal */}
       {showAssignModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6">
+          <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6">
             <h2 className="text-lg font-bold text-white mb-4">Qualifikation zuweisen</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Mitarbeiter</label>
-                <select value={assignForm.mitarbeiterId} onChange={(e) => setAssignForm({ ...assignForm, mitarbeiterId: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Mitarbeiter</label>
+                <select value={assignForm.mitarbeiterId} onChange={(e) => setAssignForm({ ...assignForm, mitarbeiterId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
                   <option value="">— auswählen —</option>
                   {mitarbeiter.map((m) => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Qualifikation</label>
-                <select value={assignForm.qualifikationId} onChange={(e) => setAssignForm({ ...assignForm, qualifikationId: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Qualifikation</label>
+                <select value={assignForm.qualifikationId} onChange={(e) => setAssignForm({ ...assignForm, qualifikationId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
                   <option value="">— auswählen —</option>
                   {qualifikationen.map((q) => <option key={q.id} value={q.id}>{q.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Erworben am</label>
-                <input type="date" value={assignForm.erworbenAm} onChange={(e) => setAssignForm({ ...assignForm, erworbenAm: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Erworben am</label>
+                <input type="date" value={assignForm.erworbenAm} onChange={(e) => setAssignForm({ ...assignForm, erworbenAm: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Ablaufdatum</label>
-                <input type="date" value={assignForm.ablaufDatum} onChange={(e) => setAssignForm({ ...assignForm, ablaufDatum: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Ablaufdatum</label>
+                <input type="date" value={assignForm.ablaufDatum} onChange={(e) => setAssignForm({ ...assignForm, ablaufDatum: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowAssignModal(false)} className="flex-1 px-4 py-2 rounded-lg border border-[#333] text-zinc-400 text-sm hover:bg-[#222]">Abbrechen</button>
+              <button onClick={() => setShowAssignModal(false)} className="flex-1 px-4 py-2 rounded-lg border border-border text-[var(--color-on-surface-variant)] text-sm hover:bg-[#222]">Abbrechen</button>
               <button onClick={assignQual} disabled={saving || !assignForm.mitarbeiterId || !assignForm.qualifikationId} className="flex-1 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium disabled:opacity-50">
                 {saving ? "Speichern..." : "Zuweisen"}
               </button>

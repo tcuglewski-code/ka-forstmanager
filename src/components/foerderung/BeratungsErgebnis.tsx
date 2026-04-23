@@ -312,7 +312,7 @@ export function BeratungsErgebnis({
           </div>
           <div>
             <h3 className="text-sm font-semibold text-foreground">Beratungsergebnis</h3>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-[var(--color-on-surface-variant)]">
               {ergebnis.ki_synthese ? "KI-gestützte Analyse" : "Automatische Analyse"} ·{" "}
               {ergebnis.programme?.length || 0} Programme gefunden
             </p>
@@ -367,15 +367,15 @@ export function BeratungsErgebnis({
                   <h3 className="text-sm font-semibold text-emerald-300 mt-3 mb-1.5">{children}</h3>
                 ),
                 p: ({ children }) => (
-                  <p className="text-sm text-zinc-200 leading-relaxed mb-3 last:mb-0">{children}</p>
+                  <p className="text-sm text-[var(--color-on-surface)] leading-relaxed mb-3 last:mb-0">{children}</p>
                 ),
                 ul: ({ children }) => (
-                  <ul className="list-disc list-inside space-y-1.5 mb-3 text-sm text-zinc-200">{children}</ul>
+                  <ul className="list-disc list-inside space-y-1.5 mb-3 text-sm text-[var(--color-on-surface)]">{children}</ul>
                 ),
                 ol: ({ children }) => (
-                  <ol className="list-decimal list-inside space-y-1.5 mb-3 text-sm text-zinc-200">{children}</ol>
+                  <ol className="list-decimal list-inside space-y-1.5 mb-3 text-sm text-[var(--color-on-surface)]">{children}</ol>
                 ),
-                li: ({ children }) => <li className="text-zinc-200">{children}</li>,
+                li: ({ children }) => <li className="text-[var(--color-on-surface)]">{children}</li>,
                 strong: ({ children }) => (
                   <strong className="font-semibold text-emerald-200">{children}</strong>
                 ),
@@ -410,13 +410,13 @@ export function BeratungsErgebnis({
 
       {/* Top Programme */}
       {Array.isArray(ergebnis.programme) && ergebnis.programme.length > 0 && (
-        <div className="bg-[#0f0f0f] rounded-xl border border-[#1e1e1e] overflow-hidden">
-          <div className="px-4 py-3 border-b border-[#1e1e1e] flex items-center justify-between">
+        <div className="bg-[var(--color-surface-container-low)] rounded-xl border border-[var(--color-outline-variant)] overflow-hidden">
+          <div className="px-4 py-3 border-b border-[var(--color-outline-variant)] flex items-center justify-between">
             <div className="flex items-center gap-2">
               <TreePine className="w-4 h-4 text-emerald-400" />
               <span className="text-sm font-medium text-white">Empfohlene Förderprogramme</span>
             </div>
-            <span className="text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded">
+            <span className="text-xs text-[var(--color-on-surface-variant)] bg-[var(--color-surface-container-lowest)] px-2 py-0.5 rounded">
               {ergebnis.programme.length} Programme
             </span>
           </div>
@@ -424,7 +424,7 @@ export function BeratungsErgebnis({
             {ergebnis.programme.slice(0, 6).map((p, idx) => (
               <div
                 key={p.id || idx}
-                className="px-4 py-3 hover:bg-[#161616] transition-colors group"
+                className="px-4 py-3 hover:bg-[var(--color-surface-container)] transition-colors group"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
@@ -436,7 +436,7 @@ export function BeratungsErgebnis({
                         {p.name || "Unbekanntes Programm"}
                       </h4>
                     </div>
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-500">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-on-surface-variant)]">
                       <span>{p.bundesland || "Bundesweit"}</span>
                       {p.foerdersatz && (
                         <span className="text-emerald-400 font-medium">{p.foerdersatz}</span>
@@ -460,8 +460,8 @@ export function BeratungsErgebnis({
             ))}
           </div>
           {ergebnis.programme.length > 6 && (
-            <div className="px-4 py-2 bg-[#0a0a0a] text-center">
-              <span className="text-xs text-zinc-500">
+            <div className="px-4 py-2 bg-[var(--color-surface-container-lowest)] text-center">
+              <span className="text-xs text-[var(--color-on-surface-variant)]">
                 + {ergebnis.programme.length - 6} weitere Programme
               </span>
             </div>

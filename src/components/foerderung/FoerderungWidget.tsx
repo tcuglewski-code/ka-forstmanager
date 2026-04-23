@@ -29,7 +29,7 @@ export function FoerderungWidget() {
   }, [])
 
   return (
-    <div className="bg-[#161616] border border-border rounded-xl p-6">
+    <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <TreePine className="w-4 h-4 text-emerald-400" />
@@ -37,7 +37,7 @@ export function FoerderungWidget() {
         </div>
         <Link
           href="/foerderung"
-          className="text-xs text-zinc-500 hover:text-emerald-400 flex items-center gap-1 transition-colors"
+          className="text-xs text-[var(--color-on-surface-variant)] hover:text-emerald-400 flex items-center gap-1 transition-colors"
         >
           Alle anzeigen
           <ArrowRight className="w-3.5 h-3.5" />
@@ -56,7 +56,7 @@ export function FoerderungWidget() {
             <Link
               key={p.id}
               href="/foerderung"
-              className="block hover:bg-[#1e1e1e] rounded-lg p-2 -mx-2 transition-all group"
+              className="block hover:bg-[var(--color-surface-container-highest)] rounded-lg p-2 -mx-2 transition-all group"
             >
               <div className="flex items-start justify-between gap-2">
                 <p className="text-sm text-white leading-snug group-hover:text-emerald-100 transition-colors line-clamp-2">
@@ -85,7 +85,7 @@ export function FoerderungWidget() {
 
       <Link
         href="/foerderung"
-        className="mt-4 flex items-center justify-center gap-1.5 w-full py-2 text-xs text-zinc-500 hover:text-emerald-400 hover:bg-[#1e1e1e] rounded-lg transition-all border border-dashed border-[#333] hover:border-emerald-900/50"
+        className="mt-4 flex items-center justify-center gap-1.5 w-full py-2 text-xs text-[var(--color-on-surface-variant)] hover:text-emerald-400 hover:bg-[var(--color-surface-container-highest)] rounded-lg transition-all border border-dashed border-border hover:border-emerald-900/50"
       >
         <ExternalLink className="w-3.5 h-3.5" />
         Alle 43 Förderprogramme durchsuchen

@@ -68,12 +68,12 @@ export default function UnternehmerCheckbox({
           type="checkbox"
           checked={checked}
           onChange={handleChange}
-          className="mt-0.5 h-5 w-5 rounded border-border bg-[#0f0f0f] text-emerald-500 focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-0 transition-colors flex-shrink-0"
+          className="mt-0.5 h-5 w-5 rounded border-border bg-[var(--color-surface-container-low)] text-emerald-500 focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-0 transition-colors flex-shrink-0"
           aria-required="true"
           aria-invalid={!!displayError}
           aria-describedby={displayError ? "unternehmer-error" : undefined}
         />
-        <span className="text-sm text-zinc-300 group-hover:text-zinc-100 transition-colors leading-relaxed">
+        <span className="text-sm text-zinc-300 group-hover:text-[var(--color-on-surface)] transition-colors leading-relaxed">
           Ich tätige diese Bestellung als Unternehmer (§14 BGB)
         </span>
       </label>

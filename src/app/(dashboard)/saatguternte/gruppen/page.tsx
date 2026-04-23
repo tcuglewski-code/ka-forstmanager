@@ -72,7 +72,7 @@ export default function GruppenPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Erntegruppen</h1>
-          <p className="text-sm text-zinc-400 mt-1">Sammler-Teams · Gruppenführer · Saisonplanung</p>
+          <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">Sammler-Teams · Gruppenführer · Saisonplanung</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
@@ -87,7 +87,7 @@ export default function GruppenPage() {
       <div className="flex gap-2 items-center">
         <button
           onClick={() => setFilterSaison("")}
-          className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${!filterSaison ? "bg-emerald-700 text-white" : "bg-[#1e1e1e] text-zinc-400 hover:text-white"}`}
+          className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${!filterSaison ? "bg-emerald-700 text-white" : "bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] hover:text-white"}`}
         >
           Alle
         </button>
@@ -95,7 +95,7 @@ export default function GruppenPage() {
           <button
             key={s.id}
             onClick={() => setFilterSaison(s.id)}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${filterSaison === s.id ? "bg-emerald-700 text-white" : "bg-[#1e1e1e] text-zinc-400 hover:text-white"}`}
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${filterSaison === s.id ? "bg-emerald-700 text-white" : "bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] hover:text-white"}`}
           >
             {s.jahr}
           </button>
@@ -110,12 +110,12 @@ export default function GruppenPage() {
       ) : gruppen.length === 0 ? (
         <div className="text-center py-16">
           <TreePine className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
-          <p className="text-zinc-500">Keine Gruppen gefunden.</p>
+          <p className="text-[var(--color-on-surface-variant)]">Keine Gruppen gefunden.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {gruppen.map((gruppe) => (
-            <div key={gruppe.id} className="bg-[#161616] border border-border rounded-2xl overflow-hidden">
+            <div key={gruppe.id} className="bg-[var(--color-surface-container)] border border-border rounded-2xl overflow-hidden">
               {/* Karten-Header */}
               <div className="p-5 border-b border-border">
                 <div className="flex items-start gap-3">
@@ -124,7 +124,7 @@ export default function GruppenPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-base font-semibold text-white truncate">{gruppe.name}</h3>
-                    <p className="text-sm text-zinc-400 mt-0.5">
+                    <p className="text-sm text-[var(--color-on-surface-variant)] mt-0.5">
                       Saison {gruppe.saison?.jahr ?? "—"}
                     </p>
                   </div>
@@ -135,22 +135,22 @@ export default function GruppenPage() {
               <div className="p-5 space-y-3">
                 {gruppe.gruppenfuehrerName && (
                   <div className="flex items-center gap-2 text-sm">
-                    <User className="w-4 h-4 text-zinc-500 flex-shrink-0" />
-                    <span className="text-zinc-400">Gruppenführer:</span>
+                    <User className="w-4 h-4 text-[var(--color-on-surface-variant)] flex-shrink-0" />
+                    <span className="text-[var(--color-on-surface-variant)]">Gruppenführer:</span>
                     <span className="text-white font-medium">{gruppe.gruppenfuehrerName}</span>
                   </div>
                 )}
 
                 {gruppe.stundenlohnGF && (
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-zinc-400">GF Stundenlohn:</span>
+                    <span className="text-[var(--color-on-surface-variant)]">GF Stundenlohn:</span>
                     <span className="text-white">{gruppe.stundenlohnGF.toFixed(2)} €/h</span>
                   </div>
                 )}
 
                 <div className="flex items-center gap-2 text-sm">
-                  <Users className="w-4 h-4 text-zinc-500 flex-shrink-0" />
-                  <span className="text-zinc-400">Mitglieder:</span>
+                  <Users className="w-4 h-4 text-[var(--color-on-surface-variant)] flex-shrink-0" />
+                  <span className="text-[var(--color-on-surface-variant)]">Mitglieder:</span>
                   <span className="text-white font-medium">{gruppe._count?.mitglieder ?? 0}</span>
                 </div>
 
@@ -170,7 +170,7 @@ export default function GruppenPage() {
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
                           <span>{m.person?.name ?? "—"}</span>
                           {m.person?.nationalitaet && (
-                            <span className="text-zinc-500">({m.person.nationalitaet})</span>
+                            <span className="text-[var(--color-on-surface-variant)]">({m.person.nationalitaet})</span>
                           )}
                           <span className="ml-auto text-zinc-600 capitalize">{m.rolle}</span>
                         </div>
@@ -189,22 +189,22 @@ export default function GruppenPage() {
       {/* Modal: Neue Gruppe */}
       {showModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#161616] border border-border rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--color-surface-container)] border border-border rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-border">
               <h2 className="text-lg font-semibold text-white">Neue Erntegruppe</h2>
-              <button onClick={() => setShowModal(false)} className="text-zinc-400 hover:text-white">
+              <button onClick={() => setShowModal(false)} className="text-[var(--color-on-surface-variant)] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Saison *</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Saison *</label>
                 <select
                   required
                   value={form.saisonId}
                   onChange={(e) => setForm({ ...form, saisonId: e.target.value })}
-                  className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
                 >
                   <option value="">Saison wählen…</option>
                   {saisons.map((s) => (
@@ -214,36 +214,36 @@ export default function GruppenPage() {
               </div>
 
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Gruppenname *</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Gruppenname *</label>
                 <input
                   type="text"
                   required
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder="z.B. Gruppe Rumänien 2025"
-                  className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Gruppenführer</label>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Gruppenführer</label>
                   <input
                     type="text"
                     value={form.gruppenfuehrerName}
                     onChange={(e) => setForm({ ...form, gruppenfuehrerName: e.target.value })}
                     placeholder="Name"
-                    className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">GF Stundenlohn (€)</label>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">GF Stundenlohn (€)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={form.stundenlohnGF}
                     onChange={(e) => setForm({ ...form, stundenlohnGF: e.target.value })}
-                    className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2"
+                    className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2"
                   />
                 </div>
               </div>
@@ -251,10 +251,10 @@ export default function GruppenPage() {
               {/* Mitglieder-Auswahl */}
               {personen.length > 0 && (
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-2">
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-2">
                     Mitglieder ({form.mitglieder.length} ausgewählt)
                   </label>
-                  <div className="bg-[#1e1e1e] border border-border rounded-lg max-h-48 overflow-y-auto divide-y divide-border">
+                  <div className="bg-[var(--color-surface-container-highest)] border border-border rounded-lg max-h-48 overflow-y-auto divide-y divide-border">
                     {personen.map((p) => {
                       const selected = form.mitglieder.includes(p.id)
                       return (
@@ -269,7 +269,7 @@ export default function GruppenPage() {
                           ) : (
                             <Square className="w-4 h-4 text-zinc-600 flex-shrink-0" />
                           )}
-                          <span className={selected ? "text-white" : "text-zinc-400"}>{p.name}</span>
+                          <span className={selected ? "text-white" : "text-[var(--color-on-surface-variant)]"}>{p.name}</span>
                           {p.nationalitaet && (
                             <span className="text-zinc-600 text-xs ml-auto">{p.nationalitaet}</span>
                           )}
@@ -281,12 +281,12 @@ export default function GruppenPage() {
               )}
 
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Notizen</label>
                 <textarea
                   value={form.notizen}
                   onChange={(e) => setForm({ ...form, notizen: e.target.value })}
                   rows={2}
-                  className="w-full bg-[#1e1e1e] border border-border text-white text-sm rounded-lg px-3 py-2 resize-none"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border text-white text-sm rounded-lg px-3 py-2 resize-none"
                 />
               </div>
 
@@ -294,7 +294,7 @@ export default function GruppenPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 border border-border text-zinc-400 hover:text-white rounded-lg text-sm"
+                  className="flex-1 px-4 py-2 border border-border text-[var(--color-on-surface-variant)] hover:text-white rounded-lg text-sm"
                 >
                   Abbrechen
                 </button>

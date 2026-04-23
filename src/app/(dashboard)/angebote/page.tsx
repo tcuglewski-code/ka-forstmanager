@@ -223,7 +223,7 @@ export default function AngebotePage() {
             <FileText className="w-6 h-6 text-emerald-400" />
             Angebote
           </h1>
-          <p className="text-zinc-500 text-sm mt-1">Anfragen zu Angeboten weiterverarbeiten</p>
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">Anfragen zu Angeboten weiterverarbeiten</p>
         </div>
         <button
           onClick={() => setModalOffen(true)}
@@ -249,7 +249,7 @@ export default function AngebotePage() {
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
               filterStatus === f.value
                 ? "bg-emerald-600 text-white border-emerald-600"
-                : "bg-[#1e1e1e] text-zinc-400 border-border hover:border-zinc-500"
+                : "bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] border-border hover:border-zinc-500"
             }`}
           >
             {f.label}
@@ -259,9 +259,9 @@ export default function AngebotePage() {
 
       {/* Tabelle */}
       {loading ? (
-        <div className="text-zinc-500 text-sm py-8 text-center">Lade Angebote…</div>
+        <div className="text-[var(--color-on-surface-variant)] text-sm py-8 text-center">Lade Angebote…</div>
       ) : angebote.length === 0 ? (
-        <div className="text-zinc-500 text-sm py-16 text-center bg-[#161616] rounded-xl border border-border">
+        <div className="text-[var(--color-on-surface-variant)] text-sm py-16 text-center bg-[var(--color-surface-container)] rounded-xl border border-border">
           Noch keine Angebote vorhanden.
         </div>
       ) : (
@@ -269,13 +269,13 @@ export default function AngebotePage() {
           {angebote.map((a) => (
             <div
               key={a.id}
-              className="bg-[#161616] border border-border rounded-xl p-5 hover:border-[#3a3a3a] transition-colors"
+              className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5 hover:border-[#3a3a3a] transition-colors"
             >
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 {/* Links: Infos */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2 flex-wrap">
-                    <span className="text-white font-semibold text-sm">{a.nummer ?? "–"}</span>
+                    <span className="text-[var(--color-on-surface)] font-semibold text-sm">{a.nummer ?? "–"}</span>
                     <StatusBadge status={a.status} />
                     {a.auftrag && (
                       <Link
@@ -288,34 +288,34 @@ export default function AngebotePage() {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs text-zinc-400">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs text-[var(--color-on-surface-variant)]">
                     {a.waldbesitzerName && (
                       <div className="flex items-center gap-1.5">
-                        <User className="w-3 h-3 text-zinc-500 flex-shrink-0" />
+                        <User className="w-3 h-3 text-[var(--color-on-surface-variant)] flex-shrink-0" />
                         <span className="truncate">{a.waldbesitzerName}</span>
                       </div>
                     )}
                     {a.gesamtpreis != null && (
                       <div className="flex items-center gap-1.5">
-                        <Euro className="w-3 h-3 text-zinc-500 flex-shrink-0" />
+                        <Euro className="w-3 h-3 text-[var(--color-on-surface-variant)] flex-shrink-0" />
                         <span className="text-emerald-400 font-medium">{formatEuro(a.gesamtpreis)}</span>
                       </div>
                     )}
                     {a.gueltigBis && (
                       <div className="flex items-center gap-1.5">
-                        <Calendar className="w-3 h-3 text-zinc-500 flex-shrink-0" />
+                        <Calendar className="w-3 h-3 text-[var(--color-on-surface-variant)] flex-shrink-0" />
                         <span>Gültig bis {formatDatum(a.gueltigBis)}</span>
                       </div>
                     )}
                     {a.flaeche_ha && (
-                      <div className="text-zinc-400">
+                      <div className="text-[var(--color-on-surface-variant)]">
                         {a.flaeche_ha} ha
                       </div>
                     )}
                   </div>
 
                   {a.beschreibung && (
-                    <p className="text-zinc-500 text-xs mt-2 line-clamp-2">{a.beschreibung}</p>
+                    <p className="text-[var(--color-on-surface-variant)] text-xs mt-2 line-clamp-2">{a.beschreibung}</p>
                   )}
                 </div>
 
@@ -366,12 +366,12 @@ export default function AngebotePage() {
       {/* ─── Modal: Neues Angebot ──────────────────────────────────────────────── */}
       {modalOffen && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-          <div className="bg-[#161616] border border-border rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--color-surface-container)] border border-border rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-border flex items-center justify-between">
-              <h2 className="text-white font-semibold text-lg">Neues Angebot erstellen</h2>
+              <h2 className="text-[var(--color-on-surface)] font-semibold text-lg">Neues Angebot erstellen</h2>
               <button
                 onClick={() => setModalOffen(false)}
-                className="text-zinc-500 hover:text-white transition-colors text-xl leading-none"
+                className="text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors text-xl leading-none"
               >
                 ×
               </button>
@@ -380,26 +380,26 @@ export default function AngebotePage() {
             <form onSubmit={angebotErstellen} className="p-6 space-y-5">
               {/* Waldbesitzer */}
               <div>
-                <p className="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-3">Waldbesitzer</p>
+                <p className="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wide mb-3">Waldbesitzer</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-zinc-500 mb-1">Name</label>
+                    <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Name</label>
                     <input
                       type="text"
                       value={form.waldbesitzerName}
                       onChange={f("waldbesitzerName")}
                       placeholder="Max Mustermann"
-                      className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
+                      className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500/50"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-zinc-500 mb-1">E-Mail</label>
+                    <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">E-Mail</label>
                     <input
                       type="email"
                       value={form.waldbesitzerEmail}
                       onChange={f("waldbesitzerEmail")}
                       placeholder="max@beispiel.de"
-                      className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
+                      className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500/50"
                     />
                   </div>
                 </div>
@@ -407,7 +407,7 @@ export default function AngebotePage() {
 
               {/* Kalkulations-Typ */}
               <div>
-                <p className="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-3">Kalkulation</p>
+                <p className="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wide mb-3">Kalkulation</p>
                 <div className="flex gap-2 mb-4 flex-wrap">
                   {[
                     { value: "flaeche", label: "🌳 Fläche (ha)" },
@@ -421,7 +421,7 @@ export default function AngebotePage() {
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
                         form.kalkulationTyp === typ.value
                           ? "bg-emerald-600 text-white border-emerald-600"
-                          : "bg-[#1e1e1e] text-zinc-400 border-border hover:border-zinc-500"
+                          : "bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] border-border hover:border-zinc-500"
                       }`}
                     >
                       {typ.label}
@@ -431,7 +431,7 @@ export default function AngebotePage() {
 
                 {form.kalkulationTyp === "flaeche" && (
                   <div>
-                    <label className="block text-xs text-zinc-500 mb-1">Fläche in ha</label>
+                    <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Fläche in ha</label>
                     <input
                       type="number"
                       step="0.01"
@@ -439,9 +439,9 @@ export default function AngebotePage() {
                       value={form.flaeche_ha}
                       onChange={f("flaeche_ha")}
                       placeholder="z.B. 2.5"
-                      className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
+                      className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500/50"
                     />
-                    <p className="text-xs text-zinc-600 mt-1">
+                    <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">
                       Preis/ha: {parseFloat(config.preis_pro_ha ?? "1800").toLocaleString("de-DE")} €
                     </p>
                   </div>
@@ -450,18 +450,18 @@ export default function AngebotePage() {
                 {form.kalkulationTyp === "baumanzahl" && (
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs text-zinc-500 mb-1">Baumanzahl</label>
+                      <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Baumanzahl</label>
                       <input
                         type="number"
                         min="0"
                         value={form.baumanzahl}
                         onChange={f("baumanzahl")}
                         placeholder="z.B. 500"
-                        className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
+                        className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500/50"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-zinc-500 mb-1">Preis pro Baum (€)</label>
+                      <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Preis pro Baum (€)</label>
                       <input
                         type="number"
                         step="0.01"
@@ -469,7 +469,7 @@ export default function AngebotePage() {
                         value={form.preisProBaum}
                         onChange={f("preisProBaum")}
                         placeholder="z.B. 3.50"
-                        className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
+                        className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500/50"
                       />
                     </div>
                   </div>
@@ -477,7 +477,7 @@ export default function AngebotePage() {
 
                 {form.kalkulationTyp === "stunden" && (
                   <div>
-                    <label className="block text-xs text-zinc-500 mb-1">Geschätzte Stunden</label>
+                    <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Geschätzte Stunden</label>
                     <input
                       type="number"
                       step="0.5"
@@ -485,9 +485,9 @@ export default function AngebotePage() {
                       value={form.stundenSchaetzung}
                       onChange={f("stundenSchaetzung")}
                       placeholder="z.B. 40"
-                      className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50"
+                      className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500/50"
                     />
-                    <p className="text-xs text-zinc-600 mt-1">
+                    <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">
                       Vollkosten/h: {parseFloat(config.vollkosten_pro_stunde ?? "43.50").toLocaleString("de-DE")} €
                     </p>
                   </div>
@@ -505,35 +505,35 @@ export default function AngebotePage() {
               {/* Beschreibung & Gültig bis */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-zinc-500 mb-1">Gültig bis</label>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Gültig bis</label>
                   <input
                     type="date"
                     value={form.gueltigBis}
                     onChange={f("gueltigBis")}
-                    className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500/50"
+                    className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500/50"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs text-zinc-500 mb-1">Beschreibung / Leistungsumfang</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Beschreibung / Leistungsumfang</label>
                 <textarea
                   value={form.beschreibung}
                   onChange={f("beschreibung")}
                   rows={3}
                   placeholder="Beschreibung der geplanten Leistungen…"
-                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 resize-none"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500/50 resize-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs text-zinc-500 mb-1">Interne Notizen</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Interne Notizen</label>
                 <textarea
                   value={form.notizen}
                   onChange={f("notizen")}
                   rows={2}
                   placeholder="Interne Anmerkungen…"
-                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 resize-none"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500/50 resize-none"
                 />
               </div>
 
@@ -542,7 +542,7 @@ export default function AngebotePage() {
                 <button
                   type="button"
                   onClick={() => setModalOffen(false)}
-                  className="flex-1 px-4 py-2.5 bg-[#1e1e1e] border border-border text-zinc-400 rounded-lg text-sm hover:text-white transition-colors"
+                  className="flex-1 px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface-variant)] rounded-lg text-sm hover:text-[var(--color-on-surface)] transition-colors"
                 >
                   Abbrechen
                 </button>

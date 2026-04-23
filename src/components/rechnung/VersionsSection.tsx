@@ -52,7 +52,7 @@ interface VersionsSectionProps {
 }
 
 const statusLabels: Record<string, { label: string; color: string }> = {
-  'entwurf': { label: 'Entwurf', color: 'text-zinc-400' },
+  'entwurf': { label: 'Entwurf', color: 'text-[var(--color-on-surface-variant)]' },
   'offen': { label: 'Offen', color: 'text-amber-400' },
   'versendet': { label: 'Versendet', color: 'text-blue-400' },
   'freigegeben': { label: 'Freigegeben', color: 'text-emerald-400' },
@@ -173,8 +173,8 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
 
   if (loading) {
     return (
-      <div className="bg-[#161616] border border-border rounded-xl p-6">
-        <div className="flex items-center gap-3 text-zinc-400">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
+        <div className="flex items-center gap-3 text-[var(--color-on-surface-variant)]">
           <Loader2 className="w-5 h-5 animate-spin" />
           <span>Lade Versionshistorie...</span>
         </div>
@@ -184,7 +184,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
 
   if (error) {
     return (
-      <div className="bg-[#161616] border border-border rounded-xl p-6">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
         <div className="flex items-center gap-3 text-red-400">
           <GitBranch className="w-5 h-5" />
           <span>{error}</span>
@@ -195,12 +195,12 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
 
   if (!data || data.versions.length === 0) {
     return (
-      <div className="bg-[#161616] border border-border rounded-xl p-6">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
         <div className="flex items-center gap-3">
-          <GitBranch className="w-5 h-5 text-zinc-500" />
-          <h3 className="text-sm text-zinc-500 uppercase tracking-wider">Versionshistorie</h3>
+          <GitBranch className="w-5 h-5 text-[var(--color-on-surface-variant)]" />
+          <h3 className="text-sm text-[var(--color-on-surface-variant)] uppercase tracking-wider">Versionshistorie</h3>
         </div>
-        <p className="text-zinc-500 text-sm mt-3">
+        <p className="text-[var(--color-on-surface-variant)] text-sm mt-3">
           Noch keine Versionen. Versionen werden bei Änderungen automatisch erstellt.
         </p>
       </div>
@@ -213,15 +213,15 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
     : null
 
   return (
-    <div className="bg-[#161616] border border-border rounded-xl p-6">
+    <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <GitBranch className="w-5 h-5 text-blue-400" />
-          <h3 className="text-sm text-zinc-500 uppercase tracking-wider">
+          <h3 className="text-sm text-[var(--color-on-surface-variant)] uppercase tracking-wider">
             Versionshistorie
           </h3>
-          <span className="px-2 py-0.5 bg-[#222] border border-[#333] text-zinc-400 text-xs rounded-full">
+          <span className="px-2 py-0.5 bg-[#222] border border-border text-[var(--color-on-surface-variant)] text-xs rounded-full">
             {data.totalVersions} Versionen
           </span>
         </div>
@@ -230,7 +230,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
           className={`flex items-center gap-1.5 px-2 py-1 text-xs rounded transition-colors ${
             showDiff 
               ? 'bg-blue-50 border border-blue-200 text-blue-700' 
-              : 'bg-[#222] border border-[#333] text-zinc-400 hover:text-white'
+              : 'bg-[#222] border border-border text-[var(--color-on-surface-variant)] hover:text-white'
           }`}
         >
           {showDiff ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
@@ -247,7 +247,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
           {displayVersions.map((version, index) => {
             const previousVersion = data.versions[index + 1] || null
             const diffs = showDiff ? calculateDiff(version, previousVersion) : []
-            const statusConfig = statusLabels[version.status] || { label: version.status, color: 'text-zinc-400' }
+            const statusConfig = statusLabels[version.status] || { label: version.status, color: 'text-[var(--color-on-surface-variant)]' }
             const isSelected = selectedVersion === version.id
             
             return (
@@ -256,7 +256,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                 <div className={`absolute left-0 top-2 w-6 h-6 rounded-full flex items-center justify-center ${
                   index === 0 
                     ? 'bg-blue-500/20 border-2 border-blue-500' 
-                    : 'bg-[#222] border border-[#333]'
+                    : 'bg-[#222] border border-border'
                 }`}>
                   <span className="text-xs font-medium text-zinc-300">
                     {version.versionNummer}
@@ -268,7 +268,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                   className={`p-4 rounded-lg transition-colors cursor-pointer ${
                     isSelected 
                       ? 'bg-[#1f1f1f] border border-blue-500/30' 
-                      : 'bg-[#1a1a1a] border border-[#252525] hover:border-[#333]'
+                      : 'bg-[var(--color-surface-container-lowest)] border border-[#252525] hover:border-border'
                   }`}
                   onClick={() => setSelectedVersion(isSelected ? null : version.id)}
                 >
@@ -286,7 +286,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                   </div>
                   
                   {/* Meta Info */}
-                  <div className="flex items-center gap-4 text-xs text-zinc-500 mb-2">
+                  <div className="flex items-center gap-4 text-xs text-[var(--color-on-surface-variant)] mb-2">
                     <span className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       {formatDateTime(version.createdAt)}
@@ -299,7 +299,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                   
                   {/* Änderungsgrund */}
                   {version.aenderungsgrund && (
-                    <div className="flex items-start gap-2 text-sm text-zinc-400 mb-2">
+                    <div className="flex items-start gap-2 text-sm text-[var(--color-on-surface-variant)] mb-2">
                       <MessageSquare className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
                       <span className="italic">"{version.aenderungsgrund}"</span>
                     </div>
@@ -308,11 +308,11 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                   {/* Diff Anzeige */}
                   {showDiff && diffs.length > 0 && (
                     <div className="mt-3 pt-3 border-t border-border">
-                      <div className="text-xs text-zinc-500 mb-2">Änderungen:</div>
+                      <div className="text-xs text-[var(--color-on-surface-variant)] mb-2">Änderungen:</div>
                       <div className="space-y-1.5">
                         {diffs.map((diff, i) => (
                           <div key={i} className="flex items-center gap-2 text-sm">
-                            <span className="text-zinc-500 min-w-[100px]">{diff.label}:</span>
+                            <span className="text-[var(--color-on-surface-variant)] min-w-[100px]">{diff.label}:</span>
                             <span className="text-red-400/70 line-through">{diff.oldValue}</span>
                             <ArrowRight className="w-3 h-3 text-zinc-600" />
                             <span className="text-emerald-400">{diff.newValue}</span>
@@ -327,39 +327,39 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                     <div className="mt-4 pt-4 border-t border-border">
                       <div className="grid grid-cols-2 gap-3 text-sm">
                         <div>
-                          <span className="text-zinc-500">Rechnungsnr.:</span>
+                          <span className="text-[var(--color-on-surface-variant)]">Rechnungsnr.:</span>
                           <span className="ml-2 text-white">{version.nummer}</span>
                         </div>
                         <div>
-                          <span className="text-zinc-500">MwSt.:</span>
+                          <span className="text-[var(--color-on-surface-variant)]">MwSt.:</span>
                           <span className="ml-2 text-white">{version.mwst}%</span>
                         </div>
                         <div>
-                          <span className="text-zinc-500">Netto:</span>
+                          <span className="text-[var(--color-on-surface-variant)]">Netto:</span>
                           <span className="ml-2 text-white">{formatCurrency(version.nettoBetrag)}</span>
                         </div>
                         <div>
-                          <span className="text-zinc-500">Brutto:</span>
+                          <span className="text-[var(--color-on-surface-variant)]">Brutto:</span>
                           <span className="ml-2 text-white">{formatCurrency(version.bruttoBetrag)}</span>
                         </div>
                         {version.rabatt && version.rabatt > 0 && (
                           <>
                             <div>
-                              <span className="text-zinc-500">Rabatt:</span>
+                              <span className="text-[var(--color-on-surface-variant)]">Rabatt:</span>
                               <span className="ml-2 text-emerald-400">{version.rabatt}%</span>
                             </div>
                             <div>
-                              <span className="text-zinc-500">Rabattbetrag:</span>
+                              <span className="text-[var(--color-on-surface-variant)]">Rabattbetrag:</span>
                               <span className="ml-2 text-emerald-400">{formatCurrency(version.rabattBetrag)}</span>
                             </div>
                           </>
                         )}
                         <div>
-                          <span className="text-zinc-500">Fällig am:</span>
+                          <span className="text-[var(--color-on-surface-variant)]">Fällig am:</span>
                           <span className="ml-2 text-white">{formatDate(version.faelligAm)}</span>
                         </div>
                         <div>
-                          <span className="text-zinc-500">Rechnungsdatum:</span>
+                          <span className="text-[var(--color-on-surface-variant)]">Rechnungsdatum:</span>
                           <span className="ml-2 text-white">{formatDate(version.rechnungsDatum)}</span>
                         </div>
                       </div>
@@ -367,13 +367,13 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
                       {/* Positionen */}
                       {version.positionen && version.positionen.length > 0 && (
                         <div className="mt-4">
-                          <div className="text-xs text-zinc-500 mb-2">
+                          <div className="text-xs text-[var(--color-on-surface-variant)] mb-2">
                             Positionen ({version.positionen.length}):
                           </div>
                           <div className="space-y-1">
                             {version.positionen.map((pos, i) => (
                               <div key={i} className="flex justify-between text-sm py-1 border-b border-[#252525] last:border-0">
-                                <span className="text-zinc-400">{pos.beschreibung}</span>
+                                <span className="text-[var(--color-on-surface-variant)]">{pos.beschreibung}</span>
                                 <span className="text-white">
                                   {pos.menge} {pos.einheit} × {formatCurrency(pos.preisProEinheit)} = {formatCurrency(pos.gesamt)}
                                 </span>
@@ -395,7 +395,7 @@ export default function VersionsSection({ rechnungId }: VersionsSectionProps) {
       {data.versions.length > 3 && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-2 w-full mt-4 px-3 py-2 bg-[#1a1a1a] border border-[#252525] text-zinc-400 rounded-lg hover:bg-[#222] hover:text-white transition-colors text-sm"
+          className="flex items-center gap-2 w-full mt-4 px-3 py-2 bg-[var(--color-surface-container-lowest)] border border-[#252525] text-[var(--color-on-surface-variant)] rounded-lg hover:bg-[#222] hover:text-white transition-colors text-sm"
         >
           {expanded ? (
             <>

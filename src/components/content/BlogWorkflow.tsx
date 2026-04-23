@@ -53,9 +53,9 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
   // Nur für abgeschlossene Aufträge anzeigen
   if (auftragStatus !== "abgeschlossen") {
     return (
-      <div className="bg-[#161616] border border-border rounded-xl p-6 text-center">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6 text-center">
         <FileText className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
-        <p className="text-zinc-400">Bewertungs-Workflow verfügbar nach Auftragsabschluss</p>
+        <p className="text-[var(--color-on-surface-variant)]">Bewertungs-Workflow verfügbar nach Auftragsabschluss</p>
         <p className="text-zinc-600 text-sm mt-1">Status muss "abgeschlossen" sein</p>
       </div>
     )
@@ -127,14 +127,14 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
 
   if (loading) {
     return (
-      <div className="bg-[#161616] border border-border rounded-xl p-6 flex items-center justify-center">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6 flex items-center justify-center">
         <Loader2 className="w-6 h-6 text-gold animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+    <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-border">
         <h3 className="text-sm font-medium text-white flex items-center gap-2">
@@ -162,11 +162,11 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
                       ? "bg-gold text-[#0f0f0f]" 
                       : isCurrent 
                         ? "bg-gold/20 border-2 border-gold text-gold"
-                        : "bg-surface-container-highest text-zinc-500"
+                        : "bg-surface-container-highest text-[var(--color-on-surface-variant)]"
                   }`}>
                     {isCompleted ? <Check className="w-4 h-4" /> : <StepIcon className="w-4 h-4" />}
                   </div>
-                  <span className={`text-xs mt-1 ${isCurrent ? "text-white" : "text-zinc-500"}`}>
+                  <span className={`text-xs mt-1 ${isCurrent ? "text-white" : "text-[var(--color-on-surface-variant)]"}`}>
                     {step.label}
                   </span>
                 </div>
@@ -196,7 +196,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
         {/* Schritt 1: Einwilligung */}
         {currentStep === 0 && (
           <div className="space-y-3">
-            <p className="text-sm text-zinc-400">
+            <p className="text-sm text-[var(--color-on-surface-variant)]">
               Waldbesitzer um Einwilligung für Referenz-Bericht bitten.
             </p>
             
@@ -227,7 +227,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
             )}
             
             {content?.einwilligungStatus === "ANGEFRAGT" && (
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-[var(--color-on-surface-variant)]">
                 ⏳ Einwilligungsanfrage versendet — warte auf Antwort
               </p>
             )}
@@ -237,7 +237,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
         {/* Schritt 2: Content generieren */}
         {currentStep === 1 && (
           <div className="space-y-3">
-            <p className="text-sm text-zinc-400">
+            <p className="text-sm text-[var(--color-on-surface-variant)]">
               ✅ Einwilligung erteilt am {content?.einwilligungDatum 
                 ? new Date(content.einwilligungDatum).toLocaleDateString("de-DE") 
                 : "–"}
@@ -256,14 +256,14 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
         {/* Schritt 3: Freigabe */}
         {currentStep === 2 && (
           <div className="space-y-4">
-            <p className="text-sm text-zinc-400">Content-Vorschau prüfen und freigeben:</p>
+            <p className="text-sm text-[var(--color-on-surface-variant)]">Content-Vorschau prüfen und freigeben:</p>
             
             {editMode ? (
               <div className="space-y-3">
                 <textarea
                   value={editedContent || content?.contentVorschlag || ""}
                   onChange={(e) => setEditedContent(e.target.value)}
-                  className="w-full h-64 bg-[#0f0f0f] border border-border rounded-lg p-3 text-sm text-zinc-300 font-mono resize-none"
+                  className="w-full h-64 bg-[var(--color-surface-container-low)] border border-border rounded-lg p-3 text-sm text-zinc-300 font-mono resize-none"
                 />
                 <div className="flex gap-3">
                   <button
@@ -279,7 +279,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
                   </button>
                   <button
                     onClick={() => setEditMode(false)}
-                    className="px-4 py-2 text-sm text-zinc-400 hover:text-white"
+                    className="px-4 py-2 text-sm text-[var(--color-on-surface-variant)] hover:text-white"
                   >
                     Abbrechen
                   </button>
@@ -287,7 +287,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
               </div>
             ) : (
               <>
-                <div className="bg-[#0f0f0f] border border-border rounded-lg p-4 max-h-64 overflow-y-auto">
+                <div className="bg-[var(--color-surface-container-low)] border border-border rounded-lg p-4 max-h-64 overflow-y-auto">
                   <div className="prose prose-sm prose-invert">
                     {content?.contentVorschlag?.split("\n").map((line, i) => (
                       <p key={i} className="text-sm text-zinc-300">{line}</p>
@@ -330,7 +330,7 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
         {/* Schritt 4: Veröffentlichen */}
         {currentStep === 3 && (
           <div className="space-y-3">
-            <p className="text-sm text-zinc-400">
+            <p className="text-sm text-[var(--color-on-surface-variant)]">
               ✅ Freigegeben am {content?.tomekFreigabeDatum 
                 ? new Date(content.tomekFreigabeDatum).toLocaleDateString("de-DE") 
                 : "–"}

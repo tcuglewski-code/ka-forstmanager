@@ -87,20 +87,20 @@ export default async function FlaecheDetailPage({
       <div className="flex items-center gap-2 mb-6">
         <Link
           href="/saatguternte/register"
-          className="flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
+          className="flex items-center gap-1.5 text-sm text-[var(--color-on-surface-variant)] hover:text-zinc-300 transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           Register-Übersicht
         </Link>
         <span className="text-zinc-700">/</span>
-        <span className="text-sm text-zinc-400 font-mono">{flaeche.registerNr}</span>
+        <span className="text-sm text-[var(--color-on-surface-variant)] font-mono">{flaeche.registerNr}</span>
       </div>
 
       {/* Header */}
       <div className="flex items-start gap-2 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white font-mono">{flaeche.registerNr}</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-0.5">
             {flaeche.baumart} · {flaeche.bundesland}
           </p>
         </div>
@@ -121,7 +121,7 @@ export default async function FlaecheDetailPage({
         {hasKoord && (
           <a
             href={`/saatguternte/scout/${flaeche.id}`}
-            className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-[#1e1e1e] border border-border hover:border-emerald-500 rounded-lg text-xs text-zinc-400 hover:text-emerald-400 transition-all"
+            className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-emerald-500 rounded-lg text-xs text-[var(--color-on-surface-variant)] hover:text-emerald-400 transition-all"
           >
             📱 Scout-Ansicht <ExternalLink className="w-3 h-3" />
           </a>

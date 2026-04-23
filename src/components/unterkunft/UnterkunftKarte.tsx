@@ -162,7 +162,7 @@ export function UnterkunftKarte({ zentrum, unterkuenfte, auftragsName }: Props) 
       <div ref={mapRef} className="flex-1 rounded-xl overflow-hidden border border-border" />
       
       {/* Seitenleiste */}
-      <div className="w-80 bg-[#161616] border border-border rounded-xl overflow-hidden flex flex-col">
+      <div className="w-80 bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden flex flex-col">
         <div className="p-4 border-b border-border">
           <h3 className="text-sm font-medium text-white flex items-center gap-2">
             <Hotel className="w-4 h-4" />
@@ -185,7 +185,7 @@ export function UnterkunftKarte({ zentrum, unterkuenfte, auftragsName }: Props) 
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-white truncate">{u.name}</p>
-                  <p className="text-xs text-zinc-500 mt-0.5">
+                  <p className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">
                     {typLabels[u.typ] || u.typ}
                     {u.sterne && (
                       <span className="ml-2">
@@ -207,11 +207,11 @@ export function UnterkunftKarte({ zentrum, unterkuenfte, auftragsName }: Props) 
         
         {/* Detail-Panel */}
         {selectedUnterkunft && (
-          <div className="p-4 border-t border-border bg-[#0f0f0f]">
+          <div className="p-4 border-t border-border bg-[var(--color-surface-container-low)]">
             <h4 className="text-sm font-medium text-white mb-2">{selectedUnterkunft.name}</h4>
             <div className="space-y-2 text-xs">
               {selectedUnterkunft.adresse && (
-                <p className="flex items-start gap-2 text-zinc-400">
+                <p className="flex items-start gap-2 text-[var(--color-on-surface-variant)]">
                   <MapPin className="w-3 h-3 mt-0.5 flex-shrink-0" />
                   {selectedUnterkunft.adresse}
                 </p>
@@ -219,14 +219,14 @@ export function UnterkunftKarte({ zentrum, unterkuenfte, auftragsName }: Props) 
               {selectedUnterkunft.telefon && (
                 <a
                   href={`tel:${selectedUnterkunft.telefon}`}
-                  className="flex items-center gap-2 text-zinc-400 hover:text-white"
+                  className="flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:text-white"
                 >
                   <Phone className="w-3 h-3" />
                   {selectedUnterkunft.telefon}
                 </a>
               )}
               {selectedUnterkunft.sterne && (
-                <p className="flex items-center gap-2 text-zinc-400">
+                <p className="flex items-center gap-2 text-[var(--color-on-surface-variant)]">
                   <Star className="w-3 h-3" />
                   {selectedUnterkunft.sterne} Sterne
                 </p>
@@ -265,10 +265,10 @@ export function UnterkunftKarte({ zentrum, unterkuenfte, auftragsName }: Props) 
 export function UnterkunftKarteSkeleton() {
   return (
     <div className="flex gap-4 h-[600px]">
-      <div className="flex-1 rounded-xl bg-[#161616] border border-border flex items-center justify-center">
+      <div className="flex-1 rounded-xl bg-[var(--color-surface-container)] border border-border flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-zinc-600 animate-spin" />
       </div>
-      <div className="w-80 bg-[#161616] border border-border rounded-xl" />
+      <div className="w-80 bg-[var(--color-surface-container)] border border-border rounded-xl" />
     </div>
   )
 }

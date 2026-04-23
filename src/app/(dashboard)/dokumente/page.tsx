@@ -25,7 +25,7 @@ const typBadge: Record<string, string> = {
   protokoll: "bg-amber-100 text-amber-800",
   foerderantrag: "bg-emerald-100 text-emerald-800",
   rechnung: "bg-red-100 text-red-800",
-  sonstiges: "bg-zinc-700/50 text-zinc-400",
+  sonstiges: "bg-[var(--color-surface-container-high)]/50 text-[var(--color-on-surface-variant)]",
 }
 
 const typLabel: Record<string, string> = {
@@ -106,7 +106,7 @@ export default function DokumentePage() {
           <h1 className="text-2xl font-bold flex items-center gap-2" style={{ color: "var(--color-on-surface)" }}>
             <FileText className="w-6 h-6 text-emerald-400" /> Dokumente
           </h1>
-          <p className="text-zinc-500 text-sm mt-1">Fotos, Karten, Protokolle und Förderanträge</p>
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">Fotos, Karten, Protokolle und Förderanträge</p>
         </div>
         <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
           <Plus className="w-4 h-4" /> Dokument hochladen
@@ -132,16 +132,16 @@ export default function DokumentePage() {
       {loading ? (
         <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
       ) : (
-        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Name</th>
-                <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Typ</th>
-                <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Zuordnung</th>
-                <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Hochgeladen</th>
-                <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Von</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Name</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Typ</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Zuordnung</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Hochgeladen</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Von</th>
                 <th className="px-6 py-3"></th>
               </tr>
             </thead>
@@ -152,15 +152,15 @@ export default function DokumentePage() {
                 <tr key={d.id} className="hover:bg-[#1c1c1c]">
                   <td className="px-6 py-4 text-sm" style={{ color: "var(--color-on-surface)" }}>{d.name}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${typBadge[d.typ] ?? "bg-zinc-700 text-zinc-400"}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-xs ${typBadge[d.typ] ?? "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]"}`}>
                       {typLabel[d.typ] ?? d.typ}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-zinc-400">
+                  <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">
                     {d.auftrag?.titel ?? d.saison?.name ?? "—"}
                   </td>
-                  <td className="px-6 py-4 text-sm text-zinc-400">{new Date(d.createdAt).toLocaleDateString("de-DE")}</td>
-                  <td className="px-6 py-4 text-sm text-zinc-500">{d.hochgeladenVon ?? "—"}</td>
+                  <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{new Date(d.createdAt).toLocaleDateString("de-DE")}</td>
+                  <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{d.hochgeladenVon ?? "—"}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2 justify-end">
                       <a href={d.url ?? ""} target="_blank" rel="noreferrer" className="text-zinc-600 hover:text-emerald-400 transition-all">
@@ -183,32 +183,32 @@ export default function DokumentePage() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto">
+          <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto">
             <h2 className="text-lg font-bold mb-4" style={{ color: "var(--color-on-surface)" }}>Dokument hochladen</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Name</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Name</label>
                 <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }} />
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Typ</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Typ</label>
                 <select value={form.typ} onChange={(e) => setForm({ ...form, typ: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }}>
                   {Object.entries(typLabel).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">URL / Link</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">URL / Link</label>
                 <input value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }} placeholder="https://..." />
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Auftrag (optional)</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Auftrag (optional)</label>
                 <select value={form.auftragId} onChange={(e) => setForm({ ...form, auftragId: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }}>
                   <option value="">— kein Auftrag —</option>
                   {auftraege.map((a) => <option key={a.id} value={a.id}>{a.titel}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Saison (optional)</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Saison (optional)</label>
                 <select value={form.saisonId} onChange={(e) => setForm({ ...form, saisonId: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--color-on-surface)" }}>
                   <option value="">— keine Saison —</option>
                   {saisons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -216,7 +216,7 @@ export default function DokumentePage() {
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 rounded-lg border border-[#333] text-zinc-400 text-sm hover:bg-[#222]">Abbrechen</button>
+              <button onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 rounded-lg border border-border text-[var(--color-on-surface-variant)] text-sm hover:bg-[#222]">Abbrechen</button>
               <button onClick={upload} disabled={saving || !form.name || !form.url} className="flex-1 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium disabled:opacity-50">
                 {saving ? "Speichern..." : "Hochladen"}
               </button>

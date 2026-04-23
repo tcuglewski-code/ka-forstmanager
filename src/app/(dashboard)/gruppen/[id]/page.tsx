@@ -71,7 +71,7 @@ export default function GruppeDetailPage() {
       <Breadcrumb items={[{ label: "Gruppen", href: "/gruppen" }, { label: gruppe.name }]} />
       <button
         onClick={() => router.back()}
-        className="flex items-center gap-2 text-zinc-500 hover:text-white mb-6 transition-colors text-sm"
+        className="flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:text-white mb-6 transition-colors text-sm"
       >
         <ArrowLeft className="w-4 h-4" /> Zurück
       </button>
@@ -94,7 +94,7 @@ export default function GruppeDetailPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Mitglieder */}
-        <div className="bg-[#161616] border border-border rounded-xl p-5">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
           <h2 className="font-semibold text-white mb-4">Mitglieder ({gruppe.mitglieder.length})</h2>
 
           <div className="space-y-2 mb-4">
@@ -105,7 +105,7 @@ export default function GruppeDetailPage() {
                 <div key={m.id} className="flex items-center justify-between py-2 border-b border-border">
                   <div>
                     <p className="text-sm text-white">{m.mitarbeiter.vorname} {m.mitarbeiter.nachname}</p>
-                    <p className="text-xs text-zinc-500">{m.rolle}</p>
+                    <p className="text-xs text-[var(--color-on-surface-variant)]">{m.rolle}</p>
                   </div>
                   <button
                     onClick={() => removeMitglied(m.mitarbeiter.id)}
@@ -123,7 +123,7 @@ export default function GruppeDetailPage() {
             <select
               value={selectedMitarbeiterId}
               onChange={e => setSelectedMitarbeiterId(e.target.value)}
-              className="flex-1 bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="flex-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
             >
               <option value="">— Mitarbeiter wählen —</option>
               {verfuegbareMitarbeiter.map(m => (
@@ -141,7 +141,7 @@ export default function GruppeDetailPage() {
         </div>
 
         {/* Aufträge */}
-        <div className="bg-[#161616] border border-border rounded-xl p-5">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
           <h2 className="font-semibold text-white mb-4">Aufträge ({gruppe.auftraege.length})</h2>
           {gruppe.auftraege.length === 0 ? (
             <p className="text-zinc-600 text-sm">Keine Aufträge zugewiesen</p>
@@ -150,7 +150,7 @@ export default function GruppeDetailPage() {
               {gruppe.auftraege.map(a => (
                 <div key={a.id} className="flex items-center justify-between py-2 border-b border-border">
                   <p className="text-sm text-white">{a.titel}</p>
-                  <span className="text-xs text-zinc-500 bg-[#0f0f0f] px-2 py-0.5 rounded">{a.status}</span>
+                  <span className="text-xs text-[var(--color-on-surface-variant)] bg-[var(--color-surface-container-low)] px-2 py-0.5 rounded">{a.status}</span>
                 </div>
               ))}
             </div>

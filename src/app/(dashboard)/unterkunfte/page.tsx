@@ -39,7 +39,7 @@ export default async function UnterkunftePage() {
       
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground">Unterkunftsplanung</h1>
-        <p className="text-sm text-zinc-400 mt-1">
+        <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">
           Finde Hotels und Pensionen in der Nähe von Aufträgen
         </p>
       </div>

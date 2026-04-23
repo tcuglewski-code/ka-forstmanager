@@ -175,7 +175,7 @@ export default function ZipayoButton({
       {/* Payment Modal */}
       {modalOpen && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-border rounded-2xl w-full max-w-sm overflow-hidden">
+          <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-2xl w-full max-w-sm overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-border">
               <div className="flex items-center gap-2">
@@ -184,7 +184,7 @@ export default function ZipayoButton({
                 </div>
                 <span className="font-semibold text-white">Zipayo</span>
               </div>
-              <button onClick={closeModal} className="text-zinc-400 hover:text-white">
+              <button onClick={closeModal} className="text-[var(--color-on-surface-variant)] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -194,7 +194,7 @@ export default function ZipayoButton({
               {loading && (
                 <div className="flex flex-col items-center py-8">
                   <Loader2 className="w-10 h-10 text-[#818cf8] animate-spin mb-4" />
-                  <p className="text-zinc-400">Zahlung wird erstellt...</p>
+                  <p className="text-[var(--color-on-surface-variant)]">Zahlung wird erstellt...</p>
                 </div>
               )}
 
@@ -229,7 +229,7 @@ export default function ZipayoButton({
 
                   {/* Instructions */}
                   <div className="text-center mb-4">
-                    <div className="flex items-center justify-center gap-2 text-zinc-400 mb-2">
+                    <div className="flex items-center justify-center gap-2 text-[var(--color-on-surface-variant)] mb-2">
                       <QrCode className="w-4 h-4" />
                       <span className="text-sm">QR-Code scannen zum Bezahlen</span>
                     </div>
@@ -260,7 +260,7 @@ export default function ZipayoButton({
                     <CheckCircle className="w-10 h-10 text-emerald-400" />
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2">Zahlung erfolgreich!</h3>
-                  <p className="text-zinc-400 text-center">
+                  <p className="text-[var(--color-on-surface-variant)] text-center">
                     {formatAmount(payment?.amount || 0)} wurde bezahlt
                   </p>
                   <button
@@ -278,7 +278,7 @@ export default function ZipayoButton({
                     <XCircle className="w-10 h-10 text-red-400" />
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2">Zahlung fehlgeschlagen</h3>
-                  <p className="text-zinc-400 text-center">
+                  <p className="text-[var(--color-on-surface-variant)] text-center">
                     Die Zahlung konnte nicht abgeschlossen werden
                   </p>
                   <button
@@ -296,7 +296,7 @@ export default function ZipayoButton({
                     <XCircle className="w-10 h-10 text-amber-400" />
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2">Zahlung abgelaufen</h3>
-                  <p className="text-zinc-400 text-center">
+                  <p className="text-[var(--color-on-surface-variant)] text-center">
                     Der QR-Code ist nicht mehr gültig
                   </p>
                   <button
@@ -310,7 +310,7 @@ export default function ZipayoButton({
             </div>
 
             {/* Footer */}
-            <div className="px-5 py-3 bg-[#111] border-t border-border text-center">
+            <div className="px-5 py-3 bg-[var(--color-surface-container-low)] border-t border-border text-center">
               <p className="text-xs text-zinc-600">
                 Powered by Zipayo • Sichere Zahlung via Stripe
               </p>

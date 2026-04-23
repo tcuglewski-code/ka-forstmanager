@@ -116,7 +116,7 @@ export function MaterialTab({ auftragId }: MaterialTabProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-5 h-5 text-zinc-500 animate-spin" />
+        <Loader2 className="w-5 h-5 text-[var(--color-on-surface-variant)] animate-spin" />
       </div>
     )
   }
@@ -125,7 +125,7 @@ export function MaterialTab({ auftragId }: MaterialTabProps) {
     return (
       <div className="text-center py-12">
         <Package className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
-        <p className="text-zinc-500 text-sm">Keine Materialreservierungen für diesen Auftrag</p>
+        <p className="text-[var(--color-on-surface-variant)] text-sm">Keine Materialreservierungen für diesen Auftrag</p>
         <p className="text-zinc-600 text-xs mt-1">
           Reservierungen können über das Lager erstellt werden
         </p>
@@ -141,34 +141,34 @@ export function MaterialTab({ auftragId }: MaterialTabProps) {
     <div className="space-y-4">
       {/* Zusammenfassung */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-[#1e1e1e] rounded-lg p-3 text-center">
+        <div className="bg-[var(--color-surface-container-highest)] rounded-lg p-3 text-center">
           <p className="text-lg font-semibold text-blue-400">{reserviert.length}</p>
-          <p className="text-xs text-zinc-500">Reserviert</p>
+          <p className="text-xs text-[var(--color-on-surface-variant)]">Reserviert</p>
         </div>
-        <div className="bg-[#1e1e1e] rounded-lg p-3 text-center">
+        <div className="bg-[var(--color-surface-container-highest)] rounded-lg p-3 text-center">
           <p className="text-lg font-semibold text-emerald-400">{verbraucht.length}</p>
-          <p className="text-xs text-zinc-500">Verbraucht</p>
+          <p className="text-xs text-[var(--color-on-surface-variant)]">Verbraucht</p>
         </div>
-        <div className="bg-[#1e1e1e] rounded-lg p-3 text-center">
+        <div className="bg-[var(--color-surface-container-highest)] rounded-lg p-3 text-center">
           <p className="text-lg font-semibold text-amber-400">{zurueck.length}</p>
-          <p className="text-xs text-zinc-500">Zurückgegeben</p>
+          <p className="text-xs text-[var(--color-on-surface-variant)]">Zurückgegeben</p>
         </div>
       </div>
 
       {/* Reservierungsliste */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left px-4 py-3 text-zinc-500 font-medium">Artikel</th>
-              <th className="text-right px-4 py-3 text-zinc-500 font-medium">Menge</th>
-              <th className="text-center px-4 py-3 text-zinc-500 font-medium">Status</th>
-              <th className="text-right px-4 py-3 text-zinc-500 font-medium">Aktionen</th>
+              <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Artikel</th>
+              <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Menge</th>
+              <th className="text-center px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Status</th>
+              <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Aktionen</th>
             </tr>
           </thead>
           <tbody>
             {reservierungen.map(r => (
-              <tr key={r.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors">
+              <tr key={r.id} className="border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
                     <BestandsAmpel 
@@ -215,7 +215,7 @@ export function MaterialTab({ auftragId }: MaterialTabProps) {
                       </>
                     )}
                     {r.status === "VERBRAUCHT" && r.verbrauchtAm && (
-                      <span className="text-xs text-zinc-500">
+                      <span className="text-xs text-[var(--color-on-surface-variant)]">
                         {new Date(r.verbrauchtAm).toLocaleDateString("de-DE")}
                       </span>
                     )}

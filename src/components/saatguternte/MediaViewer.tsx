@@ -340,7 +340,7 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* ─── Browser-Panel (links) ──────────────────────────────── */}
-        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
           {/* Panel-Header */}
           <div className="px-4 py-3 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm font-medium text-zinc-300">
@@ -364,7 +364,7 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
           </div>
 
           {/* Breadcrumb */}
-          <div className="px-4 py-2 border-b border-border flex items-center gap-1 flex-wrap text-xs text-zinc-500 overflow-x-auto">
+          <div className="px-4 py-2 border-b border-border flex items-center gap-1 flex-wrap text-xs text-[var(--color-on-surface-variant)] overflow-x-auto">
             <button
               onClick={() => browseTo("/")}
               className="hover:text-zinc-300 transition-colors whitespace-nowrap"
@@ -377,7 +377,7 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
                 <button
                   onClick={() => browseTo(seg.path + "/")}
                   className={`hover:text-zinc-300 transition-colors whitespace-nowrap ${
-                    i === breadcrumb.length - 1 ? "text-zinc-200" : ""
+                    i === breadcrumb.length - 1 ? "text-[var(--color-on-surface)]" : ""
                   }`}
                 >
                   {seg.label}
@@ -399,7 +399,7 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
                 <p className="text-sm text-red-400">{browserError}</p>
                 <button
                   onClick={() => browseTo(browserPath)}
-                  className="mt-3 text-xs text-zinc-500 hover:text-zinc-300"
+                  className="mt-3 text-xs text-[var(--color-on-surface-variant)] hover:text-zinc-300"
                 >
                   Erneut versuchen
                 </button>
@@ -450,13 +450,13 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
                         <img
                           src={proxyUrl(file.path)}
                           alt={file.name}
-                          className="w-10 h-10 object-cover rounded flex-shrink-0 bg-zinc-800"
+                          className="w-10 h-10 object-cover rounded flex-shrink-0 bg-[var(--color-surface-container-lowest)]"
                           onError={(e) => {
                             e.currentTarget.style.display = "none"
                           }}
                         />
                       ) : (
-                        <div className="w-10 h-10 flex-shrink-0 bg-zinc-800 rounded flex items-center justify-center">
+                        <div className="w-10 h-10 flex-shrink-0 bg-[var(--color-surface-container-lowest)] rounded flex items-center justify-center">
                           <Video className="w-5 h-5 text-blue-400" />
                         </div>
                       )}
@@ -482,7 +482,7 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
 
           {/* Footer: Zuordnen-Button */}
           {selectedPaths.size > 0 && (
-            <div className="px-4 py-3 border-t border-border bg-[#111]">
+            <div className="px-4 py-3 border-t border-border bg-[var(--color-surface-container-low)]">
               <button
                 onClick={handleZuordnen}
                 disabled={assigning}
@@ -500,14 +500,14 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
         </div>
 
         {/* ─── Zugeordnete Medien (rechts) ──────────────────────── */}
-        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
           {/* Panel-Header */}
           <div className="px-4 py-3 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm font-medium text-zinc-300">
               <ImageIcon className="w-4 h-4 text-emerald-400" />
               Zugeordnete Medien
               {medien.length > 0 && (
-                <span className="ml-1 px-1.5 py-0.5 bg-zinc-700 text-zinc-400 rounded text-xs">
+                <span className="ml-1 px-1.5 py-0.5 bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)] rounded text-xs">
                   {medien.length}
                 </span>
               )}
@@ -522,7 +522,7 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
                   className={`px-2 py-1 rounded transition-colors capitalize ${
                     sortKey === key
                       ? "bg-emerald-600/30 text-emerald-400"
-                      : "text-zinc-600 hover:text-zinc-400"
+                      : "text-zinc-600 hover:text-[var(--color-on-surface-variant)]"
                   }`}
                 >
                   {key === "dateiname" ? "Name" : key === "datum" ? "Datum" : "Mission"}
@@ -541,7 +541,7 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
             ) : sortedMedien.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <ImageIcon className="w-10 h-10 text-zinc-700 mb-3" />
-                <p className="text-sm text-zinc-500">Noch keine Medien zugeordnet</p>
+                <p className="text-sm text-[var(--color-on-surface-variant)]">Noch keine Medien zugeordnet</p>
                 <p className="text-xs text-zinc-600 mt-1">
                   Wähle links Dateien aus und klicke &quot;Zuordnen&quot;
                 </p>
@@ -551,7 +551,7 @@ export function MediaViewer({ flaecheId }: MediaViewerProps) {
                 {sortedMedien.map((m, idx) => (
                   <div
                     key={m.id}
-                    className="relative group rounded-lg overflow-hidden bg-zinc-900 border border-border hover:border-emerald-500/50 transition-all"
+                    className="relative group rounded-lg overflow-hidden bg-[var(--color-surface-container-low)] border border-border hover:border-emerald-500/50 transition-all"
                   >
                     {/* Medieninhalt */}
                     <div

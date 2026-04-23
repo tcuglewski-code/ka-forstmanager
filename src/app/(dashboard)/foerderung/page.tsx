@@ -173,7 +173,7 @@ function DetailModal({
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span
                 className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                  STATUS_FARBEN[prog.status || ""] || "bg-zinc-700/50 text-zinc-400"
+                  STATUS_FARBEN[prog.status || ""] || "bg-[var(--color-surface-container-high)]/50 text-[var(--color-on-surface-variant)]"
                 }`}
               >
                 {prog.status || "Unbekannt"}
@@ -187,11 +187,11 @@ function DetailModal({
                 </span>
               )}
             </div>
-            <h2 className="text-lg font-bold text-white leading-tight">{prog.name}</h2>
+            <h2 className="text-lg font-bold text-[var(--color-on-surface)] leading-tight">{prog.name}</h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-surface-container-highest rounded-lg text-zinc-400 hover:text-white transition-colors flex-shrink-0"
+            className="p-2 hover:bg-surface-container-highest rounded-lg text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors flex-shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
@@ -219,8 +219,8 @@ function DetailModal({
           {/* Beschreibungen */}
           {prog.foerdergegenstand && (
             <div>
-              <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Fördergegenstand</h3>
-              <p className="text-sm text-zinc-300 leading-relaxed bg-[#161616] rounded-lg p-3 border border-border">
+              <h3 className="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-2">Fördergegenstand</h3>
+              <p className="text-sm text-zinc-300 leading-relaxed bg-[var(--color-surface-container)] rounded-lg p-3 border border-border">
                 {prog.foerdergegenstand}
               </p>
             </div>
@@ -228,8 +228,8 @@ function DetailModal({
 
           {prog.zielgruppe && (
             <div>
-              <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Zielgruppe / Voraussetzungen</h3>
-              <p className="text-sm text-zinc-300 leading-relaxed bg-[#161616] rounded-lg p-3 border border-border">
+              <h3 className="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-2">Zielgruppe / Voraussetzungen</h3>
+              <p className="text-sm text-zinc-300 leading-relaxed bg-[var(--color-surface-container)] rounded-lg p-3 border border-border">
                 {prog.zielgruppe}
               </p>
             </div>
@@ -237,8 +237,8 @@ function DetailModal({
 
           {prog.foerderkulisse && (
             <div>
-              <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Förderkulisse</h3>
-              <p className="text-sm text-zinc-300 leading-relaxed bg-[#161616] rounded-lg p-3 border border-border">
+              <h3 className="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-2">Förderkulisse</h3>
+              <p className="text-sm text-zinc-300 leading-relaxed bg-[var(--color-surface-container)] rounded-lg p-3 border border-border">
                 {prog.foerderkulisse}
               </p>
             </div>
@@ -248,20 +248,20 @@ function DetailModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {prog.antragsfrist && (
               <div>
-                <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1">Antragsfrist</h3>
+                <h3 className="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-1">Antragsfrist</h3>
                 <p className="text-sm text-zinc-300">{prog.antragsfrist}</p>
               </div>
             )}
             {prog.antragsweg && (
               <div>
-                <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1">Antragsweg</h3>
+                <h3 className="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-1">Antragsweg</h3>
                 <p className="text-sm text-zinc-300">{prog.antragsweg}</p>
               </div>
             )}
             {prog.foerdergrundlage && (
               <div className="sm:col-span-2">
-                <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1">Rechtsgrundlage</h3>
-                <p className="text-sm text-zinc-400">{prog.foerdergrundlage}</p>
+                <h3 className="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-1">Rechtsgrundlage</h3>
+                <p className="text-sm text-[var(--color-on-surface-variant)]">{prog.foerdergrundlage}</p>
               </div>
             )}
           </div>
@@ -281,7 +281,7 @@ function DetailModal({
 
           {/* Empfehlung in Kundenakte */}
           <div className="border-t border-border pt-4">
-            <h3 className="text-sm font-medium text-white mb-3 flex items-center gap-2">
+            <h3 className="text-sm font-medium text-[var(--color-on-surface)] mb-3 flex items-center gap-2">
               <Save className="w-4 h-4 text-emerald-400" />
               Als Empfehlung in Kundenakte speichern
             </h3>
@@ -295,7 +295,7 @@ function DetailModal({
                 <select
                   value={selectedAuftrag}
                   onChange={(e) => setSelectedAuftrag(e.target.value)}
-                  className="flex-1 bg-[#1e1e1e] border border-[#333] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                  className="flex-1 bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
                 >
                   <option value="">Auftrag auswählen…</option>
                   {auftraege.map((a) => (
@@ -307,7 +307,7 @@ function DetailModal({
                 <button
                   onClick={handleSpeichern}
                   disabled={!selectedAuftrag || speichernLaeuft}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-zinc-700 disabled:text-zinc-500 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-[var(--color-surface-container-high)] disabled:text-[var(--color-on-surface-variant)] text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5"
                 >
                   {speichernLaeuft ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -339,8 +339,8 @@ function InfoField({
   if (!value) return null
   return (
     <div>
-      <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1">
-        {icon && <span className="text-zinc-600">{icon}</span>}
+      <div className="flex items-center gap-1.5 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-1">
+        {icon && <span className="text-[var(--color-on-surface-variant)]">{icon}</span>}
         {label}
       </div>
       <p className={`text-sm leading-snug ${highlight ? "text-emerald-300 font-medium" : "text-zinc-300"}`}>
@@ -365,17 +365,17 @@ function ProgrammKarte({
   return (
     <button
       onClick={onKlick}
-      className="w-full text-left bg-[#161616] border border-border rounded-xl p-4 hover:border-emerald-900/60 hover:bg-[#1a1a1a] transition-all group"
+      className="w-full text-left bg-[var(--color-surface-container)] border border-border rounded-xl p-4 hover:border-emerald-900/60 hover:bg-[var(--color-surface-container-lowest)] transition-all group"
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-3 mb-2">
-        <h3 className="text-sm font-semibold text-white leading-snug group-hover:text-emerald-100 transition-colors">
+        <h3 className="text-sm font-semibold text-[var(--color-on-surface)] leading-snug group-hover:text-emerald-100 transition-colors">
           {prog.name}
         </h3>
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <span
             className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-              STATUS_FARBEN[prog.status || ""] || "bg-zinc-700/50 text-zinc-400"
+              STATUS_FARBEN[prog.status || ""] || "bg-[var(--color-surface-container-high)]/50 text-[var(--color-on-surface-variant)]"
             }`}
           >
             {prog.status || "–"}
@@ -398,7 +398,7 @@ function ProgrammKarte({
           <KategorieBadge key={k} kat={k} />
         ))}
         {kategorien.length > 2 && (
-          <span className="px-2 py-0.5 bg-zinc-800 text-zinc-400 rounded text-xs">
+          <span className="px-2 py-0.5 bg-[var(--color-surface-container-lowest)] text-[var(--color-on-surface-variant)] rounded text-xs">
             +{kategorien.length - 2}
           </span>
         )}
@@ -406,7 +406,7 @@ function ProgrammKarte({
 
       {/* Förderstelle + Betrag */}
       <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-1.5 text-xs text-zinc-500 min-w-0">
+        <div className="flex items-center gap-1.5 text-xs text-[var(--color-on-surface-variant)] min-w-0">
           <Building2 className="w-3.5 h-3.5 flex-shrink-0" />
           <span className="truncate">{prog.traeger || "–"}</span>
         </div>
@@ -420,7 +420,7 @@ function ProgrammKarte({
 
       {/* Beschreibung */}
       {prog.foerdergegenstand && (
-        <p className="text-xs text-zinc-500 mt-2 line-clamp-2 leading-relaxed">
+        <p className="text-xs text-[var(--color-on-surface-variant)] mt-2 line-clamp-2 leading-relaxed">
           {prog.foerdergegenstand}
         </p>
       )}
@@ -531,7 +531,7 @@ export default function FoerderungPage() {
         </div>
         <div>
           <h1 className="text-xl font-bold text-foreground">Förder-Intelligence</h1>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-[var(--color-on-surface-variant)]">
             {ergebnisse.length > 0 && gestartet
               ? `${ergebnisse.length} Förderprogramme gefunden`
               : "Suche nach passenden Förderprogrammen für Ihre Projekte"}
@@ -546,8 +546,8 @@ export default function FoerderungPage() {
             <TreePine className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
-            <h2 className="text-white font-semibold text-base">Betriebs-Assistent</h2>
-            <p className="text-zinc-400 text-xs">Stellen Sie eine Frage zu Fördermöglichkeiten — KI durchsucht 255 Programme</p>
+            <h2 className="text-[var(--color-on-surface)] font-semibold text-base">Betriebs-Assistent</h2>
+            <p className="text-[var(--color-on-surface-variant)] text-xs">Stellen Sie eine Frage zu Fördermöglichkeiten — KI durchsucht 255 Programme</p>
           </div>
         </div>
 
@@ -557,18 +557,18 @@ export default function FoerderungPage() {
             value={beratungsFrage}
             onChange={(e) => setBeratungsFrage(e.target.value)}
             placeholder="z.B. Welche Förderung gibt es für Wiederbewaldung nach Borkenkäfer in Bayern? Oder: Wie kombiniere ich GAK und ELER-Förderung?"
-            className="w-full bg-[#0f0f0f] border border-border rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-700/60 resize-none"
+            className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-xl px-4 py-3 text-sm text-[var(--color-on-surface)] placeholder-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-700/60 resize-none"
             rows={3}
             onKeyDown={(e) => { if (e.key === "Enter" && e.metaKey) starteBeratung() }}
           />
 
           <div className="flex flex-wrap gap-3 items-end">
             <div className="flex-1 min-w-[140px]">
-              <label className="text-xs text-zinc-500 mb-1 block">Bundesland (optional)</label>
+              <label className="text-xs text-[var(--color-on-surface-variant)] mb-1 block">Bundesland (optional)</label>
               <select
                 value={beratungsBundesland}
                 onChange={(e) => setBeratungsBundesland(e.target.value)}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-700/60"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-700/60"
               >
                 <option value="">Alle Bundesländer</option>
                 {BUNDESLAENDER.map((bl) => (
@@ -578,13 +578,13 @@ export default function FoerderungPage() {
             </div>
 
             <div className="w-32">
-              <label className="text-xs text-zinc-500 mb-1 block">Fläche (ha)</label>
+              <label className="text-xs text-[var(--color-on-surface-variant)] mb-1 block">Fläche (ha)</label>
               <input
                 type="number"
                 value={beratungsFlaeche}
                 onChange={(e) => setBeratungsFlaeche(e.target.value)}
                 placeholder="z.B. 5.5"
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-700/60"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-700/60"
               />
             </div>
 
@@ -593,7 +593,7 @@ export default function FoerderungPage() {
                 type="checkbox"
                 checked={beratungsKalamitaet}
                 onChange={(e) => setBeratungsKalamitaet(e.target.checked)}
-                className="w-4 h-4 rounded border-border bg-zinc-900 text-emerald-500"
+                className="w-4 h-4 rounded border-border bg-[var(--color-surface-container-low)] text-emerald-500"
               />
               <span className="text-sm text-zinc-300">Kalamität / Schaden</span>
             </label>
@@ -601,7 +601,7 @@ export default function FoerderungPage() {
             <button
               onClick={starteBeratung}
               disabled={beratungsLaeuft || !beratungsFrage.trim()}
-              className="flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-zinc-700 disabled:text-zinc-500 text-white rounded-xl text-sm font-medium transition-colors"
+              className="flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-[var(--color-surface-container-high)] disabled:text-[var(--color-on-surface-variant)] text-white rounded-xl text-sm font-medium transition-colors"
             >
               {beratungsLaeuft ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Analysiere...</>
@@ -650,19 +650,19 @@ export default function FoerderungPage() {
       </div>
 
       {/* Suchleiste + Filter */}
-      <div className="bg-[#161616] border border-border rounded-xl p-4 mb-6 space-y-3">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4 mb-6 space-y-3">
         {/* Suchfeld */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)]" />
           <input
             type="text"
             placeholder="Suche nach Programmen, Bundesland, Fördergegenstand…"
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
-            className="w-full bg-[#1e1e1e] border border-[#333] rounded-lg pl-9 pr-4 py-2.5 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-600 transition-colors"
+            className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-[var(--color-on-surface)] placeholder-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-600 transition-colors"
           />
           {loading && (
-            <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 animate-spin" />
+            <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)] animate-spin" />
           )}
         </div>
 
@@ -670,11 +670,11 @@ export default function FoerderungPage() {
         <div className="flex flex-col sm:flex-row gap-2">
           {/* Bundesland */}
           <div className="relative flex-1">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)] pointer-events-none" />
             <select
               value={bundesland}
               onChange={(e) => setBundesland(e.target.value)}
-              className="w-full bg-[#1e1e1e] border border-[#333] rounded-lg pl-9 pr-8 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-600 appearance-none transition-colors"
+              className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg pl-9 pr-8 py-2.5 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600 appearance-none transition-colors"
             >
               <option value="">Alle Bundesländer</option>
               {BUNDESLAENDER.map((bl) => (
@@ -683,16 +683,16 @@ export default function FoerderungPage() {
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)] pointer-events-none" />
           </div>
 
           {/* Fördertyp */}
           <div className="relative flex-1">
-            <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+            <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)] pointer-events-none" />
             <select
               value={typ}
               onChange={(e) => setTyp(e.target.value)}
-              className="w-full bg-[#1e1e1e] border border-[#333] rounded-lg pl-9 pr-8 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-600 appearance-none transition-colors"
+              className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg pl-9 pr-8 py-2.5 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600 appearance-none transition-colors"
             >
               {FOERDERTYPEN.map((t) => (
                 <option key={t.value} value={t.value}>
@@ -700,7 +700,7 @@ export default function FoerderungPage() {
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)] pointer-events-none" />
           </div>
 
           {/* Reset */}
@@ -711,7 +711,7 @@ export default function FoerderungPage() {
                 setBundesland("")
                 setTyp("")
               }}
-              className="flex items-center gap-1.5 px-3 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white rounded-lg text-sm transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2.5 bg-[var(--color-surface-container-lowest)] hover:bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] rounded-lg text-sm transition-colors"
             >
               <X className="w-4 h-4" />
               Zurücksetzen
@@ -722,15 +722,15 @@ export default function FoerderungPage() {
 
       {/* Ergebnisse */}
       {loading && ergebnisse.length === 0 ? (
-        <div className="flex items-center justify-center py-16 text-zinc-500">
+        <div className="flex items-center justify-center py-16 text-[var(--color-on-surface-variant)]">
           <Loader2 className="w-6 h-6 animate-spin mr-3" />
           <span>Lade Förderprogramme…</span>
         </div>
       ) : ergebnisse.length === 0 && gestartet ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <AlertCircle className="w-12 h-12 text-zinc-700 mb-3" />
-          <p className="text-zinc-400 font-medium">Keine Förderprogramme gefunden</p>
-          <p className="text-zinc-600 text-sm mt-1">Versuche andere Suchbegriffe oder entferne Filter</p>
+          <p className="text-[var(--color-on-surface-variant)] font-medium">Keine Förderprogramme gefunden</p>
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">Versuche andere Suchbegriffe oder entferne Filter</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">

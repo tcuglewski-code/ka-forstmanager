@@ -191,13 +191,13 @@ export function SignaturPad({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-xs text-zinc-400">Unterschrift Förster/Kunde</label>
+        <label className="text-xs text-[var(--color-on-surface-variant)]">Unterschrift Förster/Kunde</label>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={undo}
             disabled={disabled || history.length <= 1}
-            className="p-1.5 rounded-lg bg-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1.5 rounded-lg bg-[var(--color-surface-container-lowest)] text-[var(--color-on-surface-variant)] hover:text-white hover:bg-[var(--color-surface-container-high)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Rückgängig"
           >
             <Undo2 className="w-4 h-4" />
@@ -206,7 +206,7 @@ export function SignaturPad({
             type="button"
             onClick={clear}
             disabled={disabled || !hasSignature}
-            className="p-1.5 rounded-lg bg-zinc-800 text-zinc-400 hover:text-red-400 hover:bg-zinc-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1.5 rounded-lg bg-[var(--color-surface-container-lowest)] text-[var(--color-on-surface-variant)] hover:text-red-400 hover:bg-[var(--color-surface-container-high)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Löschen"
           >
             <Eraser className="w-4 h-4" />

@@ -84,7 +84,7 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
   const gesamtSumme = positionen.reduce((sum, p) => sum + p.gesamt, 0)
 
   if (loading) {
-    return <div className="text-zinc-500 text-sm py-4">Lade Artikel...</div>
+    return <div className="text-[var(--color-on-surface-variant)] text-sm py-4">Lade Artikel...</div>
   }
 
   return (
@@ -107,24 +107,24 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
       </div>
 
       {positionen.length === 0 ? (
-        <div className="text-center py-6 text-zinc-500 text-sm border border-dashed border-border rounded-lg">
+        <div className="text-center py-6 text-[var(--color-on-surface-variant)] text-sm border border-dashed border-border rounded-lg">
           Keine Materialien hinzugefügt
         </div>
       ) : (
-        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Artikel</th>
-                <th className="text-right px-4 py-3 text-zinc-500 font-medium w-24">Menge</th>
-                <th className="text-right px-4 py-3 text-zinc-500 font-medium w-32">Einzelpreis</th>
-                <th className="text-right px-4 py-3 text-zinc-500 font-medium w-32">Gesamt</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Artikel</th>
+                <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium w-24">Menge</th>
+                <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium w-32">Einzelpreis</th>
+                <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium w-32">Gesamt</th>
                 {!readOnly && <th className="w-12"></th>}
               </tr>
             </thead>
             <tbody>
               {positionen.map((pos, index) => (
-                <tr key={index} className="border-b border-[#1e1e1e]">
+                <tr key={index} className="border-b border-[var(--color-outline-variant)]">
                   <td className="px-4 py-3">
                     {readOnly ? (
                       <span className="text-white">{pos.artikelName}</span>
@@ -132,7 +132,7 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
                       <select
                         value={pos.artikelId}
                         onChange={e => handleArtikelChange(index, e.target.value)}
-                        className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-gold"
+                        className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-gold"
                       >
                         <option value="">Artikel wählen...</option>
                         {artikel.map(a => (
@@ -154,9 +154,9 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
                           step="0.01"
                           value={pos.menge}
                           onChange={e => updatePosition(index, { menge: parseFloat(e.target.value) || 0 })}
-                          className="w-full bg-[#0f0f0f] border border-border rounded-lg px-2 py-1.5 text-sm text-white text-right focus:outline-none focus:border-gold"
+                          className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-2 py-1.5 text-sm text-white text-right focus:outline-none focus:border-gold"
                         />
-                        <span className="text-xs text-zinc-500">{pos.einheit}</span>
+                        <span className="text-xs text-[var(--color-on-surface-variant)]">{pos.einheit}</span>
                       </div>
                     )}
                   </td>
@@ -170,7 +170,7 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
                         step="0.01"
                         value={pos.einzelpreis}
                         onChange={e => updatePosition(index, { einzelpreis: parseFloat(e.target.value) || 0 })}
-                        className="w-full bg-[#0f0f0f] border border-border rounded-lg px-2 py-1.5 text-sm text-white text-right focus:outline-none focus:border-gold"
+                        className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-2 py-1.5 text-sm text-white text-right focus:outline-none focus:border-gold"
                       />
                     )}
                   </td>
@@ -182,7 +182,7 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
                       <button
                         type="button"
                         onClick={() => removePosition(index)}
-                        className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                        className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-[var(--color-on-surface-variant)] hover:text-red-400 hover:bg-red-500/10 transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -192,8 +192,8 @@ export function MaterialPosition({ positionen, onChange, readOnly = false }: Mat
               ))}
             </tbody>
             <tfoot>
-              <tr className="bg-[#1e1e1e]">
-                <td colSpan={readOnly ? 3 : 3} className="px-4 py-3 text-right text-zinc-400 font-medium">
+              <tr className="bg-[var(--color-surface-container-highest)]">
+                <td colSpan={readOnly ? 3 : 3} className="px-4 py-3 text-right text-[var(--color-on-surface-variant)] font-medium">
                   Materialkosten Gesamt:
                 </td>
                 <td className="px-4 py-3 text-right text-gold font-bold">

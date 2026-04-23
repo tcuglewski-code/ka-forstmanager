@@ -59,7 +59,7 @@ export default function GruppenPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Gruppen</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">{gruppen.length} Gruppen</p>
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-0.5">{gruppen.length} Gruppen</p>
         </div>
         <button
           onClick={() => setModal({ open: true, gruppe: null })}
@@ -79,7 +79,7 @@ export default function GruppenPage() {
           {gruppen.map(g => (
             <div
               key={g.id}
-              className="bg-[#161616] border border-border rounded-xl p-5 hover:border-zinc-600 transition-all"
+              className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5 hover:border-zinc-600 transition-all"
             >
               <div className="flex items-start justify-between mb-3">
                 <div>
@@ -97,20 +97,20 @@ export default function GruppenPage() {
 
               {/* Gruppenführer prominently displayed */}
               {g.gruppenfuehrer ? (
-                <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-[#1e1e1e] rounded-lg">
+                <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-[var(--color-surface-container-highest)] rounded-lg">
                   <Crown className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                   <span className="text-sm font-medium text-white">
                     {g.gruppenfuehrer.vorname} {g.gruppenfuehrer.nachname}
                   </span>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-[#1a1a1a] rounded-lg">
+                <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-[var(--color-surface-container-lowest)] rounded-lg">
                   <Crown className="w-3.5 h-3.5 text-zinc-600 shrink-0" />
                   <span className="text-sm text-zinc-600">Kein Gruppenführer</span>
                 </div>
               )}
 
-              <div className="flex items-center gap-2 text-zinc-500 text-sm mb-4">
+              <div className="flex items-center gap-2 text-[var(--color-on-surface-variant)] text-sm mb-4">
                 <Users className="w-4 h-4" />
                 <span>{g.mitglieder.length} Mitglieder</span>
               </div>
@@ -118,12 +118,12 @@ export default function GruppenPage() {
               {g.mitglieder.length > 0 && (
                 <div className="flex flex-wrap gap-1 mb-4">
                   {g.mitglieder.slice(0, 4).map(m => (
-                    <span key={m.id} className="text-xs bg-[#1e1e1e] text-zinc-400 px-2 py-0.5 rounded">
+                    <span key={m.id} className="text-xs bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] px-2 py-0.5 rounded">
                       {m.mitarbeiter.vorname} {m.mitarbeiter.nachname.charAt(0)}.
                     </span>
                   ))}
                   {g.mitglieder.length > 4 && (
-                    <span className="text-xs bg-[#1e1e1e] text-zinc-600 px-2 py-0.5 rounded">
+                    <span className="text-xs bg-[var(--color-surface-container-highest)] text-zinc-600 px-2 py-0.5 rounded">
                       +{g.mitglieder.length - 4}
                     </span>
                   )}
@@ -133,20 +133,20 @@ export default function GruppenPage() {
               <div className="flex gap-2">
                 <Link
                   href={`/gruppen/${g.id}`}
-                  className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-[#1e1e1e] text-zinc-400 hover:text-white text-xs transition-all"
+                  className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] hover:text-white text-xs transition-all"
                 >
                   Details <ChevronRight className="w-3 h-3" />
                 </Link>
                 <button
                   onClick={() => setModal({ open: true, gruppe: g })}
-                  className="px-3 py-1.5 rounded-lg bg-[#1e1e1e] text-zinc-400 hover:text-white text-xs transition-all"
+                  className="px-3 py-1.5 rounded-lg bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] hover:text-white text-xs transition-all"
                 >
                   Bearbeiten
                 </button>
                 <button
                   onClick={() => handleDelete(g.id, g.name)}
                   disabled={deleting === g.id}
-                  className="px-3 py-1.5 rounded-lg bg-[#1e1e1e] text-red-500 hover:text-red-400 hover:bg-red-500/10 text-xs transition-all disabled:opacity-50"
+                  className="px-3 py-1.5 rounded-lg bg-[var(--color-surface-container-highest)] text-red-500 hover:text-red-400 hover:bg-red-500/10 text-xs transition-all disabled:opacity-50"
                   title="Gruppe löschen"
                 >
                   {deleting === g.id ? '…' : <Trash2 className="w-3.5 h-3.5" />}

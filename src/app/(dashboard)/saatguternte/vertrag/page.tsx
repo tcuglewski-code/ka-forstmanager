@@ -143,18 +143,18 @@ function VertragPageInner() {
         }
       `}</style>
 
-      <div className="min-h-screen bg-[#0f0f0f] text-zinc-300 p-6">
+      <div className="min-h-screen bg-[var(--color-surface-container-low)] text-zinc-300 p-6">
         {/* Header */}
         <div className="no-print flex items-center gap-4 mb-6">
           <button
             onClick={() => router.back()}
-            className="p-2 rounded-lg border border-border hover:border-zinc-500 text-zinc-500 hover:text-zinc-300 transition-all"
+            className="p-2 rounded-lg border border-border hover:border-zinc-500 text-[var(--color-on-surface-variant)] hover:text-zinc-300 transition-all"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
             <h1 className="text-xl font-semibold text-foreground">Ernteüberlassungsvertrag</h1>
-            <p className="text-sm text-zinc-500">{flaechen.length} Fläche(n) ausgewählt</p>
+            <p className="text-sm text-[var(--color-on-surface-variant)]">{flaechen.length} Fläche(n) ausgewählt</p>
           </div>
           <div className="flex-1" />
           <button
@@ -192,7 +192,7 @@ function VertragPageInner() {
                 className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${
                   aktivesForstamt === fa
                     ? "bg-emerald-600 border-emerald-500 text-white"
-                    : "bg-[#1e1e1e] border-border text-zinc-400 hover:border-zinc-500"
+                    : "bg-[var(--color-surface-container-highest)] border-border text-[var(--color-on-surface-variant)] hover:border-zinc-500"
                 }`}
               >
                 {fa}
@@ -207,43 +207,43 @@ function VertragPageInner() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Formular */}
-          <div className="no-print lg:col-span-1 space-y-4 bg-[#161616] border border-border rounded-xl p-5">
+          <div className="no-print lg:col-span-1 space-y-4 bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
             <h2 className="text-base font-semibold text-white mb-4">Vertragsparameter</h2>
 
             <div className="space-y-3">
               <div>
-                <label className="block text-xs text-zinc-500 mb-1">Erntejahr</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Erntejahr</label>
                 <input
                   type="number"
                   value={erntejahr}
                   onChange={(e) => setErntejahr(Number(e.target.value))}
-                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <div>
-                <label className="block text-xs text-zinc-500 mb-1">Ernte ab KW</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Ernte ab KW</label>
                 <input
                   type="number"
                   min={1}
                   max={53}
                   value={ernteKw}
                   onChange={(e) => setErnteKw(Number(e.target.value))}
-                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <div>
-                <label className="block text-xs text-zinc-500 mb-1">Entschädigung (€/kg)</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Entschädigung (€/kg)</label>
                 <input
                   type="number"
                   step="0.01"
                   min={0}
                   value={entschaedigungKg}
                   onChange={(e) => setEntschaedigungKg(Number(e.target.value))}
-                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <div className="col-span-2">
-                <label className="block text-xs text-zinc-500 mb-1">Vertragspartei</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Vertragspartei</label>
                 <select
                   value={vpVorlageIdx}
                   onChange={(e) => {
@@ -253,48 +253,48 @@ function VertragPageInner() {
                     setVpName(v.name); setVpStrasse(v.strasse); setVpPlz(v.plz); setVpOrt(v.ort)
                     setOrtVertragspartei(v.ort)
                   }}
-                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 mb-2"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500 mb-2"
                 >
                   {VP_VORLAGEN.map((v, i) => <option key={i} value={i}>{v.label}</option>)}
                 </select>
                 {/* Manuelle Eingabe wenn "Andere" */}
                 {vpVorlageIdx === VP_VORLAGEN.length - 1 && (
                   <div className="grid grid-cols-2 gap-2 mt-1">
-                    <input placeholder="Firmenname" value={vpName} onChange={e => setVpName(e.target.value)} className="col-span-2 bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
-                    <input placeholder="Straße" value={vpStrasse} onChange={e => setVpStrasse(e.target.value)} className="bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
+                    <input placeholder="Firmenname" value={vpName} onChange={e => setVpName(e.target.value)} className="col-span-2 bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500" />
+                    <input placeholder="Straße" value={vpStrasse} onChange={e => setVpStrasse(e.target.value)} className="bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500" />
                     <div className="flex gap-2">
-                      <input placeholder="PLZ" value={vpPlz} onChange={e => setVpPlz(e.target.value)} className="w-24 bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
-                      <input placeholder="Ort" value={vpOrt} onChange={e => { setVpOrt(e.target.value); setOrtVertragspartei(e.target.value) }} className="flex-1 bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500" />
+                      <input placeholder="PLZ" value={vpPlz} onChange={e => setVpPlz(e.target.value)} className="w-24 bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500" />
+                      <input placeholder="Ort" value={vpOrt} onChange={e => { setVpOrt(e.target.value); setOrtVertragspartei(e.target.value) }} className="flex-1 bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500" />
                     </div>
                   </div>
                 )}
               </div>
               <div>
-                <label className="block text-xs text-zinc-500 mb-1">Ort Vertragspartei (Unterschrift)</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Ort Vertragspartei (Unterschrift)</label>
                 <input
                   type="text"
                   value={ortVertragspartei}
                   onChange={(e) => setOrtVertragspartei(e.target.value)}
-                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <div>
-                <label className="block text-xs text-zinc-500 mb-1">Ort Waldbesitzer</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Ort Waldbesitzer</label>
                 <input
                   type="text"
                   value={ortWaldbesitzer}
                   onChange={(e) => setOrtWaldbesitzer(e.target.value)}
-                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <div>
-                <label className="block text-xs text-zinc-500 mb-1">Datum</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Datum</label>
                 <input
                   type="text"
                   value={datum}
                   onChange={(e) => setDatum(e.target.value)}
                   placeholder="z.B. 27.03.2026"
-                  className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
                 />
               </div>
             </div>
@@ -309,7 +309,7 @@ function VertragPageInner() {
               style={{ fontFamily: "'Times New Roman', serif", fontSize: "11pt", lineHeight: 1.6 }}
             >
               {loading ? (
-                <div className="flex items-center justify-center h-64 text-zinc-400">
+                <div className="flex items-center justify-center h-64 text-[var(--color-on-surface-variant)]">
                   <Loader2 className="w-6 h-6 animate-spin mr-2" />
                   Lade Flächen…
                 </div>
@@ -317,7 +317,7 @@ function VertragPageInner() {
                 <>
                   {/* Kopfzeile */}
                   <div className="text-center mb-8">
-                    <p className="text-xs text-zinc-500 mb-1">{vpName} · {vpStrasse} · {vpPlz} {vpOrt}</p>
+                    <p className="text-xs text-[var(--color-on-surface-variant)] mb-1">{vpName} · {vpStrasse} · {vpPlz} {vpOrt}</p>
                     <h1 className="text-2xl font-bold mt-4 mb-2" style={{ fontFamily: "Arial, sans-serif" }}>
                       Ernteüberlassungsvertrag
                     </h1>
@@ -362,7 +362,7 @@ function VertragPageInner() {
                       <tbody>
                         {aktiveFlächen.length === 0 ? (
                           <tr>
-                            <td colSpan={5} className="border border-zinc-400 px-2 py-2 text-center text-zinc-400 italic">
+                            <td colSpan={5} className="border border-zinc-400 px-2 py-2 text-center text-[var(--color-on-surface-variant)] italic">
                               Keine Flächen ausgewählt
                             </td>
                           </tr>
@@ -448,7 +448,7 @@ function VertragPageInner() {
                       <p className="text-xs">
                         {ortVertragspartei}, den {datum}
                       </p>
-                      <p className="text-xs mt-1 text-zinc-500">
+                      <p className="text-xs mt-1 text-[var(--color-on-surface-variant)]">
                         {vpName} (Vertragspartei)
                       </p>
                     </div>
@@ -457,7 +457,7 @@ function VertragPageInner() {
                       <p className="text-xs">
                         {ortWaldbesitzer || "_______________"}, den {datum}
                       </p>
-                      <p className="text-xs mt-1 text-zinc-500">
+                      <p className="text-xs mt-1 text-[var(--color-on-surface-variant)]">
                         Forstamt {forstamtName} (Waldbesitzer)
                       </p>
                     </div>
@@ -474,7 +474,7 @@ function VertragPageInner() {
 
 export default function VertragPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-zinc-500">Lade Vertragsseite…</div>}>
+    <Suspense fallback={<div className="p-8 text-[var(--color-on-surface-variant)]">Lade Vertragsseite…</div>}>
       <VertragPageInner />
     </Suspense>
   )

@@ -57,12 +57,12 @@ function BaumschuleLoginForm() {
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
-      <div className="bg-zinc-900 border border-border rounded-2xl p-8 max-w-md w-full text-center space-y-6">
+      <div className="bg-[var(--color-surface-container-low)] border border-border rounded-2xl p-8 max-w-md w-full text-center space-y-6">
         {/* Logo/Header */}
         <div>
           <div className="text-4xl mb-2">🌲</div>
           <h1 className="text-xl font-bold text-white">Koch Aufforstung GmbH</h1>
-          <p className="text-zinc-400 text-sm mt-1">Baumschul-Portal</p>
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">Baumschul-Portal</p>
         </div>
 
         {/* Zustand: Prüfen */}
@@ -81,7 +81,7 @@ function BaumschuleLoginForm() {
             <p className="text-zinc-300 text-sm">
               Willkommen, <strong className="text-white">{baumschuleName}</strong>!
             </p>
-            <p className="text-zinc-500 text-xs">Sie werden weitergeleitet...</p>
+            <p className="text-[var(--color-on-surface-variant)] text-xs">Sie werden weitergeleitet...</p>
           </div>
         )}
 
@@ -90,8 +90,8 @@ function BaumschuleLoginForm() {
           <div className="space-y-4">
             <div className="text-4xl">❌</div>
             <p className="text-red-400 font-medium">Login fehlgeschlagen</p>
-            <p className="text-zinc-400 text-sm">{fehlerText}</p>
-            <p className="text-zinc-500 text-xs">
+            <p className="text-[var(--color-on-surface-variant)] text-sm">{fehlerText}</p>
+            <p className="text-[var(--color-on-surface-variant)] text-xs">
               Bitte wenden Sie sich an Koch Aufforstung GmbH, um einen neuen Login-Link zu erhalten.
             </p>
             <a
@@ -111,7 +111,7 @@ export default function BaumschuleLoginPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-        <div className="text-zinc-400">Wird geladen...</div>
+        <div className="text-[var(--color-on-surface-variant)]">Wird geladen...</div>
       </div>
     }>
       <BaumschuleLoginForm />

@@ -50,7 +50,7 @@ const statusBadge: Record<string, string> = {
   planung: "bg-blue-100 text-blue-800",
   aktiv: "bg-emerald-100 text-emerald-800",
   abgeschlossen: "bg-gray-100 text-gray-700",
-  archiviert: "bg-zinc-700/50 text-zinc-600",
+  archiviert: "bg-[var(--color-surface-container-high)]/50 text-zinc-600",
 }
 
 export default async function SaisonDetailPage({
@@ -86,27 +86,27 @@ export default async function SaisonDetailPage({
       />
       <Link
         href="/saisons"
-        className="flex items-center gap-2 text-zinc-400 hover:text-white text-sm mb-6 transition-all"
+        className="flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] text-sm mb-6 transition-all"
       >
         <ArrowLeft className="w-4 h-4" /> Zurück zu Saisons
       </Link>
 
       {/* Header */}
-      <div className="bg-[#161616] border border-border rounded-xl p-6 mb-6">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6 mb-6">
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3 mb-2">
               <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{saison.name}</h1>
               <span
-                className={`px-2 py-0.5 rounded-full text-xs ${statusBadge[saison.status] ?? "bg-zinc-700 text-zinc-400"}`}
+                className={`px-2 py-0.5 rounded-full text-xs ${statusBadge[saison.status] ?? "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]"}`}
               >
                 {saison.status}
               </span>
             </div>
             {saison.beschreibung && (
-              <p className="text-zinc-400 text-sm mb-2">{saison.beschreibung}</p>
+              <p className="text-[var(--color-on-surface-variant)] text-sm mb-2">{saison.beschreibung}</p>
             )}
-            <div className="flex gap-4 text-sm text-zinc-400">
+            <div className="flex gap-4 text-sm text-[var(--color-on-surface-variant)]">
               {saison.startDatum && (
                 <span>
                   Start: {new Date(saison.startDatum).toLocaleDateString("de-DE")}

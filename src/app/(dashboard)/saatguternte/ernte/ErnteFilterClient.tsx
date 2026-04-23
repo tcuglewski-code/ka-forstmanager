@@ -55,7 +55,7 @@ export function ErnteFilterClient({
           setSaison(e.target.value)
           apply({ saison: e.target.value })
         }}
-        className="px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-zinc-300 text-sm focus:outline-none focus:border-emerald-600"
+        className="px-3 py-2 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-zinc-300 text-sm focus:outline-none focus:border-emerald-600"
       >
         <option value="alle">Alle Saisons</option>
         {saisons.map((s) => (
@@ -71,7 +71,7 @@ export function ErnteFilterClient({
           setBaumart(e.target.value)
           apply({ baumart: e.target.value })
         }}
-        className="px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-zinc-300 text-sm focus:outline-none focus:border-emerald-600"
+        className="px-3 py-2 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-zinc-300 text-sm focus:outline-none focus:border-emerald-600"
       >
         <option value="">Alle Baumarten</option>
         {baumartOptionen.map((b) => (
@@ -87,7 +87,7 @@ export function ErnteFilterClient({
           setBundesland(e.target.value)
           apply({ bundesland: e.target.value })
         }}
-        className="px-3 py-2 bg-[#1e1e1e] border border-border rounded-lg text-zinc-300 text-sm focus:outline-none focus:border-emerald-600"
+        className="px-3 py-2 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-zinc-300 text-sm focus:outline-none focus:border-emerald-600"
       >
         <option value="">Alle Bundesländer</option>
         {bundeslandOptionen.map((bl) => (
@@ -100,7 +100,7 @@ export function ErnteFilterClient({
       {hasFilter && (
         <button
           onClick={reset}
-          className="px-3 py-2 text-zinc-400 hover:text-white text-sm transition-colors"
+          className="px-3 py-2 text-[var(--color-on-surface-variant)] hover:text-white text-sm transition-colors"
         >
           × Filter zurücksetzen
         </button>

@@ -83,14 +83,14 @@ export default function FoerderungDashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Erfolgsquoten Dashboard</h1>
-          <p className="text-zinc-500 text-sm mt-1">
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">
             Übersicht unserer Fördererfahrungen und Statistiken
           </p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={loadData}
-            className="p-2 text-zinc-400 hover:text-white hover:bg-[#1e1e1e] rounded-lg transition"
+            className="p-2 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-highest)] rounded-lg transition"
             title="Aktualisieren"
           >
             <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
@@ -113,22 +113,22 @@ export default function FoerderungDashboardPage() {
 
       {/* KPI-Karten */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-[#161616] border border-border rounded-xl p-5">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
               <FileText className="w-5 h-5 text-blue-400" />
             </div>
-            <p className="text-zinc-500 text-sm">Programme in DB</p>
+            <p className="text-[var(--color-on-surface-variant)] text-sm">Programme in DB</p>
           </div>
           <p className="text-3xl font-bold" style={{ color: "var(--color-on-surface)" }}>{kpis.gesamt_programme}</p>
         </div>
 
-        <div className="bg-[#161616] border border-border rounded-xl p-5">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-emerald-400" />
             </div>
-            <p className="text-zinc-500 text-sm">Ø Erfolgsquote</p>
+            <p className="text-[var(--color-on-surface-variant)] text-sm">Ø Erfolgsquote</p>
           </div>
           <div className="flex items-baseline gap-2">
             <p className={`text-3xl font-bold ${getErfolgsquoteColor(kpis.durchschn_erfolgsquote)}`}>
@@ -142,22 +142,22 @@ export default function FoerderungDashboardPage() {
           </div>
         </div>
 
-        <div className="bg-[#161616] border border-border rounded-xl p-5">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-yellow-500/10 rounded-lg flex items-center justify-center">
               <Clock className="w-5 h-5 text-yellow-400" />
             </div>
-            <p className="text-zinc-500 text-sm">Laufende Anträge</p>
+            <p className="text-[var(--color-on-surface-variant)] text-sm">Laufende Anträge</p>
           </div>
           <p className="text-3xl font-bold text-yellow-400">{kpis.laufende_antraege}</p>
         </div>
 
-        <div className="bg-[#161616] border border-border rounded-xl p-5">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center">
               <Euro className="w-5 h-5 text-purple-400" />
             </div>
-            <p className="text-zinc-500 text-sm">Gesamt bewilligt</p>
+            <p className="text-[var(--color-on-surface-variant)] text-sm">Gesamt bewilligt</p>
           </div>
           <p className="text-3xl font-bold text-purple-400">
             {formatEuro(kpis.gesamt_bewilligt_eur)}
@@ -166,10 +166,10 @@ export default function FoerderungDashboardPage() {
       </div>
 
       {/* Erfahrungs-Tabelle */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <div className="px-5 py-4 border-b border-border">
-          <h2 className="text-lg font-semibold text-white">Unsere Erfahrungen pro Programm</h2>
-          <p className="text-zinc-500 text-sm">
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">Unsere Erfahrungen pro Programm</h2>
+          <p className="text-[var(--color-on-surface-variant)] text-sm">
             Programme mit dokumentierten Anträgen
           </p>
         </div>
@@ -178,25 +178,25 @@ export default function FoerderungDashboardPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-border text-left">
-                <th className="px-5 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                <th className="px-5 py-3 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
                   Programm
                 </th>
-                <th className="px-5 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                <th className="px-5 py-3 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
                   BL
                 </th>
-                <th className="px-5 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider text-center">
+                <th className="px-5 py-3 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider text-center">
                   Anträge
                 </th>
-                <th className="px-5 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider text-center">
+                <th className="px-5 py-3 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider text-center">
                   Erfolgsquote
                 </th>
-                <th className="px-5 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider text-center">
+                <th className="px-5 py-3 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider text-center">
                   Ø Dauer
                 </th>
-                <th className="px-5 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider text-center">
+                <th className="px-5 py-3 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider text-center">
                   Ø Bewilligungsquote
                 </th>
-                <th className="px-5 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wider text-right">
+                <th className="px-5 py-3 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider text-right">
                   Gesamt bewilligt
                 </th>
               </tr>
@@ -204,13 +204,13 @@ export default function FoerderungDashboardPage() {
             <tbody className="divide-y divide-border">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-5 py-8 text-center text-zinc-500">
+                  <td colSpan={7} className="px-5 py-8 text-center text-[var(--color-on-surface-variant)]">
                     Lade Statistiken...
                   </td>
                 </tr>
               ) : programmeMitErfahrung.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-5 py-8 text-center text-zinc-500">
+                  <td colSpan={7} className="px-5 py-8 text-center text-[var(--color-on-surface-variant)]">
                     Noch keine Erfahrungen dokumentiert.{" "}
                     <Link href="/foerderung/praxis" className="text-emerald-400 hover:underline">
                       Jetzt starten →
@@ -219,18 +219,18 @@ export default function FoerderungDashboardPage() {
                 </tr>
               ) : (
                 programmeMitErfahrung.map((p) => (
-                  <tr key={p.id} className="hover:bg-[#1e1e1e] transition">
+                  <tr key={p.id} className="hover:bg-[var(--color-surface-container-highest)] transition">
                     <td className="px-5 py-4">
-                      <p className="text-white text-sm font-medium truncate max-w-[250px]">
+                      <p className="text-[var(--color-on-surface)] text-sm font-medium truncate max-w-[250px]">
                         {p.name}
                       </p>
                     </td>
-                    <td className="px-5 py-4 text-zinc-400 text-sm">
+                    <td className="px-5 py-4 text-[var(--color-on-surface-variant)] text-sm">
                       {p.bundesland || "—"}
                     </td>
                     <td className="px-5 py-4 text-center">
-                      <span className="text-white font-medium">{p.anzahl_antraege}</span>
-                      <span className="text-zinc-500 text-sm ml-1">
+                      <span className="text-[var(--color-on-surface)] font-medium">{p.anzahl_antraege}</span>
+                      <span className="text-[var(--color-on-surface-variant)] text-sm ml-1">
                         ({p.erfolgreich} ✓)
                       </span>
                     </td>
@@ -243,7 +243,7 @@ export default function FoerderungDashboardPage() {
                         {p.erfolgsquote_prozent}%
                       </span>
                     </td>
-                    <td className="px-5 py-4 text-center text-zinc-400 text-sm">
+                    <td className="px-5 py-4 text-center text-[var(--color-on-surface-variant)] text-sm">
                       {p.avg_bewilligungsdauer ? `${p.avg_bewilligungsdauer} Wo.` : "—"}
                     </td>
                     <td className="px-5 py-4 text-center">
@@ -256,7 +256,7 @@ export default function FoerderungDashboardPage() {
                           {p.avg_bewilligungsquote_prozent.toFixed(1)}%
                         </span>
                       ) : (
-                        <span className="text-zinc-500 text-sm">—</span>
+                        <span className="text-[var(--color-on-surface-variant)] text-sm">—</span>
                       )}
                     </td>
                     <td className="px-5 py-4 text-right">
@@ -273,7 +273,7 @@ export default function FoerderungDashboardPage() {
       </div>
 
       {/* Legende */}
-      <div className="flex flex-wrap gap-4 text-sm text-zinc-500">
+      <div className="flex flex-wrap gap-4 text-sm text-[var(--color-on-surface-variant)]">
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 bg-emerald-500/20 border border-emerald-500/50 rounded"></span>
           <span>≥80% Erfolgsquote</span>

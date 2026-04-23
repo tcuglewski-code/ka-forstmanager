@@ -67,10 +67,10 @@ export function BillingPortalCard() {
 
   if (loading) {
     return (
-      <div className="p-6 bg-zinc-800/50 rounded-lg border border-border">
+      <div className="p-6 bg-[var(--color-surface-container-lowest)]/50 rounded-lg border border-border">
         <div className="flex items-center gap-3">
-          <Loader2 className="h-5 w-5 text-zinc-500 animate-spin" />
-          <span className="text-zinc-400">Lade Billing-Informationen...</span>
+          <Loader2 className="h-5 w-5 text-[var(--color-on-surface-variant)] animate-spin" />
+          <span className="text-[var(--color-on-surface-variant)]">Lade Billing-Informationen...</span>
         </div>
       </div>
     );
@@ -78,12 +78,12 @@ export function BillingPortalCard() {
 
   if (!status?.available) {
     return (
-      <div className="p-6 bg-zinc-800/50 rounded-lg border border-border">
+      <div className="p-6 bg-[var(--color-surface-container-lowest)]/50 rounded-lg border border-border">
         <div className="flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-amber-500 mt-0.5" />
           <div>
             <h3 className="text-zinc-300 font-medium">Billing Portal nicht verfügbar</h3>
-            <p className="text-sm text-zinc-500 mt-1">
+            <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">
               {status?.reason === 'not_authenticated' && 'Bitte melden Sie sich an.'}
               {status?.reason === 'no_permission' && 'Nur Admin und Büro können auf das Billing Portal zugreifen.'}
               {status?.reason === 'stripe_not_configured' && 'Stripe ist noch nicht konfiguriert.'}
@@ -96,32 +96,32 @@ export function BillingPortalCard() {
   }
 
   return (
-    <div className="p-6 bg-zinc-800/50 rounded-lg border border-border">
+    <div className="p-6 bg-[var(--color-surface-container-lowest)]/50 rounded-lg border border-border">
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-4">
           <div className="p-3 bg-emerald-500/20 rounded-lg">
             <CreditCard className="h-6 w-6 text-emerald-400" />
           </div>
           <div>
-            <h3 className="text-lg font-medium text-zinc-200">Stripe Billing Portal</h3>
-            <p className="text-sm text-zinc-400 mt-1">
+            <h3 className="text-lg font-medium text-[var(--color-on-surface)]">Stripe Billing Portal</h3>
+            <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">
               Verwalten Sie Ihr Abonnement, Zahlungsmethoden und sehen Sie alle Rechnungen ein.
             </p>
             
             <ul className="mt-4 space-y-2">
-              <li className="flex items-center gap-2 text-sm text-zinc-400">
+              <li className="flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)]">
                 <CheckCircle className="h-4 w-4 text-emerald-500" />
                 Zahlungsmethode ändern
               </li>
-              <li className="flex items-center gap-2 text-sm text-zinc-400">
+              <li className="flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)]">
                 <CheckCircle className="h-4 w-4 text-emerald-500" />
                 Rechnungshistorie einsehen
               </li>
-              <li className="flex items-center gap-2 text-sm text-zinc-400">
+              <li className="flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)]">
                 <CheckCircle className="h-4 w-4 text-emerald-500" />
                 Rechnungsadresse aktualisieren
               </li>
-              <li className="flex items-center gap-2 text-sm text-zinc-400">
+              <li className="flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)]">
                 <CheckCircle className="h-4 w-4 text-emerald-500" />
                 Abonnement verwalten / kündigen
               </li>
@@ -133,7 +133,7 @@ export function BillingPortalCard() {
           onClick={openBillingPortal}
           disabled={redirecting}
           className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 
-                     disabled:bg-zinc-700 disabled:cursor-not-allowed
+                     disabled:bg-[var(--color-surface-container-high)] disabled:cursor-not-allowed
                      text-white text-sm font-medium rounded-lg transition-colors"
         >
           {redirecting ? (

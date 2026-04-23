@@ -158,7 +158,7 @@ export default async function StatistikPage({
         <div className="flex items-center gap-3">
           <Link
             href="/saatguternte/ernte"
-            className="p-2 rounded-lg hover:bg-[#1e1e1e] text-zinc-400 hover:text-white transition-colors"
+            className="p-2 rounded-lg hover:bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] hover:text-white transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
@@ -167,7 +167,7 @@ export default async function StatistikPage({
           </div>
           <div>
             <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Ernte-Statistiken</h1>
-            <p className="text-zinc-500 text-sm">
+            <p className="text-[var(--color-on-surface-variant)] text-sm">
               {saison ? `Saison ${saison}` : "Alle Saisons"}
             </p>
           </div>
@@ -181,7 +181,7 @@ export default async function StatistikPage({
               className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
                 saison === s
                   ? "bg-emerald-700 text-white"
-                  : "bg-[#1e1e1e] border border-border text-zinc-400 hover:text-white"
+                  : "bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface-variant)] hover:text-white"
               }`}
             >
               {s}
@@ -190,7 +190,7 @@ export default async function StatistikPage({
           {saison && (
             <Link
               href="/saatguternte/ernte/statistik"
-              className="px-3 py-1.5 rounded-lg text-sm bg-[#1e1e1e] border border-border text-zinc-400 hover:text-white transition-colors"
+              className="px-3 py-1.5 rounded-lg text-sm bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface-variant)] hover:text-white transition-colors"
             >
               Gesamt
             </Link>
@@ -222,10 +222,10 @@ export default async function StatistikPage({
             value: sammlerDistinct.length,
           },
         ].map(({ icon: Icon, label, value }) => (
-          <div key={label} className="bg-[#161616] border border-border rounded-xl p-4">
+          <div key={label} className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
               <Icon className="w-4 h-4 text-emerald-400" />
-              <span className="text-zinc-400 text-sm">{label}</span>
+              <span className="text-[var(--color-on-surface-variant)] text-sm">{label}</span>
             </div>
             <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{value}</p>
           </div>
@@ -234,7 +234,7 @@ export default async function StatistikPage({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* B) Sammler-Ranking */}
-        <div className="bg-[#161616] border border-border rounded-xl p-6">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
           <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
             <Users className="w-4 h-4 text-emerald-400" />
             Sammler-Ranking
@@ -242,14 +242,14 @@ export default async function StatistikPage({
 
           {top3.length > 0 ? (
             <>
-              <p className="text-zinc-500 text-xs mb-3">Top 3 (höchste Menge)</p>
+              <p className="text-[var(--color-on-surface-variant)] text-xs mb-3">Top 3 (höchste Menge)</p>
               <div className="space-y-3 mb-5">
                 {top3.map((s, i) => (
                   <div key={s.sammlerName} className="flex items-center gap-3">
                     <span className="text-xl w-8">{rankEmojis[i]}</span>
                     <div className="flex-1 min-w-0">
                       <p className="text-white font-medium truncate">{s.sammlerName}</p>
-                      <p className="text-zinc-500 text-xs">
+                      <p className="text-[var(--color-on-surface-variant)] text-xs">
                         {s.einsaetze} Einsätze · ∅ {s.avgKgEinsatz} kg/Einsatz
                         {s.avgKgTag !== null && ` · ∅ ${s.avgKgTag} kg/Tag`}
                       </p>
@@ -263,15 +263,15 @@ export default async function StatistikPage({
 
               {flop3.length > 0 && (
                 <>
-                  <p className="text-zinc-500 text-xs mb-3">Flop 3 (niedrigste Menge)</p>
+                  <p className="text-[var(--color-on-surface-variant)] text-xs mb-3">Flop 3 (niedrigste Menge)</p>
                   <div className="space-y-2">
                     {flop3.map((s) => (
                       <div
                         key={s.sammlerName}
-                        className="flex items-center justify-between py-2 px-3 bg-[#1a1a1a] rounded-lg"
+                        className="flex items-center justify-between py-2 px-3 bg-[var(--color-surface-container-lowest)] rounded-lg"
                       >
-                        <p className="text-zinc-400 text-sm truncate">{s.sammlerName}</p>
-                        <span className="text-zinc-500 text-sm whitespace-nowrap ml-3">
+                        <p className="text-[var(--color-on-surface-variant)] text-sm truncate">{s.sammlerName}</p>
+                        <span className="text-[var(--color-on-surface-variant)] text-sm whitespace-nowrap ml-3">
                           {s.gesamtKg.toLocaleString("de-DE")} kg
                         </span>
                       </div>
@@ -281,33 +281,33 @@ export default async function StatistikPage({
               )}
             </>
           ) : (
-            <p className="text-zinc-500 text-sm text-center py-8">
+            <p className="text-[var(--color-on-surface-variant)] text-sm text-center py-8">
               Keine Sammler-Daten vorhanden.
             </p>
           )}
         </div>
 
         {/* E) Durchschnitte */}
-        <div className="bg-[#161616] border border-border rounded-xl p-6">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
           <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-emerald-400" />
             Durchschnitts-Statistiken
           </h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between py-3 border-b border-border">
-              <span className="text-zinc-400 text-sm">∅ kg pro Sammler / Saison</span>
+              <span className="text-[var(--color-on-surface-variant)] text-sm">∅ kg pro Sammler / Saison</span>
               <span className="text-white font-semibold">
                 {avgKgSammler.toLocaleString("de-DE")} kg
               </span>
             </div>
             <div className="flex items-center justify-between py-3 border-b border-border">
-              <span className="text-zinc-400 text-sm">∅ kg pro Sammler / Tag</span>
+              <span className="text-[var(--color-on-surface-variant)] text-sm">∅ kg pro Sammler / Tag</span>
               <span className="text-white font-semibold">
                 {avgKgTag !== null ? `${avgKgTag.toLocaleString("de-DE")} kg` : "keine Stunden erfasst"}
               </span>
             </div>
             <div className="flex items-center justify-between py-3">
-              <span className="text-zinc-400 text-sm">∅ kg pro Fläche</span>
+              <span className="text-[var(--color-on-surface-variant)] text-sm">∅ kg pro Fläche</span>
               <span className="text-white font-semibold">
                 {avgKgFlaeche.toLocaleString("de-DE")} kg
               </span>
@@ -317,37 +317,37 @@ export default async function StatistikPage({
       </div>
 
       {/* C) Ertrag pro Baumart */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <div className="px-6 py-4 border-b border-border">
           <h2 className="text-white font-semibold">Ertrag pro Baumart</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border bg-[#111]">
-                <th className="px-4 py-3 text-left text-zinc-400 font-medium">Baumart</th>
-                <th className="px-4 py-3 text-right text-zinc-400 font-medium">Gesamtmenge kg</th>
-                <th className="px-4 py-3 text-right text-zinc-400 font-medium">Ernten</th>
-                <th className="px-4 py-3 text-right text-zinc-400 font-medium">∅ kg/Ernte</th>
-                <th className="px-4 py-3 text-right text-zinc-400 font-medium">Anteil %</th>
+              <tr className="border-b border-border bg-[var(--color-surface-container-low)]">
+                <th className="px-4 py-3 text-left text-[var(--color-on-surface-variant)] font-medium">Baumart</th>
+                <th className="px-4 py-3 text-right text-[var(--color-on-surface-variant)] font-medium">Gesamtmenge kg</th>
+                <th className="px-4 py-3 text-right text-[var(--color-on-surface-variant)] font-medium">Ernten</th>
+                <th className="px-4 py-3 text-right text-[var(--color-on-surface-variant)] font-medium">∅ kg/Ernte</th>
+                <th className="px-4 py-3 text-right text-[var(--color-on-surface-variant)] font-medium">Anteil %</th>
               </tr>
             </thead>
             <tbody>
               {baumartStats.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-10 text-center text-zinc-500">
+                  <td colSpan={5} className="px-4 py-10 text-center text-[var(--color-on-surface-variant)]">
                     Keine Daten vorhanden.
                   </td>
                 </tr>
               ) : (
                 baumartStats.map((b) => (
-                  <tr key={b.baumart} className="border-b border-[#222] hover:bg-[#1a1a1a] transition-colors">
+                  <tr key={b.baumart} className="border-b border-border hover:bg-[var(--color-surface-container-lowest)] transition-colors">
                     <td className="px-4 py-3 text-zinc-300 font-medium">{b.baumart}</td>
                     <td className="px-4 py-3 text-right text-white">
                       {b.gesamtKg.toLocaleString("de-DE")}
                     </td>
-                    <td className="px-4 py-3 text-right text-zinc-400">{b.anzahlErnten}</td>
-                    <td className="px-4 py-3 text-right text-zinc-400">
+                    <td className="px-4 py-3 text-right text-[var(--color-on-surface-variant)]">{b.anzahlErnten}</td>
+                    <td className="px-4 py-3 text-right text-[var(--color-on-surface-variant)]">
                       {b.avgKgErnte.toLocaleString("de-DE")}
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -372,24 +372,24 @@ export default async function StatistikPage({
       </div>
 
       {/* D) Ertrag pro Bundesland */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <div className="px-6 py-4 border-b border-border">
           <h2 className="text-white font-semibold">Ertrag pro Bundesland</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border bg-[#111]">
-                <th className="px-4 py-3 text-left text-zinc-400 font-medium">Bundesland</th>
-                <th className="px-4 py-3 text-right text-zinc-400 font-medium">Gesamtmenge kg</th>
-                <th className="px-4 py-3 text-right text-zinc-400 font-medium">Flächen</th>
-                <th className="px-4 py-3 text-right text-zinc-400 font-medium">∅ kg/Fläche</th>
+              <tr className="border-b border-border bg-[var(--color-surface-container-low)]">
+                <th className="px-4 py-3 text-left text-[var(--color-on-surface-variant)] font-medium">Bundesland</th>
+                <th className="px-4 py-3 text-right text-[var(--color-on-surface-variant)] font-medium">Gesamtmenge kg</th>
+                <th className="px-4 py-3 text-right text-[var(--color-on-surface-variant)] font-medium">Flächen</th>
+                <th className="px-4 py-3 text-right text-[var(--color-on-surface-variant)] font-medium">∅ kg/Fläche</th>
               </tr>
             </thead>
             <tbody>
               {bundeslandStats.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-10 text-center text-zinc-500">
+                  <td colSpan={4} className="px-4 py-10 text-center text-[var(--color-on-surface-variant)]">
                     Keine Daten vorhanden.
                   </td>
                 </tr>
@@ -397,14 +397,14 @@ export default async function StatistikPage({
                 bundeslandStats.map((b) => (
                   <tr
                     key={b.bundesland}
-                    className="border-b border-[#222] hover:bg-[#1a1a1a] transition-colors"
+                    className="border-b border-border hover:bg-[var(--color-surface-container-lowest)] transition-colors"
                   >
                     <td className="px-4 py-3 text-zinc-300 font-medium">{b.bundesland}</td>
                     <td className="px-4 py-3 text-right text-white">
                       {b.gesamtKg.toLocaleString("de-DE")}
                     </td>
-                    <td className="px-4 py-3 text-right text-zinc-400">{b.anzahlFlaechen}</td>
-                    <td className="px-4 py-3 text-right text-zinc-400">
+                    <td className="px-4 py-3 text-right text-[var(--color-on-surface-variant)]">{b.anzahlFlaechen}</td>
+                    <td className="px-4 py-3 text-right text-[var(--color-on-surface-variant)]">
                       {b.avgKgFlaeche.toLocaleString("de-DE")}
                     </td>
                   </tr>

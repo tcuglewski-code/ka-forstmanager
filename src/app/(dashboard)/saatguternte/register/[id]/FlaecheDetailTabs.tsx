@@ -157,7 +157,7 @@ function ProfilTab({
   }
 
   const statusOptions = [
-    { value: "ungeprüft", label: "Ungeprüft", color: "text-zinc-400" },
+    { value: "ungeprüft", label: "Ungeprüft", color: "text-[var(--color-on-surface-variant)]" },
     { value: "geeignet", label: "Geeignet", color: "text-emerald-400" },
     { value: "geprüft", label: "Geprüft", color: "text-blue-400" },
     { value: "verworfen", label: "Verworfen", color: "text-red-400" },
@@ -169,18 +169,18 @@ function ProfilTab({
 
   return (
     <div className="space-y-6">
-      <div className="bg-[#161616] border border-border rounded-xl p-5">
-        <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-5">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
+        <h2 className="text-sm font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide mb-5">
           Profil & Scout-Bewertung
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Status */}
           <div>
-            <label className="block text-xs text-zinc-500 mb-2">Status</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-2">Status</label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
             >
               {statusOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -192,13 +192,13 @@ function ProfilTab({
 
           {/* Bewertung */}
           <div>
-            <label className="block text-xs text-zinc-500 mb-2">Bewertung</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-2">Bewertung</label>
             <StarRating value={bewertung} onChange={setBewertung} />
             {bewertung > 0 && (
               <button
                 type="button"
                 onClick={() => setBewertung(0)}
-                className="mt-1 text-xs text-zinc-600 hover:text-zinc-400"
+                className="mt-1 text-xs text-zinc-600 hover:text-[var(--color-on-surface-variant)]"
               >
                 Zurücksetzen
               </button>
@@ -207,36 +207,36 @@ function ProfilTab({
 
           {/* Letzte Inspektion */}
           <div>
-            <label className="block text-xs text-zinc-500 mb-2">Letzte Inspektion</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-2">Letzte Inspektion</label>
             <input
               type="date"
               value={letzteInspektion}
               onChange={(e) => setLetzteInspektion(e.target.value)}
-              className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
             />
           </div>
 
           {/* Nächste Ernte */}
           <div>
-            <label className="block text-xs text-zinc-500 mb-2">Nächste geplante Ernte</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-2">Nächste geplante Ernte</label>
             <input
               type="date"
               value={naechsteErnte}
               onChange={(e) => setNaechsteErnte(e.target.value)}
-              className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
             />
           </div>
         </div>
 
         {/* Notizen */}
         <div className="mt-5">
-          <label className="block text-xs text-zinc-500 mb-2">Interne Notizen</label>
+          <label className="block text-xs text-[var(--color-on-surface-variant)] mb-2">Interne Notizen</label>
           <textarea
             value={notizen}
             onChange={(e) => setNotizen(e.target.value)}
             rows={5}
             placeholder="Beobachtungen, Hinweise, Scout-Notizen..."
-            className="w-full bg-[#1e1e1e] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
+            className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
           />
         </div>
 
@@ -255,24 +255,24 @@ function ProfilTab({
 function ErntehistorieTab({ ernten }: { ernten: Ernte[] }) {
   if (ernten.length === 0) {
     return (
-      <div className="bg-[#161616] border border-border rounded-xl p-10 flex flex-col items-center justify-center text-center">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-10 flex flex-col items-center justify-center text-center">
         <ClipboardList className="w-10 h-10 text-zinc-700 mb-3" />
-        <p className="text-zinc-500">Noch keine Ernten für diese Fläche erfasst.</p>
+        <p className="text-[var(--color-on-surface-variant)]">Noch keine Ernten für diese Fläche erfasst.</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+    <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
       <div className="px-5 py-4 border-b border-border">
-        <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
+        <h2 className="text-sm font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide">
           Erntehistorie ({ernten.length} Einträge)
         </h2>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border text-xs text-zinc-500 uppercase">
+            <tr className="border-b border-border text-xs text-[var(--color-on-surface-variant)] uppercase">
               <th className="px-4 py-3 text-left">Saison</th>
               <th className="px-4 py-3 text-left">Datum</th>
               <th className="px-4 py-3 text-left">Baumart</th>
@@ -282,14 +282,14 @@ function ErntehistorieTab({ ernten }: { ernten: Ernte[] }) {
           </thead>
           <tbody>
             {ernten.map((ernte) => (
-              <tr key={ernte.id} className="border-b border-border hover:bg-[#1a1a1a] transition-colors">
+              <tr key={ernte.id} className="border-b border-border hover:bg-[var(--color-surface-container-lowest)] transition-colors">
                 <td className="px-4 py-3 text-zinc-300 font-mono">{ernte.saison}</td>
-                <td className="px-4 py-3 text-zinc-400">{formatDatum(ernte.datum)}</td>
+                <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">{formatDatum(ernte.datum)}</td>
                 <td className="px-4 py-3 text-zinc-300">{ernte.baumart}</td>
                 <td className="px-4 py-3 text-right text-zinc-300">
                   {ernte.mengeKgGesamt != null ? `${ernte.mengeKgGesamt.toFixed(1)} kg` : "–"}
                 </td>
-                <td className="px-4 py-3 text-zinc-400 text-xs">
+                <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-xs">
                   {ernte.positionen.length > 0
                     ? ernte.positionen.map((p) => p.sammlerName).join(", ")
                     : "–"}
@@ -310,19 +310,19 @@ function AnsprechpartnerBlock({ flaeche }: { flaeche: Flaeche }) {
     flaeche.ansprechpartnerEmail != null
   if (!hasContact) return null
   return (
-    <div className="bg-[#161616] border border-border rounded-xl p-4">
-      <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Ansprechpartner</h2>
+    <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
+      <h2 className="text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide mb-3">Ansprechpartner</h2>
       <div className="space-y-2 text-sm">
         {flaeche.ansprechpartner != null && (
           <div className="text-zinc-300">{flaeche.ansprechpartner}</div>
         )}
         {flaeche.hoheitlicheStelle != null && (
-          <div className="text-zinc-500 text-xs">{flaeche.hoheitlicheStelle}</div>
+          <div className="text-[var(--color-on-surface-variant)] text-xs">{flaeche.hoheitlicheStelle}</div>
         )}
         {flaeche.ansprechpartnerTel != null && (
           <a
             href={`tel:${flaeche.ansprechpartnerTel}`}
-            className="flex items-center gap-2 text-zinc-400 hover:text-zinc-200 text-xs transition-colors"
+            className="flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] text-xs transition-colors"
           >
             <Phone className="w-3.5 h-3.5" />
             {flaeche.ansprechpartnerTel}
@@ -331,7 +331,7 @@ function AnsprechpartnerBlock({ flaeche }: { flaeche: Flaeche }) {
         {flaeche.ansprechpartnerEmail != null && (
           <a
             href={`mailto:${flaeche.ansprechpartnerEmail}`}
-            className="flex items-center gap-2 text-zinc-400 hover:text-zinc-200 text-xs transition-colors"
+            className="flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] text-xs transition-colors"
           >
             <Mail className="w-3.5 h-3.5" />
             {flaeche.ansprechpartnerEmail}
@@ -362,7 +362,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
   return (
     <div>
       {/* Tab Navigation */}
-      <div className="flex gap-1 mb-6 bg-[#161616] border border-border rounded-xl p-1">
+      <div className="flex gap-1 mb-6 bg-[var(--color-surface-container)] border border-border rounded-xl p-1">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -370,7 +370,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all flex-1 justify-center ${
               activeTab === tab.id
                 ? "bg-emerald-600 text-white"
-                : "text-zinc-500 hover:text-zinc-300 hover:bg-[#1e1e1e]"
+                : "text-[var(--color-on-surface-variant)] hover:text-zinc-300 hover:bg-[var(--color-surface-container-highest)]"
             }`}
           >
             {tab.icon}
@@ -385,8 +385,8 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
           {/* Linke Spalte */}
           <div className="space-y-6">
             {/* Grunddaten */}
-            <div className="bg-[#161616] border border-border rounded-xl p-5">
-              <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-4">Grunddaten</h2>
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
+              <h2 className="text-sm font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide mb-4">Grunddaten</h2>
               <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
                 {[
                   ["Register-Nr", flaeche.registerNr],
@@ -415,8 +415,8 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
             </div>
 
             {/* Standort */}
-            <div className="bg-[#161616] border border-border rounded-xl p-5">
-              <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-4">Standort</h2>
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
+              <h2 className="text-sm font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide mb-4">Standort</h2>
               <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm mb-4">
                 {[
                   ["Forstamt", flaeche.forstamt ?? "–"],
@@ -438,8 +438,8 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
               {flaeche.osmUrl && (
                 <div className="mt-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <MapPin className="w-4 h-4 text-zinc-500" />
-                    <span className="text-xs text-zinc-500">OpenStreetMap</span>
+                    <MapPin className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
+                    <span className="text-xs text-[var(--color-on-surface-variant)]">OpenStreetMap</span>
                     <a
                       href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=13/${lat}/${lon}`}
                       target="_blank"
@@ -463,8 +463,8 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
           {/* Rechte Spalte */}
           <div className="space-y-4">
             {/* Quelle */}
-            <div className="bg-[#161616] border border-border rounded-xl p-4">
-              <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Registerquelle</h2>
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
+              <h2 className="text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide mb-3">Registerquelle</h2>
               <div className="space-y-2 text-sm">
                 <div>
                   <dt className="text-zinc-600 text-xs">Name</dt>
@@ -500,7 +500,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
                       href={flaeche.quelleUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-zinc-500 hover:text-zinc-400 flex items-center gap-1 break-all"
+                      className="text-xs text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface-variant)] flex items-center gap-1 break-all"
                     >
                       Direktlink <ExternalLink className="w-3 h-3 flex-shrink-0" />
                     </a>
@@ -508,7 +508,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
                 )}
                 <div>
                   <dt className="text-zinc-600 text-xs">Datenstand</dt>
-                  <dd className="text-zinc-400 text-xs">
+                  <dd className="text-[var(--color-on-surface-variant)] text-xs">
                     {flaeche.datenstand ?? formatDatum(flaeche.letzteAktualisierung)}
                   </dd>
                 </div>
@@ -517,18 +517,18 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
 
             {/* Ansprechpartner */}
             {(flaeche.ansprechpartner != null || flaeche.ansprechpartnerTel != null || flaeche.ansprechpartnerEmail != null) ? (
-              <div className="bg-[#161616] border border-border rounded-xl p-4">
-                <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Ansprechpartner</h2>
+              <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
+                <h2 className="text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide mb-3">Ansprechpartner</h2>
                 <div className="space-y-2 text-sm">
                   {flaeche.ansprechpartner != null ? <div className="text-zinc-300">{flaeche.ansprechpartner}</div> : null}
-                  {flaeche.hoheitlicheStelle != null ? <div className="text-zinc-500 text-xs">{flaeche.hoheitlicheStelle}</div> : null}
+                  {flaeche.hoheitlicheStelle != null ? <div className="text-[var(--color-on-surface-variant)] text-xs">{flaeche.hoheitlicheStelle}</div> : null}
                   {flaeche.ansprechpartnerTel != null ? (
-                    <a href={`tel:${flaeche.ansprechpartnerTel}`} className="flex items-center gap-2 text-zinc-400 hover:text-zinc-200 text-xs">
+                    <a href={`tel:${flaeche.ansprechpartnerTel}`} className="flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] text-xs">
                       <Phone className="w-3.5 h-3.5" />{flaeche.ansprechpartnerTel}
                     </a>
                   ) : null}
                   {flaeche.ansprechpartnerEmail != null ? (
-                    <a href={`mailto:${flaeche.ansprechpartnerEmail}`} className="flex items-center gap-2 text-zinc-400 hover:text-zinc-200 text-xs">
+                    <a href={`mailto:${flaeche.ansprechpartnerEmail}`} className="flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] text-xs">
                       <Mail className="w-3.5 h-3.5" />{flaeche.ansprechpartnerEmail}
                     </a>
                   ) : null}
@@ -537,8 +537,8 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
             ) : null}
 
             {/* Weitere Angaben */}
-            <div className="bg-[#161616] border border-border rounded-xl p-4">
-              <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Weitere Angaben</h2>
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
+              <h2 className="text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide mb-3">Weitere Angaben</h2>
               <div className="space-y-2 text-xs">
                 {[
                   ["Verwendungszweck", flaeche.verwendungszweck],
@@ -549,7 +549,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
                   value ? (
                     <div key={label as string}>
                       <dt className="text-zinc-600">{label}</dt>
-                      <dd className="text-zinc-400 mt-0.5">{value as string}</dd>
+                      <dd className="text-[var(--color-on-surface-variant)] mt-0.5">{value as string}</dd>
                     </div>
                   ) : null
                 )}
@@ -558,10 +558,10 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
 
             {/* Rohdaten */}
             {flaeche.rohdaten && (
-              <div className="bg-[#161616] border border-border rounded-xl p-4">
+              <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-3">
                   <Database className="w-3.5 h-3.5 text-zinc-600" />
-                  <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide">Rohdaten (JSON)</h2>
+                  <h2 className="text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide">Rohdaten (JSON)</h2>
                 </div>
                 <RohdatenInline data={flaeche.rohdaten} />
               </div>
@@ -599,12 +599,12 @@ function RohdatenInline({ data }: { data: unknown }) {
     <div>
       <button
         onClick={() => setOpen(!open)}
-        className="text-xs text-zinc-500 hover:text-zinc-300"
+        className="text-xs text-[var(--color-on-surface-variant)] hover:text-zinc-300"
       >
         {open ? "▼ Ausblenden" : "▶ Anzeigen"}
       </button>
       {open && (
-        <pre className="mt-2 text-xs text-zinc-600 overflow-x-auto bg-[#111] p-2 rounded">
+        <pre className="mt-2 text-xs text-zinc-600 overflow-x-auto bg-[var(--color-surface-container-low)] p-2 rounded">
           {JSON.stringify(data, null, 2)}
         </pre>
       )}

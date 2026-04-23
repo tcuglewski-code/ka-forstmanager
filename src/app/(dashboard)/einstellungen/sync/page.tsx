@@ -131,7 +131,7 @@ export default function SyncSettingsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Synchronisation</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-0.5">
             WordPress ↔ ForstManager Datenabgleich
           </p>
         </div>
@@ -151,20 +151,20 @@ export default function SyncSettingsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4 mb-6">
-        <div className="bg-[#161616] border border-border rounded-xl p-4">
-          <p className="text-zinc-500 text-xs mb-1">Gesamt</p>
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
+          <p className="text-[var(--color-on-surface-variant)] text-xs mb-1">Gesamt</p>
           <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{stats.total}</p>
         </div>
-        <div className="bg-[#161616] border border-border rounded-xl p-4">
-          <p className="text-zinc-500 text-xs mb-1">Erfolgreich</p>
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
+          <p className="text-[var(--color-on-surface-variant)] text-xs mb-1">Erfolgreich</p>
           <p className="text-2xl font-bold text-emerald-400">{stats.ok}</p>
         </div>
-        <div className="bg-[#161616] border border-border rounded-xl p-4">
-          <p className="text-zinc-500 text-xs mb-1">Fehler</p>
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
+          <p className="text-[var(--color-on-surface-variant)] text-xs mb-1">Fehler</p>
           <p className="text-2xl font-bold text-red-400">{stats.error}</p>
         </div>
-        <div className="bg-[#161616] border border-border rounded-xl p-4">
-          <p className="text-zinc-500 text-xs mb-1">Letzte Sync</p>
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
+          <p className="text-[var(--color-on-surface-variant)] text-xs mb-1">Letzte Sync</p>
           <p className="text-sm font-medium text-white">
             {stats.lastSync 
               ? new Date(stats.lastSync).toLocaleString("de-DE", { 
@@ -188,7 +188,7 @@ export default function SyncSettingsPage() {
             className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
               filter === f 
                 ? "bg-gold/20 text-gold" 
-                : "bg-[#1e1e1e] text-zinc-400 hover:text-white"
+                : "bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] hover:text-white"
             }`}
           >
             {f === "alle" ? "Alle" : f}
@@ -197,30 +197,30 @@ export default function SyncSettingsPage() {
       </div>
 
       {/* Log-Tabelle */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         {loading ? (
-          <div className="text-center py-12 text-zinc-500">Laden...</div>
+          <div className="text-center py-12 text-[var(--color-on-surface-variant)]">Laden...</div>
         ) : filteredLogs.length === 0 ? (
           <div className="text-center py-12">
             <RefreshCw className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-500 text-sm">Keine Sync-Logs vorhanden</p>
+            <p className="text-[var(--color-on-surface-variant)] text-sm">Keine Sync-Logs vorhanden</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Zeitpunkt</th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Typ</th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Richtung</th>
-                <th className="text-center px-4 py-3 text-zinc-500 font-medium">Status</th>
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Fehler</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Zeitpunkt</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Typ</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Richtung</th>
+                <th className="text-center px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Status</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Fehler</th>
               </tr>
             </thead>
             <tbody>
               {filteredLogs.slice(0, 50).map(log => (
-                <tr key={log.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors">
-                  <td className="px-4 py-3 text-zinc-400">
+                <tr key={log.id} className="border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors">
+                  <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">
                     <div className="flex items-center gap-1.5">
                       <Clock className="w-3 h-3" />
                       {new Date(log.timestamp).toLocaleString("de-DE", {
@@ -234,7 +234,7 @@ export default function SyncSettingsPage() {
                   </td>
                   <td className="px-4 py-3">
                     <span className="text-white">{log.entityType}</span>
-                    <span className="text-zinc-500 text-xs ml-2">#{log.entityId.slice(0, 8)}</span>
+                    <span className="text-[var(--color-on-surface-variant)] text-xs ml-2">#{log.entityId.slice(0, 8)}</span>
                   </td>
                   <td className="px-4 py-3">
                     <DirectionBadge direction={log.direction} />
@@ -254,23 +254,23 @@ export default function SyncSettingsPage() {
       </div>
 
       {/* Info-Box */}
-      <div className="mt-6 p-4 rounded-xl bg-[#161616] border border-border">
+      <div className="mt-6 p-4 rounded-xl bg-[var(--color-surface-container)] border border-border">
         <h3 className="text-sm font-medium text-white mb-2">Sync-Konfiguration</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="text-zinc-500">WordPress URL:</span>
+            <span className="text-[var(--color-on-surface-variant)]">WordPress URL:</span>
             <span className="text-white ml-2">peru-otter-113714.hostingersite.com</span>
           </div>
           <div>
-            <span className="text-zinc-500">Sync-Intervall:</span>
+            <span className="text-[var(--color-on-surface-variant)]">Sync-Intervall:</span>
             <span className="text-white ml-2">15 Minuten (Cron)</span>
           </div>
           <div>
-            <span className="text-zinc-500">Konflikt-Strategie:</span>
+            <span className="text-[var(--color-on-surface-variant)]">Konflikt-Strategie:</span>
             <span className="text-white ml-2">Last-Write-Wins</span>
           </div>
           <div>
-            <span className="text-zinc-500">Rate-Limit:</span>
+            <span className="text-[var(--color-on-surface-variant)]">Rate-Limit:</span>
             <span className="text-white ml-2">100 Requests/Minute</span>
           </div>
         </div>

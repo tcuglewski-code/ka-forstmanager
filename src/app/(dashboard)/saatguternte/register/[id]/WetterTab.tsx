@@ -134,9 +134,9 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-[#161616] border border-border rounded-xl p-5">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-zinc-200 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)] flex items-center gap-2">
             🌤️ Wetterdaten für diese Fläche
           </h2>
           {hasKoord && (
@@ -193,9 +193,9 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
         <>
           {/* Aktuelle 7-Tage-Vorschau */}
           {aktuell && (
-            <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
               <div className="px-5 py-4 border-b border-border flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
+                <h3 className="text-sm font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide">
                   📅 Aktuelle 7-Tage-Vorschau
                 </h3>
                 <span className="text-xs text-zinc-600">
@@ -207,7 +207,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-border text-xs text-zinc-500 uppercase">
+                    <tr className="border-b border-border text-xs text-[var(--color-on-surface-variant)] uppercase">
                       <th className="px-4 py-3 text-left">Datum</th>
                       <th className="px-4 py-3 text-center">Symbol</th>
                       <th className="px-4 py-3 text-right">Min °C</th>
@@ -217,7 +217,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
                   </thead>
                   <tbody>
                     {aktuell.daily.time.map((t, i) => (
-                      <tr key={t} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors">
+                      <tr key={t} className="border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors">
                         <td className="px-4 py-2.5 text-zinc-300">{formatDatum(t)}</td>
                         <td className="px-4 py-2.5 text-center text-lg">
                           {/* Kein weather_code pro Tag in archive, verwende simplen Indikator */}
@@ -235,7 +235,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
                         <td className="px-4 py-2.5 text-right text-orange-400 font-mono text-xs">
                           {aktuell.daily.temperature_2m_max[i]?.toFixed(1) ?? "–"}°
                         </td>
-                        <td className="px-4 py-2.5 text-right text-zinc-400 font-mono text-xs">
+                        <td className="px-4 py-2.5 text-right text-[var(--color-on-surface-variant)] font-mono text-xs">
                           {(aktuell.daily.precipitation_sum[i] ?? 0).toFixed(1)} mm
                         </td>
                       </tr>
@@ -247,9 +247,9 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
           )}
 
           {/* Jahres-Statistik */}
-          <div className="bg-[#161616] border border-border rounded-xl p-5">
+          <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
             <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
-              <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide">
                 📊 Jahres-Statistik
               </h3>
               {/* Jahr-Auswahl */}
@@ -289,7 +289,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                       aktivesJahr === jahr
                         ? "bg-emerald-600 text-white"
-                        : "bg-surface-container-highest text-zinc-400 hover:bg-[#333] hover:text-zinc-200"
+                        : "bg-surface-container-highest text-[var(--color-on-surface-variant)] hover:bg-[#333] hover:text-[var(--color-on-surface)]"
                     }`}
                   >
                     {ladeJahr === jahr ? <RefreshCw className="w-3 h-3 animate-spin inline" /> : jahr}
@@ -302,60 +302,60 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
               <>
                 {/* Stats Cards */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
-                  <div className="bg-[#1e1e1e] border border-border rounded-lg p-3 text-center">
+                  <div className="bg-[var(--color-surface-container-highest)] border border-border rounded-lg p-3 text-center">
                     <div className="text-2xl mb-1">🌡️</div>
-                    <div className="text-xs text-zinc-500 mb-1">Ø Temperatur</div>
-                    <div className="text-sm font-semibold text-zinc-200">
+                    <div className="text-xs text-[var(--color-on-surface-variant)] mb-1">Ø Temperatur</div>
+                    <div className="text-sm font-semibold text-[var(--color-on-surface)]">
                       {n(aktuellerSnapshot.tempMaxAvgC, "°C")}
                     </div>
-                    <div className="text-xs text-zinc-500 mt-0.5">
+                    <div className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">
                       Min: {n(aktuellerSnapshot.tempMinAvgC, "°")} | Max: {n(aktuellerSnapshot.tempMaxAvgC, "°")}
                     </div>
                   </div>
-                  <div className="bg-[#1e1e1e] border border-border rounded-lg p-3 text-center">
+                  <div className="bg-[var(--color-surface-container-highest)] border border-border rounded-lg p-3 text-center">
                     <div className="text-2xl mb-1">🌧️</div>
-                    <div className="text-xs text-zinc-500 mb-1">Niederschlag</div>
-                    <div className="text-sm font-semibold text-zinc-200">
+                    <div className="text-xs text-[var(--color-on-surface-variant)] mb-1">Niederschlag</div>
+                    <div className="text-sm font-semibold text-[var(--color-on-surface)]">
                       {n(aktuellerSnapshot.niederschlagMm, " mm")}
                     </div>
-                    <div className="text-xs text-zinc-500 mt-0.5">Jahressumme</div>
+                    <div className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">Jahressumme</div>
                   </div>
-                  <div className="bg-[#1e1e1e] border border-border rounded-lg p-3 text-center">
+                  <div className="bg-[var(--color-surface-container-highest)] border border-border rounded-lg p-3 text-center">
                     <div className="text-2xl mb-1">❄️</div>
-                    <div className="text-xs text-zinc-500 mb-1">Frosttage</div>
-                    <div className="text-sm font-semibold text-zinc-200">
+                    <div className="text-xs text-[var(--color-on-surface-variant)] mb-1">Frosttage</div>
+                    <div className="text-sm font-semibold text-[var(--color-on-surface)]">
                       {n(aktuellerSnapshot.frosttage, " Tage")}
                     </div>
-                    <div className="text-xs text-zinc-500 mt-0.5">Min &lt; 0°C</div>
+                    <div className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">Min &lt; 0°C</div>
                   </div>
-                  <div className="bg-[#1e1e1e] border border-border rounded-lg p-3 text-center">
+                  <div className="bg-[var(--color-surface-container-highest)] border border-border rounded-lg p-3 text-center">
                     <div className="text-2xl mb-1">☀️</div>
-                    <div className="text-xs text-zinc-500 mb-1">Hitzetage</div>
-                    <div className="text-sm font-semibold text-zinc-200">
+                    <div className="text-xs text-[var(--color-on-surface-variant)] mb-1">Hitzetage</div>
+                    <div className="text-sm font-semibold text-[var(--color-on-surface)]">
                       {n(aktuellerSnapshot.hitzetage, " Tage")}
                     </div>
-                    <div className="text-xs text-zinc-500 mt-0.5">Max &gt; 30°C</div>
+                    <div className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">Max &gt; 30°C</div>
                   </div>
-                  <div className="bg-[#1e1e1e] border border-border rounded-lg p-3 text-center">
+                  <div className="bg-[var(--color-surface-container-highest)] border border-border rounded-lg p-3 text-center">
                     <div className="text-2xl mb-1">🌧️</div>
-                    <div className="text-xs text-zinc-500 mb-1">Regentage</div>
-                    <div className="text-sm font-semibold text-zinc-200">
+                    <div className="text-xs text-[var(--color-on-surface-variant)] mb-1">Regentage</div>
+                    <div className="text-sm font-semibold text-[var(--color-on-surface)]">
                       {n(aktuellerSnapshot.regentage, " Tage")}
                     </div>
-                    <div className="text-xs text-zinc-500 mt-0.5">&gt; 1mm Niederschlag</div>
+                    <div className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">&gt; 1mm Niederschlag</div>
                   </div>
                 </div>
 
                 {/* Monatlicher Verlauf */}
                 {monatsDaten.length > 0 && (
                   <div>
-                    <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">
+                    <h4 className="text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide mb-3">
                       Monatlicher Verlauf Jan–Dez {aktivesJahr}
                     </h4>
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b border-border text-xs text-zinc-500 uppercase">
+                          <tr className="border-b border-border text-xs text-[var(--color-on-surface-variant)] uppercase">
                             <th className="px-3 py-2 text-left">Monat</th>
                             <th className="px-3 py-2 text-right">Ø Min °C</th>
                             <th className="px-3 py-2 text-right">Ø Max °C</th>
@@ -367,7 +367,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
                           {monatsDaten.map((m) => (
                             <tr
                               key={m.monat}
-                              className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors"
+                              className="border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors"
                             >
                               <td className="px-3 py-2 text-zinc-300 font-medium">{m.label}</td>
                               <td className="px-3 py-2 text-right text-blue-400 font-mono text-xs">
@@ -376,10 +376,10 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
                               <td className="px-3 py-2 text-right text-orange-400 font-mono text-xs">
                                 {m.tempMaxAvg != null ? `${m.tempMaxAvg}°` : "–"}
                               </td>
-                              <td className="px-3 py-2 text-right text-zinc-400 font-mono text-xs">
+                              <td className="px-3 py-2 text-right text-[var(--color-on-surface-variant)] font-mono text-xs">
                                 {m.niederschlagSumme} mm
                               </td>
-                              <td className="px-3 py-2 text-right text-zinc-500 font-mono text-xs">
+                              <td className="px-3 py-2 text-right text-[var(--color-on-surface-variant)] font-mono text-xs">
                                 {m.frosttage > 0 ? (
                                   <span className="text-blue-400">{m.frosttage}</span>
                                 ) : (
@@ -397,7 +397,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
             ) : (
               <div className="flex flex-col items-center justify-center py-10 text-center">
                 <Cloud className="w-10 h-10 text-zinc-700 mb-3" />
-                <p className="text-zinc-500 text-sm">
+                <p className="text-[var(--color-on-surface-variant)] text-sm">
                   Noch keine Daten für {aktivesJahr} geladen.
                 </p>
                 <button

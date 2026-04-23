@@ -33,7 +33,7 @@ function formatGroesse(bytes: number): string {
 function DateiIcon({ contentType }: { contentType: string }) {
   if (contentType.startsWith("image/")) return <Image className="w-4 h-4 text-blue-400" />
   if (contentType === "application/pdf") return <FileText className="w-4 h-4 text-red-400" />
-  return <File className="w-4 h-4 text-zinc-400" />
+  return <File className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
 }
 
 export function DokumentenUpload({ kundeId, auftragId, maxMb = 20 }: DokumentenUploadProps) {
@@ -179,15 +179,15 @@ export function DokumentenUpload({ kundeId, auftragId, maxMb = 20 }: DokumentenU
           border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all
           ${dropAktiv
             ? "border-green-500 bg-green-900/20"
-            : "border-zinc-600 hover:border-zinc-400 bg-zinc-800/30 hover:bg-zinc-800/50"
+            : "border-zinc-600 hover:border-zinc-400 bg-[var(--color-surface-container-lowest)]/30 hover:bg-[var(--color-surface-container-lowest)]/50"
           }
         `}
       >
-        <Upload className={`w-8 h-8 mx-auto mb-3 ${dropAktiv ? "text-green-400" : "text-zinc-500"}`} />
+        <Upload className={`w-8 h-8 mx-auto mb-3 ${dropAktiv ? "text-green-400" : "text-[var(--color-on-surface-variant)]"}`} />
         <p className="text-zinc-300 font-medium">
           {dropAktiv ? "Dateien loslassen zum Hochladen" : "Dateien hierher ziehen oder klicken"}
         </p>
-        <p className="text-zinc-500 text-xs mt-1">
+        <p className="text-[var(--color-on-surface-variant)] text-xs mt-1">
           PDF, Bilder, Word, Excel · max. {maxMb} MB pro Datei
         </p>
         <input
@@ -204,7 +204,7 @@ export function DokumentenUpload({ kundeId, auftragId, maxMb = 20 }: DokumentenU
       {uploads.size > 0 && (
         <div className="space-y-2">
           {Array.from(uploads.entries()).map(([key, upload]) => (
-            <div key={key} className="bg-zinc-800 rounded-lg p-3">
+            <div key={key} className="bg-[var(--color-surface-container-lowest)] rounded-lg p-3">
               <div className="flex items-center justify-between text-sm mb-1">
                 <span className="text-zinc-300 truncate max-w-[200px]">
                   {key.split("-").slice(0, -1).join("-")}
@@ -212,7 +212,7 @@ export function DokumentenUpload({ kundeId, auftragId, maxMb = 20 }: DokumentenU
                 <span className={
                   upload.status === "fertig" ? "text-green-400" :
                   upload.status === "fehler" ? "text-red-400" :
-                  "text-zinc-400"
+                  "text-[var(--color-on-surface-variant)]"
                 }>
                   {upload.status === "fertig" ? "✓ Fertig" :
                    upload.status === "fehler" ? "✗ Fehler" :
@@ -220,7 +220,7 @@ export function DokumentenUpload({ kundeId, auftragId, maxMb = 20 }: DokumentenU
                 </span>
               </div>
               {upload.status === "hochladen" && (
-                <div className="w-full bg-zinc-700 rounded-full h-1.5">
+                <div className="w-full bg-[var(--color-surface-container-high)] rounded-full h-1.5">
                   <div
                     className="bg-green-500 h-1.5 rounded-full transition-all"
                     style={{ width: `${upload.fortschritt}%` }}
@@ -237,12 +237,12 @@ export function DokumentenUpload({ kundeId, auftragId, maxMb = 20 }: DokumentenU
 
       {/* Dateiliste */}
       <div>
-        <h3 className="text-sm font-medium text-zinc-400 mb-2">
+        <h3 className="text-sm font-medium text-[var(--color-on-surface-variant)] mb-2">
           Hochgeladene Dokumente ({dateien.length})
         </h3>
 
         {ladenDateien ? (
-          <div className="text-zinc-500 text-sm text-center py-4">Lade Dokumente...</div>
+          <div className="text-[var(--color-on-surface-variant)] text-sm text-center py-4">Lade Dokumente...</div>
         ) : dateien.length === 0 ? (
           <div className="text-zinc-600 text-sm text-center py-6 border border-dashed border-border rounded-lg">
             Noch keine Dokumente hochgeladen
@@ -252,12 +252,12 @@ export function DokumentenUpload({ kundeId, auftragId, maxMb = 20 }: DokumentenU
             {dateien.map((datei) => (
               <div
                 key={datei.pfad}
-                className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg hover:bg-zinc-800 transition-colors group"
+                className="flex items-center gap-3 p-3 bg-[var(--color-surface-container-lowest)]/50 rounded-lg hover:bg-[var(--color-surface-container-lowest)] transition-colors group"
               >
                 <DateiIcon contentType={datei.contentType} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-white truncate">{datei.name}</p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-[var(--color-on-surface-variant)]">
                     {formatGroesse(datei.groesse)}
                     {datei.geaendertAm && ` · ${new Date(datei.geaendertAm).toLocaleDateString("de-DE")}`}
                     {datei.typ && datei.typ !== "sonstiges" && ` · ${datei.typ}`}
@@ -268,14 +268,14 @@ export function DokumentenUpload({ kundeId, auftragId, maxMb = 20 }: DokumentenU
                     href={`/api/kundenportal/dokumente/download?pfad=${encodeURIComponent(datei.pfad)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-1.5 text-zinc-400 hover:text-white rounded"
+                    className="p-1.5 text-[var(--color-on-surface-variant)] hover:text-white rounded"
                     title="Herunterladen"
                   >
                     <Download className="w-4 h-4" />
                   </a>
                   <button
                     onClick={() => dateiLoeschen(datei)}
-                    className="p-1.5 text-zinc-400 hover:text-red-400 rounded"
+                    className="p-1.5 text-[var(--color-on-surface-variant)] hover:text-red-400 rounded"
                     title="Löschen"
                   >
                     <Trash2 className="w-4 h-4" />

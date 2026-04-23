@@ -50,7 +50,7 @@ const DIENSTLEISTUNG_TYPEN = [
   { key: "kulturpflege", label: "Kulturpflege", icon: Scissors, farbe: "bg-blue-900/50 text-blue-300 border-blue-700" },
   { key: "kulturschutz", label: "Kulturschutz", icon: Shield, farbe: "bg-purple-900/50 text-purple-300 border-purple-700" },
   { key: "saatguternte", label: "Saatguternte", icon: Wheat, farbe: "bg-yellow-900/50 text-yellow-300 border-yellow-700" },
-  { key: "sonstiges", label: "Sonstiges", icon: ClipboardList, farbe: "bg-zinc-700/50 text-zinc-300 border-zinc-600" },
+  { key: "sonstiges", label: "Sonstiges", icon: ClipboardList, farbe: "bg-[var(--color-surface-container-high)]/50 text-zinc-300 border-zinc-600" },
 ]
 
 const BAUMARTEN = [
@@ -185,7 +185,7 @@ export default function WochenplanungPage() {
   }
 
   const typFarbe = (typ: string) =>
-    DIENSTLEISTUNG_TYPEN.find((t) => t.key === typ)?.farbe ?? "bg-zinc-700 text-zinc-300 border-zinc-600"
+    DIENSTLEISTUNG_TYPEN.find((t) => t.key === typ)?.farbe ?? "bg-[var(--color-surface-container-high)] text-zinc-300 border-zinc-600"
 
   const typLabel = (typ: string) =>
     DIENSTLEISTUNG_TYPEN.find((t) => t.key === typ)?.label ?? typ
@@ -196,7 +196,7 @@ export default function WochenplanungPage() {
       {/* Seiten-Header */}
       <div>
         <h1 className="text-2xl font-bold text-foreground">Wochenplanung</h1>
-        <p className="text-zinc-400 text-sm mt-1">
+        <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">
           Planung aller Dienstleistungen nach Kalenderwoche
         </p>
       </div>
@@ -204,20 +204,20 @@ export default function WochenplanungPage() {
       {/* Steuerleiste */}
       <div className="flex flex-wrap items-center gap-4">
         {/* KW-Navigation */}
-        <div className="flex items-center gap-2 bg-zinc-800 border border-border rounded-xl px-4 py-2">
+        <div className="flex items-center gap-2 bg-[var(--color-surface-container-lowest)] border border-border rounded-xl px-4 py-2">
           <button
             onClick={() => kWNavigieren(-1)}
-            className="p-1 hover:text-white text-zinc-400 transition-colors"
+            className="p-1 hover:text-white text-[var(--color-on-surface-variant)] transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
           <div className="text-center min-w-[100px]">
             <div className="text-white font-bold text-lg">KW {kw}</div>
-            <div className="text-zinc-400 text-xs">{jahr}</div>
+            <div className="text-[var(--color-on-surface-variant)] text-xs">{jahr}</div>
           </div>
           <button
             onClick={() => kWNavigieren(1)}
-            className="p-1 hover:text-white text-zinc-400 transition-colors"
+            className="p-1 hover:text-white text-[var(--color-on-surface-variant)] transition-colors"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -227,7 +227,7 @@ export default function WochenplanungPage() {
         <select
           value={aktGruppeId ?? ""}
           onChange={(e) => setAktGruppeId(e.target.value || null)}
-          className="bg-zinc-800 border border-border rounded-lg px-3 py-2 text-white text-sm min-w-[160px]"
+          className="bg-[var(--color-surface-container-lowest)] border border-border rounded-lg px-3 py-2 text-white text-sm min-w-[160px]"
         >
           <option value="">Alle Gruppen</option>
           {gruppen.map((g) => (
@@ -249,7 +249,7 @@ export default function WochenplanungPage() {
             href={`/api/wochenplanung/${wochenplan.id}/export-pdf`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-3 py-2 bg-zinc-700 text-zinc-200 rounded-lg hover:bg-zinc-600 text-sm"
+            className="flex items-center gap-2 px-3 py-2 bg-[var(--color-surface-container-high)] text-[var(--color-on-surface)] rounded-lg hover:bg-zinc-600 text-sm"
           >
             <FileDown className="w-4 h-4" />
             PDF exportieren
@@ -259,15 +259,15 @@ export default function WochenplanungPage() {
 
       {/* Hauptinhalt */}
       {laden ? (
-        <div className="text-zinc-400 text-center py-16">Lade Wochenplan...</div>
+        <div className="text-[var(--color-on-surface-variant)] text-center py-16">Lade Wochenplan...</div>
       ) : !wochenplan ? (
         /* Kein Plan vorhanden */
-        <div className="bg-zinc-800/50 border border-dashed border-zinc-600 rounded-2xl p-12 text-center">
+        <div className="bg-[var(--color-surface-container-lowest)]/50 border border-dashed border-zinc-600 rounded-2xl p-12 text-center">
           <div className="text-4xl mb-4">📋</div>
           <h2 className="text-xl font-bold mb-2" style={{ color: "var(--color-on-surface)" }}>
             Kein Wochenplan für KW {kw}/{jahr}
           </h2>
-          <p className="text-zinc-400 text-sm mb-6">
+          <p className="text-[var(--color-on-surface-variant)] text-sm mb-6">
             {aktGruppeId
               ? `Für die ausgewählte Gruppe wurde noch kein Plan erstellt.`
               : "Für diese Kalenderwoche existiert noch kein Plan."}
@@ -284,19 +284,19 @@ export default function WochenplanungPage() {
         /* Plan vorhanden */
         <div className="space-y-6">
           {/* Plan-Header */}
-          <div className="bg-zinc-800/50 border border-border rounded-xl p-4 flex items-center justify-between">
+          <div className="bg-[var(--color-surface-container-lowest)]/50 border border-border rounded-xl p-4 flex items-center justify-between">
             <div>
               <h2 className="font-bold text-white">
                 Wochenplan KW {wochenplan.kalenderwoche}/{wochenplan.jahr}
                 {wochenplan.gruppe && ` — ${wochenplan.gruppe.name}`}
               </h2>
-              <p className="text-zinc-400 text-sm">
+              <p className="text-[var(--color-on-surface-variant)] text-sm">
                 {wochenplan.positionen.length} Position{wochenplan.positionen.length !== 1 ? "en" : ""}
               </p>
             </div>
             <span className={`px-2 py-1 rounded text-xs font-medium ${
               wochenplan.status === "freigegeben" ? "bg-green-900/40 text-green-400" :
-              wochenplan.status === "abgeschlossen" ? "bg-zinc-700 text-zinc-300" :
+              wochenplan.status === "abgeschlossen" ? "bg-[var(--color-surface-container-high)] text-zinc-300" :
               "bg-amber-900/40 text-amber-400"
             }`}>
               {wochenplan.status.charAt(0).toUpperCase() + wochenplan.status.slice(1)}
@@ -314,10 +314,10 @@ export default function WochenplanungPage() {
                     <Icon className="w-3.5 h-3.5" />
                     {label}
                   </h3>
-                  <span className="text-zinc-500 text-xs">({posFuerTyp.length})</span>
+                  <span className="text-[var(--color-on-surface-variant)] text-xs">({posFuerTyp.length})</span>
                   <button
                     onClick={() => setPositionFormTyp(positionFormTyp === key ? null : key)}
-                    className="text-xs text-zinc-400 hover:text-white flex items-center gap-1"
+                    className="text-xs text-[var(--color-on-surface-variant)] hover:text-white flex items-center gap-1"
                   >
                     <Plus className="w-3 h-3" />
                     Hinzufügen
@@ -328,39 +328,39 @@ export default function WochenplanungPage() {
                 {positionFormTyp === key && (
                   <form
                     onSubmit={positionHinzufuegen}
-                    className="bg-zinc-800 border border-zinc-600 rounded-xl p-4 space-y-3 ml-4"
+                    className="bg-[var(--color-surface-container-lowest)] border border-zinc-600 rounded-xl p-4 space-y-3 ml-4"
                   >
                     <div className="grid grid-cols-3 gap-3">
                       <div>
-                        <label className="text-xs text-zinc-400">Datum</label>
-                        <input type="date" name="datum" className="w-full mt-1 bg-zinc-900 border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                        <label className="text-xs text-[var(--color-on-surface-variant)]">Datum</label>
+                        <input type="date" name="datum" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
                       </div>
                       <div>
-                        <label className="text-xs text-zinc-400">Fläche / Waldstück</label>
-                        <input type="text" name="flaeche" placeholder="z.B. Forstort Eichwald" className="w-full mt-1 bg-zinc-900 border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                        <label className="text-xs text-[var(--color-on-surface-variant)]">Fläche / Waldstück</label>
+                        <input type="text" name="flaeche" placeholder="z.B. Forstort Eichwald" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
                       </div>
                       <div>
-                        <label className="text-xs text-zinc-400">Treffpunkt</label>
-                        <input type="text" name="treffpunkt" placeholder="z.B. Parkplatz B27" className="w-full mt-1 bg-zinc-900 border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                        <label className="text-xs text-[var(--color-on-surface-variant)]">Treffpunkt</label>
+                        <input type="text" name="treffpunkt" placeholder="z.B. Parkplatz B27" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
                       </div>
                       <div>
-                        <label className="text-xs text-zinc-400">GPS-Position</label>
-                        <input type="text" name="gpsPosition" placeholder="51.1657, 10.4515" className="w-full mt-1 bg-zinc-900 border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                        <label className="text-xs text-[var(--color-on-surface-variant)]">GPS-Position</label>
+                        <input type="text" name="gpsPosition" placeholder="51.1657, 10.4515" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
                       </div>
 
                       {/* Pflanzung-spezifische Felder */}
                       {key === "pflanzung" && (
                         <>
                           <div>
-                            <label className="text-xs text-zinc-400">Baumart</label>
-                            <select name="baumart" className="w-full mt-1 bg-zinc-900 border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white">
+                            <label className="text-xs text-[var(--color-on-surface-variant)]">Baumart</label>
+                            <select name="baumart" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white">
                               <option value="">Wählen...</option>
                               {BAUMARTEN.map((b) => <option key={b} value={b}>{b}</option>)}
                             </select>
                           </div>
                           <div>
-                            <label className="text-xs text-zinc-400">Stückzahl</label>
-                            <input type="number" name="stueckzahl" min="0" placeholder="z.B. 5000" className="w-full mt-1 bg-zinc-900 border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                            <label className="text-xs text-[var(--color-on-surface-variant)]">Stückzahl</label>
+                            <input type="number" name="stueckzahl" min="0" placeholder="z.B. 5000" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
                           </div>
                         </>
                       )}
@@ -369,26 +369,26 @@ export default function WochenplanungPage() {
                       {key === "saatguternte" && (
                         <>
                           <div>
-                            <label className="text-xs text-zinc-400">Baumart</label>
-                            <select name="baumart" className="w-full mt-1 bg-zinc-900 border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white">
+                            <label className="text-xs text-[var(--color-on-surface-variant)]">Baumart</label>
+                            <select name="baumart" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white">
                               <option value="">Wählen...</option>
                               {BAUMARTEN.map((b) => <option key={b} value={b}>{b}</option>)}
                             </select>
                           </div>
                           <div>
-                            <label className="text-xs text-zinc-400">Herkunftscode</label>
-                            <input type="text" name="herkunftscode" placeholder="z.B. 06 NRW-818-07" className="w-full mt-1 bg-zinc-900 border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                            <label className="text-xs text-[var(--color-on-surface-variant)]">Herkunftscode</label>
+                            <input type="text" name="herkunftscode" placeholder="z.B. 06 NRW-818-07" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
                           </div>
                           <div>
-                            <label className="text-xs text-zinc-400">Ziel (kg)</label>
-                            <input type="number" name="zielkg" min="0" step="0.1" placeholder="z.B. 50" className="w-full mt-1 bg-zinc-900 border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                            <label className="text-xs text-[var(--color-on-surface-variant)]">Ziel (kg)</label>
+                            <input type="number" name="zielkg" min="0" step="0.1" placeholder="z.B. 50" className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
                           </div>
                         </>
                       )}
 
                       <div className="col-span-3">
-                        <label className="text-xs text-zinc-400">Notizen</label>
-                        <input type="text" name="notizen" placeholder="Besonderheiten, Hinweise..." className="w-full mt-1 bg-zinc-900 border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
+                        <label className="text-xs text-[var(--color-on-surface-variant)]">Notizen</label>
+                        <input type="text" name="notizen" placeholder="Besonderheiten, Hinweise..." className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-zinc-600 rounded-lg px-3 py-1.5 text-sm text-white" />
                       </div>
                     </div>
                     <div className="flex gap-2 justify-end">
@@ -404,12 +404,12 @@ export default function WochenplanungPage() {
                     {posFuerTyp.map((pos) => (
                       <div
                         key={pos.id}
-                        className="flex items-start gap-3 p-3 bg-zinc-800/40 border border-border/50 rounded-lg hover:bg-zinc-800/60 group transition-colors"
+                        className="flex items-start gap-3 p-3 bg-[var(--color-surface-container-lowest)]/40 border border-border/50 rounded-lg hover:bg-[var(--color-surface-container-lowest)]/60 group transition-colors"
                       >
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3 flex-wrap">
                             {pos.datum && (
-                              <span className="text-xs text-zinc-400 font-mono">
+                              <span className="text-xs text-[var(--color-on-surface-variant)] font-mono">
                                 {new Date(pos.datum).toLocaleDateString("de-DE")}
                               </span>
                             )}
@@ -430,16 +430,16 @@ export default function WochenplanungPage() {
                               </span>
                             )}
                             {pos.treffpunkt && (
-                              <span className="text-xs text-zinc-400 flex items-center gap-1"><MapPin className="w-3 h-3" /> {pos.treffpunkt}</span>
+                              <span className="text-xs text-[var(--color-on-surface-variant)] flex items-center gap-1"><MapPin className="w-3 h-3" /> {pos.treffpunkt}</span>
                             )}
                           </div>
                           {pos.notizen && (
-                            <p className="text-xs text-zinc-500 mt-1 italic">{pos.notizen}</p>
+                            <p className="text-xs text-[var(--color-on-surface-variant)] mt-1 italic">{pos.notizen}</p>
                           )}
                         </div>
                         <button
                           onClick={() => positionLoeschen(pos.id)}
-                          className="opacity-0 group-hover:opacity-100 p-1 text-zinc-500 hover:text-red-400 transition-all"
+                          className="opacity-0 group-hover:opacity-100 p-1 text-[var(--color-on-surface-variant)] hover:text-red-400 transition-all"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

@@ -130,7 +130,7 @@ export function AddressAutofill({
       {/* Kontakt-Suche (optional) */}
       {showKontaktSuche && (
         <div ref={kontaktRef} className="relative">
-          <label className="block text-xs text-zinc-400 mb-1">
+          <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">
             Forstamt/Kontakt suchen
           </label>
           <div className="relative">
@@ -141,9 +141,9 @@ export function AddressAutofill({
               onFocus={() => kontaktSuggestions.length > 0 && setShowKontaktDropdown(true)}
               placeholder="Name eingeben..."
               disabled={disabled}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg pl-10 pr-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg pl-10 pr-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
             />
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)]">
               {kontaktLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
@@ -154,7 +154,7 @@ export function AddressAutofill({
 
           {/* Kontakt Dropdown */}
           {showKontaktDropdown && kontaktSuggestions.length > 0 && (
-            <div className="absolute z-50 w-full mt-1 bg-[#1a1a1a] border border-border rounded-lg shadow-xl max-h-60 overflow-y-auto">
+            <div className="absolute z-50 w-full mt-1 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg shadow-xl max-h-60 overflow-y-auto">
               {kontaktSuggestions.map((k, idx) => (
                 <button
                   key={idx}
@@ -163,7 +163,7 @@ export function AddressAutofill({
                   className="w-full px-3 py-2 text-left hover:bg-emerald-500/10 border-b border-border last:border-b-0 transition-colors"
                 >
                   <div className="text-sm text-white font-medium">{k.name}</div>
-                  <div className="text-xs text-zinc-500 flex gap-2">
+                  <div className="text-xs text-[var(--color-on-surface-variant)] flex gap-2">
                     {k.plz && <span>{k.plz}</span>}
                     {k.ort && <span>{k.ort}</span>}
                     {k.email && <span>• {k.email}</span>}
@@ -178,7 +178,7 @@ export function AddressAutofill({
       {/* PLZ + Ort */}
       <div className="grid grid-cols-3 gap-3">
         <div className="relative">
-          <label className="block text-xs text-zinc-400 mb-1">PLZ</label>
+          <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">PLZ</label>
           <div className="relative">
             <input
               type="text"
@@ -190,18 +190,18 @@ export function AddressAutofill({
               placeholder="12345"
               maxLength={5}
               disabled={disabled}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
             />
             {plzLoading && (
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                <Loader2 className="w-4 h-4 text-zinc-500 animate-spin" />
+                <Loader2 className="w-4 h-4 text-[var(--color-on-surface-variant)] animate-spin" />
               </div>
             )}
           </div>
         </div>
 
         <div className="col-span-2 relative">
-          <label className="block text-xs text-zinc-400 mb-1">Ort</label>
+          <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Ort</label>
           <div className="relative">
             <input
               type="text"
@@ -209,9 +209,9 @@ export function AddressAutofill({
               onChange={(e) => onOrtChange(e.target.value)}
               placeholder="Ort"
               disabled={disabled}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg pl-10 pr-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg pl-10 pr-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
             />
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)]" />
           </div>
         </div>
       </div>

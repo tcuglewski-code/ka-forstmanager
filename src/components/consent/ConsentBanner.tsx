@@ -148,7 +148,7 @@ export function ConsentBanner({ onConsentChange, showOnlyOnce = true }: ConsentB
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center z-[9999] p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-lg shadow-2xl">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl w-full max-w-lg shadow-2xl">
         {/* Header */}
         <div className="flex items-center gap-3 p-5 border-b border-border">
           <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
@@ -156,13 +156,13 @@ export function ConsentBanner({ onConsentChange, showOnlyOnce = true }: ConsentB
           </div>
           <div>
             <h2 className="text-lg font-semibold text-white">Datenschutz-Einstellungen</h2>
-            <p className="text-sm text-zinc-500">KI-Features benötigen Ihre Einwilligung</p>
+            <p className="text-sm text-[var(--color-on-surface-variant)]">KI-Features benötigen Ihre Einwilligung</p>
           </div>
         </div>
 
         {/* Content */}
         <div className="p-5 space-y-4">
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-[var(--color-on-surface-variant)]">
             ForstManager nutzt KI-Technologie zur Unterstützung bei der Auftragsbearbeitung. 
             Bitte wählen Sie, welche Funktionen Sie aktivieren möchten.
           </p>
@@ -175,7 +175,7 @@ export function ConsentBanner({ onConsentChange, showOnlyOnce = true }: ConsentB
                 className={`p-3 rounded-lg border transition-colors ${
                   consents[key as keyof ConsentStatus]
                     ? "border-emerald-500/50 bg-emerald-500/5"
-                    : "border-border bg-[#0f0f0f]"
+                    : "border-border bg-[var(--color-surface-container-low)]"
                 }`}
               >
                 <label className="flex items-start gap-3 cursor-pointer">
@@ -183,11 +183,11 @@ export function ConsentBanner({ onConsentChange, showOnlyOnce = true }: ConsentB
                     type="checkbox"
                     checked={consents[key as keyof ConsentStatus]}
                     onChange={(e) => handleConsent(key as keyof ConsentStatus, e.target.checked)}
-                    className="mt-0.5 w-4 h-4 rounded border-zinc-600 bg-[#0f0f0f] text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0"
+                    className="mt-0.5 w-4 h-4 rounded border-zinc-600 bg-[var(--color-surface-container-low)] text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0"
                   />
                   <div className="flex-1">
                     <div className="text-sm font-medium text-white">{config.label}</div>
-                    <div className="text-xs text-zinc-500 mt-0.5">{config.description}</div>
+                    <div className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">{config.description}</div>
                   </div>
                 </label>
               </div>
@@ -198,14 +198,14 @@ export function ConsentBanner({ onConsentChange, showOnlyOnce = true }: ConsentB
           <button
             type="button"
             onClick={() => setExpanded(!expanded)}
-            className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-400 transition-colors"
+            className="flex items-center gap-1.5 text-xs text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface-variant)] transition-colors"
           >
             <Info className="w-3.5 h-3.5" />
             {expanded ? "Details ausblenden" : "Mehr Informationen"}
           </button>
 
           {expanded && (
-            <div className="text-xs text-zinc-500 bg-[#0f0f0f] rounded-lg p-3 space-y-2">
+            <div className="text-xs text-[var(--color-on-surface-variant)] bg-[var(--color-surface-container-low)] rounded-lg p-3 space-y-2">
               <p>
                 <strong>KI-Verarbeitung:</strong> Ihre Auftragsdaten werden zur Analyse und 
                 Optimierung an unsere KI-Systeme übermittelt. Die Verarbeitung erfolgt DSGVO-konform.
@@ -229,7 +229,7 @@ export function ConsentBanner({ onConsentChange, showOnlyOnce = true }: ConsentB
             type="button"
             onClick={handleRejectAll}
             disabled={saving}
-            className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white hover:border-zinc-500 transition-all disabled:opacity-50"
+            className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-white hover:border-zinc-500 transition-all disabled:opacity-50"
           >
             Alle ablehnen
           </button>

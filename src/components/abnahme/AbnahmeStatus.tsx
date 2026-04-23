@@ -23,7 +23,7 @@ interface AbnahmeStatusProps {
 function StatusIcon({ status }: { status: string }) {
   if (status === "bestätigt") return <CheckCircle className="w-4 h-4 text-emerald-400" />
   if (status === "mängel") return <AlertTriangle className="w-4 h-4 text-amber-400" />
-  if (status === "abgelehnt") return <XCircle className="w-4 h-4 text-zinc-500" />
+  if (status === "abgelehnt") return <XCircle className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
   return <Clock className="w-4 h-4 text-amber-400" />
 }
 
@@ -65,7 +65,7 @@ export function AbnahmeStatus({ auftragId }: AbnahmeStatusProps) {
 
   if (loading) {
     return (
-      <div className="bg-[#161616] border border-border rounded-xl p-4">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
         <p className="text-xs text-zinc-600">Lade Abnahmen...</p>
       </div>
     )
@@ -74,7 +74,7 @@ export function AbnahmeStatus({ auftragId }: AbnahmeStatusProps) {
   // ── Formular-Overlay ──────────────────────────────────────────────────────
   if (formOpen) {
     return (
-      <div className="bg-[#161616] border border-border rounded-xl p-6">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
         <AbnahmeFormular
           auftragId={auftragId}
           abnahmeId={editId}
@@ -87,13 +87,13 @@ export function AbnahmeStatus({ auftragId }: AbnahmeStatusProps) {
 
   // ── Status-Übersicht ──────────────────────────────────────────────────────
   return (
-    <div className="bg-[#161616] border border-border rounded-xl p-5">
+    <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-white uppercase tracking-wide flex items-center gap-2">
-          <CheckCircle className="w-4 h-4 text-zinc-500" />
+          <CheckCircle className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
           Abnahme
           {abnahmen.length > 0 && (
-            <span className="text-xs bg-zinc-700 text-zinc-400 px-1.5 py-0.5 rounded-full">{abnahmen.length}</span>
+            <span className="text-xs bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)] px-1.5 py-0.5 rounded-full">{abnahmen.length}</span>
           )}
         </h3>
         <button
@@ -114,7 +114,7 @@ export function AbnahmeStatus({ auftragId }: AbnahmeStatusProps) {
       ) : (
         <div className="space-y-2">
           {abnahmen.map(a => (
-            <div key={a.id} className="flex items-center justify-between p-3 bg-[#0f0f0f] rounded-lg border border-border group">
+            <div key={a.id} className="flex items-center justify-between p-3 bg-[var(--color-surface-container-low)] rounded-lg border border-border group">
               <div className="flex items-center gap-3">
                 <StatusIcon status={a.status} />
                 <div>
@@ -126,7 +126,7 @@ export function AbnahmeStatus({ auftragId }: AbnahmeStatusProps) {
                       </span>
                     )}
                   </div>
-                  {a.foersterName && <p className="text-xs text-zinc-500 mt-0.5">Förster: {a.foersterName}</p>}
+                  {a.foersterName && <p className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">Förster: {a.foersterName}</p>}
                   {a.notizen && <p className="text-xs text-zinc-600 mt-0.5 line-clamp-1">{a.notizen}</p>}
                 </div>
               </div>
@@ -134,7 +134,7 @@ export function AbnahmeStatus({ auftragId }: AbnahmeStatusProps) {
                 <StatusLabel status={a.status} />
                 <button
                   onClick={() => { setEditId(a.id); setFormOpen(true) }}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-zinc-500 hover:text-white"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-[var(--color-on-surface-variant)] hover:text-white"
                   title="Bearbeiten"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -146,10 +146,10 @@ export function AbnahmeStatus({ auftragId }: AbnahmeStatusProps) {
       )}
 
       {/* Link zur vollständigen Abnahmen-Übersicht */}
-      <div className="mt-3 pt-3 border-t border-[#1e1e1e]">
+      <div className="mt-3 pt-3 border-t border-[var(--color-outline-variant)]">
         <Link
           href="/abnahmen"
-          className="text-xs text-zinc-600 hover:text-zinc-400 flex items-center gap-1 transition-colors"
+          className="text-xs text-zinc-600 hover:text-[var(--color-on-surface-variant)] flex items-center gap-1 transition-colors"
         >
           Alle Abnahmen ansehen
           <ChevronRight className="w-3 h-3" />

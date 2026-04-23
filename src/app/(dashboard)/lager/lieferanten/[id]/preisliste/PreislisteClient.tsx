@@ -279,7 +279,7 @@ export default function PreislisteClient({ lieferant }: Props) {
 
       {/* CSV-Import Vorschau */}
       {csvPreview && (
-        <div className="bg-[#161616] border border-border rounded-xl p-4">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-white flex items-center gap-2">
               <FileSpreadsheet className="w-4 h-4" />
@@ -289,7 +289,7 @@ export default function PreislisteClient({ lieferant }: Props) {
               onClick={() => { setCsvPreview(null); setCsvMapping({}) }}
               className="p-1 hover:bg-surface-container-highest rounded"
             >
-              <X className="w-4 h-4 text-zinc-400" />
+              <X className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
             </button>
           </div>
 
@@ -297,7 +297,7 @@ export default function PreislisteClient({ lieferant }: Props) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             {csvPreview[0].map((header, idx) => (
               <div key={idx} className="space-y-1">
-                <label className="text-xs text-zinc-500">{header || `Spalte ${idx + 1}`}</label>
+                <label className="text-xs text-[var(--color-on-surface-variant)]">{header || `Spalte ${idx + 1}`}</label>
                 <select
                   value={Object.entries(csvMapping).find(([_, v]) => v === idx)?.[0] || ""}
                   onChange={(e) => {
@@ -314,7 +314,7 @@ export default function PreislisteClient({ lieferant }: Props) {
                       })
                     }
                   }}
-                  className="w-full bg-[#0f0f0f] border border-border rounded px-2 py-1 text-xs text-white"
+                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded px-2 py-1 text-xs text-white"
                 >
                   <option value="">-- ignorieren --</option>
                   <option value="name">Artikelname</option>
@@ -333,13 +333,13 @@ export default function PreislisteClient({ lieferant }: Props) {
               <thead>
                 <tr className="border-b border-border">
                   {csvPreview[0].map((h, i) => (
-                    <th key={i} className="text-left py-2 px-2 text-zinc-400">{h || `Spalte ${i + 1}`}</th>
+                    <th key={i} className="text-left py-2 px-2 text-[var(--color-on-surface-variant)]">{h || `Spalte ${i + 1}`}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {csvPreview.slice(1, 5).map((row, ri) => (
-                  <tr key={ri} className="border-b border-[#1e1e1e]">
+                  <tr key={ri} className="border-b border-[var(--color-outline-variant)]">
                     {row.map((cell, ci) => (
                       <td key={ci} className="py-2 px-2 text-zinc-300">{cell}</td>
                     ))}
@@ -364,35 +364,35 @@ export default function PreislisteClient({ lieferant }: Props) {
 
       {/* Manuelles Hinzufügen */}
       {showAddForm && (
-        <div className="bg-[#161616] border border-border rounded-xl p-4">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
           <h3 className="text-sm font-medium text-white mb-4">Neuen Artikel hinzufügen</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs text-zinc-500 mb-1">Artikelname *</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Artikelname *</label>
               <input
                 type="text"
                 value={neuerArtikel.name}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, name: e.target.value }))}
                 placeholder="z.B. Eiche Traubeneiche 1+1"
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-500 mb-1">Baumart</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Baumart</label>
               <input
                 type="text"
                 value={neuerArtikel.baumartName}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, baumartName: e.target.value }))}
                 placeholder="z.B. Quercus petraea"
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-500 mb-1">Einheit</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Einheit</label>
               <select
                 value={neuerArtikel.einheit}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, einheit: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
               >
                 <option value="Stück">Stück</option>
                 <option value="kg">kg</option>
@@ -401,21 +401,21 @@ export default function PreislisteClient({ lieferant }: Props) {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-zinc-500 mb-1">Preis (€) *</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Preis (€) *</label>
               <input
                 type="text"
                 value={neuerArtikel.preis}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, preis: e.target.value }))}
                 placeholder="0,00"
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
             <div>
-              <label className="block text-xs text-zinc-500 mb-1">Verfügbarkeit</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Verfügbarkeit</label>
               <select
                 value={neuerArtikel.verfuegbarkeit}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, verfuegbarkeit: e.target.value as "vorhanden" | "ausverkauft" | "auf_anfrage" }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
               >
                 <option value="vorhanden">Vorhanden</option>
                 <option value="ausverkauft">Ausverkauft</option>
@@ -423,19 +423,19 @@ export default function PreislisteClient({ lieferant }: Props) {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-zinc-500 mb-1">Gültig bis</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Gültig bis</label>
               <input
                 type="date"
                 value={neuerArtikel.gueltigBis}
                 onChange={(e) => setNeuerArtikel(prev => ({ ...prev, gueltigBis: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white"
               />
             </div>
           </div>
           <div className="flex justify-end gap-3 mt-4">
             <button
               onClick={() => setShowAddForm(false)}
-              className="px-4 py-2 text-sm text-zinc-400 hover:text-white"
+              className="px-4 py-2 text-sm text-[var(--color-on-surface-variant)] hover:text-white"
             >
               Abbrechen
             </button>
@@ -452,7 +452,7 @@ export default function PreislisteClient({ lieferant }: Props) {
       )}
 
       {/* Artikel-Liste */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <div className="p-4 border-b border-border">
           <h3 className="text-sm font-medium text-white">
             {artikel.length} Artikel in der Preisliste
@@ -462,7 +462,7 @@ export default function PreislisteClient({ lieferant }: Props) {
         {artikel.length === 0 ? (
           <div className="p-8 text-center">
             <FileSpreadsheet className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
-            <p className="text-zinc-400">Noch keine Artikel vorhanden</p>
+            <p className="text-[var(--color-on-surface-variant)]">Noch keine Artikel vorhanden</p>
             <p className="text-zinc-600 text-sm mt-1">Füge Artikel manuell hinzu oder importiere eine CSV</p>
           </div>
         ) : (
@@ -474,7 +474,7 @@ export default function PreislisteClient({ lieferant }: Props) {
               >
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-white truncate">{a.name}</p>
-                  <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
+                  <div className="flex items-center gap-3 mt-1 text-xs text-[var(--color-on-surface-variant)]">
                     <span>{a.kategorie}</span>
                     <span>·</span>
                     <span>{a.einheit}</span>
@@ -503,7 +503,7 @@ export default function PreislisteClient({ lieferant }: Props) {
 
                 <button
                   onClick={() => handleDeleteArtikel(a.id)}
-                  className="p-2 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                  className="p-2 text-[var(--color-on-surface-variant)] hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
                   title="Löschen"
                 >
                   <Trash2 className="w-4 h-4" />

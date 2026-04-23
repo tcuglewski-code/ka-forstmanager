@@ -144,7 +144,7 @@ export default function ProtokolleSeite() {
   }
 
   const statusColor: Record<string, string> = {
-    entwurf: "text-zinc-400 bg-zinc-800 border-border",
+    entwurf: "text-[var(--color-on-surface-variant)] bg-[var(--color-surface-container-lowest)] border-border",
     eingereicht: "text-emerald-700 bg-emerald-50 border-emerald-500/30",
     genehmigt: "text-blue-800 bg-blue-100 border-blue-200",
     abgelehnt: "text-red-700 bg-red-50 border-red-500/30",
@@ -157,7 +157,7 @@ export default function ProtokolleSeite() {
           <h1 className="text-2xl font-bold flex items-center gap-2" style={{ color: "var(--color-on-surface)" }}>
             <ClipboardList className="w-6 h-6 text-emerald-400" /> Tagesprotokolle
           </h1>
-          <p className="text-zinc-500 text-sm mt-1">Tagesberichte und Arbeitsprotokolle</p>
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">Tagesberichte und Arbeitsprotokolle</p>
         </div>
         <button
           onClick={() => {
@@ -175,7 +175,7 @@ export default function ProtokolleSeite() {
         <select
           value={filterAuftrag}
           onChange={(e) => setFilterAuftrag(e.target.value)}
-          className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white"
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white"
         >
           <option value="">Alle Aufträge</option>
           {auftraege.map((a) => (
@@ -187,7 +187,7 @@ export default function ProtokolleSeite() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white"
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white"
         >
           <option value="">Alle Status</option>
           <option value="entwurf">Entwurf</option>
@@ -200,14 +200,14 @@ export default function ProtokolleSeite() {
           value={filterVon}
           onChange={(e) => setFilterVon(e.target.value)}
           placeholder="Von"
-          className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white"
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white"
         />
         <input
           type="date"
           value={filterBis}
           onChange={(e) => setFilterBis(e.target.value)}
           placeholder="Bis"
-          className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white"
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white"
         />
         <a
           href={`/api/tagesprotokoll/export?${new URLSearchParams({
@@ -216,7 +216,7 @@ export default function ProtokolleSeite() {
             ...(filterVon ? { vonDatum: filterVon } : {}),
             ...(filterBis ? { bisDatum: filterBis } : {}),
           }).toString()}`}
-          className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white border border-border px-3 py-2 rounded-lg hover:bg-[#222] transition-colors ml-auto"
+          className="flex items-center gap-1.5 text-xs text-[var(--color-on-surface-variant)] hover:text-white border border-border px-3 py-2 rounded-lg hover:bg-[#222] transition-colors ml-auto"
         >
           <Download className="w-3.5 h-3.5" /> CSV
         </a>
@@ -228,9 +228,9 @@ export default function ProtokolleSeite() {
           <Loader2 className="w-6 h-6 text-emerald-400 animate-spin" />
         </div>
       ) : protokolle.length === 0 ? (
-        <div className="bg-[#161616] border border-border rounded-xl p-12 text-center">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-12 text-center">
           <ClipboardList className="w-8 h-8 text-zinc-600 mx-auto mb-3" />
-          <p className="text-zinc-500">Noch keine Protokolle vorhanden.</p>
+          <p className="text-[var(--color-on-surface-variant)]">Noch keine Protokolle vorhanden.</p>
           {auftraege.length > 0 && (
             <button
               onClick={() => { setSelectedAuftrag(auftraege[0]); setShowForm(true) }}
@@ -243,7 +243,7 @@ export default function ProtokolleSeite() {
       ) : (
         <div className="space-y-2">
           {protokolle.map((p) => (
-            <div key={p.id} className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+            <div key={p.id} className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
               {/* Row */}
               <button
                 className="w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-[#1c1c1c] transition-colors"
@@ -260,10 +260,10 @@ export default function ProtokolleSeite() {
                       })}
                     </span>
                     {p.auftrag && (
-                      <span className="text-sm text-zinc-400 truncate">{p.auftrag.titel}</span>
+                      <span className="text-sm text-[var(--color-on-surface-variant)] truncate">{p.auftrag.titel}</span>
                     )}
                     {p.witterung && (
-                      <span className="text-xs text-zinc-500">{p.witterung}</span>
+                      <span className="text-xs text-[var(--color-on-surface-variant)]">{p.witterung}</span>
                     )}
                   </div>
                   {p.kommentar && (
@@ -276,13 +276,13 @@ export default function ProtokolleSeite() {
                       {((p.stk_pflanzung ?? 0) + (p.stk_pflanzung_mit_bohrer ?? 0)).toLocaleString()} Stk.
                     </span>
                   )}
-                  <span className={`text-xs px-2 py-0.5 rounded-full border ${statusColor[p.status] ?? "text-zinc-400 bg-zinc-800 border-border"}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full border ${statusColor[p.status] ?? "text-[var(--color-on-surface-variant)] bg-[var(--color-surface-container-lowest)] border-border"}`}>
                     {statusLabel[p.status] ?? p.status}
                   </span>
                   {expandedId === p.id ? (
-                    <ChevronUp className="w-4 h-4 text-zinc-500" />
+                    <ChevronUp className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
                   ) : (
-                    <ChevronDown className="w-4 h-4 text-zinc-500" />
+                    <ChevronDown className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
                   )}
                 </div>
               </button>
@@ -304,7 +304,7 @@ export default function ProtokolleSeite() {
                             <>
                               <button
                                 onClick={() => openEdit(detailProtokoll)}
-                                className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white border border-border px-3 py-1.5 rounded-lg hover:bg-[#222] transition-colors"
+                                className="flex items-center gap-1.5 text-xs text-[var(--color-on-surface-variant)] hover:text-white border border-border px-3 py-1.5 rounded-lg hover:bg-[#222] transition-colors"
                               >
                                 <Pencil className="w-3.5 h-3.5" /> Bearbeiten
                               </button>
@@ -344,12 +344,12 @@ export default function ProtokolleSeite() {
       {/* Modal: Neues Protokoll */}
       {showForm && selectedAuftrag && (
         <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-2xl my-8">
+          <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-2xl my-8">
             <div className="flex items-center justify-between px-6 py-4 border-b border-border">
               <h2 className="text-base font-bold text-white">Tagesprotokoll erstellen</h2>
               <button
                 onClick={() => setShowForm(false)}
-                className="text-zinc-500 hover:text-white transition-colors"
+                className="text-[var(--color-on-surface-variant)] hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -357,14 +357,14 @@ export default function ProtokolleSeite() {
 
             {/* Auftrag wählen */}
             <div className="px-6 pt-4 pb-0">
-              <label className="block text-xs text-zinc-500 mb-1">Auftrag *</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Auftrag *</label>
               <select
                 value={selectedAuftrag.id}
                 onChange={(e) => {
                   const a = auftraege.find((x) => x.id === e.target.value) ?? null
                   setSelectedAuftrag(a)
                 }}
-                className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white mb-2"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white mb-2"
               >
                 {auftraege.map((a) => (
                   <option key={a.id} value={a.id}>
@@ -398,12 +398,12 @@ export default function ProtokolleSeite() {
       {/* Modal: Protokoll bearbeiten */}
       {showEditForm && editProtokoll && selectedAuftrag && (
         <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-2xl my-8">
+          <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-2xl my-8">
             <div className="flex items-center justify-between px-6 py-4 border-b border-border">
               <h2 className="text-base font-bold text-white">Protokoll bearbeiten</h2>
               <button
                 onClick={() => { setShowEditForm(false); setEditProtokoll(null) }}
-                className="text-zinc-500 hover:text-white transition-colors"
+                className="text-[var(--color-on-surface-variant)] hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>

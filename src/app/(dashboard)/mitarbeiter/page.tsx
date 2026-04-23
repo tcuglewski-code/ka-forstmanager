@@ -38,7 +38,7 @@ function RolleBadge({ rolle }: { rolle: string }) {
   if (rolle === "ka_mitarbeiter" || rolle === "mitarbeiter") {
     return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-500/20">Mitarbeiter</span>
   }
-  return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs text-zinc-500 border border-border">{rolle}</span>
+  return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs text-[var(--color-on-surface-variant)] border border-border">{rolle}</span>
 }
 
 const statusBadge: Record<string, string> = {
@@ -208,7 +208,7 @@ export default function MitarbeiterPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Mitarbeiter</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-0.5">
             {mitarbeiter.length} Einträge
           </p>
         </div>
@@ -224,19 +224,19 @@ export default function MitarbeiterPage() {
       {/* Filters */}
       <div className="flex gap-3 mb-5">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)]" />
           <input
             type="text"
             placeholder="Suchen..."
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 bg-[#161616] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+            className="w-full pl-9 pr-4 py-2.5 bg-[var(--color-surface-container)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
           />
         </div>
         <select
           value={rolleFilter}
           onChange={(e) => setRolleFilter(e.target.value)}
-          className="px-3 py-2.5 bg-[#161616] border border-border rounded-lg text-sm text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+          className="px-3 py-2.5 bg-[var(--color-surface-container)] border border-border rounded-lg text-sm text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
         >
           <option value="">Alle Rollen</option>
           <option value="mitarbeiter">Mitarbeiter</option>
@@ -250,7 +250,7 @@ export default function MitarbeiterPage() {
 
       {/* Bulk-Aktionsbar — erscheint wenn mindestens ein Eintrag ausgewählt */}
       {selected.length > 0 && (
-        <div className="flex items-center gap-3 mb-4 px-4 py-3 bg-[#1a1a1a] border border-emerald-500/30 rounded-xl flex-wrap">
+        <div className="flex items-center gap-3 mb-4 px-4 py-3 bg-[var(--color-surface-container-lowest)] border border-emerald-500/30 rounded-xl flex-wrap">
           <span className="text-sm font-medium text-emerald-400 flex items-center gap-1.5">
             <CheckSquare className="w-4 h-4" />
             {selected.length} Mitarbeiter ausgewählt
@@ -264,14 +264,14 @@ export default function MitarbeiterPage() {
               <select
                 value={bulkStatus}
                 onChange={(e) => setBulkStatus(e.target.value)}
-                className="appearance-none pl-3 pr-8 py-1.5 bg-[#161616] border border-border rounded-lg text-sm text-zinc-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer"
+                className="appearance-none pl-3 pr-8 py-1.5 bg-[var(--color-surface-container)] border border-border rounded-lg text-sm text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer"
               >
                 <option value="">Status setzen…</option>
                 <option value="aktiv">✅ Aktiv</option>
                 <option value="inaktiv">🔴 Inaktiv</option>
                 <option value="archiviert">📁 Archiviert</option>
               </select>
-              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500 pointer-events-none" />
+              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--color-on-surface-variant)] pointer-events-none" />
             </div>
             <button
               onClick={handleBulkStatusSetzen}
@@ -298,7 +298,7 @@ export default function MitarbeiterPage() {
           {/* Auswahl aufheben */}
           <button
             onClick={() => setSelected([])}
-            className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-zinc-500 hover:text-zinc-300 text-sm rounded-lg hover:bg-surface-container-highest transition-all"
+            className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] text-sm rounded-lg hover:bg-surface-container-highest transition-all"
           >
             <X className="w-3.5 h-3.5" />
             Auswahl aufheben
@@ -307,15 +307,15 @@ export default function MitarbeiterPage() {
       )}
 
       {/* Tabelle */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         {loading ? (
           <div className="space-y-2 p-4">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-12 bg-[#1e1e1e] rounded-lg animate-pulse" />
+              <div key={i} className="h-12 bg-[var(--color-surface-container-highest)] rounded-lg animate-pulse" />
             ))}
           </div>
         ) : mitarbeiter.length === 0 ? (
-          <div className="text-center py-16 text-zinc-500">
+          <div className="text-center py-16 text-[var(--color-on-surface-variant)]">
             <p className="text-lg mb-2">Keine Mitarbeiter gefunden</p>
             <p className="text-sm">
               {suche || rolleFilter
@@ -337,15 +337,15 @@ export default function MitarbeiterPage() {
                       if (el) el.indeterminate = teilweiseAusgewaehlt
                     }}
                     onChange={toggleAll}
-                    className="w-4 h-4 rounded border-[#3a3a3a] bg-[#1e1e1e] accent-emerald-400 cursor-pointer"
+                    className="w-4 h-4 rounded border-border bg-[var(--color-surface-container-highest)] accent-emerald-400 cursor-pointer"
                     title={alleAusgewaehlt ? "Alle abwählen" : "Alle auswählen"}
                   />
                 </th>
-                <th className="text-left text-xs font-medium text-zinc-500 px-4 py-3">Name</th>
-                <th className="text-left text-xs font-medium text-zinc-500 px-4 py-3">Rolle</th>
-                <th className="text-left text-xs font-medium text-zinc-500 px-4 py-3">Telefon</th>
-                <th className="text-left text-xs font-medium text-zinc-500 px-4 py-3">Status</th>
-                <th className="text-right text-xs font-medium text-zinc-500 px-4 py-3">Aktionen</th>
+                <th className="text-left text-xs font-medium text-[var(--color-on-surface-variant)] px-4 py-3">Name</th>
+                <th className="text-left text-xs font-medium text-[var(--color-on-surface-variant)] px-4 py-3">Rolle</th>
+                <th className="text-left text-xs font-medium text-[var(--color-on-surface-variant)] px-4 py-3">Telefon</th>
+                <th className="text-left text-xs font-medium text-[var(--color-on-surface-variant)] px-4 py-3">Status</th>
+                <th className="text-right text-xs font-medium text-[var(--color-on-surface-variant)] px-4 py-3">Aktionen</th>
               </tr>
             </thead>
             <tbody>
@@ -359,7 +359,7 @@ export default function MitarbeiterPage() {
                       "border-b border-border last:border-0 transition-colors cursor-pointer",
                       istAusgewaehlt
                         ? "bg-emerald-500/5 hover:bg-emerald-500/8"
-                        : "hover:bg-[#1a1a1a]"
+                        : "hover:bg-[var(--color-surface-container-lowest)]"
                     )}
                   >
                     {/* Zeilen-Checkbox */}
@@ -368,30 +368,30 @@ export default function MitarbeiterPage() {
                         type="checkbox"
                         checked={istAusgewaehlt}
                         onChange={() => toggleOne(m.id)}
-                        className="w-4 h-4 rounded border-[#3a3a3a] bg-[#1e1e1e] accent-emerald-400 cursor-pointer"
+                        className="w-4 h-4 rounded border-border bg-[var(--color-surface-container-highest)] accent-emerald-400 cursor-pointer"
                       />
                     </td>
                     <td className="px-4 py-4">
                       <div>
-                        <p className="font-medium text-white">
+                        <p className="font-medium text-[var(--color-on-surface)]">
                           {m.vorname} {m.nachname}
                         </p>
                         {m.email && (
-                          <p className="text-xs text-zinc-500 mt-0.5">{m.email}</p>
+                          <p className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">{m.email}</p>
                         )}
                       </div>
                     </td>
                     <td className="px-4 py-4">
                       <RolleBadge rolle={m.rolle} />
                     </td>
-                    <td className="px-4 py-4 text-sm text-zinc-400">
+                    <td className="px-4 py-4 text-sm text-[var(--color-on-surface-variant)]">
                       {m.telefon || "–"}
                     </td>
                     <td className="px-4 py-4">
                       <span
                         className={cn(
                           "inline-flex items-center px-2 py-0.5 rounded text-xs border capitalize",
-                          statusBadge[m.status] || "bg-zinc-700/50 text-zinc-400 border-zinc-600/30"
+                          statusBadge[m.status] || "bg-[var(--color-surface-container-high)]/50 text-[var(--color-on-surface-variant)] border-zinc-600/30"
                         )}
                       >
                         {m.status}
@@ -401,20 +401,20 @@ export default function MitarbeiterPage() {
                       <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                         <Link
                           href={`/mitarbeiter/${m.id}`}
-                          className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 hover:bg-surface-container-highest hover:text-emerald-400 transition-all"
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--color-on-surface-variant)] hover:bg-surface-container-highest hover:text-emerald-400 transition-all"
                         >
                           <Eye className="w-3.5 h-3.5" />
                         </Link>
                         <button
                           onClick={() => openEdit(m)}
-                          className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 hover:bg-surface-container-highest hover:text-white transition-all"
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--color-on-surface-variant)] hover:bg-surface-container-highest hover:text-[var(--color-on-surface)] transition-all"
                         >
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDelete(m.id)}
                           disabled={deleting === m.id}
-                          className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 hover:bg-red-500/10 hover:text-red-400 transition-all disabled:opacity-50"
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--color-on-surface-variant)] hover:bg-red-500/10 hover:text-red-400 transition-all disabled:opacity-50"
                         >
                           {deleting === m.id ? (
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />

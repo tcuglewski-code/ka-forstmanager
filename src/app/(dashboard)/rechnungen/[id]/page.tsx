@@ -126,7 +126,7 @@ export default function RechnungDetailPage() {
       <div className="flex items-center gap-4 mb-8">
         <button
           onClick={() => router.push("/rechnungen")}
-          className="p-2 rounded-lg bg-[#1e1e1e] border border-border text-zinc-400 hover:text-white hover:bg-[#252525] transition-colors"
+          className="p-2 rounded-lg bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[#252525] transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -135,7 +135,7 @@ export default function RechnungDetailPage() {
             <Receipt className="w-6 h-6 text-emerald-400" />
             Rechnung {rechnung.nummer}
           </h1>
-          <p className="text-zinc-500 text-sm mt-1">
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">
             Erstellt am {new Date(rechnung.rechnungsDatum).toLocaleDateString("de-DE")}
           </p>
         </div>
@@ -146,21 +146,21 @@ export default function RechnungDetailPage() {
         {/* Left: Details */}
         <div className="md:col-span-2 space-y-6">
           {/* Status Card */}
-          <div className="bg-[#161616] border border-border rounded-xl p-6">
+          <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${statusInfo.color.split(" ")[0]}`}>
                   <StatusIcon className={`w-5 h-5 ${statusInfo.color.split(" ")[1]}`} />
                 </div>
                 <div>
-                  <p className="text-zinc-500 text-sm">Status</p>
+                  <p className="text-[var(--color-on-surface-variant)] text-sm">Status</p>
                   <p className={`font-semibold ${statusInfo.color.split(" ")[1]}`}>{statusInfo.label}</p>
                 </div>
               </div>
               {rechnung.faelligAm && (
                 <div className="text-right">
-                  <p className="text-zinc-500 text-sm">Fällig am</p>
-                  <p className="text-white font-medium">
+                  <p className="text-[var(--color-on-surface-variant)] text-sm">Fällig am</p>
+                  <p className="text-[var(--color-on-surface)] font-medium">
                     {new Date(rechnung.faelligAm).toLocaleDateString("de-DE")}
                   </p>
                 </div>
@@ -175,7 +175,7 @@ export default function RechnungDetailPage() {
                 <Lock className="w-5 h-5 text-amber-400 mt-0.5" />
                 <div>
                   <h4 className="text-amber-400 font-semibold">GoBD-gesperrt</h4>
-                  <p className="text-zinc-400 text-sm mt-1">
+                  <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">
                     Diese Rechnung ist {rechnung.lockInfo?.lockReason || "nach den GoBD-Richtlinien"} gesperrt 
                     und kann nicht mehr bearbeitet werden. Die Sperrung erfolgte am{" "}
                     {rechnung.lockInfo?.lockedAt 
@@ -192,19 +192,19 @@ export default function RechnungDetailPage() {
           )}
 
           {/* Betrag Card */}
-          <div className="bg-[#161616] border border-border rounded-xl p-6">
-            <h3 className="text-sm text-zinc-500 uppercase tracking-wider mb-4">Beträge</h3>
+          <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
+            <h3 className="text-sm text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-4">Beträge</h3>
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-zinc-400">Netto</span>
-                <span className="text-white">{rechnung.betrag.toFixed(2)} €</span>
+                <span className="text-[var(--color-on-surface-variant)]">Netto</span>
+                <span className="text-[var(--color-on-surface)]">{rechnung.betrag.toFixed(2)} €</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-zinc-400">MwSt. {rechnung.mwst || 19}%</span>
-                <span className="text-white">{mwstBetrag.toFixed(2)} €</span>
+                <span className="text-[var(--color-on-surface-variant)]">MwSt. {rechnung.mwst || 19}%</span>
+                <span className="text-[var(--color-on-surface)]">{mwstBetrag.toFixed(2)} €</span>
               </div>
               <div className="border-t border-border pt-3 flex justify-between">
-                <span className="text-white font-semibold">Gesamt (Brutto)</span>
+                <span className="text-[var(--color-on-surface)] font-semibold">Gesamt (Brutto)</span>
                 <span className="text-2xl font-bold text-emerald-400">{bruttoBetrag.toFixed(2)} €</span>
               </div>
             </div>
@@ -212,21 +212,21 @@ export default function RechnungDetailPage() {
 
           {/* Auftrag Card */}
           {rechnung.auftrag && (
-            <div className="bg-[#161616] border border-border rounded-xl p-6">
-              <h3 className="text-sm text-zinc-500 uppercase tracking-wider mb-4">Verknüpfter Auftrag</h3>
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
+              <h3 className="text-sm text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-4">Verknüpfter Auftrag</h3>
               <div className="space-y-2">
                 <a
                   href={`/auftraege/${rechnung.auftrag.id}`}
-                  className="text-white font-medium hover:text-emerald-400 flex items-center gap-2"
+                  className="text-[var(--color-on-surface)] font-medium hover:text-emerald-400 flex items-center gap-2"
                 >
                   {rechnung.auftrag.titel}
                   <ExternalLink className="w-4 h-4" />
                 </a>
                 {rechnung.auftrag.waldbesitzer && (
-                  <p className="text-zinc-400 text-sm">Kunde: {rechnung.auftrag.waldbesitzer}</p>
+                  <p className="text-[var(--color-on-surface-variant)] text-sm">Kunde: {rechnung.auftrag.waldbesitzer}</p>
                 )}
                 {rechnung.auftrag.waldbesitzerEmail && (
-                  <p className="text-zinc-500 text-sm">{rechnung.auftrag.waldbesitzerEmail}</p>
+                  <p className="text-[var(--color-on-surface-variant)] text-sm">{rechnung.auftrag.waldbesitzerEmail}</p>
                 )}
               </div>
             </div>
@@ -234,9 +234,9 @@ export default function RechnungDetailPage() {
 
           {/* Notizen */}
           {rechnung.notizen && (
-            <div className="bg-[#161616] border border-border rounded-xl p-6">
-              <h3 className="text-sm text-zinc-500 uppercase tracking-wider mb-4">Notizen</h3>
-              <p className="text-zinc-300 text-sm whitespace-pre-wrap">{rechnung.notizen}</p>
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
+              <h3 className="text-sm text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-4">Notizen</h3>
+              <p className="text-[var(--color-on-surface)] text-sm whitespace-pre-wrap">{rechnung.notizen}</p>
             </div>
           )}
         </div>
@@ -246,8 +246,8 @@ export default function RechnungDetailPage() {
           {/* Zipayo Payment - Sprint GB-01: nur bei nicht-gesperrten Rechnungen */}
           {istOffen && !isLocked && (
             <div className="bg-gradient-to-br from-[#1a1a2e] to-[#161616] border border-[#6366f1]/30 rounded-xl p-6">
-              <h3 className="text-white font-semibold mb-2">Online bezahlen</h3>
-              <p className="text-zinc-400 text-sm mb-4">
+              <h3 className="text-[var(--color-on-surface)] font-semibold mb-2">Online bezahlen</h3>
+              <p className="text-[var(--color-on-surface-variant)] text-sm mb-4">
                 Bezahlen Sie diese Rechnung schnell und sicher per QR-Code oder Link.
               </p>
               <ZipayoButton
@@ -267,7 +267,7 @@ export default function RechnungDetailPage() {
                 <Lock className="w-5 h-5 text-amber-400" />
                 <h3 className="text-amber-400 font-semibold">Gesperrt</h3>
               </div>
-              <p className="text-zinc-400 text-sm">
+              <p className="text-[var(--color-on-surface-variant)] text-sm">
                 Diese Rechnung ist GoBD-gesperrt. Status-Änderungen sind nicht mehr möglich.
                 Kontaktieren Sie den Administrator für Korrekturen.
               </p>
@@ -279,12 +279,12 @@ export default function RechnungDetailPage() {
             <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-6 text-center">
               <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto mb-3" />
               <h3 className="text-emerald-400 font-semibold text-lg">Bezahlt</h3>
-              <p className="text-zinc-400 text-sm mt-1">Diese Rechnung wurde beglichen.</p>
+              <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">Diese Rechnung wurde beglichen.</p>
             </div>
           )}
 
           {/* Actions */}
-          <div className="bg-[#161616] border border-border rounded-xl p-4 space-y-3">
+          <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4 space-y-3">
             {/* ZUGFeRD E-Rechnung Download */}
             <div className="relative">
               <a
@@ -300,7 +300,7 @@ export default function RechnungDetailPage() {
                   <BadgeCheck className="w-3 h-3" />
                   ZUGFeRD 2.3
                 </span>
-                <span className="text-zinc-500 text-xs">E-Rechnung (ab 2025)</span>
+                <span className="text-[var(--color-on-surface-variant)] text-xs">E-Rechnung (ab 2025)</span>
               </div>
             </div>
             
@@ -308,7 +308,7 @@ export default function RechnungDetailPage() {
               <a
                 href={`/rechnungen/${rechnung.id}/drucken`}
                 target="_blank"
-                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#222] border border-[#333] text-white rounded-lg hover:bg-surface-container-highest transition-colors"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#222] border border-border text-[var(--color-on-surface)] rounded-lg hover:bg-surface-container-highest transition-colors"
               >
                 <Printer className="w-4 h-4" />
                 Druckansicht
@@ -320,7 +320,7 @@ export default function RechnungDetailPage() {
                 href={rechnung.pdfUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#222] border border-[#333] text-white rounded-lg hover:bg-surface-container-highest transition-colors"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#222] border border-border text-[var(--color-on-surface)] rounded-lg hover:bg-surface-container-highest transition-colors"
               >
                 <FileText className="w-4 h-4" />
                 Altes PDF

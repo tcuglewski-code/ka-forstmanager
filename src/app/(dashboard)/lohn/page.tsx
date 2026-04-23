@@ -183,68 +183,68 @@ function NeueLohnabrechnungModal({ mitarbeiter, saisons, onClose, onSave }: {
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-lg font-semibold text-white">Neue Lohnabrechnung</h2>
-          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">Neue Lohnabrechnung</h2>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Mitarbeiter *</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Mitarbeiter *</label>
             <select value={form.mitarbeiterId} onChange={e => setForm(f => ({ ...f, mitarbeiterId: e.target.value }))} required
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500">
               <option value="">— wählen —</option>
               {mitarbeiter.map(m => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Saison (optional)</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Saison (optional)</label>
             <select value={form.saisonId} onChange={e => setForm(f => ({ ...f, saisonId: e.target.value }))}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500">
               <option value="">— Manueller Zeitraum —</option>
               {saisons.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
             </select>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Zeitraum Von *</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Zeitraum Von *</label>
               <input type="date" value={form.zeitraumVon} onChange={e => setForm(f => ({ ...f, zeitraumVon: e.target.value }))} required
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500" />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Zeitraum Bis *</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Zeitraum Bis *</label>
               <input type="date" value={form.zeitraumBis} onChange={e => setForm(f => ({ ...f, zeitraumBis: e.target.value }))} required
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
 
           {/* Vorschau */}
           {vorschauLoading && (
-            <div className="bg-[#0f0f0f] rounded-lg px-4 py-3 text-xs text-zinc-500">Berechne Vorschau...</div>
+            <div className="bg-[var(--color-surface-container-low)] rounded-lg px-4 py-3 text-xs text-[var(--color-on-surface-variant)]">Berechne Vorschau...</div>
           )}
           {!vorschauLoading && vorschau && (
-            <div className="bg-[#0f0f0f] rounded-lg px-4 py-3 space-y-2">
-              <p className="text-xs text-zinc-500 font-medium mb-2">Vorschau</p>
+            <div className="bg-[var(--color-surface-container-low)] rounded-lg px-4 py-3 space-y-2">
+              <p className="text-xs text-[var(--color-on-surface-variant)] font-medium mb-2">Vorschau</p>
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div><span className="text-zinc-500">Stunden:</span> <span className="text-white font-medium">{vorschau.stunden.toFixed(1)}h</span></div>
-                <div><span className="text-zinc-500">Bruttolohn:</span> <span className="text-white font-medium">{vorschau.bruttoLohn.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
-                <div><span className="text-zinc-500">Maschinenbonus:</span> <span className="text-emerald-400 font-medium">{vorschau.maschinenBonus.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
-                <div><span className="text-zinc-500">Vorschüsse:</span> <span className="text-amber-400 font-medium">{vorschau.vorschuesse.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
+                <div><span className="text-[var(--color-on-surface-variant)]">Stunden:</span> <span className="text-white font-medium">{vorschau.stunden.toFixed(1)}h</span></div>
+                <div><span className="text-[var(--color-on-surface-variant)]">Bruttolohn:</span> <span className="text-white font-medium">{vorschau.bruttoLohn.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
+                <div><span className="text-[var(--color-on-surface-variant)]">Maschinenbonus:</span> <span className="text-emerald-400 font-medium">{vorschau.maschinenBonus.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
+                <div><span className="text-[var(--color-on-surface-variant)]">Vorschüsse:</span> <span className="text-amber-400 font-medium">{vorschau.vorschuesse.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
               </div>
               <div className="border-t border-border pt-2 flex justify-between">
-                <span className="text-xs text-zinc-400">Auszahlung:</span>
+                <span className="text-xs text-[var(--color-on-surface-variant)]">Auszahlung:</span>
                 <span className="text-emerald-400 font-bold">{vorschau.auszahlung.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span>
               </div>
             </div>
           )}
 
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Notizen</label>
             <textarea value={form.notizen} onChange={e => setForm(f => ({ ...f, notizen: e.target.value }))} rows={2}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 resize-none" />
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500 resize-none" />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-white transition-all">Abbrechen</button>
             <button type="submit" disabled={loading || !form.mitarbeiterId}
               className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
               {loading ? "Erstellen..." : "Abrechnung erstellen"}
@@ -295,56 +295,56 @@ function AbrechnungModal({ mitarbeiter, monat, jahr, onClose, onSave }: {
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-lg font-semibold text-white">Abrechnung erstellen</h2>
-          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">Abrechnung erstellen</h2>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Mitarbeiter *</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Mitarbeiter *</label>
             <select value={form.mitarbeiterId} onChange={e => setForm(f => ({ ...f, mitarbeiterId: e.target.value }))} required
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500">
               <option value="">— wählen —</option>
               {mitarbeiter.map(m => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
             </select>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Monat</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Monat</label>
               <select value={form.monat} onChange={e => setForm(f => ({ ...f, monat: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500">
                 {MONATE.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Jahr</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Jahr</label>
               <input type="number" value={form.jahr} onChange={e => setForm(f => ({ ...f, jahr: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Stunden *</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Stunden *</label>
               <input type="number" step="0.5" value={form.stunden} onChange={e => setForm(f => ({ ...f, stunden: e.target.value }))} required
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500" />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Stundenlohn (€)</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Stundenlohn (€)</label>
               <input type="number" step="0.01" value={form.stundenlohn} onChange={e => setForm(f => ({ ...f, stundenlohn: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           {brutto > 0 && (
-            <div className="bg-[#0f0f0f] rounded-lg px-4 py-3">
+            <div className="bg-[var(--color-surface-container-low)] rounded-lg px-4 py-3">
               <div className="flex justify-between text-sm">
-                <span className="text-zinc-400">Brutto</span>
+                <span className="text-[var(--color-on-surface-variant)]">Brutto</span>
                 <span className="text-white font-semibold">{brutto.toFixed(2)} €</span>
               </div>
             </div>
           )}
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-white transition-all">Abbrechen</button>
             <button type="submit" disabled={loading || !form.mitarbeiterId || !form.stunden} className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
               {loading ? "Erstellen..." : "Erstellen"}
             </button>
@@ -389,58 +389,58 @@ function VorschussModal({ mitarbeiter, onClose, onSave }: {
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-lg font-semibold text-white">Vorschuss erfassen</h2>
-          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">Vorschuss erfassen</h2>
+          <button onClick={onClose} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Mitarbeiter *</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Mitarbeiter *</label>
             <select value={form.mitarbeiterId} onChange={e => setForm(f => ({ ...f, mitarbeiterId: e.target.value }))} required
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500">
               <option value="">— wählen —</option>
               {mitarbeiter.map(m => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
             </select>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Betrag (€) *</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Betrag (€) *</label>
               <input type="number" step="0.01" min="0" value={form.betrag} onChange={e => setForm(f => ({ ...f, betrag: e.target.value }))} required
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500" />
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Datum</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Datum</label>
               <input type="date" value={form.datum} onChange={e => setForm(f => ({ ...f, datum: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Grund</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Grund</label>
             <input type="text" value={form.grund} onChange={e => setForm(f => ({ ...f, grund: e.target.value }))}
               placeholder="z.B. Reisekosten, Materialvorschuss..."
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500" />
           </div>
           {/* Individueller Bonus (K7) */}
           <div className="border-t border-border pt-3">
-            <p className="text-xs text-zinc-500 mb-3">Optionaler Bonus</p>
+            <p className="text-xs text-[var(--color-on-surface-variant)] mb-3">Optionaler Bonus</p>
             <div>
-              <label className="text-xs text-zinc-500 mb-1 block">Individueller Bonus (€)</label>
+              <label className="text-xs text-[var(--color-on-surface-variant)] mb-1 block">Individueller Bonus (€)</label>
               <input type="number" step="1" min="0" placeholder="0"
                 value={form.individualBonus}
                 onChange={(e) => setForm(prev => ({ ...prev, individualBonus: e.target.value }))}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
             </div>
             <div className="mt-3">
-              <label className="text-xs text-zinc-500 mb-1 block">Grund des Bonus</label>
+              <label className="text-xs text-[var(--color-on-surface-variant)] mb-1 block">Grund des Bonus</label>
               <input type="text" placeholder="z.B. Schichtleitung, Erschwernis..."
                 value={form.individualBonusGrund}
                 onChange={(e) => setForm(prev => ({ ...prev, individualBonusGrund: e.target.value }))}
-                className="w-full px-3 py-2 bg-[#0f0f0f] border border-border rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
+                className="w-full px-3 py-2 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-white transition-all">Abbrechen</button>
             <button type="submit" disabled={loading || !form.mitarbeiterId || !form.betrag} className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 transition-all">
               {loading ? "Speichern..." : "Speichern"}
             </button>
@@ -578,7 +578,7 @@ export default function LohnPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Lohn</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-0.5">
             {eintraege.length} Einträge · Gesamt: {gesamtBrutto.toFixed(2)} €
           </p>
         </div>
@@ -614,30 +614,30 @@ export default function LohnPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-[#161616] border border-border rounded-lg p-1 w-fit flex-wrap">
+      <div className="flex gap-1 mb-6 bg-[var(--color-surface-container)] border border-border rounded-lg p-1 w-fit flex-wrap">
         <button
           onClick={() => setActiveTab("lohnabrechnung")}
-          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === "lohnabrechnung" ? "bg-forest text-emerald-400" : "text-zinc-400 hover:text-white"}`}
+          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === "lohnabrechnung" ? "bg-forest text-emerald-400" : "text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]"}`}
         >
           <FileText className="w-3.5 h-3.5" />
           Abrechnungen
         </button>
         <button
           onClick={() => setActiveTab("abrechnungen")}
-          className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === "abrechnungen" ? "bg-forest text-emerald-400" : "text-zinc-400 hover:text-white"}`}
+          className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === "abrechnungen" ? "bg-forest text-emerald-400" : "text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]"}`}
         >
           Lohneinträge
         </button>
         <button
           onClick={() => setActiveTab("vorschuesse")}
-          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === "vorschuesse" ? "bg-forest text-emerald-400" : "text-zinc-400 hover:text-white"}`}
+          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === "vorschuesse" ? "bg-forest text-emerald-400" : "text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]"}`}
         >
           <TrendingDown className="w-3.5 h-3.5" />
           Vorschüsse
         </button>
         <button
           onClick={() => setActiveTab("lohnuebersicht")}
-          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === "lohnuebersicht" ? "bg-forest text-emerald-400" : "text-zinc-400 hover:text-white"}`}
+          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === "lohnuebersicht" ? "bg-forest text-emerald-400" : "text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]"}`}
         >
           <Calculator className="w-3.5 h-3.5" />
           Lohnübersicht
@@ -648,9 +648,9 @@ export default function LohnPage() {
       {activeTab === "lohnabrechnung" && (
         <>
           {abrechnungenLoading ? (
-            <div className="text-center py-12 text-zinc-600">Laden...</div>
+            <div className="text-center py-12 text-[var(--color-on-surface-variant)]">Laden...</div>
           ) : abrechnungen.length === 0 ? (
-            <div className="text-center py-16 text-zinc-600">
+            <div className="text-center py-16 text-[var(--color-on-surface-variant)]">
               <FileText className="w-10 h-10 mx-auto mb-3 opacity-30" />
               <p>Noch keine Abrechnungen erstellt</p>
               <p className="text-xs mt-1">Klicke auf „Neue Abrechnung" um zu starten</p>
@@ -658,30 +658,30 @@ export default function LohnPage() {
           ) : (
             <div className="space-y-3">
               {abrechnungen.map(a => (
-                <div key={a.id} className="bg-[#161616] border border-border rounded-xl p-4">
+                <div key={a.id} className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <p className="font-medium text-white">{a.mitarbeiter?.vorname} {a.mitarbeiter?.nachname}</p>
-                      <p className="text-xs text-zinc-500">
+                      <p className="font-medium text-[var(--color-on-surface)]">{a.mitarbeiter?.vorname} {a.mitarbeiter?.nachname}</p>
+                      <p className="text-xs text-[var(--color-on-surface-variant)]">
                         {a.saison?.name ?? "Manueller Zeitraum"} · {new Date(a.zeitraumVon).toLocaleDateString("de-DE")} – {new Date(a.zeitraumBis).toLocaleDateString("de-DE")}
                       </p>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full border ${
                       a.status === "ausgezahlt" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
                       a.status === "genehmigt" ? "bg-blue-500/10 text-blue-400 border-blue-500/20" :
-                      "bg-zinc-700/50 text-zinc-400 border-zinc-600"
+                      "bg-[var(--color-surface-container-high)]/50 text-[var(--color-on-surface-variant)] border-zinc-600"
                     }`}>{a.status}</span>
                   </div>
                   <div className="grid grid-cols-3 gap-2 text-xs mb-3">
-                    <div><p className="text-zinc-500">Stunden</p><p className="font-medium text-white">{a.stunden?.toFixed(1)}h</p></div>
-                    <div><p className="text-zinc-500">Bruttolohn</p><p className="font-medium text-white">{a.bruttoLohn?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p></div>
-                    <div><p className="text-zinc-500">Auszahlung</p><p className="font-medium text-emerald-400">{a.auszahlung?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p></div>
+                    <div><p className="text-[var(--color-on-surface-variant)]">Stunden</p><p className="font-medium text-[var(--color-on-surface)]">{a.stunden?.toFixed(1)}h</p></div>
+                    <div><p className="text-[var(--color-on-surface-variant)]">Bruttolohn</p><p className="font-medium text-[var(--color-on-surface)]">{a.bruttoLohn?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p></div>
+                    <div><p className="text-[var(--color-on-surface-variant)]">Auszahlung</p><p className="font-medium text-emerald-400">{a.auszahlung?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p></div>
                   </div>
                   {a.vorschuesse > 0 && (
                     <p className="text-xs text-amber-400 mb-2">Vorschüsse abgezogen: {a.vorschuesse?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p>
                   )}
                   {a.notizen && (
-                    <p className="text-xs text-zinc-500 mb-2 italic">{a.notizen}</p>
+                    <p className="text-xs text-[var(--color-on-surface-variant)] mb-2 italic">{a.notizen}</p>
                   )}
                   <div className="flex gap-2 mt-2 flex-wrap">
                     {a.status !== "ausgezahlt" && (
@@ -697,7 +697,7 @@ export default function LohnPage() {
                       </button>
                     )}
                     <button onClick={() => setEditAbrechnung(a)}
-                      className="text-xs px-2 py-1 border border-border text-zinc-400 rounded hover:border-zinc-500 transition-all">
+                      className="text-xs px-2 py-1 border border-border text-[var(--color-on-surface-variant)] rounded hover:border-zinc-500 transition-all">
                       Bearbeiten
                     </button>
                     {/* PDF-Lohnabrechnung */}
@@ -705,7 +705,7 @@ export default function LohnPage() {
                       href={`/lohn/${a.mitarbeiter?.id}/abrechnung${a.saison?.id ? `?saisonId=${a.saison.id}` : ""}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs px-2 py-1 bg-zinc-700/50 border border-zinc-600 text-zinc-300 rounded hover:bg-zinc-600/60 transition-all flex items-center gap-1"
+                      className="text-xs px-2 py-1 bg-[var(--color-surface-container-high)]/50 border border-zinc-600 text-zinc-300 rounded hover:bg-zinc-600/60 transition-all flex items-center gap-1"
                     >
                       🖨️ PDF
                     </a>
@@ -718,37 +718,37 @@ export default function LohnPage() {
           {/* Edit Modal */}
           {editAbrechnung && (
             <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-              <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md">
+              <div className="bg-[var(--color-surface-container)] border border-border rounded-xl w-full max-w-md">
                 <div className="flex items-center justify-between p-6 border-b border-border">
-                  <h2 className="text-lg font-semibold text-white">Abrechnung bearbeiten</h2>
-                  <button onClick={() => setEditAbrechnung(null)} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-zinc-500 hover:text-white" /></button>
+                  <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">Abrechnung bearbeiten</h2>
+                  <button onClick={() => setEditAbrechnung(null)} className="p-2 -m-2 touch-target"><X className="w-5 h-5 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]" /></button>
                 </div>
                 <div className="p-6 space-y-4">
                   <div>
-                    <label className="block text-xs text-zinc-400 mb-1">Status</label>
+                    <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Status</label>
                     <select defaultValue={editAbrechnung.status}
                       onChange={e => setEditAbrechnung(prev => prev ? { ...prev, status: e.target.value } : null)}
-                      className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                      className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500">
                       <option value="erstellt">Erstellt</option>
                       <option value="genehmigt">Genehmigt</option>
                       <option value="ausgezahlt">Ausgezahlt</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-zinc-400 mb-1">Auszahlung (€)</label>
+                    <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Auszahlung (€)</label>
                     <input type="number" step="0.01" defaultValue={editAbrechnung.auszahlung}
                       onChange={e => setEditAbrechnung(prev => prev ? { ...prev, auszahlung: parseFloat(e.target.value) } : null)}
-                      className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+                      className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500" />
                   </div>
                   <div>
-                    <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
+                    <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Notizen</label>
                     <textarea defaultValue={editAbrechnung.notizen ?? ""}
                       onChange={e => setEditAbrechnung(prev => prev ? { ...prev, notizen: e.target.value } : null)}
                       rows={3}
-                      className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 resize-none" />
+                      className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500 resize-none" />
                   </div>
                   <div className="flex gap-3">
-                    <button onClick={() => setEditAbrechnung(null)} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all">Abbrechen</button>
+                    <button onClick={() => setEditAbrechnung(null)} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-white transition-all">Abbrechen</button>
                     <button onClick={async () => {
                       await updateAbrechnung(editAbrechnung.id, {
                         status: editAbrechnung.status,
@@ -772,46 +772,46 @@ export default function LohnPage() {
         <>
           <div className="flex gap-3 mb-6">
             <select value={monat} onChange={e => setMonat(parseInt(e.target.value))}
-              className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500">
+              className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500">
               {MONATE.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
             </select>
             <select value={jahr} onChange={e => setJahr(parseInt(e.target.value))}
-              className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500">
+              className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500">
               {[2024, 2025, 2026, 2027].map(y => <option key={y} value={y}>{y}</option>)}
             </select>
           </div>
 
-          <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+          <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left px-4 py-3 text-zinc-500 font-medium">Mitarbeiter</th>
-                  <th className="text-right px-4 py-3 text-zinc-500 font-medium">Stunden</th>
-                  <th className="text-right px-4 py-3 text-zinc-500 font-medium">Stundenlohn</th>
-                  <th className="text-right px-4 py-3 text-zinc-500 font-medium">Brutto</th>
-                  <th className="text-center px-4 py-3 text-zinc-500 font-medium">Ausgezahlt</th>
+                  <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Mitarbeiter</th>
+                  <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Stunden</th>
+                  <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Stundenlohn</th>
+                  <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Brutto</th>
+                  <th className="text-center px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Ausgezahlt</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={5} className="text-center py-12 text-zinc-600">Laden...</td></tr>
+                  <tr><td colSpan={5} className="text-center py-12 text-[var(--color-on-surface-variant)]">Laden...</td></tr>
                 ) : eintraege.length === 0 ? (
-                  <tr><td colSpan={5} className="text-center py-12 text-zinc-600">Keine Einträge für diesen Zeitraum</td></tr>
+                  <tr><td colSpan={5} className="text-center py-12 text-[var(--color-on-surface-variant)]">Keine Einträge für diesen Zeitraum</td></tr>
                 ) : (
                   eintraege.map(e => (
-                    <tr key={e.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors">
-                      <td className="px-4 py-3 text-white font-medium">
+                    <tr key={e.id} className="border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors">
+                      <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">
                         {e.mitarbeiter.vorname} {e.mitarbeiter.nachname}
                       </td>
-                      <td className="px-4 py-3 text-right text-zinc-400">{e.stunden}h</td>
-                      <td className="px-4 py-3 text-right text-zinc-400">{e.stundenlohn.toFixed(2)} €</td>
-                      <td className="px-4 py-3 text-right text-white font-semibold">{e.brutto.toFixed(2)} €</td>
+                      <td className="px-4 py-3 text-right text-[var(--color-on-surface-variant)]">{e.stunden}h</td>
+                      <td className="px-4 py-3 text-right text-[var(--color-on-surface-variant)]">{e.stundenlohn.toFixed(2)} €</td>
+                      <td className="px-4 py-3 text-right text-[var(--color-on-surface)] font-semibold">{e.brutto.toFixed(2)} €</td>
                       <td className="px-4 py-3 text-center">
                         <button onClick={() => toggleAusgezahlt(e.id, e.ausgezahlt)} className="transition-colors">
                           {e.ausgezahlt
                             ? <CheckCircle className="w-5 h-5 text-emerald-400 mx-auto" />
-                            : <Circle className="w-5 h-5 text-zinc-600 mx-auto hover:text-zinc-400" />}
+                            : <Circle className="w-5 h-5 text-zinc-600 mx-auto hover:text-[var(--color-on-surface-variant)]" />}
                         </button>
                       </td>
                     </tr>
@@ -820,8 +820,8 @@ export default function LohnPage() {
               </tbody>
               {eintraege.length > 0 && (
                 <tfoot>
-                  <tr className="bg-[#0f0f0f]">
-                    <td className="px-4 py-3 text-zinc-400 font-medium" colSpan={3}>Gesamt</td>
+                  <tr className="bg-[var(--color-surface-container-low)]">
+                    <td className="px-4 py-3 text-[var(--color-on-surface-variant)] font-medium" colSpan={3}>Gesamt</td>
                     <td className="px-4 py-3 text-right text-emerald-400 font-bold">{gesamtBrutto.toFixed(2)} €</td>
                     <td></td>
                   </tr>
@@ -841,16 +841,16 @@ export default function LohnPage() {
             <select
               value={gruppenFilter}
               onChange={e => setGruppenFilter(e.target.value)}
-              className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+              className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
             >
               <option value="">Alle Gruppen</option>
               {gruppen.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
             </select>
           </div>
 
-          <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+          <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
             <div className="px-4 py-3 border-b border-border">
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-[var(--color-on-surface-variant)]">
                 {gruppenFilter ? `Gefiltert: ${filteredVorschuesse.length} Vorschüsse` : "Alle erfassten Vorschüsse an Mitarbeiter"}
               </p>
             </div>
@@ -858,23 +858,23 @@ export default function LohnPage() {
             <table className="min-w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left px-4 py-3 text-zinc-500 font-medium">Mitarbeiter</th>
-                  <th className="text-right px-4 py-3 text-zinc-500 font-medium">Betrag</th>
-                  <th className="text-right px-4 py-3 text-zinc-500 font-medium">Bonus</th>
-                  <th className="text-left px-4 py-3 text-zinc-500 font-medium">Datum</th>
-                  <th className="text-left px-4 py-3 text-zinc-500 font-medium">Grund</th>
-                  <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
+                  <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Mitarbeiter</th>
+                  <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Betrag</th>
+                  <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Bonus</th>
+                  <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Datum</th>
+                  <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Grund</th>
+                  <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {vorschuesseLoading ? (
-                  <tr><td colSpan={6} className="text-center py-12 text-zinc-600">Laden...</td></tr>
+                  <tr><td colSpan={6} className="text-center py-12 text-[var(--color-on-surface-variant)]">Laden...</td></tr>
                 ) : filteredVorschuesse.length === 0 ? (
-                  <tr><td colSpan={6} className="text-center py-12 text-zinc-600">Keine Vorschüsse erfasst</td></tr>
+                  <tr><td colSpan={6} className="text-center py-12 text-[var(--color-on-surface-variant)]">Keine Vorschüsse erfasst</td></tr>
                 ) : (
                   filteredVorschuesse.map(v => (
-                    <tr key={v.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors">
-                      <td className="px-4 py-3 text-white font-medium">
+                    <tr key={v.id} className="border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors">
+                      <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">
                         {v.mitarbeiter.vorname} {v.mitarbeiter.nachname}
                       </td>
                       <td className="px-4 py-3 text-right text-amber-400 font-semibold">
@@ -886,13 +886,13 @@ export default function LohnPage() {
                             +{v.individualBonus.toFixed(2)} €
                           </span>
                         ) : (
-                          <span className="text-zinc-600">—</span>
+                          <span className="text-[var(--color-on-surface-variant)]">—</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-zinc-400">
+                      <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">
                         {v.datum ? new Date(v.datum).toLocaleDateString("de-DE") : "—"}
                       </td>
-                      <td className="px-4 py-3 text-zinc-500">{v.grund || "—"}</td>
+                      <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">{v.grund || "—"}</td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                           v.status === "ausgezahlt"
@@ -910,8 +910,8 @@ export default function LohnPage() {
               </tbody>
               {filteredVorschuesse.length > 0 && (
                 <tfoot>
-                  <tr className="bg-[#0f0f0f]">
-                    <td className="px-4 py-3 text-zinc-400 font-medium" colSpan={1}>Gesamt</td>
+                  <tr className="bg-[var(--color-surface-container-low)]">
+                    <td className="px-4 py-3 text-[var(--color-on-surface-variant)] font-medium" colSpan={1}>Gesamt</td>
                     <td className="px-4 py-3 text-right text-amber-400 font-bold">
                       {filteredVorschuesse.reduce((s, v) => s + (v.betrag || 0), 0).toFixed(2)} €
                     </td>
@@ -932,14 +932,14 @@ export default function LohnPage() {
 
       {/* ─── Tab: Lohnübersicht (K1) ─────────────────────────────────────── */}
       {activeTab === "lohnuebersicht" && (
-        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
           <div className="px-4 py-3 border-b border-border flex items-center justify-between">
-            <p className="text-sm text-zinc-400">Automatische Lohnberechnung aus Stundenbuchungen</p>
+            <p className="text-sm text-[var(--color-on-surface-variant)]">Automatische Lohnberechnung aus Stundenbuchungen</p>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => exportGruppenAbrechnungCSV(selectedGruppe?.name ?? "alle", vorschuesse, lohnBerechnung)}
                 disabled={lohnBerechnung.length === 0}
-                className="flex items-center gap-2 px-3 py-1.5 border border-border rounded-lg text-xs text-zinc-400 hover:text-white disabled:opacity-40 transition-all"
+                className="flex items-center gap-2 px-3 py-1.5 border border-border rounded-lg text-xs text-[var(--color-on-surface-variant)] hover:text-white disabled:opacity-40 transition-all"
               >
                 <Download className="w-3.5 h-3.5" />
                 Abrechnung exportieren
@@ -956,49 +956,49 @@ export default function LohnPage() {
           <table className="min-w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-4 py-3 text-zinc-500 font-medium">Mitarbeiter</th>
-                <th className="text-right px-4 py-3 text-zinc-500 font-medium">Stunden</th>
-                <th className="text-right px-4 py-3 text-zinc-500 font-medium">Stundenlohn</th>
-                <th className="text-right px-4 py-3 text-zinc-500 font-medium">Bruttolohn</th>
-                <th className="text-right px-4 py-3 text-zinc-500 font-medium">Maschinenbonus</th>
-                <th className="text-right px-4 py-3 text-zinc-500 font-medium">Gesamt</th>
-                <th className="text-right px-4 py-3 text-zinc-500 font-medium">Buchungen</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Mitarbeiter</th>
+                <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Stunden</th>
+                <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Stundenlohn</th>
+                <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Bruttolohn</th>
+                <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Maschinenbonus</th>
+                <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Gesamt</th>
+                <th className="text-right px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Buchungen</th>
               </tr>
             </thead>
             <tbody>
               {lohnBerechnungLoading ? (
-                <tr><td colSpan={7} className="text-center py-12 text-zinc-600">Laden...</td></tr>
+                <tr><td colSpan={7} className="text-center py-12 text-[var(--color-on-surface-variant)]">Laden...</td></tr>
               ) : lohnBerechnung.length === 0 ? (
-                <tr><td colSpan={7} className="text-center py-12 text-zinc-600">Keine Stundenbuchungen vorhanden</td></tr>
+                <tr><td colSpan={7} className="text-center py-12 text-[var(--color-on-surface-variant)]">Keine Stundenbuchungen vorhanden</td></tr>
               ) : (
                 lohnBerechnung.map(m => (
-                  <tr key={m.mitarbeiterId} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors">
-                    <td className="px-4 py-3 text-white font-medium">
+                  <tr key={m.mitarbeiterId} className="border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors">
+                    <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">
                       {m.mitarbeiter.vorname} {m.mitarbeiter.nachname}
                     </td>
-                    <td className="px-4 py-3 text-right text-zinc-400">{m.stunden.toFixed(1)}h</td>
-                    <td className="px-4 py-3 text-right text-zinc-400">
+                    <td className="px-4 py-3 text-right text-[var(--color-on-surface-variant)]">{m.stunden.toFixed(1)}h</td>
+                    <td className="px-4 py-3 text-right text-[var(--color-on-surface-variant)]">
                       {m.stundenlohn ? `${m.stundenlohn.toFixed(2)} €` : "—"}
                     </td>
-                    <td className="px-4 py-3 text-right text-white">{m.bruttoLohn.toFixed(2)} €</td>
+                    <td className="px-4 py-3 text-right text-[var(--color-on-surface)]">{m.bruttoLohn.toFixed(2)} €</td>
                     <td className="px-4 py-3 text-right">
                       {m.maschinenzuschlag > 0 ? (
                         <span className="text-emerald-400">{m.maschinenzuschlag.toFixed(2)} €</span>
                       ) : (
-                        <span className="text-zinc-600">—</span>
+                        <span className="text-[var(--color-on-surface-variant)]">—</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-right text-emerald-400 font-bold">{m.gesamtLohn.toFixed(2)} €</td>
-                    <td className="px-4 py-3 text-right text-zinc-600">{m.eintraege}</td>
+                    <td className="px-4 py-3 text-right text-[var(--color-on-surface-variant)]">{m.eintraege}</td>
                   </tr>
                 ))
               )}
             </tbody>
             {lohnBerechnung.length > 0 && (
               <tfoot>
-                <tr className="bg-[#0f0f0f] border-t border-border">
-                  <td className="px-4 py-3 font-bold text-zinc-300" colSpan={3}>Gesamt</td>
-                  <td className="px-4 py-3 text-right font-bold text-white">
+                <tr className="bg-[var(--color-surface-container-low)] border-t border-border">
+                  <td className="px-4 py-3 font-bold text-[var(--color-on-surface)]" colSpan={3}>Gesamt</td>
+                  <td className="px-4 py-3 text-right font-bold text-[var(--color-on-surface)]">
                     {lohnBerechnung.reduce((s, m) => s + m.bruttoLohn, 0).toFixed(2)} €
                   </td>
                   <td className="px-4 py-3 text-right font-bold text-emerald-400">
@@ -1009,7 +1009,7 @@ export default function LohnPage() {
                   <td className="px-4 py-3 text-right font-bold text-emerald-400">
                     {lohnBerechnung.reduce((s, m) => s + m.gesamtLohn, 0).toFixed(2)} €
                   </td>
-                  <td className="px-4 py-3 text-right font-bold text-zinc-400">
+                  <td className="px-4 py-3 text-right font-bold text-[var(--color-on-surface-variant)]">
                     {lohnBerechnung.reduce((s, m) => s + m.eintraege, 0)}
                   </td>
                 </tr>

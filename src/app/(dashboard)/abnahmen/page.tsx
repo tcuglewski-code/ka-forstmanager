@@ -80,7 +80,7 @@ export default function AbnahmenPage() {
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <CheckSquare className="w-6 h-6 text-emerald-400" /> Abnahmen
           </h1>
-          <p className="text-zinc-500 text-sm mt-1">Forstliche Abnahmen und Protokolle</p>
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">Forstliche Abnahmen und Protokolle</p>
         </div>
         <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
           <Plus className="w-4 h-4" /> Abnahme erstellen
@@ -89,13 +89,13 @@ export default function AbnahmenPage() {
 
       {/* Filter */}
       <div className="flex flex-wrap gap-3 mb-4">
-        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white">
+        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white">
           <option value="">Alle Status</option>
           <option value="offen">Offen</option>
           <option value="bestanden">Bestanden</option>
           <option value="nicht_bestanden">Nicht bestanden</option>
         </select>
-        <select value={filterAuftrag} onChange={(e) => setFilterAuftrag(e.target.value)} className="bg-[#161616] border border-border rounded-lg px-3 py-2 text-sm text-white">
+        <select value={filterAuftrag} onChange={(e) => setFilterAuftrag(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-white">
           <option value="">Alle Aufträge</option>
           {auftraege.map((a) => <option key={a.id} value={a.id}>{a.titel}</option>)}
         </select>
@@ -104,16 +104,16 @@ export default function AbnahmenPage() {
       {loading ? (
         <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>
       ) : (
-        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Auftrag</th>
-                <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Datum</th>
-                <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Förster</th>
-                <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Status</th>
-                <th className="text-left px-6 py-3 text-xs text-zinc-500 uppercase tracking-wider">Signatur</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Auftrag</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Datum</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Förster</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Status</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">Signatur</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -122,10 +122,10 @@ export default function AbnahmenPage() {
               ) : abnahmen.map((a) => (
                 <tr key={a.id} className="hover:bg-[#1c1c1c] cursor-pointer" onClick={() => setSelectedAbnahme(selectedAbnahme?.id === a.id ? null : a)}>
                   <td className="px-6 py-4 text-sm text-white">{a.auftrag.titel}</td>
-                  <td className="px-6 py-4 text-sm text-zinc-400">{new Date(a.datum).toLocaleDateString("de-DE")}</td>
-                  <td className="px-6 py-4 text-sm text-zinc-400">{a.foersterId ?? "—"}</td>
+                  <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{new Date(a.datum).toLocaleDateString("de-DE")}</td>
+                  <td className="px-6 py-4 text-sm text-[var(--color-on-surface-variant)]">{a.foersterId ?? "—"}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${statusBadge[a.status] ?? "bg-zinc-700 text-zinc-400"}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-xs ${statusBadge[a.status] ?? "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]"}`}>
                       {statusLabel[a.status] ?? a.status}
                     </span>
                   </td>
@@ -144,13 +144,13 @@ export default function AbnahmenPage() {
 
       {/* Detail Panel */}
       {selectedAbnahme && (
-        <div className="mt-4 bg-[#161616] border border-border rounded-xl p-6">
+        <div className="mt-4 bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
           <h3 className="font-semibold text-white mb-3">Details: {selectedAbnahme.auftrag.titel}</h3>
-          <p className="text-sm text-zinc-400 mb-2"><span className="text-zinc-500">Notizen:</span> {selectedAbnahme.notizen ?? "—"}</p>
+          <p className="text-sm text-[var(--color-on-surface-variant)] mb-2"><span className="text-[var(--color-on-surface-variant)]">Notizen:</span> {selectedAbnahme.notizen ?? "—"}</p>
           {selectedAbnahme.signaturUrl && (
             <div>
-              <p className="text-sm text-zinc-500 mb-1">Signatur:</p>
-              <img src={selectedAbnahme.signaturUrl} alt="Signatur" className="max-h-32 border border-[#333] rounded-lg" />
+              <p className="text-sm text-[var(--color-on-surface-variant)] mb-1">Signatur:</p>
+              <img src={selectedAbnahme.signaturUrl} alt="Signatur" className="max-h-32 border border-border rounded-lg" />
             </div>
           )}
         </div>
@@ -158,24 +158,24 @@ export default function AbnahmenPage() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto">
+          <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto">
             <h2 className="text-lg font-bold text-white mb-4">Abnahme erstellen</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Auftrag</label>
-                <select value={form.auftragId} onChange={(e) => setForm({ ...form, auftragId: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Auftrag</label>
+                <select value={form.auftragId} onChange={(e) => setForm({ ...form, auftragId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
                   <option value="">— auswählen —</option>
                   {auftraege.map((a) => <option key={a.id} value={a.id}>{a.titel}</option>)}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Datum</label>
-                  <input type="date" value={form.datum} onChange={(e) => setForm({ ...form, datum: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Datum</label>
+                  <input type="date" value={form.datum} onChange={(e) => setForm({ ...form, datum: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
                 </div>
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-1">Status</label>
-                  <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white">
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Status</label>
+                  <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white">
                     <option value="offen">Offen</option>
                     <option value="bestanden">Bestanden</option>
                     <option value="nicht_bestanden">Nicht bestanden</option>
@@ -183,16 +183,16 @@ export default function AbnahmenPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Förster Name</label>
-                <input value={form.foersterId} onChange={(e) => setForm({ ...form, foersterId: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" />
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Förster Name</label>
+                <input value={form.foersterId} onChange={(e) => setForm({ ...form, foersterId: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" />
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
-                <textarea value={form.notizen} onChange={(e) => setForm({ ...form, notizen: e.target.value })} className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white" rows={3} />
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Notizen</label>
+                <textarea value={form.notizen} onChange={(e) => setForm({ ...form, notizen: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white" rows={3} />
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 rounded-lg border border-[#333] text-zinc-400 text-sm hover:bg-[#222]">Abbrechen</button>
+              <button onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 rounded-lg border border-border text-[var(--color-on-surface-variant)] text-sm hover:bg-[#222]">Abbrechen</button>
               <button onClick={create} disabled={saving || !form.auftragId} className="flex-1 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium disabled:opacity-50">
                 {saving ? "Speichern..." : "Erstellen"}
               </button>

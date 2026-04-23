@@ -578,24 +578,24 @@ export function AuftragModal({
 
   const field = (label: string, key: keyof typeof form, type = "text", placeholder = "") => (
     <div>
-      <label className="block text-xs text-zinc-400 mb-1">{label}</label>
+      <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">{label}</label>
       <input
         type={type}
         value={form[key]}
         onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
         placeholder={placeholder}
-        className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+        className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
       />
     </div>
   )
 
   const select = (label: string, key: keyof typeof form, options: { value: string; label: string }[], allowEmpty = false) => (
     <div>
-      <label className="block text-xs text-zinc-400 mb-1">{label}</label>
+      <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">{label}</label>
       <select
         value={form[key]}
         onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-        className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+        className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
       >
         {allowEmpty && <option value="">— keine —</option>}
         {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -605,12 +605,12 @@ export function AuftragModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-2xl flex flex-col max-h-[85vh]">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl w-full max-w-2xl flex flex-col max-h-[85vh]">
         <div className="flex items-center justify-between p-6 border-b border-border shrink-0">
-          <h2 className="text-lg font-semibold text-white">
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">
             {auftrag?.id ? "Auftrag bearbeiten" : "Neuer Auftrag"}
           </h2>
-          <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors">
+          <button onClick={onClose} className="text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -630,13 +630,13 @@ export function AuftragModal({
                       key={t.id}
                       type="button"
                       onClick={() => applyTemplate(t)}
-                      className="flex flex-col items-start p-3 bg-[#0f0f0f] border border-border rounded-lg hover:border-emerald-500 hover:bg-emerald-500/5 transition-all text-left group"
+                      className="flex flex-col items-start p-3 bg-[var(--color-surface-container-low)] border border-border rounded-lg hover:border-emerald-500 hover:bg-emerald-500/5 transition-all text-left group"
                     >
-                      <span className="text-sm font-medium text-white group-hover:text-emerald-400 transition-colors">
+                      <span className="text-sm font-medium text-[var(--color-on-surface)] group-hover:text-emerald-400 transition-colors">
                         {t.name}
                       </span>
                       {t.beschreibung && (
-                        <span className="text-xs text-zinc-500 mt-1 line-clamp-2">
+                        <span className="text-xs text-[var(--color-on-surface-variant)] mt-1 line-clamp-2">
                           {t.beschreibung}
                         </span>
                       )}
@@ -655,7 +655,7 @@ export function AuftragModal({
                     <span className="text-sm font-medium text-violet-400">KI-Autofill aus Dokument</span>
                   </div>
                   {kiConsent === false && (
-                    <span className="text-xs text-zinc-500">Einwilligung erforderlich</span>
+                    <span className="text-xs text-[var(--color-on-surface-variant)]">Einwilligung erforderlich</span>
                   )}
                 </div>
                 
@@ -675,7 +675,7 @@ export function AuftragModal({
                   className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed transition-all ${
                     kiConsent && !kiAnalyzing
                       ? "border-violet-500/30 hover:border-violet-500/60 hover:bg-violet-500/5 text-violet-400 cursor-pointer"
-                      : "border-border text-zinc-600 cursor-not-allowed"
+                      : "border-border text-[var(--color-on-surface-variant)] cursor-not-allowed"
                   }`}
                   title={!kiConsent ? "KI-Einwilligung in den Einstellungen erforderlich" : undefined}
                 >
@@ -692,7 +692,7 @@ export function AuftragModal({
                   )}
                 </button>
                 
-                <p className="text-xs text-zinc-600 mt-2">
+                <p className="text-xs text-[var(--color-on-surface-variant)] mt-2">
                   Unterstützt: JPEG, PNG, GIF, WebP • Max. 10MB • Die KI extrahiert Auftragsdaten automatisch
                 </p>
               </div>
@@ -704,12 +704,12 @@ export function AuftragModal({
               {select("Status", "status", STATUS_LIST)}
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Beschreibung</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Beschreibung</label>
               <textarea
                 value={form.beschreibung}
                 onChange={e => setForm(f => ({ ...f, beschreibung: e.target.value }))}
                 rows={3}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 resize-none"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500 resize-none"
                 placeholder="Beschreibung der Maßnahme..."
               />
             </div>
@@ -717,7 +717,7 @@ export function AuftragModal({
             {/* FM-05: Multi-Flächen Section */}
             <div className="border border-border rounded-lg p-4 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium text-white">Flächen</h3>
+                <h3 className="text-sm font-medium text-[var(--color-on-surface)]">Flächen</h3>
                 <button
                   type="button"
                   onClick={addFlaeche}
@@ -729,14 +729,14 @@ export function AuftragModal({
               </div>
               
               {flaechen.map((flaeche, idx) => (
-                <div key={flaeche.id} className="bg-[#0a0a0a] rounded-lg p-3 space-y-3">
+                <div key={flaeche.id} className="bg-[var(--color-surface-container-lowest)] rounded-lg p-3 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-zinc-500">Fläche {idx + 1}</span>
+                    <span className="text-xs text-[var(--color-on-surface-variant)]">Fläche {idx + 1}</span>
                     {flaechen.length > 1 && (
                       <button
                         type="button"
                         onClick={() => removeFlaeche(flaeche.id)}
-                        className="text-zinc-500 hover:text-red-500"
+                        className="text-[var(--color-on-surface-variant)] hover:text-red-500"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -744,47 +744,47 @@ export function AuftragModal({
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs text-zinc-400 mb-1">Fläche (ha)</label>
+                      <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Fläche (ha)</label>
                       <input
                         type="number"
                         step="0.01"
                         value={flaeche.flaeche_ha}
                         onChange={e => updateFlaeche(flaeche.id, "flaeche_ha", e.target.value)}
                         placeholder="0.00"
-                        className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                        className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-zinc-400 mb-1">Standort</label>
+                      <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Standort</label>
                       <input
                         type="text"
                         value={flaeche.standort}
                         onChange={e => updateFlaeche(flaeche.id, "standort", e.target.value)}
                         placeholder="z.B. Abt. 5"
-                        className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                        className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
                       />
                     </div>
                   </div>
                   {/* FM-01: Forstamt/Revier pro Fläche */}
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs text-zinc-400 mb-1">Forstamt</label>
+                      <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Forstamt</label>
                       <input
                         type="text"
                         value={flaeche.forstamt}
                         onChange={e => updateFlaeche(flaeche.id, "forstamt", e.target.value)}
                         placeholder="z.B. Forstamt Arnsberg"
-                        className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                        className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-zinc-400 mb-1">Revier</label>
+                      <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Revier</label>
                       <input
                         type="text"
                         value={flaeche.revier}
                         onChange={e => updateFlaeche(flaeche.id, "revier", e.target.value)}
                         placeholder="z.B. Revier Nord"
-                        className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                        className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
                       />
                     </div>
                   </div>
@@ -792,23 +792,23 @@ export function AuftragModal({
                   <div className="flex items-end gap-2">
                     <div className="flex-1 grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs text-zinc-400 mb-1">Breitengrad (Lat)</label>
+                        <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Breitengrad (Lat)</label>
                         <input
                           type="text"
                           value={flaeche.lat}
                           onChange={e => updateFlaeche(flaeche.id, "lat", e.target.value)}
                           placeholder="51.4556"
-                          className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                          className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-zinc-400 mb-1">Längengrad (Lng)</label>
+                        <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Längengrad (Lng)</label>
                         <input
                           type="text"
                           value={flaeche.lng}
                           onChange={e => updateFlaeche(flaeche.id, "lng", e.target.value)}
                           placeholder="7.0116"
-                          className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                          className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
                         />
                       </div>
                     </div>
@@ -825,7 +825,7 @@ export function AuftragModal({
               ))}
               
               {flaechen.length > 1 && (
-                <div className="text-xs text-zinc-500 text-right">
+                <div className="text-xs text-[var(--color-on-surface-variant)] text-right">
                   Gesamtfläche: {flaechen.reduce((sum, f) => sum + (parseFloat(f.flaeche_ha) || 0), 0).toFixed(2)} ha
                 </div>
               )}
@@ -836,11 +836,11 @@ export function AuftragModal({
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Bundesland</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Bundesland</label>
                 <select
                   value={form.bundesland}
                   onChange={e => setForm(f => ({ ...f, bundesland: e.target.value }))}
-                  className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
                 >
                   <option value="">— wählen —</option>
                   {BUNDESLAENDER.map(b => <option key={b} value={b}>{b}</option>)}
@@ -879,7 +879,7 @@ export function AuftragModal({
             {/* FM-02: GPS-Koordinaten (Haupt - falls nur 1 Fläche ohne GPS) */}
             {flaechen.length === 1 && !flaechen[0].lat && !flaechen[0].lng && (
               <div className="border border-border rounded-lg p-4">
-                <label className="block text-xs text-zinc-400 mb-2">GPS-Standort (alternativ)</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-2">GPS-Standort (alternativ)</label>
                 <div className="flex items-end gap-2">
                   <div className="flex-1 grid grid-cols-2 gap-3">
                     <input
@@ -887,14 +887,14 @@ export function AuftragModal({
                       value={form.lat}
                       onChange={e => setForm(f => ({ ...f, lat: e.target.value }))}
                       placeholder="Breitengrad (51.4556)"
-                      className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
                     />
                     <input
                       type="text"
                       value={form.lng}
                       onChange={e => setForm(f => ({ ...f, lng: e.target.value }))}
                       placeholder="Längengrad (7.0116)"
-                      className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <button
@@ -916,10 +916,10 @@ export function AuftragModal({
                 <h3 className="text-sm font-medium text-emerald-500">Pflanzung Details</h3>
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs text-zinc-400 mb-2">Bezugsquelle</label>
+                    <label className="block text-xs text-[var(--color-on-surface-variant)] mb-2">Bezugsquelle</label>
                     <div className="flex gap-4">
                       {["koch", "kunde", "baumschule"].map(opt => (
-                        <label key={opt} className="flex items-center gap-2 text-sm text-white cursor-pointer">
+                        <label key={opt} className="flex items-center gap-2 text-sm text-[var(--color-on-surface)] cursor-pointer">
                           <input
                             type="radio"
                             name="bezugsquelle"
@@ -935,21 +935,21 @@ export function AuftragModal({
                   </div>
                   {field("Lieferant", "lieferant", "text", "Name der Baumschule")}
                   <div>
-                    <label className="block text-xs text-zinc-400 mb-1">Baumarten</label>
+                    <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Baumarten</label>
                     <textarea
                       value={form.baumarten}
                       onChange={e => setForm(f => ({ ...f, baumarten: e.target.value }))}
                       rows={2}
                       placeholder="z.B. 500 Eiche, 300 Buche, 200 Lärche"
-                      className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 resize-none"
+                      className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500 resize-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-zinc-400 mb-1">Pflanzverband</label>
+                    <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Pflanzverband</label>
                     <select
                       value={form.pflanzverband}
                       onChange={e => setForm(f => ({ ...f, pflanzverband: e.target.value }))}
-                      className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
                     >
                       {PFLANZVERBAND_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                     </select>
@@ -963,11 +963,11 @@ export function AuftragModal({
                 <h3 className="text-sm font-medium text-emerald-500">Zaunbau Details</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-zinc-400 mb-1">Zauntyp</label>
+                    <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Zauntyp</label>
                     <select
                       value={form.zauntyp}
                       onChange={e => setForm(f => ({ ...f, zauntyp: e.target.value }))}
-                      className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
                     >
                       {ZAUNTYP_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                     </select>
@@ -981,10 +981,10 @@ export function AuftragModal({
               <div className="border border-emerald-600/30 rounded-lg p-4 space-y-4">
                 <h3 className="text-sm font-medium text-emerald-500">Kulturschutz Details</h3>
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-2">Schutztyp</label>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-2">Schutztyp</label>
                   <div className="flex flex-wrap gap-3">
                     {["wuchshuellen", "drahthosen", "verbissschutz", "fegeschutz"].map(opt => (
-                      <label key={opt} className="flex items-center gap-2 text-sm text-white cursor-pointer">
+                      <label key={opt} className="flex items-center gap-2 text-sm text-[var(--color-on-surface)] cursor-pointer">
                         <input
                           type="checkbox"
                           checked={form.schutztyp.includes(opt)}
@@ -1004,11 +1004,11 @@ export function AuftragModal({
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-zinc-400 mb-1">Schutzart</label>
+                    <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Schutzart</label>
                     <select
                       value={form.schutzart}
                       onChange={e => setForm(f => ({ ...f, schutzart: e.target.value }))}
-                      className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
                     >
                       {SCHUTZART_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                     </select>
@@ -1023,10 +1023,10 @@ export function AuftragModal({
               <div className="border border-emerald-600/30 rounded-lg p-4 space-y-4">
                 <h3 className="text-sm font-medium text-emerald-500">Flächenvorbereitung Details</h3>
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-2">Aufwuchsart</label>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-2">Aufwuchsart</label>
                   <div className="flex flex-wrap gap-3">
                     {AUFWUCHSART_OPTIONS.map(opt => (
-                      <label key={opt.value} className="flex items-center gap-2 text-sm text-white cursor-pointer">
+                      <label key={opt.value} className="flex items-center gap-2 text-sm text-[var(--color-on-surface)] cursor-pointer">
                         <input
                           type="checkbox"
                           checked={form.aufwuchsart.includes(opt.value)}
@@ -1045,10 +1045,10 @@ export function AuftragModal({
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs text-zinc-400 mb-2">Arbeitsmethode</label>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-2">Arbeitsmethode</label>
                   <div className="flex gap-4">
                     {ARBEITSMETHODE_OPTIONS.map(opt => (
-                      <label key={opt.value} className="flex items-center gap-2 text-sm text-white cursor-pointer">
+                      <label key={opt.value} className="flex items-center gap-2 text-sm text-[var(--color-on-surface)] cursor-pointer">
                         <input
                           type="radio"
                           name="arbeitsmethode"
@@ -1078,22 +1078,22 @@ export function AuftragModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Saison</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Saison</label>
                 <select
                   value={form.saisonId}
                   onChange={e => setForm(f => ({ ...f, saisonId: e.target.value }))}
-                  className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
                 >
                   <option value="">— keine —</option>
                   {saisons.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1">Gruppe</label>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Gruppe</label>
                 <select
                   value={form.gruppeId}
                   onChange={e => setForm(f => ({ ...f, gruppeId: e.target.value }))}
-                  className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
                 >
                   <option value="">— keine —</option>
                   {gruppen.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
@@ -1132,7 +1132,7 @@ export function AuftragModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white hover:border-zinc-500 transition-all"
+              className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:border-zinc-500 transition-all"
             >
               Abbrechen
             </button>

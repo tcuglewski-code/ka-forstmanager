@@ -34,7 +34,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--color-surface-container-low)] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
@@ -42,18 +42,18 @@ export default function ForgotPasswordPage() {
             <TreePine className="w-8 h-8 text-emerald-400" />
           </div>
           <h1 className="text-2xl font-bold text-white">ForstManager</h1>
-          <p className="text-sm text-zinc-400 mt-1">Koch Aufforstung GmbH</p>
+          <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">Koch Aufforstung GmbH</p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-[#161616] border border-border rounded-2xl p-8">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-2xl p-8">
           {submitted ? (
             <>
               <h2 className="text-lg font-semibold text-white mb-1">E-Mail gesendet</h2>
-              <p className="text-sm text-zinc-400 mt-4">
+              <p className="text-sm text-[var(--color-on-surface-variant)] mt-4">
                 Falls ein Konto mit dieser E-Mail-Adresse existiert, wurde eine Nachricht mit einem Link zum Zurücksetzen des Passworts gesendet.
               </p>
-              <p className="text-sm text-zinc-500 mt-3">
+              <p className="text-sm text-[var(--color-on-surface-variant)] mt-3">
                 Bitte überprüfe auch deinen Spam-Ordner.
               </p>
               <a
@@ -67,7 +67,7 @@ export default function ForgotPasswordPage() {
           ) : (
             <>
               <h2 className="text-lg font-semibold text-white mb-1">Passwort vergessen</h2>
-              <p className="text-sm text-zinc-500 mb-6">
+              <p className="text-sm text-[var(--color-on-surface-variant)] mb-6">
                 Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen.
               </p>
 
@@ -79,7 +79,7 @@ export default function ForgotPasswordPage() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label htmlFor="forgot-email" className="block text-sm font-medium text-zinc-400 mb-1.5">
+                  <label htmlFor="forgot-email" className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">
                     E-Mail-Adresse
                   </label>
                   <input
@@ -91,7 +91,7 @@ export default function ForgotPasswordPage() {
                     autoComplete="email"
                     autoFocus
                     placeholder="name@koch-aufforstung.de"
-                    className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
                   />
                 </div>
 
@@ -112,7 +112,7 @@ export default function ForgotPasswordPage() {
 
                 <a
                   href="/login"
-                  className="w-full flex items-center justify-center gap-2 text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 text-sm text-[var(--color-on-surface-variant)] hover:text-zinc-300 transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Zurück zur Anmeldung

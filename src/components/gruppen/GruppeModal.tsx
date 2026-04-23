@@ -92,12 +92,12 @@ export function GruppeModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-md flex flex-col max-h-[85vh]">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl w-full max-w-md flex flex-col max-h-[85vh]">
         <div className="flex items-center justify-between p-6 border-b border-border shrink-0">
-          <h2 className="text-lg font-semibold text-white">
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">
             {gruppe?.id ? "Gruppe bearbeiten" : "Neue Gruppe"}
           </h2>
-          <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors">
+          <button onClick={onClose} className="text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -105,11 +105,11 @@ export function GruppeModal({
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
           <div className="overflow-y-auto flex-1 p-6 space-y-4">
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Gruppenführer</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Gruppenführer</label>
               <select
                 value={form.gruppenfuehrerId}
                 onChange={handleFuehrerChange}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
               >
                 <option value="">— keiner —</option>
                 {mitarbeiter.map(m => (
@@ -117,29 +117,29 @@ export function GruppeModal({
                 ))}
               </select>
               {mitarbeiter.length === 0 && (
-                <p className="text-xs text-zinc-600 mt-1">Keine Gruppenführer gefunden. Bitte Rollen in Mitarbeiterverwaltung setzen.</p>
+                <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Keine Gruppenführer gefunden. Bitte Rollen in Mitarbeiterverwaltung setzen.</p>
               )}
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Name *</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Name *</label>
               <input
                 type="text"
                 value={form.name}
                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                 placeholder="z.B. Gruppe Nord"
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
                 required
               />
               {!gruppe?.id && (
-                <p className="text-xs text-zinc-600 mt-1">Wird automatisch aus Gruppenführer-Name befüllt</p>
+                <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Wird automatisch aus Gruppenführer-Name befüllt</p>
               )}
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Saison</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Saison</label>
               <select
                 value={form.saisonId}
                 onChange={e => setForm(f => ({ ...f, saisonId: e.target.value }))}
-                className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
               >
                 <option value="">— keine —</option>
                 {saisons.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -151,7 +151,7 @@ export function GruppeModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white hover:border-zinc-500 transition-all"
+              className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:border-zinc-500 transition-all"
             >
               Abbrechen
             </button>

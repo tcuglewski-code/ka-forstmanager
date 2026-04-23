@@ -74,20 +74,20 @@ export function SyncStatusBadge({
       </div>
 
       {/* Tooltip */}
-      <div className="absolute z-50 bottom-full left-0 mb-2 w-64 p-3 bg-[#1a1a1a] border border-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-        <p className="text-xs text-zinc-400 mb-2">{status.description}</p>
+      <div className="absolute z-50 bottom-full left-0 mb-2 w-64 p-3 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+        <p className="text-xs text-[var(--color-on-surface-variant)] mb-2">{status.description}</p>
         <div className="space-y-1 text-xs">
           {wpSyncedAt && (
-            <p className="text-zinc-500">
-              <span className="text-zinc-400">Letzte WP-Sync:</span> {formatDate(wpSyncedAt)}
+            <p className="text-[var(--color-on-surface-variant)]">
+              <span className="text-[var(--color-on-surface-variant)]">Letzte WP-Sync:</span> {formatDate(wpSyncedAt)}
             </p>
           )}
           {localUpdatedAt && (
-            <p className="text-zinc-500">
-              <span className="text-zinc-400">Lokal geändert:</span> {formatDate(localUpdatedAt)}
+            <p className="text-[var(--color-on-surface-variant)]">
+              <span className="text-[var(--color-on-surface-variant)]">Lokal geändert:</span> {formatDate(localUpdatedAt)}
             </p>
           )}
-          <p className="text-zinc-600 mt-2">
+          <p className="text-[var(--color-on-surface-variant)] mt-2">
             WP-ID: {wpProjektId}
           </p>
         </div>

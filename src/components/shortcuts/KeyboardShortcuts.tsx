@@ -163,16 +163,16 @@ export function KeyboardShortcuts({ onOpenSearch }: KeyboardShortcutsProps) {
             onClick={() => setIsHelpOpen(false)}
           />
           <div className="fixed inset-x-0 top-[15%] mx-auto max-w-md z-50 px-4">
-            <div className="bg-[#1a1a1a] border border-border rounded-xl shadow-2xl overflow-hidden">
+            <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl shadow-2xl overflow-hidden">
               {/* Header */}
               <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-                <div className="flex items-center gap-2 text-white">
+                <div className="flex items-center gap-2 text-[var(--color-on-surface)]">
                   <Keyboard className="w-5 h-5 text-emerald-400" />
                   <span className="font-medium">Tastenkürzel</span>
                 </div>
                 <button
                   onClick={() => setIsHelpOpen(false)}
-                  className="p-1 text-zinc-500 hover:text-white"
+                  className="p-1 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -185,7 +185,7 @@ export function KeyboardShortcuts({ onOpenSearch }: KeyboardShortcutsProps) {
                     key={index}
                     className="flex items-center justify-between py-1.5"
                   >
-                    <span className="text-sm text-zinc-400">{shortcut.description}</span>
+                    <span className="text-sm text-[var(--color-on-surface-variant)]">{shortcut.description}</span>
                     <div className="flex items-center gap-1">
                       {shortcut.keys.map((key, keyIndex) => (
                         <kbd
@@ -193,8 +193,8 @@ export function KeyboardShortcuts({ onOpenSearch }: KeyboardShortcutsProps) {
                           className={cn(
                             "px-2 py-1 rounded text-xs font-mono",
                             key === "→"
-                              ? "text-zinc-500"
-                              : "bg-surface-container-highest text-zinc-300"
+                              ? "text-[var(--color-on-surface-variant)]"
+                              : "bg-surface-container-highest text-[var(--color-on-surface)]"
                           )}
                         >
                           {key}
@@ -206,7 +206,7 @@ export function KeyboardShortcuts({ onOpenSearch }: KeyboardShortcutsProps) {
               </div>
 
               {/* Footer */}
-              <div className="px-4 py-3 border-t border-border text-xs text-zinc-600">
+              <div className="px-4 py-3 border-t border-border text-xs text-[var(--color-on-surface-variant)]">
                 <span className="flex items-center gap-1">
                   Auf Windows/Linux: Ctrl statt{" "}
                   <Command className="w-3 h-3" /> verwenden
@@ -239,11 +239,11 @@ export function ShortcutsButton({ onClick }: { onClick?: () => void }) {
   return (
     <button
       onClick={handleClick}
-      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-zinc-400 hover:bg-[#1e1e1e] hover:text-white transition-all"
+      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-highest)] hover:text-[var(--color-on-surface)] transition-all"
     >
       <Keyboard className="w-4 h-4" />
       <span className="flex-1 text-left">Tastenkürzel</span>
-      <kbd className="flex items-center gap-0.5 px-1.5 py-0.5 bg-surface-container-highest rounded text-[10px] text-zinc-500">
+      <kbd className="flex items-center gap-0.5 px-1.5 py-0.5 bg-surface-container-highest rounded text-[10px] text-[var(--color-on-surface-variant)]">
         <Command className="w-2.5 h-2.5" />/
       </kbd>
     </button>

@@ -72,7 +72,7 @@ function hasValue(v: unknown): boolean {
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
-    entwurf: "bg-zinc-700 text-zinc-300 border-zinc-600",
+    entwurf: "bg-[var(--color-surface-container-high)] text-zinc-300 border-zinc-600",
     eingereicht: "bg-emerald-100 text-emerald-800 border-emerald-500/40",
     genehmigt: "bg-blue-100 text-blue-800 border-blue-500/40",
     abgelehnt: "bg-red-100 text-red-800 border-red-500/40",
@@ -84,7 +84,7 @@ function StatusBadge({ status }: { status: string }) {
     abgelehnt: "Abgelehnt",
   }
   return (
-    <span className={`text-xs px-2 py-0.5 rounded-full border ${map[status] ?? "bg-zinc-700 text-zinc-400 border-zinc-600"}`}>
+    <span className={`text-xs px-2 py-0.5 rounded-full border ${map[status] ?? "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)] border-zinc-600"}`}>
       {labelMap[status] ?? status}
     </span>
   )
@@ -101,11 +101,11 @@ function DetailSection({
 }) {
   return (
     <div className="border border-border rounded-lg overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-2.5 bg-[#111]">
-        <span className="text-zinc-500">{icon}</span>
-        <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">{title}</span>
+      <div className="flex items-center gap-2 px-4 py-2.5 bg-[var(--color-surface-container-low)]">
+        <span className="text-[var(--color-on-surface-variant)]">{icon}</span>
+        <span className="text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider">{title}</span>
       </div>
-      <div className="p-4 bg-[#0d0d0d]">
+      <div className="p-4 bg-[var(--color-surface-container)]">
         <div className="grid grid-cols-2 gap-x-6 gap-y-2">
           {children}
         </div>
@@ -118,7 +118,7 @@ function Row({ label, value, unit = "" }: { label: string; value: unknown; unit?
   if (!hasValue(value)) return null
   return (
     <>
-      <span className="text-xs text-zinc-500">{label}</span>
+      <span className="text-xs text-[var(--color-on-surface-variant)]">{label}</span>
       <span className="text-sm text-white text-right">
         {typeof value === "number"
           ? `${value.toLocaleString("de-DE")}${unit ? " " + unit : ""}`
@@ -268,7 +268,7 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
           <h3 className="font-semibold text-white text-base">
             {p.auftrag?.titel ?? "Protokoll"}
           </h3>
-          <p className="text-sm text-zinc-500 mt-0.5">
+          <p className="text-sm text-[var(--color-on-surface-variant)] mt-0.5">
             {new Date(p.datum).toLocaleDateString("de-DE", {
               weekday: "long",
               day: "2-digit",
@@ -280,7 +280,7 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
         <StatusBadge status={localStatus} />
       </div>
       {p.ersteller && (
-        <p className="text-xs text-zinc-500">Gruppenführer: <span className="text-zinc-300">{p.ersteller}</span></p>
+        <p className="text-xs text-[var(--color-on-surface-variant)]">Gruppenführer: <span className="text-zinc-300">{p.ersteller}</span></p>
       )}
 
       {/* Revier */}
@@ -371,14 +371,14 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
         <DetailSection icon={<MessageSquare className="w-4 h-4" />} title="Kommentar & Bericht">
           {p.kommentar && (
             <div className="col-span-2">
-              <p className="text-xs text-zinc-500 mb-1">Kommentar</p>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mb-1">Kommentar</p>
               <p className="text-sm text-zinc-300 whitespace-pre-wrap">{p.kommentar}</p>
             </div>
           )}
           {p.bericht && (
             <div className="col-span-2 mt-2">
-              <p className="text-xs text-zinc-500 mb-1">Bericht (intern)</p>
-              <p className="text-sm text-zinc-400 whitespace-pre-wrap">{p.bericht}</p>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mb-1">Bericht (intern)</p>
+              <p className="text-sm text-[var(--color-on-surface-variant)] whitespace-pre-wrap">{p.bericht}</p>
             </div>
           )}
         </DetailSection>
@@ -395,7 +395,7 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
       {/* Genehmigungs-Kommentar anzeigen */}
       {localKommentar && (
         <div className={`rounded-lg px-4 py-3 border ${localStatus === 'abgelehnt' ? 'bg-red-500/10 border-red-500/30' : 'bg-blue-500/10 border-blue-500/30'}`}>
-          <p className="text-xs text-zinc-500 mb-1">Genehmigungs-Kommentar</p>
+          <p className="text-xs text-[var(--color-on-surface-variant)] mb-1">Genehmigungs-Kommentar</p>
           <p className={`text-sm whitespace-pre-wrap ${localStatus === 'abgelehnt' ? 'text-red-300' : 'text-blue-300'}`}>{localKommentar}</p>
         </div>
       )}
@@ -425,7 +425,7 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
       {(localStatus === 'eingereicht' || localStatus === 'genehmigt') && (
         <button
           onClick={() => window.open(`/api/tagesprotokoll/${p.id}/pdf`, '_blank')}
-          className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white border border-border px-4 py-2 rounded-lg hover:bg-[#1a1a1a] transition-colors"
+          className="flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)] hover:text-white border border-border px-4 py-2 rounded-lg hover:bg-[var(--color-surface-container-lowest)] transition-colors"
         >
           <FileText className="w-4 h-4" />
           PDF exportieren
@@ -459,21 +459,21 @@ export default function TagesprotokollDetail({ protokoll: p, onStatusChange }: T
       {/* Ablehnen-Modal */}
       {showRejectModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setShowRejectModal(false)}>
-          <div className="bg-[#1a1a1a] border border-border rounded-xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-base font-bold text-white mb-3">Protokoll ablehnen</h3>
-            <p className="text-sm text-zinc-400 mb-3">Bitte geben Sie einen Grund für die Ablehnung an (Pflicht):</p>
+            <p className="text-sm text-[var(--color-on-surface-variant)] mb-3">Bitte geben Sie einen Grund für die Ablehnung an (Pflicht):</p>
             <textarea
               value={rejectComment}
               onChange={(e) => setRejectComment(e.target.value)}
               rows={3}
-              className="w-full bg-[#111] border border-[#333] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500"
               placeholder="Ablehnungsgrund..."
               autoFocus
             />
             <div className="flex gap-3 mt-4">
               <button
                 onClick={() => { setShowRejectModal(false); setRejectComment("") }}
-                className="flex-1 px-4 py-2 rounded-lg text-sm text-zinc-400 border border-border hover:bg-[#222] transition-colors"
+                className="flex-1 px-4 py-2 rounded-lg text-sm text-[var(--color-on-surface-variant)] border border-border hover:bg-[#222] transition-colors"
               >
                 Abbrechen
               </button>

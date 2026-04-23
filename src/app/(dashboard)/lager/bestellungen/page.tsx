@@ -47,7 +47,7 @@ interface KritischerArtikel {
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, { bg: string; text: string; icon: React.ReactNode }> = {
-    ENTWURF: { bg: "bg-zinc-500/20", text: "text-zinc-400", icon: <FileText className="w-3 h-3" /> },
+    ENTWURF: { bg: "bg-zinc-500/20", text: "text-[var(--color-on-surface-variant)]", icon: <FileText className="w-3 h-3" /> },
     BESTELLT: { bg: "bg-blue-500/20", text: "text-blue-400", icon: <Clock className="w-3 h-3" /> },
     GELIEFERT: { bg: "bg-emerald-500/20", text: "text-emerald-400", icon: <Check className="w-3 h-3" /> },
   }
@@ -135,24 +135,24 @@ function NeueBestellungModal({
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#161616] border border-border rounded-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between p-5 border-b border-border">
           <h2 className="text-lg font-semibold text-white flex items-center gap-2">
             <ShoppingCart className="w-5 h-5 text-gold" />
             Neue Bestellung
           </h2>
           <button onClick={onClose}>
-            <X className="w-5 h-5 text-zinc-500 hover:text-white" />
+            <X className="w-5 h-5 text-[var(--color-on-surface-variant)] hover:text-white" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 space-y-4">
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Lieferant</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Lieferant</label>
             <select
               value={selectedLieferant}
               onChange={e => setSelectedLieferant(e.target.value)}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold"
             >
               <option value="">Lieferant wählen...</option>
               {lieferanten.map(l => (
@@ -162,21 +162,21 @@ function NeueBestellungModal({
           </div>
 
           {selectedLieferant && artikelFürLieferant.length === 0 && (
-            <div className="text-center py-4 text-zinc-500 text-sm">
+            <div className="text-center py-4 text-[var(--color-on-surface-variant)] text-sm">
               Keine kritischen Artikel bei diesem Lieferanten
             </div>
           )}
 
           {positionen.length > 0 && (
             <div className="space-y-2">
-              <label className="block text-xs text-zinc-400">Positionen (aus kritischen Beständen)</label>
+              <label className="block text-xs text-[var(--color-on-surface-variant)]">Positionen (aus kritischen Beständen)</label>
               {positionen.map((pos, idx) => {
                 const artikel = kritischeArtikel.find(a => a.id === pos.artikelId)
                 return (
-                  <div key={idx} className="flex items-center gap-3 bg-[#1e1e1e] rounded-lg p-3">
+                  <div key={idx} className="flex items-center gap-3 bg-[var(--color-surface-container-highest)] rounded-lg p-3">
                     <div className="flex-1">
                       <span className="text-white">{artikel?.name}</span>
-                      <span className="text-zinc-500 text-xs ml-2">
+                      <span className="text-[var(--color-on-surface-variant)] text-xs ml-2">
                         (Bestand: {artikel?.bestand}/{artikel?.mindestbestand})
                       </span>
                     </div>
@@ -189,9 +189,9 @@ function NeueBestellungModal({
                         updated[idx].menge = parseInt(e.target.value) || 1
                         setPositionen(updated)
                       }}
-                      className="w-20 bg-[#0f0f0f] border border-border rounded px-2 py-1 text-sm text-white text-right"
+                      className="w-20 bg-[var(--color-surface-container-low)] border border-border rounded px-2 py-1 text-sm text-white text-right"
                     />
-                    <span className="text-zinc-500 text-xs">{artikel?.einheit}</span>
+                    <span className="text-[var(--color-on-surface-variant)] text-xs">{artikel?.einheit}</span>
                     <span className="text-white text-sm">
                       {(pos.menge * pos.einzelpreis).toFixed(2)} €
                     </span>
@@ -199,7 +199,7 @@ function NeueBestellungModal({
                 )
               })}
               <div className="text-right pt-2 border-t border-border">
-                <span className="text-zinc-400 text-sm">Gesamt: </span>
+                <span className="text-[var(--color-on-surface-variant)] text-sm">Gesamt: </span>
                 <span className="text-gold font-bold">
                   {positionen.reduce((sum, p) => sum + p.menge * p.einzelpreis, 0).toFixed(2)} €
                 </span>
@@ -208,12 +208,12 @@ function NeueBestellungModal({
           )}
 
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Notizen</label>
+            <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Notizen</label>
             <textarea
               value={notizen}
               onChange={e => setNotizen(e.target.value)}
               rows={2}
-              className="w-full bg-[#0f0f0f] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold"
+              className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold"
               placeholder="Optionale Notizen..."
             />
           </div>
@@ -222,7 +222,7 @@ function NeueBestellungModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-zinc-400 hover:text-white transition-all"
+              className="flex-1 px-4 py-2 rounded-lg border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-white transition-all"
             >
               Abbrechen
             </button>
@@ -303,7 +303,7 @@ export default function BestellungenPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Bestellungen</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">
+          <p className="text-[var(--color-on-surface-variant)] text-sm mt-0.5">
             {bestellungen.length} Bestellungen • {kritischeArtikel.length} kritische Artikel
           </p>
         </div>
@@ -320,52 +320,52 @@ export default function BestellungenPage() {
       <div className="grid grid-cols-3 gap-4 mb-6">
         <button
           onClick={() => setFilter(filter === "ENTWURF" ? "alle" : "ENTWURF")}
-          className={`bg-[#161616] border rounded-xl p-4 text-center transition-all ${filter === "ENTWURF" ? "border-gold" : "border-border hover:border-zinc-600"}`}
+          className={`bg-[var(--color-surface-container)] border rounded-xl p-4 text-center transition-all ${filter === "ENTWURF" ? "border-gold" : "border-border hover:border-zinc-600"}`}
         >
-          <p className="text-2xl font-bold text-zinc-400">{stats.entwurf}</p>
-          <p className="text-xs text-zinc-500">Entwürfe</p>
+          <p className="text-2xl font-bold text-[var(--color-on-surface-variant)]">{stats.entwurf}</p>
+          <p className="text-xs text-[var(--color-on-surface-variant)]">Entwürfe</p>
         </button>
         <button
           onClick={() => setFilter(filter === "BESTELLT" ? "alle" : "BESTELLT")}
-          className={`bg-[#161616] border rounded-xl p-4 text-center transition-all ${filter === "BESTELLT" ? "border-gold" : "border-border hover:border-zinc-600"}`}
+          className={`bg-[var(--color-surface-container)] border rounded-xl p-4 text-center transition-all ${filter === "BESTELLT" ? "border-gold" : "border-border hover:border-zinc-600"}`}
         >
           <p className="text-2xl font-bold text-blue-400">{stats.bestellt}</p>
-          <p className="text-xs text-zinc-500">Bestellt</p>
+          <p className="text-xs text-[var(--color-on-surface-variant)]">Bestellt</p>
         </button>
         <button
           onClick={() => setFilter(filter === "GELIEFERT" ? "alle" : "GELIEFERT")}
-          className={`bg-[#161616] border rounded-xl p-4 text-center transition-all ${filter === "GELIEFERT" ? "border-gold" : "border-border hover:border-zinc-600"}`}
+          className={`bg-[var(--color-surface-container)] border rounded-xl p-4 text-center transition-all ${filter === "GELIEFERT" ? "border-gold" : "border-border hover:border-zinc-600"}`}
         >
           <p className="text-2xl font-bold text-emerald-400">{stats.geliefert}</p>
-          <p className="text-xs text-zinc-500">Geliefert</p>
+          <p className="text-xs text-[var(--color-on-surface-variant)]">Geliefert</p>
         </button>
       </div>
 
       {/* Bestellungs-Liste */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         {loading ? (
-          <div className="text-center py-12 text-zinc-500">Laden...</div>
+          <div className="text-center py-12 text-[var(--color-on-surface-variant)]">Laden...</div>
         ) : filteredBestellungen.length === 0 ? (
           <div className="text-center py-12">
             <ShoppingCart className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-500 text-sm">Keine Bestellungen vorhanden</p>
+            <p className="text-[var(--color-on-surface-variant)] text-sm">Keine Bestellungen vorhanden</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-5 py-3 text-zinc-500 font-medium">Datum</th>
-                <th className="text-left px-5 py-3 text-zinc-500 font-medium">Lieferant</th>
-                <th className="text-center px-5 py-3 text-zinc-500 font-medium">Status</th>
-                <th className="text-center px-5 py-3 text-zinc-500 font-medium">Positionen</th>
-                <th className="text-right px-5 py-3 text-zinc-500 font-medium">Betrag</th>
+                <th className="text-left px-5 py-3 text-[var(--color-on-surface-variant)] font-medium">Datum</th>
+                <th className="text-left px-5 py-3 text-[var(--color-on-surface-variant)] font-medium">Lieferant</th>
+                <th className="text-center px-5 py-3 text-[var(--color-on-surface-variant)] font-medium">Status</th>
+                <th className="text-center px-5 py-3 text-[var(--color-on-surface-variant)] font-medium">Positionen</th>
+                <th className="text-right px-5 py-3 text-[var(--color-on-surface-variant)] font-medium">Betrag</th>
                 <th className="px-5 py-3"></th>
               </tr>
             </thead>
             <tbody>
               {filteredBestellungen.map(b => (
-                <tr key={b.id} className="border-b border-[#1e1e1e] hover:bg-[#1c1c1c] transition-colors">
+                <tr key={b.id} className="border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors">
                   <td className="px-5 py-4 text-white">
                     {new Date(b.bestelldatum).toLocaleDateString("de-DE")}
                   </td>
@@ -377,7 +377,7 @@ export default function BestellungenPage() {
                   <td className="px-5 py-4 text-center">
                     <StatusBadge status={b.status} />
                   </td>
-                  <td className="px-5 py-4 text-center text-zinc-400">
+                  <td className="px-5 py-4 text-center text-[var(--color-on-surface-variant)]">
                     {b.positionen.length} Artikel
                   </td>
                   <td className="px-5 py-4 text-right text-gold font-medium">

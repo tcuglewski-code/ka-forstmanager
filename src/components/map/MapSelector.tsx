@@ -168,8 +168,8 @@ export function MapSelector({
 
       {/* Loading overlay */}
       {isLoading && (
-        <div className="absolute inset-0 bg-[#0f0f0f] flex items-center justify-center rounded-lg">
-          <div className="text-zinc-500 text-sm">Karte wird geladen...</div>
+        <div className="absolute inset-0 bg-[var(--color-surface-container-low)] flex items-center justify-center rounded-lg">
+          <div className="text-[var(--color-on-surface-variant)] text-sm">Karte wird geladen...</div>
         </div>
       )}
 
@@ -196,7 +196,7 @@ export function MapSelector({
 
       {/* Instructions */}
       {!hasValidCoords && !disabled && (
-        <div className="absolute bottom-3 left-3 right-3 px-3 py-2 bg-[#161616]/90 text-zinc-400 text-xs rounded-lg shadow-lg z-[1000] text-center">
+        <div className="absolute bottom-3 left-3 right-3 px-3 py-2 bg-[var(--color-surface-container)]/90 text-[var(--color-on-surface-variant)] text-xs rounded-lg shadow-lg z-[1000] text-center">
           Klicken Sie auf die Karte, um den Standort zu markieren
         </div>
       )}

@@ -121,14 +121,14 @@ function DraggableBar({ auftrag, barStyle, statusColor, isMobile, onMobileMove }
 
       {/* Hover Tooltip */}
       <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block z-10 pointer-events-none">
-        <div className="bg-zinc-900 border border-border rounded-lg px-3 py-2 shadow-xl whitespace-nowrap">
-          <p className="text-xs font-medium text-white">{auftrag.titel}</p>
-          <p className="text-xs text-zinc-400 mt-0.5">
+        <div className="bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 shadow-xl whitespace-nowrap">
+          <p className="text-xs font-medium text-[var(--color-on-surface)]">{auftrag.titel}</p>
+          <p className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">
             {new Date(auftrag.startDatum!).toLocaleDateString("de-DE")}
             {auftrag.endDatum && ` – ${new Date(auftrag.endDatum).toLocaleDateString("de-DE")}`}
           </p>
           {auftrag.waldbesitzer && (
-            <p className="text-xs text-zinc-500">{auftrag.waldbesitzer}</p>
+            <p className="text-xs text-[var(--color-on-surface-variant)]">{auftrag.waldbesitzer}</p>
           )}
           {!isMobile && (
             <p className="text-xs text-emerald-400 mt-1">🖱️ Ziehen zum Verschieben</p>
@@ -194,24 +194,24 @@ function MobileDateModal({ auftrag, onClose, onSave }: MobileDateModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
       <div
-        className="bg-[#1e1e1e] border border-border rounded-xl p-6 w-80 max-w-[90vw]"
+        className="bg-[var(--color-surface-container-highest)] border border-border rounded-xl p-6 w-80 max-w-[90vw]"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-white font-medium mb-2">Auftrag verschieben</h3>
-        <p className="text-sm text-zinc-400 mb-4 truncate">{auftrag.titel}</p>
-        
-        <label className="block text-xs text-zinc-500 mb-1">Neues Startdatum</label>
+        <h3 className="text-[var(--color-on-surface)] font-medium mb-2">Auftrag verschieben</h3>
+        <p className="text-sm text-[var(--color-on-surface-variant)] mb-4 truncate">{auftrag.titel}</p>
+
+        <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Neues Startdatum</label>
         <input
           type="date"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
-          className="w-full bg-[#161616] border border-border rounded-lg px-3 py-2 text-white mb-4"
+          className="w-full bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-[var(--color-on-surface)] mb-4"
         />
         
         <div className="flex gap-2">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 rounded-lg text-white text-sm"
+            className="flex-1 px-4 py-2 bg-[var(--color-surface-container-high)] hover:bg-zinc-600 rounded-lg text-white text-sm"
           >
             Abbrechen
           </button>
@@ -402,12 +402,12 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         {/* Toolbar */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border flex-wrap gap-2">
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-zinc-500" />
-            <span className="text-sm text-zinc-400">
+            <Calendar className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
+            <span className="text-sm text-[var(--color-on-surface-variant)]">
               {startDate.toLocaleDateString("de-DE", { month: "long", year: "numeric" })} –{" "}
               {endDate.toLocaleDateString("de-DE", { month: "long", year: "numeric" })}
             </span>
@@ -420,31 +420,31 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
             {/* Navigation */}
             <button
               onClick={() => setViewOffset((o) => o - (viewMode === "month" ? 1 : 3))}
-              className="p-1.5 rounded-lg hover:bg-surface-container-highest text-zinc-400 hover:text-white transition-colors"
+              className="p-1.5 rounded-lg hover:bg-surface-container-highest text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
               title="Zurück"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => setViewOffset(0)}
-              className="px-2 py-1 text-xs rounded-lg hover:bg-surface-container-highest text-zinc-400 hover:text-white transition-colors"
+              className="px-2 py-1 text-xs rounded-lg hover:bg-surface-container-highest text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
             >
               Heute
             </button>
             <button
               onClick={() => setViewOffset((o) => o + (viewMode === "month" ? 1 : 3))}
-              className="p-1.5 rounded-lg hover:bg-surface-container-highest text-zinc-400 hover:text-white transition-colors"
+              className="p-1.5 rounded-lg hover:bg-surface-container-highest text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
               title="Vorwärts"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
 
             {/* View Mode Toggle */}
-            <div className="flex items-center gap-1 ml-4 bg-[#1e1e1e] rounded-lg p-1">
+            <div className="flex items-center gap-1 ml-4 bg-[var(--color-surface-container-highest)] rounded-lg p-1">
               <button
                 onClick={() => setViewMode("month")}
                 className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
-                  viewMode === "month" ? "bg-emerald-600 text-white" : "text-zinc-400 hover:text-white"
+                  viewMode === "month" ? "bg-emerald-600 text-white" : "text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]"
                 }`}
               >
                 <ZoomIn className="w-3 h-3" />
@@ -453,7 +453,7 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
               <button
                 onClick={() => setViewMode("quarter")}
                 className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
-                  viewMode === "quarter" ? "bg-emerald-600 text-white" : "text-zinc-400 hover:text-white"
+                  viewMode === "quarter" ? "bg-emerald-600 text-white" : "text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]"
                 }`}
               >
                 <ZoomOut className="w-3 h-3" />
@@ -469,10 +469,10 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
             {/* Header Row */}
             <div className="flex border-b border-border" style={{ height: HEADER_HEIGHT }}>
               <div
-                className="flex-shrink-0 flex items-center px-4 bg-[#1a1a1a] border-r border-border"
+                className="flex-shrink-0 flex items-center px-4 bg-[var(--color-surface-container-lowest)] border-r border-border"
                 style={{ width: LABEL_WIDTH }}
               >
-                <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                <span className="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
                   Auftrag
                 </span>
               </div>
@@ -483,7 +483,7 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
                     className="flex items-center justify-center border-r border-border last:border-r-0"
                     style={{ width: `${col.width}%` }}
                   >
-                    <span className="text-xs font-medium text-zinc-400">{col.label}</span>
+                    <span className="text-xs font-medium text-[var(--color-on-surface-variant)]">{col.label}</span>
                   </div>
                 ))}
               </div>
@@ -491,11 +491,11 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
 
             {/* Rows */}
             {visibleAuftraege.length === 0 ? (
-              <div className="flex items-center justify-center py-16 text-zinc-600">
+              <div className="flex items-center justify-center py-16 text-[var(--color-on-surface-variant)]">
                 <div className="text-center">
                   <Calendar className="w-8 h-8 mx-auto mb-2 opacity-50" />
                   <p className="text-sm">Keine Aufträge mit Start-/Enddatum im sichtbaren Zeitraum</p>
-                  <p className="text-xs text-zinc-700 mt-1">
+                  <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">
                     Tipp: Lege Start- und Enddatum in den Auftragsdetails fest
                   </p>
                 </div>
@@ -508,12 +508,12 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
                 return (
                   <div
                     key={auftrag.id}
-                    className="flex border-b border-[#1e1e1e] hover:bg-[#1a1a1a] transition-colors"
+                    className="flex border-b border-[var(--color-outline-variant)] hover:bg-[var(--color-surface-container-lowest)] transition-colors"
                     style={{ height: ROW_HEIGHT }}
                   >
                     {/* Label Column */}
                     <div
-                      className="flex-shrink-0 flex items-center gap-3 px-4 border-r border-border bg-[#161616] cursor-pointer"
+                      className="flex-shrink-0 flex items-center gap-3 px-4 border-r border-border bg-[var(--color-surface-container)] cursor-pointer"
                       style={{ width: LABEL_WIDTH }}
                       onClick={() => onAuftragClick?.(auftrag.id)}
                     >
@@ -522,10 +522,10 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
                         style={{ backgroundColor: statusColor }}
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-white truncate" title={auftrag.titel}>
+                        <p className="text-sm text-[var(--color-on-surface)] truncate" title={auftrag.titel}>
                           {auftrag.titel}
                         </p>
-                        <p className="text-xs text-zinc-500 truncate">
+                        <p className="text-xs text-[var(--color-on-surface-variant)] truncate">
                           {TYP_LABELS[auftrag.typ] || auftrag.typ}
                           {auftrag.gruppe?.name && ` • ${auftrag.gruppe.name}`}
                         </p>
@@ -539,7 +539,7 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
                         {columns.map((_, i) => (
                           <div
                             key={i}
-                            className="border-r border-[#1e1e1e] last:border-r-0"
+                            className="border-r border-[var(--color-outline-variant)] last:border-r-0"
                             style={{ width: `${100 / columns.length}%` }}
                           />
                         ))}
@@ -591,9 +591,9 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
         </div>
 
         {/* Legend */}
-        <div className="px-4 py-3 border-t border-border bg-[#1a1a1a]">
+        <div className="px-4 py-3 border-t border-border bg-[var(--color-surface-container-lowest)]">
           <div className="flex items-center gap-4 flex-wrap">
-            <span className="text-xs text-zinc-600">Legende:</span>
+            <span className="text-xs text-[var(--color-on-surface-variant)]">Legende:</span>
             {[
               { status: "anfrage", label: "Anfrage" },
               { status: "geplant", label: "Geplant" },
@@ -605,12 +605,12 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
                   className="w-3 h-3 rounded"
                   style={{ backgroundColor: STATUS_FARBEN[item.status] }}
                 />
-                <span className="text-xs text-zinc-500">{item.label}</span>
+                <span className="text-xs text-[var(--color-on-surface-variant)]">{item.label}</span>
               </div>
             ))}
             <div className="flex items-center gap-1.5 ml-4">
               <div className="w-px h-3 bg-emerald-500" />
-              <span className="text-xs text-zinc-500">Heute</span>
+              <span className="text-xs text-[var(--color-on-surface-variant)]">Heute</span>
             </div>
             {!isMobile && (
               <div className="flex items-center gap-1.5 ml-4">

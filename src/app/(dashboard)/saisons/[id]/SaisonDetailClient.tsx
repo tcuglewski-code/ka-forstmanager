@@ -315,7 +315,7 @@ export default function SaisonDetailClient({
   return (
     <>
       {/* Tab-Leiste */}
-      <div className="flex gap-1 mb-6 bg-[#161616] border border-border rounded-lg p-1 w-fit overflow-x-auto">
+      <div className="flex gap-1 mb-6 bg-[var(--color-surface-container)] border border-border rounded-lg p-1 w-fit overflow-x-auto">
         {tabs.map((t) => (
           <button
             key={t.key}
@@ -323,7 +323,7 @@ export default function SaisonDetailClient({
             className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
               tab === t.key
                 ? "bg-forest text-emerald-400"
-                : "text-zinc-400 hover:text-white"
+                : "text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]"
             }`}
           >
             {t.label}
@@ -361,21 +361,21 @@ export default function SaisonDetailClient({
             ].map((kpi) => (
               <div
                 key={kpi.label}
-                className="bg-[#161616] border border-border rounded-xl p-4 text-center"
+                className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4 text-center"
               >
                 <p className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>
                   {kpi.value}
-                  <span className="text-sm text-zinc-400">{kpi.unit}</span>
+                  <span className="text-sm text-[var(--color-on-surface-variant)]">{kpi.unit}</span>
                 </p>
-                <p className="text-xs text-zinc-500 mt-1">{kpi.label}</p>
+                <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">{kpi.label}</p>
               </div>
             ))}
           </div>
 
           {/* Auftrags-Status-Verteilung */}
           {saison.auftraege.length > 0 && (
-            <div className="bg-[#161616] border border-border rounded-xl p-5">
-              <h3 className="text-sm font-medium text-zinc-400 mb-4">
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
+              <h3 className="text-sm font-medium text-[var(--color-on-surface-variant)] mb-4">
                 Auftrags-Status-Verteilung
               </h3>
               <div className="flex h-4 rounded-full overflow-hidden gap-0.5 mb-3">
@@ -396,7 +396,7 @@ export default function SaisonDetailClient({
                     <span
                       className={`inline-block w-2.5 h-2.5 rounded-full ${statusFarben[status] ?? "bg-zinc-600"}`}
                     />
-                    <span className="text-xs text-zinc-400">
+                    <span className="text-xs text-[var(--color-on-surface-variant)]">
                       {auftragStatusLabel[status] ?? status}: {count}
                     </span>
                   </div>
@@ -407,33 +407,33 @@ export default function SaisonDetailClient({
 
           {/* Gruppen-Übersicht */}
           {saison.gruppen.length > 0 && (
-            <div className="bg-[#161616] border border-border rounded-xl p-5">
-              <h3 className="text-sm font-medium text-zinc-400 mb-4">
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
+              <h3 className="text-sm font-medium text-[var(--color-on-surface-variant)] mb-4">
                 Gruppen
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {saison.gruppen.map((g) => (
                   <div
                     key={g.id}
-                    className="bg-[#1e1e1e] rounded-lg p-3 border border-border"
+                    className="bg-[var(--color-surface-container-highest)] rounded-lg p-3 border border-border"
                   >
-                    <p className="font-medium text-white text-sm mb-1">
+                    <p className="font-medium text-[var(--color-on-surface)] text-sm mb-1">
                       {g.name}
                     </p>
-                    <p className="text-xs text-zinc-500 mb-2">
+                    <p className="text-xs text-[var(--color-on-surface-variant)] mb-2">
                       {g.mitglieder.length} Mitglieder
                     </p>
                     <div className="flex flex-wrap gap-1">
                       {g.mitglieder.slice(0, 4).map((m) => (
                         <span
                           key={m.id}
-                          className="text-xs bg-surface-container-highest text-zinc-400 px-2 py-0.5 rounded"
+                          className="text-xs bg-surface-container-highest text-[var(--color-on-surface-variant)] px-2 py-0.5 rounded"
                         >
                           {m.mitarbeiter.vorname} {m.mitarbeiter.nachname}
                         </span>
                       ))}
                       {g.mitglieder.length > 4 && (
-                        <span className="text-xs text-zinc-600">
+                        <span className="text-xs text-[var(--color-on-surface-variant)]">
                           +{g.mitglieder.length - 4}
                         </span>
                       )}
@@ -448,10 +448,10 @@ export default function SaisonDetailClient({
 
       {/* ─── Tab 2: Aufträge ─────────────────────────────────────────────── */}
       {tab === "auftraege" && (
-        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
           {/* KJ-1: Quick Add Button */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-            <span className="text-sm font-medium text-zinc-400">
+            <span className="text-sm font-medium text-[var(--color-on-surface-variant)]">
               {saison.auftraege.length} Aufträge
             </span>
             <button
@@ -466,12 +466,12 @@ export default function SaisonDetailClient({
             <thead>
               <tr className="border-b border-border">
                 <th className="w-8 px-3 py-3" />
-                <th className="text-left px-4 py-3 text-xs text-zinc-500">Nr.</th>
-                <th className="text-left px-4 py-3 text-xs text-zinc-500">Titel</th>
-                <th className="text-left px-4 py-3 text-xs text-zinc-500">Waldbesitzer</th>
-                <th className="text-left px-4 py-3 text-xs text-zinc-500">Gruppe</th>
-                <th className="text-left px-4 py-3 text-xs text-zinc-500">Status</th>
-                <th className="text-right px-4 py-3 text-xs text-zinc-500">Fläche</th>
+                <th className="text-left px-4 py-3 text-xs text-[var(--color-on-surface-variant)]">Nr.</th>
+                <th className="text-left px-4 py-3 text-xs text-[var(--color-on-surface-variant)]">Titel</th>
+                <th className="text-left px-4 py-3 text-xs text-[var(--color-on-surface-variant)]">Waldbesitzer</th>
+                <th className="text-left px-4 py-3 text-xs text-[var(--color-on-surface-variant)]">Gruppe</th>
+                <th className="text-left px-4 py-3 text-xs text-[var(--color-on-surface-variant)]">Status</th>
+                <th className="text-right px-4 py-3 text-xs text-[var(--color-on-surface-variant)]">Fläche</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -480,7 +480,7 @@ export default function SaisonDetailClient({
                 <tr>
                   <td
                     colSpan={8}
-                    className="px-6 py-12 text-center text-zinc-600"
+                    className="px-6 py-12 text-center text-[var(--color-on-surface-variant)]"
                   >
                     Keine Aufträge in dieser Saison
                   </td>
@@ -497,33 +497,33 @@ export default function SaisonDetailClient({
                         )
                       }
                     >
-                      <td className="px-3 py-3 text-zinc-500">
+                      <td className="px-3 py-3 text-[var(--color-on-surface-variant)]">
                         {expandedAuftrag === a.id ? (
                           <ChevronDown className="w-4 h-4" />
                         ) : (
                           <ChevronRight className="w-4 h-4" />
                         )}
                       </td>
-                      <td className="px-4 py-3 text-zinc-500 text-xs">
+                      <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-xs">
                         {a.nummer ?? "–"}
                       </td>
-                      <td className="px-4 py-3 text-white font-medium">
+                      <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">
                         {a.titel}
                       </td>
-                      <td className="px-4 py-3 text-zinc-400">
+                      <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">
                         {a.waldbesitzer ?? "–"}
                       </td>
-                      <td className="px-4 py-3 text-zinc-400">
+                      <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">
                         {a.gruppe?.name ?? "–"}
                       </td>
                       <td className="px-4 py-3">
                         <span
-                          className={`px-2 py-0.5 rounded-full text-xs ${auftragStatusBadge[a.status] ?? "bg-zinc-700 text-zinc-400"}`}
+                          className={`px-2 py-0.5 rounded-full text-xs ${auftragStatusBadge[a.status] ?? "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]"}`}
                         >
                           {auftragStatusLabel[a.status] ?? a.status}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-right text-zinc-400">
+                      <td className="px-4 py-3 text-right text-[var(--color-on-surface-variant)]">
                         {a.flaeche_ha != null
                           ? `${a.flaeche_ha} ha`
                           : "–"}
@@ -532,7 +532,7 @@ export default function SaisonDetailClient({
                         <Link
                           href={`/auftraege/${a.id}`}
                           onClick={(e) => e.stopPropagation()}
-                          className="text-zinc-600 hover:text-emerald-400 transition-colors"
+                          className="text-[var(--color-on-surface-variant)] hover:text-emerald-400 transition-colors"
                         >
                           <ExternalLink className="w-4 h-4" />
                         </Link>
@@ -546,11 +546,11 @@ export default function SaisonDetailClient({
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Letzte 3 Protokolle */}
                             <div>
-                              <p className="text-xs font-medium text-zinc-500 mb-2">
+                              <p className="text-xs font-medium text-[var(--color-on-surface-variant)] mb-2">
                                 Letzte Protokolle
                               </p>
                               {a.protokolle.length === 0 ? (
-                                <p className="text-xs text-zinc-700">
+                                <p className="text-xs text-[var(--color-on-surface-variant)]">
                                   Keine Protokolle
                                 </p>
                               ) : (
@@ -558,9 +558,9 @@ export default function SaisonDetailClient({
                                   {a.protokolle.slice(0, 3).map((p) => (
                                     <div
                                       key={p.id}
-                                      className="flex items-center gap-2 text-xs text-zinc-400"
+                                      className="flex items-center gap-2 text-xs text-[var(--color-on-surface-variant)]"
                                     >
-                                      <span className="text-zinc-600">
+                                      <span className="text-[var(--color-on-surface-variant)]">
                                         {new Date(
                                           p.datum as string
                                         ).toLocaleDateString("de-DE")}
@@ -571,7 +571,7 @@ export default function SaisonDetailClient({
                                           : "–"}
                                       </span>
                                       {p.witterung && (
-                                        <span className="text-zinc-500">
+                                        <span className="text-[var(--color-on-surface-variant)]">
                                           · {p.witterung}
                                         </span>
                                       )}
@@ -583,11 +583,11 @@ export default function SaisonDetailClient({
 
                             {/* Letzte 3 Logs */}
                             <div>
-                              <p className="text-xs font-medium text-zinc-500 mb-2">
+                              <p className="text-xs font-medium text-[var(--color-on-surface-variant)] mb-2">
                                 Letzte Aktivitäten
                               </p>
                               {a.logs.length === 0 ? (
-                                <p className="text-xs text-zinc-700">
+                                <p className="text-xs text-[var(--color-on-surface-variant)]">
                                   Keine Aktivitäten
                                 </p>
                               ) : (
@@ -595,16 +595,16 @@ export default function SaisonDetailClient({
                                   {a.logs.slice(0, 3).map((log) => (
                                     <div
                                       key={log.id}
-                                      className="flex items-center gap-2 text-xs text-zinc-400"
+                                      className="flex items-center gap-2 text-xs text-[var(--color-on-surface-variant)]"
                                     >
-                                      <span className="text-zinc-600">
+                                      <span className="text-[var(--color-on-surface-variant)]">
                                         {new Date(
                                           log.createdAt as string
                                         ).toLocaleDateString("de-DE")}
                                       </span>
                                       <span>{log.aktion}</span>
                                       {log.von && log.nach && (
-                                        <span className="text-zinc-600">
+                                        <span className="text-[var(--color-on-surface-variant)]">
                                           {log.von} → {log.nach}
                                         </span>
                                       )}
@@ -627,15 +627,15 @@ export default function SaisonDetailClient({
 
       {/* ─── Tab 3: Mitarbeiter ──────────────────────────────────────────── */}
       {tab === "mitarbeiter" && (
-        <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-6 py-3 text-xs text-zinc-500">Name</th>
-                <th className="text-left px-6 py-3 text-xs text-zinc-500">Rolle</th>
-                <th className="text-right px-6 py-3 text-xs text-zinc-500">Stundenlohn</th>
-                <th className="text-right px-6 py-3 text-xs text-zinc-500">Stunden (Saison)</th>
-                <th className="text-left px-6 py-3 text-xs text-zinc-500">Abrechnung</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)]">Name</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)]">Rolle</th>
+                <th className="text-right px-6 py-3 text-xs text-[var(--color-on-surface-variant)]">Stundenlohn</th>
+                <th className="text-right px-6 py-3 text-xs text-[var(--color-on-surface-variant)]">Stunden (Saison)</th>
+                <th className="text-left px-6 py-3 text-xs text-[var(--color-on-surface-variant)]">Abrechnung</th>
                 <th className="px-6 py-3" />
               </tr>
             </thead>
@@ -644,7 +644,7 @@ export default function SaisonDetailClient({
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-6 py-12 text-center text-zinc-600"
+                    className="px-6 py-12 text-center text-[var(--color-on-surface-variant)]"
                   >
                     Keine Mitarbeiter angemeldet
                   </td>
@@ -652,13 +652,13 @@ export default function SaisonDetailClient({
               ) : (
                 mitarbeiterStunden.map((ma) => (
                   <tr key={ma.id} className="hover:bg-[#1c1c1c]">
-                    <td className="px-6 py-4 text-white">
+                    <td className="px-6 py-4 text-[var(--color-on-surface)]">
                       {ma.mitarbeiter.vorname} {ma.mitarbeiter.nachname}
                     </td>
-                    <td className="px-6 py-4 text-zinc-400 text-xs">
+                    <td className="px-6 py-4 text-[var(--color-on-surface-variant)] text-xs">
                       {ma.mitarbeiter.rolle}
                     </td>
-                    <td className="px-6 py-4 text-right text-zinc-400">
+                    <td className="px-6 py-4 text-right text-[var(--color-on-surface-variant)]">
                       {ma.mitarbeiter.stundenlohn != null
                         ? `${ma.mitarbeiter.stundenlohn.toFixed(2)} €/h`
                         : "–"}
@@ -672,7 +672,7 @@ export default function SaisonDetailClient({
                           <Check className="w-3 h-3" /> Abgerechnet
                         </span>
                       ) : (
-                        <span className="flex items-center gap-1 text-xs text-zinc-600">
+                        <span className="flex items-center gap-1 text-xs text-[var(--color-on-surface-variant)]">
                           <X className="w-3 h-3" /> Ausstehend
                         </span>
                       )}
@@ -713,10 +713,10 @@ export default function SaisonDetailClient({
       {tab === "statistiken" && (
         <div className="space-y-6">
           {gesamtPflanzen === 0 && gesamtStunden === 0 ? (
-            <div className="bg-[#161616] border border-border rounded-xl p-8 text-center">
-              <AlertTriangle className="w-8 h-8 text-zinc-600 mx-auto mb-3" />
-              <p className="text-zinc-400 font-medium">Keine Protokolldaten vorhanden</p>
-              <p className="text-zinc-600 text-sm mt-1">
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-8 text-center">
+              <AlertTriangle className="w-8 h-8 text-[var(--color-on-surface-variant)] mx-auto mb-3" />
+              <p className="text-[var(--color-on-surface-variant)] font-medium">Keine Protokolldaten vorhanden</p>
+              <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">
                 Sobald Tagesprotokolle erfasst werden, erscheinen hier die
                 Auswertungen.
               </p>
@@ -725,16 +725,16 @@ export default function SaisonDetailClient({
             <>
               {/* Gesamt-KPIs */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-[#161616] border border-border rounded-xl p-5">
-                  <p className="text-xs text-zinc-500 mb-1">Ø Pflanzen / Stunde</p>
+                <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
+                  <p className="text-xs text-[var(--color-on-surface-variant)] mb-1">Ø Pflanzen / Stunde</p>
                   <p className="text-3xl font-bold" style={{ color: "var(--color-on-surface)" }}>
                     {gesamtStunden > 0
                       ? (gesamtPflanzen / gesamtStunden).toFixed(1)
                       : "–"}
                   </p>
                 </div>
-                <div className="bg-[#161616] border border-border rounded-xl p-5">
-                  <p className="text-xs text-zinc-500 mb-1">Pflanzen / Hektar</p>
+                <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
+                  <p className="text-xs text-[var(--color-on-surface-variant)] mb-1">Pflanzen / Hektar</p>
                   <p className="text-3xl font-bold" style={{ color: "var(--color-on-surface)" }}>
                     {gesamtFlaeche > 0
                       ? Math.round(gesamtPflanzen / gesamtFlaeche).toLocaleString(
@@ -743,8 +743,8 @@ export default function SaisonDetailClient({
                       : "–"}
                   </p>
                 </div>
-                <div className="bg-[#161616] border border-border rounded-xl p-5">
-                  <p className="text-xs text-zinc-500 mb-1">Pflanzen gesamt</p>
+                <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
+                  <p className="text-xs text-[var(--color-on-surface-variant)] mb-1">Pflanzen gesamt</p>
                   <p className="text-3xl font-bold text-emerald-400">
                     {gesamtPflanzen.toLocaleString("de-DE")}
                   </p>
@@ -753,38 +753,38 @@ export default function SaisonDetailClient({
 
               {/* Pro-Gruppe-Tabelle */}
               {gruppenStats.length > 0 && (
-                <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+                <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
                   <div className="px-5 py-4 border-b border-border">
-                    <h3 className="text-sm font-medium text-zinc-300">
+                    <h3 className="text-sm font-medium text-[var(--color-on-surface)]">
                       Gruppen-Vergleich
                     </h3>
                   </div>
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-border">
-                        <th className="text-left px-5 py-3 text-xs text-zinc-500">Gruppe</th>
-                        <th className="text-right px-5 py-3 text-xs text-zinc-500">Aufträge</th>
-                        <th className="text-right px-5 py-3 text-xs text-zinc-500">Pflanzen</th>
-                        <th className="text-right px-5 py-3 text-xs text-zinc-500">Stunden</th>
-                        <th className="text-right px-5 py-3 text-xs text-zinc-500">Ø Pfl./Std.</th>
+                        <th className="text-left px-5 py-3 text-xs text-[var(--color-on-surface-variant)]">Gruppe</th>
+                        <th className="text-right px-5 py-3 text-xs text-[var(--color-on-surface-variant)]">Aufträge</th>
+                        <th className="text-right px-5 py-3 text-xs text-[var(--color-on-surface-variant)]">Pflanzen</th>
+                        <th className="text-right px-5 py-3 text-xs text-[var(--color-on-surface-variant)]">Stunden</th>
+                        <th className="text-right px-5 py-3 text-xs text-[var(--color-on-surface-variant)]">Ø Pfl./Std.</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#1e1e1e]">
                       {gruppenStats.map((g) => (
                         <tr key={g.name} className="hover:bg-[#1c1c1c]">
-                          <td className="px-5 py-3 text-white font-medium">
+                          <td className="px-5 py-3 text-[var(--color-on-surface)] font-medium">
                             {g.name}
                           </td>
-                          <td className="px-5 py-3 text-right text-zinc-400">
+                          <td className="px-5 py-3 text-right text-[var(--color-on-surface-variant)]">
                             {g.auftraege}
                           </td>
                           <td className="px-5 py-3 text-right text-emerald-400">
                             {g.pflanzen.toLocaleString("de-DE")}
                           </td>
-                          <td className="px-5 py-3 text-right text-zinc-400">
+                          <td className="px-5 py-3 text-right text-[var(--color-on-surface-variant)]">
                             {g.stunden.toFixed(1)} h
                           </td>
-                          <td className="px-5 py-3 text-right text-white font-medium">
+                          <td className="px-5 py-3 text-right text-[var(--color-on-surface)] font-medium">
                             {g.leistung > 0 ? g.leistung.toFixed(1) : "–"}
                           </td>
                         </tr>
@@ -801,8 +801,8 @@ export default function SaisonDetailClient({
       {/* ─── Tab 5: Abschluss ────────────────────────────────────────────── */}
       {tab === "abschluss" && saison.status !== "abgeschlossen" && (
         <div className="space-y-6">
-          <div className="bg-[#161616] border border-border rounded-xl p-6">
-            <h3 className="text-base font-semibold text-white mb-5">
+          <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6">
+            <h3 className="text-base font-semibold text-[var(--color-on-surface)] mb-5">
               Abschluss-Checkliste
             </h3>
 
@@ -819,10 +819,10 @@ export default function SaisonDetailClient({
                   {alleAuftraegeAbgeschlossen ? "✅" : "❌"}
                 </span>
                 <div>
-                  <p className="text-sm font-medium text-white">
+                  <p className="text-sm font-medium text-[var(--color-on-surface)]">
                     Alle Aufträge abgeschlossen
                   </p>
-                  <p className="text-xs text-zinc-500 mt-0.5">
+                  <p className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">
                     {alleAuftraegeAbgeschlossen
                       ? `${saison.auftraege.length} Aufträge abgeschlossen / storniert`
                       : `Noch ${saison.auftraege.filter((a) => a.status !== "abgeschlossen" && a.status !== "storniert").length} Aufträge offen`}
@@ -848,10 +848,10 @@ export default function SaisonDetailClient({
                       : "❌"}
                 </span>
                 <div>
-                  <p className="text-sm font-medium text-white">
+                  <p className="text-sm font-medium text-[var(--color-on-surface)]">
                     Lohnabrechnungen erstellt
                   </p>
-                  <p className="text-xs text-zinc-500 mt-0.5">
+                  <p className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">
                     {saison.lohnabrechnungen.length} von {anmeldungen.length}{" "}
                     Mitarbeitern abgerechnet
                   </p>
@@ -863,7 +863,7 @@ export default function SaisonDetailClient({
                 className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
                   checkGeraete
                     ? "bg-emerald-500/10 border border-emerald-500/20"
-                    : "bg-[#1e1e1e] border border-border hover:border-zinc-600"
+                    : "bg-[var(--color-surface-container-highest)] border border-border hover:border-zinc-600"
                 }`}
               >
                 <input
@@ -873,10 +873,10 @@ export default function SaisonDetailClient({
                   className="mt-0.5 rounded border-zinc-600 accent-emerald-500"
                 />
                 <div>
-                  <p className="text-sm font-medium text-white">
+                  <p className="text-sm font-medium text-[var(--color-on-surface)]">
                     Alle Geräte zurückgegeben
                   </p>
-                  <p className="text-xs text-zinc-500 mt-0.5">
+                  <p className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">
                     Manuelle Bestätigung erforderlich
                   </p>
                 </div>
@@ -887,7 +887,7 @@ export default function SaisonDetailClient({
                 className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
                   checkFahrzeuge
                     ? "bg-emerald-500/10 border border-emerald-500/20"
-                    : "bg-[#1e1e1e] border border-border hover:border-zinc-600"
+                    : "bg-[var(--color-surface-container-highest)] border border-border hover:border-zinc-600"
                 }`}
               >
                 <input
@@ -897,10 +897,10 @@ export default function SaisonDetailClient({
                   className="mt-0.5 rounded border-zinc-600 accent-emerald-500"
                 />
                 <div>
-                  <p className="text-sm font-medium text-white">
+                  <p className="text-sm font-medium text-[var(--color-on-surface)]">
                     Alle Fahrzeuge eingecheckt
                   </p>
-                  <p className="text-xs text-zinc-500 mt-0.5">
+                  <p className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">
                     Manuelle Bestätigung erforderlich
                   </p>
                 </div>
@@ -911,7 +911,7 @@ export default function SaisonDetailClient({
                 className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
                   checkBericht
                     ? "bg-emerald-500/10 border border-emerald-500/20"
-                    : "bg-[#1e1e1e] border border-border hover:border-zinc-600"
+                    : "bg-[var(--color-surface-container-highest)] border border-border hover:border-zinc-600"
                 }`}
               >
                 <input
@@ -921,10 +921,10 @@ export default function SaisonDetailClient({
                   className="mt-0.5 rounded border-zinc-600 accent-emerald-500"
                 />
                 <div>
-                  <p className="text-sm font-medium text-white">
+                  <p className="text-sm font-medium text-[var(--color-on-surface)]">
                     Abschlussbericht erstellt
                   </p>
-                  <p className="text-xs text-zinc-500 mt-0.5">
+                  <p className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">
                     Manuelle Bestätigung erforderlich
                   </p>
                 </div>
@@ -934,7 +934,7 @@ export default function SaisonDetailClient({
             {/* Abschluss-Button */}
             <div className="mt-6 pt-5 border-t border-border">
               {!alleChecksOK && (
-                <p className="text-xs text-zinc-600 mb-3 flex items-center gap-1.5">
+                <p className="text-xs text-[var(--color-on-surface-variant)] mb-3 flex items-center gap-1.5">
                   <AlertTriangle className="w-3 h-3" />
                   Alle Checks müssen erfüllt sein, bevor die Saison abgeschlossen
                   werden kann.
@@ -943,7 +943,7 @@ export default function SaisonDetailClient({
               <button
                 onClick={handleAbschliessen}
                 disabled={!alleChecksOK || abschliessend}
-                className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 disabled:bg-zinc-700 disabled:text-zinc-500 text-white rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 disabled:bg-[var(--color-surface-container-high)] disabled:text-[var(--color-on-surface-variant)] text-white rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2"
               >
                 {abschliessend ? (
                   <>

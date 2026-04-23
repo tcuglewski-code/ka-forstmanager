@@ -234,10 +234,10 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
     return (
       <div key={type} className="py-1">
         {/* Gruppen-Header */}
-        <div className="flex items-center gap-2 px-4 py-1.5 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+        <div className="flex items-center gap-2 px-4 py-1.5 text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
           {getTypeIcon(type)}
           <span>{getTypeLabel(type)}</span>
-          <span className="text-zinc-600">({items.length})</span>
+          <span className="text-[var(--color-on-surface-variant)]">({items.length})</span>
         </div>
         {/* Ergebnisse */}
         {items.map((result, idx) => {
@@ -254,7 +254,7 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
                 "w-full flex items-center gap-3 px-4 py-2 text-left transition-colors",
                 globalIndex === selectedIndex
                   ? "bg-forest text-white"
-                  : "text-zinc-400 hover:bg-[#222]"
+                  : "text-[var(--color-on-surface-variant)] hover:bg-[#222]"
               )}
             >
               <div
@@ -262,7 +262,7 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
                   "w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0",
                   globalIndex === selectedIndex
                     ? "bg-emerald-100 text-emerald-800"
-                    : "bg-surface-container-highest text-zinc-500"
+                    : "bg-surface-container-highest text-[var(--color-on-surface-variant)]"
                 )}
               >
                 {getIcon(result.type)}
@@ -270,7 +270,7 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{result.title}</p>
                 {result.subtitle && (
-                  <p className="text-xs text-zinc-500 truncate">{result.subtitle}</p>
+                  <p className="text-xs text-[var(--color-on-surface-variant)] truncate">{result.subtitle}</p>
                 )}
               </div>
             </button>
@@ -299,10 +299,10 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
 
       {/* Modal */}
       <div className="fixed inset-x-0 top-[12%] mx-auto max-w-xl z-50 px-4">
-        <div className="bg-[#1a1a1a] border border-border rounded-xl shadow-2xl overflow-hidden">
+        <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl shadow-2xl overflow-hidden">
           {/* Search Input */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
-            <Search className="w-5 h-5 text-zinc-500 flex-shrink-0" />
+            <Search className="w-5 h-5 text-[var(--color-on-surface-variant)] flex-shrink-0" />
             <input
               ref={inputRef}
               type="text"
@@ -310,12 +310,12 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Suche nach Aufträgen, Mitarbeitern, Rechnungen..."
-              className="flex-1 bg-transparent text-white placeholder:text-zinc-500 text-sm outline-none"
+              className="flex-1 bg-transparent text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] text-sm outline-none"
             />
             {query && (
               <button
                 onClick={() => setQuery("")}
-                className="p-1 text-zinc-500 hover:text-white flex-shrink-0"
+                className="p-1 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] flex-shrink-0"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -324,7 +324,7 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
 
           {/* Fuzzy-Matching Hinweis */}
           {query.length >= 2 && hasResults && (
-            <div className="px-4 py-1.5 text-[10px] text-zinc-600 border-b border-border flex items-center gap-1">
+            <div className="px-4 py-1.5 text-[10px] text-[var(--color-on-surface-variant)] border-b border-border flex items-center gap-1">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500/50"></span>
               Fuzzy-Suche aktiv · Tippfehler werden ignoriert
             </div>
@@ -334,15 +334,15 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
           <div className="max-h-[400px] overflow-y-auto">
             {isLoading ? (
               <div className="px-4 py-8 text-center">
-                <div className="inline-flex items-center gap-2 text-zinc-500 text-sm">
+                <div className="inline-flex items-center gap-2 text-[var(--color-on-surface-variant)] text-sm">
                   <div className="w-4 h-4 border-2 border-zinc-600 border-t-emerald-500 rounded-full animate-spin" />
                   Suche läuft...
                 </div>
               </div>
             ) : query && !hasResults ? (
-              <div className="px-4 py-8 text-center text-zinc-500 text-sm">
+              <div className="px-4 py-8 text-center text-[var(--color-on-surface-variant)] text-sm">
                 <p>Keine Ergebnisse für &ldquo;{query}&rdquo;</p>
-                <p className="text-xs text-zinc-600 mt-1">
+                <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">
                   Versuche eine andere Schreibweise
                 </p>
               </div>
@@ -353,9 +353,9 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
                 {renderGroup("rechnung", groupedResults.rechnungen, rechnungenStartIndex)}
               </div>
             ) : (
-              <div className="px-4 py-6 text-center text-zinc-600 text-sm">
+              <div className="px-4 py-6 text-center text-[var(--color-on-surface-variant)] text-sm">
                 <p>Tippen Sie, um zu suchen</p>
-                <p className="text-xs mt-1.5 text-zinc-700">
+                <p className="text-xs mt-1.5 text-[var(--color-on-surface-variant)]">
                   Mind. 2 Zeichen · Tippfehler-tolerant
                 </p>
               </div>
@@ -363,7 +363,7 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between px-4 py-2.5 border-t border-border text-xs text-zinc-600">
+          <div className="flex items-center justify-between px-4 py-2.5 border-t border-border text-xs text-[var(--color-on-surface-variant)]">
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
                 <ArrowUp className="w-3 h-3" />
@@ -426,11 +426,11 @@ export function QuickSearchTrigger() {
   return (
     <button
       onClick={openSearch}
-      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-zinc-400 hover:bg-[#1e1e1e] hover:text-white transition-all"
+      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-highest)] hover:text-[var(--color-on-surface)] transition-all"
     >
       <Search className="w-4 h-4" />
       <span className="flex-1 text-left">Suchen</span>
-      <kbd className="flex items-center gap-0.5 px-1.5 py-0.5 bg-surface-container-highest rounded text-[10px] text-zinc-500">
+      <kbd className="flex items-center gap-0.5 px-1.5 py-0.5 bg-surface-container-highest rounded text-[10px] text-[var(--color-on-surface-variant)]">
         <Command className="w-2.5 h-2.5" />K
       </kbd>
     </button>

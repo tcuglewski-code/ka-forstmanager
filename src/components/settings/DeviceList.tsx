@@ -89,20 +89,20 @@ export function DeviceList() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm text-zinc-400">
+        <div className="flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)]">
           <Shield className="w-4 h-4" />
           <span>{sessions.length} aktive Sitzung{sessions.length !== 1 ? "en" : ""}</span>
         </div>
         <button
           onClick={fetchSessions}
-          className="flex items-center gap-1 text-xs text-zinc-500 hover:text-emerald-400 transition-colors"
+          className="flex items-center gap-1 text-xs text-[var(--color-on-surface-variant)] hover:text-emerald-400 transition-colors"
         >
           <RefreshCw className="w-3 h-3" /> Aktualisieren
         </button>
       </div>
 
       {/* Info */}
-      <div className="bg-[#1a1a1a] border border-border rounded-lg p-4 text-sm text-zinc-400">
+      <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-lg p-4 text-sm text-[var(--color-on-surface-variant)]">
         <p>
           Hier sehen Sie alle Geräte, auf denen Sie derzeit angemeldet sind. 
           Sie können einzelne Sitzungen beenden, um den Zugriff auf Ihr Konto zu widerrufen.
@@ -110,7 +110,7 @@ export function DeviceList() {
       </div>
 
       {/* Session List */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden divide-y divide-border">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden divide-y divide-border">
         {sessions.length === 0 ? (
           <div className="px-6 py-12 text-center text-zinc-600">
             Keine aktiven Sitzungen gefunden
@@ -127,7 +127,7 @@ export function DeviceList() {
               >
                 <div className="flex items-center gap-4">
                   <div className={`p-2 rounded-lg ${session.isCurrent ? "bg-emerald-500/20" : "bg-surface-container-highest"}`}>
-                    <Icon className={`w-5 h-5 ${session.isCurrent ? "text-emerald-400" : "text-zinc-400"}`} />
+                    <Icon className={`w-5 h-5 ${session.isCurrent ? "text-emerald-400" : "text-[var(--color-on-surface-variant)]"}`} />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
@@ -138,7 +138,7 @@ export function DeviceList() {
                         </span>
                       )}
                     </div>
-                    <div className="text-xs text-zinc-500 mt-0.5">
+                    <div className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">
                       IP: {session.ipAddress} · Zuletzt aktiv: {formatDate(session.lastActiveAt)}
                     </div>
                   </div>
@@ -164,9 +164,9 @@ export function DeviceList() {
       </div>
 
       {/* Security Tips */}
-      <div className="bg-[#1a1a1a] border border-amber-500/20 rounded-lg p-4 text-sm">
+      <div className="bg-[var(--color-surface-container-lowest)] border border-amber-500/20 rounded-lg p-4 text-sm">
         <p className="text-amber-400 font-medium mb-1">🔒 Sicherheitstipp</p>
-        <p className="text-zinc-400 text-xs">
+        <p className="text-[var(--color-on-surface-variant)] text-xs">
           Wenn Sie ein Gerät nicht erkennen, beenden Sie die Sitzung sofort und ändern Sie Ihr Passwort.
           Aktivieren Sie die Zwei-Faktor-Authentifizierung für zusätzliche Sicherheit.
         </p>

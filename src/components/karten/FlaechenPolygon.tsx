@@ -342,7 +342,7 @@ export function FlaechenPolygon({
       {/* Toolbar */}
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center gap-3">
-          <span className="text-zinc-400 flex items-center gap-1.5">
+          <span className="text-[var(--color-on-surface-variant)] flex items-center gap-1.5">
             <MapPin className="w-4 h-4" />
             Auftragsfläche
           </span>
@@ -389,7 +389,7 @@ export function FlaechenPolygon({
       />
 
       {bearbeitbar && (
-        <p className="text-xs text-zinc-500 flex items-center gap-1.5">
+        <p className="text-xs text-[var(--color-on-surface-variant)] flex items-center gap-1.5">
           <Maximize2 className="w-3 h-3" />
           Klicke auf das Polygon-Werkzeug (links), um die Auftragsfläche einzuzeichnen
         </p>

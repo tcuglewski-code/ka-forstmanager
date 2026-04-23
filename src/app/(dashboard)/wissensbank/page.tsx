@@ -128,7 +128,7 @@ const BETRIEBSART_COLORS: Record<string, string> = {
 }
 
 function BetriebsartBadge({ betriebsart }: { betriebsart: string | null }) {
-  if (!betriebsart) return <span className="text-zinc-600 text-xs">—</span>
+  if (!betriebsart) return <span className="text-[var(--color-on-surface-variant)] text-xs">—</span>
   const cls = BETRIEBSART_COLORS[betriebsart] ?? "bg-gray-100 text-gray-700 border-zinc-500/30"
   return (
     <span className={`px-2 py-0.5 rounded border text-xs font-medium ${cls}`}>
@@ -221,16 +221,16 @@ function ForstamterTab() {
       {/* Filter-Bar */}
       <div className="flex gap-2 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)]" />
           <input
-            className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
+            className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-600"
             placeholder="Suche nach Name, Funktion, Forstamt, Ort..."
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
           />
         </div>
         <select
-          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
           value={bundesland}
           onChange={(e) => setBundesland(e.target.value)}
         >
@@ -240,7 +240,7 @@ function ForstamterTab() {
           ))}
         </select>
         <select
-          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
           value={sort}
           onChange={(e) => setSort(e.target.value)}
         >
@@ -251,7 +251,7 @@ function ForstamterTab() {
         </select>
         <button
           onClick={() => setOrder(order === "asc" ? "desc" : "asc")}
-          className="flex items-center gap-1.5 bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
+          className="flex items-center gap-1.5 bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
         >
           <ArrowUpDown className="w-3.5 h-3.5" />
           {order === "asc" ? "A→Z" : "Z→A"}
@@ -259,21 +259,21 @@ function ForstamterTab() {
       </div>
 
       {/* Stats */}
-      <div className="flex items-center justify-between text-xs text-zinc-500">
+      <div className="flex items-center justify-between text-xs text-[var(--color-on-surface-variant)]">
         <span>{loading ? "Lädt..." : `${total.toLocaleString("de")} Kontakte gefunden`}</span>
         {total > 0 && <span>Zeige {from}–{to} von {total.toLocaleString("de")}</span>}
       </div>
 
       {/* Table */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Name / Funktion</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Forstamt / Ort</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Bundesland</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Kontakt</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Name / Funktion</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Forstamt / Ort</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Bundesland</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Kontakt</th>
                 <th className="px-4 py-3"></th>
               </tr>
             </thead>
@@ -286,23 +286,23 @@ function ForstamterTab() {
                 </tr>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-zinc-500">
+                  <td colSpan={5} className="px-4 py-8 text-center text-[var(--color-on-surface-variant)]">
                     Keine Kontakte gefunden
                   </td>
                 </tr>
               ) : (
                 data.map((k) => (
-                  <tr key={k.id} className="border-b border-[#1e1e1e] hover:bg-[#1a1a1a] transition-colors">
+                  <tr key={k.id} className="border-b border-[var(--color-outline-variant)] hover:bg-[var(--color-surface-container-lowest)] transition-colors">
                     <td className="px-4 py-3">
-                      <p className="text-white font-medium text-xs">
+                      <p className="text-[var(--color-on-surface)] font-medium text-xs">
                         {[k.titel, k.vorname, k.nachname].filter(Boolean).join(" ") || "—"}
                       </p>
-                      <p className="text-zinc-500 text-xs mt-0.5 truncate max-w-[200px]">{k.funktion}</p>
-                      {k.revier && <p className="text-zinc-600 text-xs">Revier: {k.revier}</p>}
+                      <p className="text-[var(--color-on-surface-variant)] text-xs mt-0.5 truncate max-w-[200px]">{k.funktion}</p>
+                      {k.revier && <p className="text-[var(--color-on-surface-variant)] text-xs">Revier: {k.revier}</p>}
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-zinc-300 text-xs">{k.forstamt_name || "—"}</p>
-                      <p className="text-zinc-500 text-xs">{k.plz} {k.ort}</p>
+                      <p className="text-[var(--color-on-surface-variant)] text-xs">{k.forstamt_name || "—"}</p>
+                      <p className="text-[var(--color-on-surface-variant)] text-xs">{k.plz} {k.ort}</p>
                     </td>
                     <td className="px-4 py-3">
                       {k.bundesland_kuerzel && (
@@ -356,17 +356,17 @@ function ForstamterTab() {
           <button
             onClick={() => setOffset(Math.max(0, offset - limit))}
             disabled={offset === 0}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
           >
             <ChevronLeft className="w-4 h-4" /> Zurück
           </button>
-          <span className="text-sm text-zinc-500">
+          <span className="text-sm text-[var(--color-on-surface-variant)]">
             Zeige {from}–{to} von {total.toLocaleString("de")}
           </span>
           <button
             onClick={() => setOffset(offset + limit)}
             disabled={offset + limit >= total}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
           >
             Weiter <ChevronRight className="w-4 h-4" />
           </button>
@@ -438,16 +438,16 @@ function BetriebeTab() {
       {/* Filter-Bar */}
       <div className="flex gap-2 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)]" />
           <input
-            className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
+            className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-600"
             placeholder="Suche nach Name oder Ort..."
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
           />
         </div>
         <select
-          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
           value={betriebsartFilter}
           onChange={(e) => setBetriebsartFilter(e.target.value)}
         >
@@ -457,7 +457,7 @@ function BetriebeTab() {
           ))}
         </select>
         <select
-          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
           value={sortField}
           onChange={(e) => setSortField(e.target.value)}
         >
@@ -467,7 +467,7 @@ function BetriebeTab() {
         </select>
         <button
           onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-          className="flex items-center gap-1.5 bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
+          className="flex items-center gap-1.5 bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
         >
           <ArrowUpDown className="w-3.5 h-3.5" />
           {sortOrder === "asc" ? "A→Z" : "Z→A"}
@@ -475,23 +475,23 @@ function BetriebeTab() {
       </div>
 
       {/* Stats */}
-      <div className="flex items-center justify-between text-xs text-zinc-500">
+      <div className="flex items-center justify-between text-xs text-[var(--color-on-surface-variant)]">
         <span>{loading ? "Lädt..." : `${total.toLocaleString("de")} Betriebe gefunden`}</span>
         {total > 0 && <span>Zeige {from}–{to} von {total.toLocaleString("de")}</span>}
       </div>
 
       {/* Table */}
-      <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Name</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Betriebsart</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Ort</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Bundesland</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Betr.-Nr.</th>
-                <th className="text-left px-4 py-3 text-zinc-400 font-medium">Partner</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Name</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Betriebsart</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Ort</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Bundesland</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Betr.-Nr.</th>
+                <th className="text-left px-4 py-3 text-[var(--color-on-surface-variant)] font-medium">Partner</th>
               </tr>
             </thead>
             <tbody>
@@ -503,31 +503,31 @@ function BetriebeTab() {
                 </tr>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-zinc-500">
+                  <td colSpan={6} className="px-4 py-8 text-center text-[var(--color-on-surface-variant)]">
                     Keine Betriebe gefunden
                   </td>
                 </tr>
               ) : (
                 data.map((b) => (
-                  <tr key={b.id} className="border-b border-[#1e1e1e] hover:bg-[#1a1a1a] transition-colors">
+                  <tr key={b.id} className="border-b border-[var(--color-outline-variant)] hover:bg-[var(--color-surface-container-lowest)] transition-colors">
                     <td className="px-4 py-3">
-                      <p className="text-white text-xs font-medium">{b.name}</p>
+                      <p className="text-[var(--color-on-surface)] text-xs font-medium">{b.name}</p>
                     </td>
                     <td className="px-4 py-3">
                       <BetriebsartBadge betriebsart={b.betriebsart} />
                     </td>
-                    <td className="px-4 py-3 text-xs text-zinc-300">
+                    <td className="px-4 py-3 text-xs text-[var(--color-on-surface-variant)]">
                       {[b.plz, b.ort].filter(Boolean).join(" ") || "—"}
                     </td>
-                    <td className="px-4 py-3 text-xs text-zinc-400">{b.bundesland || "—"}</td>
-                    <td className="px-4 py-3 text-xs text-zinc-500 font-mono">{b.betriebsnummer || "—"}</td>
+                    <td className="px-4 py-3 text-xs text-[var(--color-on-surface-variant)]">{b.bundesland || "—"}</td>
+                    <td className="px-4 py-3 text-xs text-[var(--color-on-surface-variant)] font-mono">{b.betriebsnummer || "—"}</td>
                     <td className="px-4 py-3">
                       {b.ist_partner ? (
                         <span className="px-2 py-0.5 bg-amber-100 text-amber-800 border border-amber-500/30 rounded text-xs font-medium">
                           ⭐ Partner
                         </span>
                       ) : (
-                        <span className="text-zinc-600 text-xs">—</span>
+                        <span className="text-[var(--color-on-surface-variant)] text-xs">—</span>
                       )}
                     </td>
                   </tr>
@@ -544,17 +544,17 @@ function BetriebeTab() {
           <button
             onClick={() => setPage(Math.max(0, page - 1))}
             disabled={page === 0}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
           >
             <ChevronLeft className="w-4 h-4" /> Zurück
           </button>
-          <span className="text-sm text-zinc-500">
+          <span className="text-sm text-[var(--color-on-surface-variant)]">
             Zeige {from}–{to} von {total.toLocaleString("de")}
           </span>
           <button
             onClick={() => setPage(page + 1)}
             disabled={(page + 1) * PAGE_SIZE >= total}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
           >
             Weiter <ChevronRight className="w-4 h-4" />
           </button>
@@ -575,10 +575,10 @@ function FoerderprogrammeCard({ prog }: { prog: Foerderprogramm }) {
       : "bg-gray-100 text-gray-700"
 
   return (
-    <div className="bg-[#161616] border border-border rounded-xl overflow-hidden">
+    <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full text-left p-5 hover:bg-[#1a1a1a] transition-colors"
+        className="w-full text-left p-5 hover:bg-[var(--color-surface-container-lowest)] transition-colors"
       >
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
@@ -602,14 +602,14 @@ function FoerderprogrammeCard({ prog }: { prog: Foerderprogramm }) {
                 </span>
               )}
             </div>
-            <h3 className="text-white font-semibold text-sm leading-tight">{prog.name}</h3>
-            <div className="flex flex-wrap gap-4 mt-2 text-xs text-zinc-400">
+            <h3 className="text-[var(--color-on-surface)] font-semibold text-sm leading-tight">{prog.name}</h3>
+            <div className="flex flex-wrap gap-4 mt-2 text-xs text-[var(--color-on-surface-variant)]">
               {prog.foerderart && <span>💰 {prog.foerderart}</span>}
               {prog.foerdersatz && <span>📊 {prog.foerdersatz}</span>}
               {prog.antragsfrist && <span>📅 {prog.antragsfrist}</span>}
             </div>
           </div>
-          <div className="flex-shrink-0 text-zinc-500">
+          <div className="flex-shrink-0 text-[var(--color-on-surface-variant)]">
             {open ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </div>
         </div>
@@ -619,44 +619,44 @@ function FoerderprogrammeCard({ prog }: { prog: Foerderprogramm }) {
         <div className="px-5 pb-5 border-t border-border pt-4 space-y-3">
           {prog.traeger && (
             <div>
-              <p className="text-xs text-zinc-500 mb-0.5">Träger</p>
-              <p className="text-sm text-zinc-300">{prog.traeger}</p>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mb-0.5">Träger</p>
+              <p className="text-sm text-[var(--color-on-surface-variant)]">{prog.traeger}</p>
             </div>
           )}
           {prog.bewilligungsstelle && (
             <div>
-              <p className="text-xs text-zinc-500 mb-0.5">Bewilligungsstelle</p>
-              <p className="text-sm text-zinc-300">{prog.bewilligungsstelle}</p>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mb-0.5">Bewilligungsstelle</p>
+              <p className="text-sm text-[var(--color-on-surface-variant)]">{prog.bewilligungsstelle}</p>
             </div>
           )}
           {prog.zielgruppe && (
             <div>
-              <p className="text-xs text-zinc-500 mb-0.5">Zielgruppe</p>
-              <p className="text-sm text-zinc-300">{prog.zielgruppe}</p>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mb-0.5">Zielgruppe</p>
+              <p className="text-sm text-[var(--color-on-surface-variant)]">{prog.zielgruppe}</p>
             </div>
           )}
           {prog.foerdergegenstand && (
             <div>
-              <p className="text-xs text-zinc-500 mb-0.5">Fördergegenstand</p>
-              <p className="text-sm text-zinc-300">{prog.foerdergegenstand}</p>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mb-0.5">Fördergegenstand</p>
+              <p className="text-sm text-[var(--color-on-surface-variant)]">{prog.foerdergegenstand}</p>
             </div>
           )}
           {prog.foerderkulisse && (
             <div>
-              <p className="text-xs text-zinc-500 mb-0.5">Förderkulisse</p>
-              <p className="text-sm text-zinc-300">{prog.foerderkulisse}</p>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mb-0.5">Förderkulisse</p>
+              <p className="text-sm text-[var(--color-on-surface-variant)]">{prog.foerderkulisse}</p>
             </div>
           )}
           {prog.antragsweg && (
             <div>
-              <p className="text-xs text-zinc-500 mb-0.5">Antragsweg</p>
-              <p className="text-sm text-zinc-300">{prog.antragsweg}</p>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mb-0.5">Antragsweg</p>
+              <p className="text-sm text-[var(--color-on-surface-variant)]">{prog.antragsweg}</p>
             </div>
           )}
           {prog.foerdergrundlage && (
             <div>
-              <p className="text-xs text-zinc-500 mb-0.5">Fördergrundlage</p>
-              <p className="text-sm text-zinc-300">{prog.foerdergrundlage}</p>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mb-0.5">Fördergrundlage</p>
+              <p className="text-sm text-[var(--color-on-surface-variant)]">{prog.foerdergrundlage}</p>
             </div>
           )}
           {prog.url && (
@@ -737,16 +737,16 @@ function FoerderprogrammeTab() {
     <div className="space-y-4">
       <div className="flex gap-2 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)]" />
           <input
-            className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
+            className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-600"
             placeholder="Suche nach Programm, Fördergegenstand..."
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
           />
         </div>
         <select
-          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
           value={bundesland}
           onChange={(e) => setBundesland(e.target.value)}
         >
@@ -757,7 +757,7 @@ function FoerderprogrammeTab() {
         </select>
         {kategorien.length > 0 && (
           <select
-            className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+            className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
             value={kategorie}
             onChange={(e) => setKategorie(e.target.value)}
           >
@@ -768,7 +768,7 @@ function FoerderprogrammeTab() {
           </select>
         )}
         <select
-          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
         >
@@ -777,7 +777,7 @@ function FoerderprogrammeTab() {
           <option value="GESCHLOSSEN">Geschlossen</option>
         </select>
         <select
-          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
           value={sort}
           onChange={(e) => setSort(e.target.value)}
         >
@@ -787,7 +787,7 @@ function FoerderprogrammeTab() {
         </select>
       </div>
 
-      <div className="text-xs text-zinc-500">
+      <div className="text-xs text-[var(--color-on-surface-variant)]">
         {loading ? "Lädt..." : `${data.length} Förderprogramme`}
       </div>
 
@@ -795,14 +795,14 @@ function FoerderprogrammeTab() {
         <div className="flex flex-col items-center py-12 gap-3">
           <AlertTriangle className="w-8 h-8 text-amber-400" />
           <p className="text-amber-400 text-sm font-medium">Verbindungsfehler</p>
-          <p className="text-zinc-500 text-xs text-center max-w-sm">{apiError}</p>
+          <p className="text-[var(--color-on-surface-variant)] text-xs text-center max-w-sm">{apiError}</p>
         </div>
       ) : loading ? (
         <div className="flex justify-center py-12">
           <Loader2 className="w-6 h-6 animate-spin text-emerald-500" />
         </div>
       ) : sorted.length === 0 ? (
-        <div className="text-center py-12 text-zinc-500">Keine Förderprogramme gefunden</div>
+        <div className="text-center py-12 text-[var(--color-on-surface-variant)]">Keine Förderprogramme gefunden</div>
       ) : (
         <div className="space-y-3">
           {sorted.map((prog) => (
@@ -901,17 +901,17 @@ function WissenTab() {
   return (
     <div className="space-y-4">
       {/* Search */}
-      <div className="bg-[#161616] border border-border rounded-xl p-5">
-        <p className="text-zinc-400 text-sm mb-4">
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
+        <p className="text-[var(--color-on-surface-variant)] text-sm mb-4">
           Volltextsuche in{" "}
           {total > 0 && hasSearched ? `${total.toLocaleString("de")} Treffer aus ` : ""}
           1.641 gecrawlten Forstdokumenten und PDFs
         </p>
         <div className="flex gap-2 flex-wrap">
           <div className="relative flex-1 min-w-[200px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)]" />
             <input
-              className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-600"
+              className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-600"
               placeholder="z.B. Pflanzverband, Borkenkäfer, Fördersatz..."
               value={suche}
               onChange={(e) => setSuche(e.target.value)}
@@ -920,7 +920,7 @@ function WissenTab() {
           </div>
           {kategorien.length > 0 && (
             <select
-              className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+              className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
               value={kategorie}
               onChange={(e) => setKategorie(e.target.value)}
             >
@@ -931,7 +931,7 @@ function WissenTab() {
             </select>
           )}
           <select
-            className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-600"
+            className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
             value={sort}
             onChange={(e) => {
               setSort(e.target.value)
@@ -960,36 +960,36 @@ function WissenTab() {
         <div className="flex flex-col items-center py-12 gap-3">
           <AlertTriangle className="w-8 h-8 text-amber-400" />
           <p className="text-amber-400 text-sm font-medium">Verbindungsfehler</p>
-          <p className="text-zinc-500 text-xs text-center max-w-sm">{apiError}</p>
+          <p className="text-[var(--color-on-surface-variant)] text-xs text-center max-w-sm">{apiError}</p>
         </div>
       ) : loading ? (
         <div className="flex justify-center py-12">
           <Loader2 className="w-6 h-6 animate-spin text-emerald-500" />
         </div>
       ) : !hasSearched ? (
-        <div className="text-center py-12 text-zinc-500">
+        <div className="text-center py-12 text-[var(--color-on-surface-variant)]">
           <FileText className="w-10 h-10 mx-auto mb-3 text-zinc-700" />
           <p>Suchbegriff eingeben um in der Wissensdatenbank zu suchen</p>
         </div>
       ) : data.length === 0 ? (
-        <div className="text-center py-12 text-zinc-500">
-          <AlertCircle className="w-8 h-8 mx-auto mb-3 text-zinc-600" />
+        <div className="text-center py-12 text-[var(--color-on-surface-variant)]">
+          <AlertCircle className="w-8 h-8 mx-auto mb-3 text-[var(--color-on-surface-variant)]" />
           Keine Treffer für &ldquo;{suche}&rdquo;
         </div>
       ) : (
         <>
-          <div className="text-xs text-zinc-500">{total.toLocaleString("de")} Treffer</div>
+          <div className="text-xs text-[var(--color-on-surface-variant)]">{total.toLocaleString("de")} Treffer</div>
           <div className="space-y-3">
             {data.map((chunk) => (
-              <div key={chunk.id} className="bg-[#161616] border border-border rounded-xl p-4">
+              <div key={chunk.id} className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div>
-                    <p className="text-white text-sm font-medium leading-tight">
+                    <p className="text-[var(--color-on-surface)] text-sm font-medium leading-tight">
                       {chunk.doc_title || "Unbekanntes Dokument"}
                     </p>
                     <div className="flex gap-2 mt-1 flex-wrap">
                       {chunk.doc_type && (
-                        <span className="px-2 py-0.5 bg-[#1e1e1e] text-zinc-400 rounded text-xs border border-border">
+                        <span className="px-2 py-0.5 bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] rounded text-xs border border-border">
                           {chunk.doc_type}
                         </span>
                       )}
@@ -999,7 +999,7 @@ function WissenTab() {
                         </span>
                       )}
                       {chunk.page_ref && (
-                        <span className="text-xs text-zinc-600">S. {chunk.page_ref}</span>
+                        <span className="text-xs text-[var(--color-on-surface-variant)]">S. {chunk.page_ref}</span>
                       )}
                     </div>
                   </div>
@@ -1014,7 +1014,7 @@ function WissenTab() {
                     </a>
                   )}
                 </div>
-                <p className="text-sm text-zinc-400 leading-relaxed line-clamp-4">
+                <p className="text-sm text-[var(--color-on-surface-variant)] leading-relaxed line-clamp-4">
                   {highlightText(chunk.chunk_text, suche)}
                 </p>
               </div>
@@ -1026,17 +1026,17 @@ function WissenTab() {
               <button
                 onClick={() => setOffset(Math.max(0, offset - limit))}
                 disabled={offset === 0}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" /> Zurück
               </button>
-              <span className="text-sm text-zinc-500">
+              <span className="text-sm text-[var(--color-on-surface-variant)]">
                 Zeige {from}–{to} von {total.toLocaleString("de")}
               </span>
               <button
                 onClick={() => setOffset(offset + limit)}
                 disabled={offset + limit >= total}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-zinc-400 hover:text-white disabled:opacity-40 transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
               >
                 Weiter <ChevronRight className="w-4 h-4" />
               </button>
@@ -1062,7 +1062,7 @@ export default function WissensPage() {
         </div>
         <div>
           <h1 className="text-xl font-bold" style={{ color: "var(--color-on-surface)" }}>Wissensbank</h1>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-[var(--color-on-surface-variant)]">
             7.000+ Datensätze aus dem Forstbereich — Kontakte, Betriebe, Förderprogramme, Wissen
           </p>
         </div>
@@ -1070,14 +1070,14 @@ export default function WissensPage() {
           <div className="px-3 py-1.5 bg-forest/50 border border-emerald-900/50 rounded-lg text-xs text-emerald-400">
             🌲 SecondBrain DB
           </div>
-          <div className="px-3 py-1.5 bg-[#1e1e1e] border border-border rounded-lg text-xs text-zinc-400">
+          <div className="px-3 py-1.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-xs text-[var(--color-on-surface-variant)]">
             7.064 Einträge
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-[#161616] p-1 rounded-xl border border-border overflow-x-auto">
+      <div className="flex gap-1 bg-[var(--color-surface-container)] p-1 rounded-xl border border-border overflow-x-auto">
         {TAB_LIST.map((tab) => {
           const Icon = tab.icon
           const isActive = activeTab === tab.id
@@ -1088,7 +1088,7 @@ export default function WissensPage() {
               className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap flex-1 justify-center ${
                 isActive
                   ? "bg-forest text-emerald-400"
-                  : "text-zinc-400 hover:text-white hover:bg-[#1e1e1e]"
+                  : "text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-highest)]"
               }`}
             >
               <Icon className="w-4 h-4" />

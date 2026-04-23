@@ -112,15 +112,15 @@ export function MitarbeiterModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-[#161616] border border-border rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div className="relative bg-[var(--color-surface-container)] border border-border rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-border sticky top-0 bg-[#161616] z-10">
-          <h2 className="text-lg font-semibold text-white">
+        <div className="flex items-center justify-between p-6 border-b border-border sticky top-0 bg-[var(--color-surface-container)] z-10">
+          <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">
             {isEdit ? "Mitarbeiter bearbeiten" : "Mitarbeiter hinzufügen"}
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 hover:bg-[#1e1e1e] hover:text-white transition-all"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-highest)] hover:text-[var(--color-on-surface)] transition-all"
           >
             <X className="w-4 h-4" />
           </button>
@@ -136,7 +136,7 @@ export function MitarbeiterModal({
           {/* Name */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+              <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">
                 Vorname <span className="text-red-400">*</span>
               </label>
               <input
@@ -145,11 +145,11 @@ export function MitarbeiterModal({
                 value={form.vorname || ""}
                 onChange={(e) => update("vorname", e.target.value)}
                 required
-                className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+              <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">
                 Nachname <span className="text-red-400">*</span>
               </label>
               <input
@@ -158,7 +158,7 @@ export function MitarbeiterModal({
                 value={form.nachname || ""}
                 onChange={(e) => update("nachname", e.target.value)}
                 required
-                className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
               />
             </div>
           </div>
@@ -166,70 +166,70 @@ export function MitarbeiterModal({
           {/* Kontakt */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5">E-Mail</label>
+              <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">E-Mail</label>
               <input
                 type="email"
                 name="email"
                 value={form.email || ""}
                 onChange={(e) => update("email", e.target.value)}
-                className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5">Telefon</label>
+              <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">Telefon</label>
               <input
                 type="tel"
                 name="telefon"
                 value={form.telefon || ""}
                 onChange={(e) => update("telefon", e.target.value)}
-                className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1.5">Mobil</label>
+            <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">Mobil</label>
             <input
               type="tel"
               name="mobil"
               value={form.mobil || ""}
               onChange={(e) => update("mobil", e.target.value)}
-              className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+              className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
             />
           </div>
 
           {/* Adresse */}
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1.5">Adresse</label>
+            <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">Adresse</label>
             <input
               type="text"
               name="adresse"
               value={form.adresse || ""}
               onChange={(e) => update("adresse", e.target.value)}
               placeholder="Straße und Hausnummer"
-              className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+              className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5">PLZ</label>
+              <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">PLZ</label>
               <input
                 type="text"
                 name="plz"
                 value={form.plz || ""}
                 onChange={(e) => update("plz", e.target.value)}
-                className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5">Ort</label>
+              <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">Ort</label>
               <input
                 type="text"
                 name="ort"
                 value={form.ort || ""}
                 onChange={(e) => update("ort", e.target.value)}
-                className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
               />
             </div>
           </div>
@@ -237,11 +237,11 @@ export function MitarbeiterModal({
           {/* Rolle & Status */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5">Rolle</label>
+              <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">Rolle</label>
               <select
                 value={form.rolle || "mitarbeiter"}
                 onChange={(e) => update("rolle", e.target.value)}
-                className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
               >
                 {rollenOptions.map((o) => (
                   <option key={o.value} value={o.value}>
@@ -251,11 +251,11 @@ export function MitarbeiterModal({
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5">Status</label>
+              <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">Status</label>
               <select
                 value={form.status || "aktiv"}
                 onChange={(e) => update("status", e.target.value)}
-                className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
               >
                 {statusOptions.map((o) => (
                   <option key={o.value} value={o.value}>
@@ -268,7 +268,7 @@ export function MitarbeiterModal({
 
           {/* Stundenlohn */}
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+            <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">
               Stundenlohn (€)
             </label>
             <input
@@ -280,7 +280,7 @@ export function MitarbeiterModal({
                 update("stundenlohn", e.target.value ? parseFloat(e.target.value) : null)
               }
               placeholder="z.B. 14.50"
-              className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+              className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
             />
           </div>
 
@@ -289,34 +289,34 @@ export function MitarbeiterModal({
             <p className="text-xs font-semibold text-red-400 uppercase tracking-wider mb-3">🚨 Notfallkontakt</p>
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1.5">Name</label>
+                <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">Name</label>
                 <input
                   type="text"
                   value={form.notfallName || ""}
                   onChange={(e) => update("notfallName", e.target.value || null)}
                   placeholder="z.B. Maria Müller"
-                  className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-red-500/30 text-sm"
+                  className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-red-500/30 text-sm"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-1.5">Telefon</label>
+                  <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">Telefon</label>
                   <input
                     type="tel"
                     value={form.notfallTelefon || ""}
                     onChange={(e) => update("notfallTelefon", e.target.value || null)}
                     placeholder="+49 151 123 4567"
-                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-red-500/30 text-sm"
+                    className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-red-500/30 text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-1.5">Beziehung</label>
+                  <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">Beziehung</label>
                   <input
                     type="text"
                     value={form.notfallBeziehung || ""}
                     onChange={(e) => update("notfallBeziehung", e.target.value || null)}
                     placeholder="z.B. Partner, Mutter"
-                    className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-red-500/30 text-sm"
+                    className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-red-500/30 text-sm"
                   />
                 </div>
               </div>
@@ -325,13 +325,13 @@ export function MitarbeiterModal({
 
           {/* Notizen */}
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1.5">Notizen</label>
+            <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-1.5">Notizen</label>
             <textarea
               name="notizen"
               value={form.notizen || ""}
               onChange={(e) => update("notizen", e.target.value)}
               rows={3}
-              className="w-full px-3 py-2.5 bg-[#0f0f0f] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm resize-none"
+              className="w-full px-3 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm resize-none"
             />
           </div>
 
@@ -340,7 +340,7 @@ export function MitarbeiterModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 px-4 bg-[#0f0f0f] border border-border text-zinc-400 hover:text-white rounded-lg text-sm transition-all"
+              className="flex-1 py-2.5 px-4 bg-[var(--color-surface-container-low)] border border-border text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] rounded-lg text-sm transition-all"
             >
               Abbrechen
             </button>

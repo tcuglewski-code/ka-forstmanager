@@ -22,11 +22,11 @@ const BAR_COLORS = ["#10b981", "#6366f1", "#f59e0b", "#ec4899", "#8b5cf6"]
 
 export function FeatureUsageWidget() {
   return (
-    <div className="bg-[#1a1a1a] border border-border rounded-xl p-6">
+    <div className="bg-[var(--color-surface-container-lowest)] border border-border rounded-xl p-6">
       <h2 className="text-lg font-semibold text-white mb-1">
         API-Nutzung
       </h2>
-      <p className="text-sm text-zinc-500 mb-4">
+      <p className="text-sm text-[var(--color-on-surface-variant)] mb-4">
         Top 5 Routen (letzte 24h)
       </p>
       <div className="h-56">
