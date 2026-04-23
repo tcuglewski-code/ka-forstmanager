@@ -23,6 +23,7 @@ async function getStats() {
       lagerUnterMindest,
       ablaufendeQualifikationen,
       faelligeWartungen,
+      tuvWartungFaellig,
       naechsteSchulungen,
       offeneAbnahmen,
       stundenAusstehend,
@@ -43,6 +44,26 @@ async function getStats() {
         where: { ablaufDatum: { lte: in30Tagen, gte: heute } },
       }),
       prisma.wartung.count({ where: { erledigt: false, datum: { lte: heute } } }),
+      // FM-38: TÜV/Wartung fällig in nächsten 30 Tagen
+      prisma.fahrzeug.findMany({
+        where: {
+          OR: [
+            { tuvDatum: { lte: in30Tagen, gte: heute } },
+            { tuvDatum: { lt: heute } },
+            { naechsteWartung: { lte: in30Tagen, gte: heute } },
+            { naechsteWartung: { lt: heute } },
+          ],
+        },
+        select: {
+          id: true,
+          bezeichnung: true,
+          kennzeichen: true,
+          tuvDatum: true,
+          naechsteWartung: true,
+        },
+        orderBy: { tuvDatum: "asc" },
+        take: 10,
+      }).catch(() => [] as { id: string; bezeichnung: string; kennzeichen: string | null; tuvDatum: Date | null; naechsteWartung: Date | null }[]),
       prisma.schulung.findMany({
         where: { datum: { gte: heute }, status: { not: "abgeschlossen" } },
         orderBy: { datum: "asc" },
@@ -130,6 +151,7 @@ async function getStats() {
       lagerUnterMindest,
       ablaufendeQualifikationen,
       faelligeWartungen,
+      tuvWartungFaellig,
       naechsteSchulungen,
       offeneAbnahmen,
       stundenAusstehend,
@@ -154,6 +176,7 @@ async function getStats() {
       lagerUnterMindest: 0,
       ablaufendeQualifikationen: 0,
       faelligeWartungen: 0,
+      tuvWartungFaellig: [] as { id: string; bezeichnung: string; kennzeichen: string | null; tuvDatum: Date | null; naechsteWartung: Date | null }[],
       naechsteSchulungen: [],
       offeneAbnahmen: 0,
       stundenAusstehend: 0,
@@ -257,6 +280,49 @@ export default async function DashboardPage() {
           </span>
         </div>
       </div>
+
+      {/* TÜV/Wartung fällig (FM-38) */}
+      {stats.tuvWartungFaellig.length > 0 && (
+        <div className="mb-6 bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Wrench className="w-4 h-4" style={{ color: "#d97706" }} />
+            <h3 className="text-sm font-semibold" style={{ color: "var(--color-on-surface)" }}>
+              TÜV / Wartung fällig
+            </h3>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold">
+              {stats.tuvWartungFaellig.length}
+            </span>
+          </div>
+          <div className="space-y-2">
+            {stats.tuvWartungFaellig.map(f => {
+              const tuvDate = f.tuvDatum ? new Date(f.tuvDatum) : null
+              const wartungDate = f.naechsteWartung ? new Date(f.naechsteWartung) : null
+              const now = new Date()
+              const isOverdue = (tuvDate && tuvDate < now) || (wartungDate && wartungDate < now)
+              return (
+                <Link key={f.id} href="/fuhrpark" className="flex items-center justify-between p-3 rounded-lg hover:bg-[var(--color-surface-container-high)] transition-colors">
+                  <div>
+                    <span className="text-sm font-medium" style={{ color: "var(--color-on-surface)" }}>{f.bezeichnung}</span>
+                    {f.kennzeichen && <span className="text-xs ml-2" style={{ color: "var(--color-on-surface-variant)" }}>{f.kennzeichen}</span>}
+                  </div>
+                  <div className="text-right">
+                    {tuvDate && (
+                      <span className={`text-xs font-medium ${isOverdue ? "text-red-500" : "text-amber-600"}`}>
+                        TÜV: {tuvDate.toLocaleDateString("de-DE")}
+                      </span>
+                    )}
+                    {wartungDate && (
+                      <span className={`text-xs font-medium ml-2 ${wartungDate < now ? "text-red-500" : "text-amber-600"}`}>
+                        Wartung: {wartungDate.toLocaleDateString("de-DE")}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Warnungen */}
       {(stats.ablaufendeQualifikationen > 0 || stats.faelligeWartungen > 0 || stats.lagerUnterMindest > 0) && (

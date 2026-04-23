@@ -801,7 +801,7 @@ function LagerPageInner() {
       {activeTab === "bestellungen" && (
         <div>
           <div className="flex justify-end mb-4">
-            <a href="/lager/bestellungen" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all"
+            <a href="/lager/bestellungen?neu=1" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all"
               style={{ backgroundColor: GOLD, color: WALDGRUEN }}>
               <Plus className="w-4 h-4" />
               Neue Bestellung

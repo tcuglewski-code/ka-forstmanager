@@ -107,6 +107,34 @@ export async function GET(
   drawRow('Wuchshüllen', protokoll.stk_wuchshuellen, 'Stk.')
   drawRow('Nachbesserung', protokoll.stk_nachbesserung, 'Stk.')
 
+  // Kennzahlen (FM-16)
+  {
+    let nettoStunden: number | null = null
+    if (protokoll.arbeitsbeginn && protokoll.arbeitsende) {
+      const begin = new Date(protokoll.arbeitsbeginn).getTime()
+      const end = new Date(protokoll.arbeitsende).getTime()
+      const pauseMs = (protokoll.pauseMinuten ?? 0) * 60000
+      nettoStunden = Math.round(((end - begin - pauseMs) / 3600000) * 100) / 100
+    }
+    const pflanzrate = nettoStunden && nettoStunden > 0 && protokoll.gepflanztGesamt
+      ? Math.round(protokoll.gepflanztGesamt / nettoStunden)
+      : null
+    const flaechenrate = nettoStunden && nettoStunden > 0 && protokoll.flaecheBearbeitetHa
+      ? Math.round((protokoll.flaecheBearbeitetHa / nettoStunden) * 100) / 100
+      : null
+
+    if (nettoStunden || pflanzrate || flaechenrate) {
+      drawHeader('Kennzahlen')
+      if (nettoStunden) drawRow('Netto-Arbeitszeit', nettoStunden, 'Std.')
+      if (pflanzrate) drawRow('Pflanzrate', pflanzrate, 'Pfl./Std.')
+      if (flaechenrate) drawRow('Flächenrate', flaechenrate, 'ha/Std.')
+      if (protokoll.mitarbeiterAnzahl && nettoStunden) {
+        const teamStunden = Math.round(nettoStunden * protokoll.mitarbeiterAnzahl * 100) / 100
+        drawRow('Team-Stunden gesamt', teamStunden, 'Std.')
+      }
+    }
+  }
+
   // Qualität & Witterung
   if (protokoll.witterung || protokoll.ausfaelleAnzahl || protokoll.qualitaetsBewertung) {
     drawHeader('Qualität & Witterung')

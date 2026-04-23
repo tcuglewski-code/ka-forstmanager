@@ -65,7 +65,7 @@ export async function GET(
 
     const { id } = await params
 
-    // Tagesprotokoll laden
+    // Tagesprotokoll laden (FM-14: alle relevanten Felder)
     const protokoll = await prisma.tagesprotokoll.findUnique({
       where: { id },
       select: {
@@ -77,6 +77,24 @@ export async function GET(
         witterung: true,
         besonderheiten: true,
         naechsteSchritte: true,
+        mitarbeiterAnzahl: true,
+        arbeitsbeginn: true,
+        arbeitsende: true,
+        pauseMinuten: true,
+        maschinenEinsatz: true,
+        qualitaetsBewertung: true,
+        stk_pflanzung: true,
+        stk_pflanzung_mit_bohrer: true,
+        std_handpflanzung: true,
+        std_mit_bohrer: true,
+        std_freischneider: true,
+        std_motorsaege: true,
+        std_zaunbau: true,
+        lfm_zaunbau: true,
+        stk_wuchshuellen: true,
+        stk_nachbesserung: true,
+        ausfaelleAnzahl: true,
+        ausfaelleGrund: true,
         auftrag: {
           select: { titel: true },
         },
@@ -99,21 +117,72 @@ export async function GET(
       )
     }
 
-    // Protokolldaten zusammenbauen
+    // Protokolldaten zusammenbauen (FM-14: alle Felder)
     const datumStr = new Date(protokoll.datum).toLocaleDateString("de-DE")
+
+    // Netto-Stunden berechnen
+    let nettoStunden: number | null = null
+    if (protokoll.arbeitsbeginn && protokoll.arbeitsende) {
+      const begin = new Date(protokoll.arbeitsbeginn).getTime()
+      const end = new Date(protokoll.arbeitsende).getTime()
+      const pauseMs = (protokoll.pauseMinuten ?? 0) * 60000
+      nettoStunden = Math.round(((end - begin - pauseMs) / 3600000) * 100) / 100
+    }
+
+    // Pflanzrate und Flächenrate berechnen
+    const pflanzrate = nettoStunden && nettoStunden > 0 && protokoll.gepflanztGesamt
+      ? Math.round(protokoll.gepflanztGesamt / nettoStunden)
+      : null
+    const flaechenrate = nettoStunden && nettoStunden > 0 && protokoll.flaecheBearbeitetHa
+      ? Math.round((protokoll.flaecheBearbeitetHa / nettoStunden) * 100) / 100
+      : null
+
     const rawText = [
       `Datum: ${datumStr}`,
       protokoll.auftrag?.titel
         ? `Auftrag: ${protokoll.auftrag.titel}`
         : null,
-      protokoll.bericht ? `Bericht: ${protokoll.bericht}` : null,
+      protokoll.mitarbeiterAnzahl
+        ? `Mitarbeiter: ${protokoll.mitarbeiterAnzahl}`
+        : null,
+      nettoStunden != null
+        ? `Netto-Arbeitszeit: ${nettoStunden} Stunden`
+        : null,
       protokoll.gepflanztGesamt != null
         ? `Gepflanzt gesamt: ${protokoll.gepflanztGesamt} Stück`
+        : null,
+      pflanzrate != null
+        ? `Pflanzrate: ${pflanzrate} Pflanzen/Stunde`
         : null,
       protokoll.flaecheBearbeitetHa != null
         ? `Fläche bearbeitet: ${protokoll.flaecheBearbeitetHa} ha`
         : null,
+      flaechenrate != null
+        ? `Flächenrate: ${flaechenrate} ha/Stunde`
+        : null,
+      protokoll.stk_pflanzung
+        ? `Handpflanzung: ${protokoll.stk_pflanzung} Stk.`
+        : null,
+      protokoll.stk_pflanzung_mit_bohrer
+        ? `Bohrpflanzung: ${protokoll.stk_pflanzung_mit_bohrer} Stk.`
+        : null,
+      protokoll.lfm_zaunbau
+        ? `Zaunbau: ${protokoll.lfm_zaunbau} lfm`
+        : null,
+      protokoll.stk_wuchshuellen
+        ? `Wuchshüllen: ${protokoll.stk_wuchshuellen} Stk.`
+        : null,
+      protokoll.maschinenEinsatz
+        ? `Maschineneinsatz: ${protokoll.maschinenEinsatz}`
+        : null,
+      protokoll.qualitaetsBewertung
+        ? `Qualitätsbewertung: ${protokoll.qualitaetsBewertung}/5`
+        : null,
       protokoll.witterung ? `Witterung: ${protokoll.witterung}` : null,
+      protokoll.ausfaelleAnzahl
+        ? `Ausfälle: ${protokoll.ausfaelleAnzahl}${protokoll.ausfaelleGrund ? ` (${protokoll.ausfaelleGrund})` : ""}`
+        : null,
+      protokoll.bericht ? `Bericht: ${protokoll.bericht}` : null,
       protokoll.besonderheiten
         ? `Besonderheiten: ${protokoll.besonderheiten}`
         : null,
@@ -131,7 +200,8 @@ export async function GET(
     const anthropic = new Anthropic({ apiKey })
     const prompt = `Fasse das folgende Tagesprotokoll eines Forstbetriebs kurz und prägnant zusammen.
 Maximal 200 Wörter. Schreibe auf Deutsch in sachlichem Ton.
-Fokussiere auf: Arbeitsfortschritt, Mengen, Besonderheiten und nächste Schritte.
+Fokussiere auf: Arbeitsfortschritt, Kennzahlen (Stunden, Pflanzen, Fläche, Pflanzrate, Qualität), Besonderheiten und nächste Schritte.
+Nenne wenn vorhanden: Mitarbeiteranzahl, Netto-Stunden, Pflanzrate (Pflanzen/Stunde), Flächenrate (ha/Stunde), Qualitätsbewertung, Maschineneinsatz.
 Personennamen sind pseudonymisiert (PERSON_1 etc.) — übernimm diese Platzhalter.
 
 Tagesprotokoll:

@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
+import { useSearchParams } from "next/navigation"
 import { Plus, ShoppingCart, Package, Truck, Check, Clock, X, FileText } from "lucide-react"
 import { toast } from "sonner"
 
@@ -241,11 +242,19 @@ function NeueBestellungModal({
 }
 
 export default function BestellungenPage() {
+  const searchParams = useSearchParams()
   const [bestellungen, setBestellungen] = useState<Bestellung[]>([])
   const [kritischeArtikel, setKritischeArtikel] = useState<KritischerArtikel[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [filter, setFilter] = useState<string>("alle")
+
+  // Auto-open modal when ?neu=1
+  useEffect(() => {
+    if (searchParams.get("neu") === "1") {
+      setShowModal(true)
+    }
+  }, [searchParams])
 
   const load = async () => {
     setLoading(true)
