@@ -162,7 +162,7 @@ Koch Aufforstung GmbH`
               </a>
             )}
             {lieferant.website && (
-              <a href={lieferant.website.startsWith("http") ? lieferant.website : `https://${lieferant.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-[var(--color-on-surface)] hover:text-emerald-400 transition-colors">
+              <a href={/^https?:\/\//i.test(lieferant.website) ? lieferant.website : `https://${lieferant.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-[var(--color-on-surface)] hover:text-emerald-400 transition-colors">
                 <Globe className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
                 {lieferant.website}
                 <ExternalLink className="w-3 h-3" />
