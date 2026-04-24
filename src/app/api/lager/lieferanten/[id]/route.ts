@@ -39,14 +39,20 @@ export async function PATCH(
   try {
     const body = await req.json()
     const { name, email, telefon, website, adresse, plz, ort, land, notizen, aktiv } = body
-    
+
+    // FM-34: Auto-prefix https:// for website URLs
+    let normalizedWebsite = website
+    if (website !== undefined && website && !/^https?:\/\//i.test(website)) {
+      normalizedWebsite = `https://${website}`
+    }
+
     const updated = await prisma.lieferant.update({
       where: { id },
       data: {
         ...(name !== undefined && { name }),
         ...(email !== undefined && { email }),
         ...(telefon !== undefined && { telefon }),
-        ...(website !== undefined && { website }),
+        ...(website !== undefined && { website: normalizedWebsite }),
         ...(adresse !== undefined && { adresse }),
         ...(plz !== undefined && { plz }),
         ...(ort !== undefined && { ort }),

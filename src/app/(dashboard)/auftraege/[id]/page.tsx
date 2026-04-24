@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import {
   ArrowLeft, ExternalLink, Save, Phone, Mail, User, TreePine, MapPin, Calendar,
   FileText, Shield, Sprout, Scissors, Package, Layers, Info, BadgeCheck, ChevronRight, Camera, CheckSquare, Plus,
-  MessageCircle
+  MessageCircle, Download, BarChart3
 } from "lucide-react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
@@ -1098,13 +1098,25 @@ export default function AuftragDetailPage() {
           <div className="bg-surface-container border border-border rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
               <SectionHeading icon={<FileText className="w-4 h-4" />} label={`Tagesprotokolle (${tagesprotokolle.length})`} />
-              <Link
-                href={`/auftraege/${auftrag.id}/protokoll/neu`}
-                className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-emerald-500/20 border border-emerald-500/40 rounded-lg text-emerald-400 hover:bg-emerald-500/30 transition-all"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                Neues Tagesprotokoll
-              </Link>
+              <div className="flex items-center gap-2">
+                {tagesprotokolle.length > 0 && (
+                  <a
+                    href={`/api/auftraege/${auftrag.id}/protokolle/export-pdf`}
+                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 border border-outline-variant rounded-lg text-on-surface-variant hover:text-on-surface hover:border-outline-variant transition-all"
+                    title="Alle Protokolle als ZIP exportieren"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    Alle exportieren
+                  </a>
+                )}
+                <Link
+                  href={`/auftraege/${auftrag.id}/protokoll/neu`}
+                  className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-emerald-500/20 border border-emerald-500/40 rounded-lg text-emerald-400 hover:bg-emerald-500/30 transition-all"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  Neues Tagesprotokoll
+                </Link>
+              </div>
             </div>
             {tagesprotokolle.length === 0 ? (
               <p className="text-on-surface-variant text-sm">Noch keine Tagesprotokolle vorhanden.</p>
@@ -1230,6 +1242,89 @@ export default function AuftragDetailPage() {
 
           {/* ── Abnahme-Workflow ───────────────────────────────────── */}
           {auftrag && <AbnahmeStatus auftragId={auftrag.id} />}
+
+          {/* ── FM-18: Abnahme-Zusammenfassung (genehmigte Protokolle) ── */}
+          {(() => {
+            const genehmigte = tagesprotokolle.filter(p => p.status === 'genehmigt')
+            if (genehmigte.length === 0) return null
+
+            let sumStunden = 0
+            let sumPflanzen = 0
+            let sumFlaeche = 0
+            let sumMitarbeiter = 0
+
+            for (const p of genehmigte) {
+              let netto = 0
+              if (p.arbeitsbeginn && p.arbeitsende) {
+                const begin = new Date(p.arbeitsbeginn).getTime()
+                const end = new Date(p.arbeitsende).getTime()
+                const pauseMs = (p.pauseMinuten ?? 0) * 60000
+                netto = (end - begin - pauseMs) / 3600000
+              }
+              sumStunden += netto
+              sumPflanzen += p.gepflanztGesamt ?? 0
+              sumFlaeche += p.flaecheBearbeitetHa ?? 0
+              sumMitarbeiter += p.mitarbeiterAnzahl ?? 0
+            }
+
+            const avgPflProStdMa = sumStunden > 0 && sumMitarbeiter > 0
+              ? Math.round(sumPflanzen / sumStunden / (sumMitarbeiter / genehmigte.length))
+              : null
+
+            return (
+              <div className="bg-surface-container border border-emerald-500/30 rounded-xl p-6">
+                <SectionHeading icon={<BarChart3 className="w-4 h-4" />} label={`Abnahme-Zusammenfassung (${genehmigte.length} genehmigte Protokolle)`} />
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                  {[
+                    { label: 'Netto-Stunden', value: Math.round(sumStunden * 100) / 100, unit: 'Std.' },
+                    { label: 'Pflanzen gesamt', value: sumPflanzen.toLocaleString('de-DE'), unit: 'Stk.' },
+                    { label: 'Fläche gesamt', value: (Math.round(sumFlaeche * 100) / 100).toLocaleString('de-DE'), unit: 'ha' },
+                    { label: 'Pfl./Std./MA', value: avgPflProStdMa ?? '—', unit: avgPflProStdMa ? '' : '' },
+                  ].map(({ label, value, unit }) => (
+                    <div key={label} className="bg-surface-container-low border border-border rounded-xl p-3">
+                      <p className="text-xs text-on-surface-variant mb-1">{label}</p>
+                      <p className="text-lg font-bold text-on-surface">{value} <span className="text-xs font-normal text-on-surface-variant">{unit}</span></p>
+                    </div>
+                  ))}
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="text-left pb-2 text-on-surface-variant font-medium text-xs">Datum</th>
+                        <th className="text-left pb-2 text-on-surface-variant font-medium text-xs">Ersteller</th>
+                        <th className="text-right pb-2 text-on-surface-variant font-medium text-xs">Stunden</th>
+                        <th className="text-right pb-2 text-on-surface-variant font-medium text-xs">Pflanzen</th>
+                        <th className="text-right pb-2 text-on-surface-variant font-medium text-xs">Fläche (ha)</th>
+                        <th className="text-right pb-2 text-on-surface-variant font-medium text-xs">MA</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {genehmigte.map(p => {
+                        let netto = 0
+                        if (p.arbeitsbeginn && p.arbeitsende) {
+                          const begin = new Date(p.arbeitsbeginn).getTime()
+                          const end = new Date(p.arbeitsende).getTime()
+                          const pauseMs = (p.pauseMinuten ?? 0) * 60000
+                          netto = Math.round(((end - begin - pauseMs) / 3600000) * 100) / 100
+                        }
+                        return (
+                          <tr key={p.id} className="border-b border-outline-variant hover:bg-surface-container-high transition-colors">
+                            <td className="py-2 text-on-surface text-xs">{new Date(p.datum).toLocaleDateString('de-DE')}</td>
+                            <td className="py-2 text-on-surface-variant text-xs">{p.ersteller ?? '—'}</td>
+                            <td className="py-2 text-right text-on-surface text-xs">{netto > 0 ? netto : '—'}</td>
+                            <td className="py-2 text-right text-on-surface text-xs">{p.gepflanztGesamt ? p.gepflanztGesamt.toLocaleString('de-DE') : '—'}</td>
+                            <td className="py-2 text-right text-on-surface text-xs">{p.flaecheBearbeitetHa ?? '—'}</td>
+                            <td className="py-2 text-right text-on-surface text-xs">{p.mitarbeiterAnzahl ?? '—'}</td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )
+          })()}
 
           {/* ── Materialzuweisung ──────────────────────────────────── */}
           <div className="bg-surface-container border border-border rounded-xl p-6">

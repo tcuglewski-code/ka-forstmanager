@@ -62,6 +62,7 @@ export interface TagesprotokollFull {
   arbeitsende?: string | null
   pauseMinuten?: number | null
   gepflanztGesamt?: number | null
+  flaecheBearbeitetHa?: number | null
   mitarbeiterAnzahl?: number | null
   // meta
   eingereichtAm?: string | null

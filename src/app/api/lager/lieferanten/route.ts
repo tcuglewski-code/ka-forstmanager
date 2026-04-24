@@ -42,12 +42,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Name erforderlich" }, { status: 400 })
     }
 
+    // FM-34: Auto-prefix https:// for website URLs
+    let website = body.website?.trim() || null
+    if (website && !/^https?:\/\//i.test(website)) {
+      website = `https://${website}`
+    }
+
     const lieferant = await prisma.lieferant.create({
       data: {
         name: body.name.trim(),
         email: body.email || null,
         telefon: body.telefon || null,
-        website: body.website || null,
+        website,
         adresse: body.adresse || null,
         plz: body.plz || null,
         ort: body.ort || null,
