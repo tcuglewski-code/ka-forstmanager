@@ -784,6 +784,8 @@ model Tagesprotokoll {
   lockedAt              DateTime?
   lockedBy              String?
 
+  // F-3: Protokoll-Items (Dienstleistungen)
+  items             TagesprotokollItem[]
   // Sprint P2-1: Protokoll ↔ Rechnung Verknüpfung
   rechnungLinks     RechnungProtokollLink[]
 
@@ -2403,6 +2405,40 @@ model WpAnfrage {
 
   @@index([source])
   @@index([createdAt])
+}
+
+// F-2: Pflanzensteckbrief — Baumarten-Infos für Wissensbank
+model PflanzenInfo {
+  id                   String   @id @default(cuid())
+  baumart              String   @unique
+  lateinischName       String?
+  hoeheCm              Int?
+  wurzeltiefeCm        Int?
+  lichtbedarf          String? // "vollsonne" | "halbschatten" | "schatten"
+  bodentypus           String?
+  wuchsgeschwindigkeit String? // "schnell" | "mittel" | "langsam"
+  frosthaerte          String? // "hoch" | "mittel" | "niedrig"
+  pflegeaufwand        String? // "hoch" | "mittel" | "niedrig"
+  foerderFaehig        Boolean  @default(false)
+  beschreibung         String?  @db.Text
+  bildUrl              String?
+  quellen              String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+// F-3: Protokoll-Items — Dienstleistungs-Verknüpfung im Tagesprotokoll
+model TagesprotokollItem {
+  id               String         @id @default(cuid())
+  tagesprotokollId String
+  dienstleistung   String
+  flaeche          Float?
+  anzahlPflanzen   Int?
+  stunden          Float?
+  bemerkung        String?
+  tagesprotokoll   Tagesprotokoll @relation(fields: [tagesprotokollId], references: [id], onDelete: Cascade)
+
+  @@index([tagesprotokollId])
 }
 
 // Förder-News / Updates (Sprint 0.4)

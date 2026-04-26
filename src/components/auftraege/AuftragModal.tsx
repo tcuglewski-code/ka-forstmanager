@@ -12,6 +12,8 @@ interface Saison {
 interface Gruppe {
   id: string
   name: string
+  gruppenfuehrerId?: string | null
+  gruppenfuehrer?: { id: string; vorname: string; nachname: string } | null
 }
 
 // Sprint Q031: Template Interface
@@ -188,6 +190,11 @@ export function AuftragModal({
   const [kiEnabled, setKiEnabled] = useState(true) // Feature-Flag
   const fileInputRef = useRef<HTMLInputElement>(null)
   
+  // F-7: Waldbesitzer Autofill State
+  const [waldbesitzerSuggestions, setWaldbesitzerSuggestions] = useState<Array<{waldbesitzer: string | null; waldbesitzerEmail: string | null; waldbesitzerTelefon: string | null}>>([])
+  const [showWbSuggestions, setShowWbSuggestions] = useState(false)
+  const [wbAutofilled, setWbAutofilled] = useState(false)
+
   // FM-05: Multi-Flächen State
   const [flaechen, setFlaechen] = useState<Flaeche[]>(() => {
     const wizardFlaechen = auftrag?.wizardDaten?.flaechen
@@ -250,7 +257,10 @@ export function AuftragModal({
 
   useEffect(() => {
     fetch("/api/saisons").then(r => r.json()).then(setSaisons)
-    fetch("/api/gruppen").then(r => r.json()).then(setGruppen)
+    fetch("/api/gruppen").then(r => r.json()).then(data => {
+      // API returns paginated { items: [...] } or direct array
+      setGruppen(Array.isArray(data) ? data : (data.items ?? []))
+    })
     // Sprint Q031: Templates laden
     fetch("/api/auftraege/templates").then(r => r.json()).then(setTemplates)
     // KH-1: KI Consent-Status laden
@@ -260,6 +270,34 @@ export function AuftragModal({
       .catch(() => setKiConsent(false))
   }, [])
   
+  // F-7: Waldbesitzer Autofill — Suche bei Eingabe
+  useEffect(() => {
+    if (!form.waldbesitzer || form.waldbesitzer.length < 2 || auftrag?.id) {
+      setWaldbesitzerSuggestions([])
+      return
+    }
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/waldbesitzer-suggest?name=${encodeURIComponent(form.waldbesitzer)}`)
+        const data = await res.json()
+        if (Array.isArray(data) && data.length > 0) {
+          setWaldbesitzerSuggestions(data)
+          setShowWbSuggestions(true)
+        } else {
+          setWaldbesitzerSuggestions([])
+          setShowWbSuggestions(false)
+        }
+      } catch { /* ignore */ }
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [form.waldbesitzer, auftrag?.id])
+
+  // F-4: Gruppenführer-Name für ausgewählte Gruppe
+  const selectedGruppe = gruppen.find(g => g.id === form.gruppeId)
+  const gruppenfuehrerName = selectedGruppe?.gruppenfuehrer
+    ? `${selectedGruppe.gruppenfuehrer.vorname} ${selectedGruppe.gruppenfuehrer.nachname}`
+    : null
+
   // KH-1: KI Dokument-Analyse Handler
   const handleKiFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -846,7 +884,47 @@ export function AuftragModal({
                   {BUNDESLAENDER.map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
               </div>
-              {field("Waldbesitzer", "waldbesitzer", "text", "Name")}
+              {/* F-7: Waldbesitzer mit Autofill-Suggestions */}
+              <div className="relative">
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Waldbesitzer</label>
+                <input
+                  type="text"
+                  value={form.waldbesitzer}
+                  onChange={e => { setForm(f => ({ ...f, waldbesitzer: e.target.value })); setWbAutofilled(false) }}
+                  onFocus={() => waldbesitzerSuggestions.length > 0 && setShowWbSuggestions(true)}
+                  onBlur={() => setTimeout(() => setShowWbSuggestions(false), 200)}
+                  placeholder="Name"
+                  className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
+                />
+                {showWbSuggestions && waldbesitzerSuggestions.length > 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-[var(--color-surface-container)] border border-border rounded-lg shadow-lg max-h-40 overflow-y-auto">
+                    {waldbesitzerSuggestions.map((s, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        className="w-full text-left px-3 py-2 text-sm text-[var(--color-on-surface)] hover:bg-emerald-500/10 transition-colors"
+                        onMouseDown={e => {
+                          e.preventDefault()
+                          setForm(f => ({
+                            ...f,
+                            waldbesitzer: s.waldbesitzer || f.waldbesitzer,
+                            waldbesitzerEmail: s.waldbesitzerEmail || f.waldbesitzerEmail,
+                            waldbesitzerTelefon: s.waldbesitzerTelefon || f.waldbesitzerTelefon,
+                          }))
+                          setShowWbSuggestions(false)
+                          setWbAutofilled(true)
+                        }}
+                      >
+                        <span className="font-medium">{s.waldbesitzer}</span>
+                        {s.waldbesitzerEmail && <span className="text-xs text-[var(--color-on-surface-variant)] ml-2">{s.waldbesitzerEmail}</span>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {wbAutofilled && (
+                  <p className="text-xs text-emerald-500 mt-1">Kontaktdaten aus Kundenstamm übernommen</p>
+                )}
+              </div>
             </div>
             {/* KC-4: PLZ Autofill + Forstamt-Kontaktsuche */}
             <AddressAutofill
@@ -1098,6 +1176,10 @@ export function AuftragModal({
                   <option value="">— keine —</option>
                   {gruppen.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
                 </select>
+                {/* F-4: Gruppenführer-Anzeige */}
+                {gruppenfuehrerName && (
+                  <p className="text-xs text-emerald-500 mt-1">GF: {gruppenfuehrerName}</p>
+                )}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">

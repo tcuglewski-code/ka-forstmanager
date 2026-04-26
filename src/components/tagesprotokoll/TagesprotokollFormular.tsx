@@ -90,6 +90,9 @@ export default function TagesprotokollFormular({
   // AUF-4: Gruppen-Dropdown (echte Daten statt hardcoded)
   const [gruppenListe, setGruppenListe] = useState<{ id: string; name: string }[]>([])
 
+  // F-3: Protokoll-Items (Dienstleistungs-Verknüpfung)
+  const [protokollItems, setProtokollItems] = useState<Array<{dienstleistung: string; flaeche: string; anzahlPflanzen: string; stunden: string; bemerkung: string}>>([])
+
   // FIX 6: Team-Mitglieder
   const [team, setTeam] = useState<TeamMitglied[]>([])
   const [globalStunden, setGlobalStunden] = useState('')
@@ -417,6 +420,16 @@ export default function TagesprotokollFormular({
         // Kommentar
         kommentar: form.kommentar || null,
         bericht: form.bericht || '',
+        // F-3: Protokoll-Items
+        items: protokollItems
+          .filter(it => it.dienstleistung.trim())
+          .map(it => ({
+            dienstleistung: it.dienstleistung,
+            flaeche: it.flaeche ? parseFloat(it.flaeche) : null,
+            anzahlPflanzen: it.anzahlPflanzen ? parseInt(it.anzahlPflanzen) : null,
+            stunden: it.stunden ? parseFloat(it.stunden) : null,
+            bemerkung: it.bemerkung || null,
+          })),
       }
 
       const url = editId ? `/api/tagesprotokoll/${editId}` : '/api/tagesprotokoll'
@@ -788,6 +801,81 @@ export default function TagesprotokollFormular({
           </div>
         </div>
       )}
+
+      {/* F-3: Protokoll-Items (Dienstleistungs-Verknüpfung) */}
+      <div className="mb-6 bg-[var(--color-surface-container)] rounded-xl border border-border overflow-hidden">
+        <div className="bg-[var(--color-surface-container-highest)] px-4 py-3 border-b border-border flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span>📋</span>
+            <h3 className="font-semibold text-[var(--color-on-surface)] text-sm">Leistungspositionen</h3>
+          </div>
+          <button
+            type="button"
+            onClick={() => setProtokollItems(prev => [...prev, { dienstleistung: '', flaeche: '', anzahlPflanzen: '', stunden: '', bemerkung: '' }])}
+            className="text-xs bg-green-700 text-white px-3 py-1.5 rounded-lg hover:bg-green-600"
+          >
+            + Leistung
+          </button>
+        </div>
+        <div className="p-4">
+          {protokollItems.length === 0 ? (
+            <p className="text-sm text-[var(--color-on-surface-variant)] text-center py-3">
+              Keine Leistungspositionen. Klicken Sie &quot;+ Leistung&quot; zum Hinzufügen.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {protokollItems.map((item, idx) => (
+                <div key={idx} className="bg-[var(--color-surface-container-highest)] border border-border rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-[var(--color-on-surface-variant)]">Position {idx + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => setProtokollItems(prev => prev.filter((_, i) => i !== idx))}
+                      className="text-xs text-red-400 hover:text-red-300"
+                    >
+                      Entfernen
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+                    <div className="md:col-span-2">
+                      <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Dienstleistung</label>
+                      <input
+                        type="text"
+                        value={item.dienstleistung}
+                        onChange={e => setProtokollItems(prev => prev.map((it, i) => i === idx ? { ...it, dienstleistung: e.target.value } : it))}
+                        placeholder="z.B. Pflanzung, Zaunbau, Kulturpflege"
+                        className="w-full border border-border rounded px-2 py-1.5 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] placeholder-[var(--color-on-surface-variant)]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Stunden</label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        value={item.stunden}
+                        onChange={e => setProtokollItems(prev => prev.map((it, i) => i === idx ? { ...it, stunden: e.target.value } : it))}
+                        className="w-full border border-border rounded px-2 py-1.5 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Fläche (ha)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={item.flaeche}
+                        onChange={e => setProtokollItems(prev => prev.map((it, i) => i === idx ? { ...it, flaeche: e.target.value } : it))}
+                        className="w-full border border-border rounded px-2 py-1.5 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* Kommentar */}
       <div className="bg-[var(--color-surface-container)] rounded-xl border border-border overflow-hidden mb-6">

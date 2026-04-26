@@ -23,7 +23,8 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
     include: {
       auftrag: {
         select: { titel: true, nummer: true, waldbesitzer: true, standort: true }
-      }
+      },
+      items: true,
     }
   })
 
@@ -202,6 +203,9 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
     if (existing) warnings.push('Protokoll für diesen Tag + Auftrag + Gruppe existiert bereits')
   }
 
+  // F-3: Items aus Request extrahieren
+  const itemsData = Array.isArray(data.items) ? data.items : []
+
   // Whitelist: nur Felder die im Prisma-Schema existieren
   const protokoll = await prisma.tagesprotokoll.create({
     data: {
@@ -287,7 +291,20 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
       std_nachbesserung: data.std_nachbesserung ?? null,
       stk_nachbesserung: data.stk_nachbesserung ?? null,
       std_sonstige_arbeiten: data.std_sonstige_arbeiten ?? null,
-    }
+      // F-3: Protokoll-Items (Dienstleistungen)
+      ...(itemsData.length > 0 && {
+        items: {
+          create: itemsData.map((item: { dienstleistung: string; flaeche?: number; anzahlPflanzen?: number; stunden?: number; bemerkung?: string }) => ({
+            dienstleistung: item.dienstleistung,
+            flaeche: item.flaeche ?? null,
+            anzahlPflanzen: item.anzahlPflanzen ?? null,
+            stunden: item.stunden ?? null,
+            bemerkung: item.bemerkung ?? null,
+          })),
+        },
+      }),
+    },
+    include: { items: true },
   })
 
   return NextResponse.json({ ...protokoll, warnings }, { status: 201 })
