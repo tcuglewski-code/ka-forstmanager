@@ -2457,3 +2457,64 @@ model FoerderNews {
   @@index([prioritaet])
   @@index([aktiv])
 }
+
+// ===== F-1: Lieferantenbestellungen (Baumschulen-Bestellungen mit KI-Extraktion) =====
+model LieferantenBestellung {
+  id              String                  @id @default(cuid())
+  bestellnummer   String                  @unique
+  lieferantName   String
+  lieferantEmail  String?
+  bestelldatum    DateTime                @default(now())
+  lieferdatum     DateTime?
+  status          String                  @default("entwurf") // entwurf | bestellt | geliefert | storniert
+  gesamtbetrag    Float?
+  bemerkung       String?
+  positionen      LieferBestellPosition[]
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+}
+
+model LieferBestellPosition {
+  id              String                @id @default(cuid())
+  bestellungId    String
+  baumart         String
+  menge           Int
+  einheit         String                @default("Stück")
+  preisProEinheit Float?
+  gesamtpreis     Float?
+  qualitaet       String?
+  bemerkung       String?
+  bestellung      LieferantenBestellung @relation(fields: [bestellungId], references: [id], onDelete: Cascade)
+
+  @@index([bestellungId])
+}
+
+// ===== F-6: Produktvarianten — Baumschul-Katalog =====
+model Produkt {
+  id           String            @id @default(cuid())
+  baumart      String
+  kategorie    String?
+  beschreibung String?
+  baumschuleId String?
+  aktiv        Boolean           @default(true)
+  varianten    ProduktVariante[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([baumschuleId])
+  @@index([baumart])
+}
+
+model ProduktVariante {
+  id            String  @id @default(cuid())
+  produktId     String
+  name          String
+  hoehe         String?
+  qualitaet     String?
+  preisProStueck Float?
+  verfuegbar    Boolean @default(true)
+  minBestellung Int?
+  produkt       Produkt @relation(fields: [produktId], references: [id], onDelete: Cascade)
+
+  @@index([produktId])
+}

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { getSmartItemsForDienstleistung, DIENSTLEISTUNG_LABELS, type SmartItem } from '@/lib/smart-items'
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Typen
@@ -839,13 +840,32 @@ export default function TagesprotokollFormular({
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
                     <div className="md:col-span-2">
                       <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Dienstleistung</label>
-                      <input
-                        type="text"
+                      <select
                         value={item.dienstleistung}
                         onChange={e => setProtokollItems(prev => prev.map((it, i) => i === idx ? { ...it, dienstleistung: e.target.value } : it))}
-                        placeholder="z.B. Pflanzung, Zaunbau, Kulturpflege"
-                        className="w-full border border-border rounded px-2 py-1.5 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] placeholder-[var(--color-on-surface-variant)]"
-                      />
+                        className="w-full border border-border rounded px-2 py-1.5 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)]"
+                      >
+                        <option value="">Bitte wählen...</option>
+                        {Object.entries(DIENSTLEISTUNG_LABELS).map(([key, label]) => (
+                          <option key={key} value={key}>{label}</option>
+                        ))}
+                        <option value="sonstiges">Sonstiges</option>
+                      </select>
+                      {/* FM-12: Smart Items Vorschläge */}
+                      {item.dienstleistung && getSmartItemsForDienstleistung(item.dienstleistung).length > 0 && (
+                        <div className="mt-1.5 flex flex-wrap gap-1">
+                          {getSmartItemsForDienstleistung(item.dienstleistung).map((si: SmartItem) => (
+                            <button
+                              key={si.name}
+                              type="button"
+                              onClick={() => setProtokollItems(prev => [...prev, { dienstleistung: item.dienstleistung, flaeche: '', anzahlPflanzen: si.einheit === 'Stück' ? String(si.richtwert) : '', stunden: si.einheit === 'h' ? String(si.richtwert) : '', bemerkung: si.name }])}
+                              className="text-[10px] px-2 py-0.5 rounded-full border border-green-700/40 text-green-500 hover:bg-green-700/20 transition-colors"
+                            >
+                              + {si.name} ({si.richtwert} {si.einheit})
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
                     <div>
                       <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Stunden</label>

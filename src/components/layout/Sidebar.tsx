@@ -11,6 +11,8 @@ import {
   ClipboardList,
   Package,
   Car,
+  Zap,
+  ShoppingCart,
   DollarSign,
   Clock,
   GraduationCap,
@@ -56,6 +58,7 @@ const navItems = [
   { href: "/saisons", label: "Saisons", icon: Calendar },
   { href: "/mitarbeiter", label: "Mitarbeiter", icon: Users, tourId: "mitarbeiter" },
   { href: "/gruppen", label: "Gruppen", icon: UsersRound },
+  { href: "/lieferantenbestellungen", label: "Lieferantenbestellungen", icon: ShoppingCart },
   { href: "/lager", label: "Lager", icon: Package, tourId: "lager" },
   { href: "/fuhrpark", label: "Fuhrpark", icon: Car },
   { href: "/lohn", label: "Lohn", icon: DollarSign },
@@ -68,6 +71,7 @@ const navItems = [
   { href: "/protokolle", label: "Protokolle", icon: ScrollText, tourId: "protokolle" },
   { href: "/abnahmen", label: "Abnahmen", icon: CheckSquare, tourId: "abnahmen" },
   { href: "/saatguternte/baumschulen", label: "Baumschulen", icon: TreeDeciduous },
+  { href: "/baumschule/katalog", label: "Produktkatalog", icon: Package },
   { href: "/kontakte", label: "Kontakte", icon: MapPin },
   { href: "/wissensbank", label: "Wissensbank", icon: BookOpen },
   { href: "/foerderung", label: "Förderberater", icon: Leaf },
@@ -413,8 +417,22 @@ export function Sidebar() {
           </button>
         </div>
 
-        {/* ── CTA: Neuer Auftrag ── */}
-        <div className="px-3 pb-3 flex-shrink-0">
+        {/* ── CTA: Neuer Auftrag + Schnell-Auftrag ── */}
+        <div className="px-3 pb-3 flex-shrink-0 space-y-1.5">
+          <Link
+            href="/auftraege/schnell"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
+            style={{
+              backgroundColor: "#d97706",
+              color: "#ffffff",
+              fontFamily: "var(--font-display)",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
+            onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+          >
+            <Zap className="w-4 h-4" />
+            Schnell-Auftrag
+          </Link>
           <Link
             href="/auftraege/neu"
             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
