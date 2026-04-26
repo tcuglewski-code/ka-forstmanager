@@ -9,19 +9,22 @@ export async function GET(req: NextRequest) {
 
   try {
     const { searchParams } = new URL(req.url)
+    const wantPagination = searchParams.has("page")
     const page = parseInt(searchParams.get("page") || "1")
     const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 200)
     const skip = (page - 1) * limit
 
-    const [items, total] = await Promise.all([
-      prisma.saison.findMany({
-        orderBy: { createdAt: "desc" },
-        skip,
-        take: limit,
-      }),
-      prisma.saison.count(),
-    ])
+    const items = await prisma.saison.findMany({
+      orderBy: { createdAt: "desc" },
+      ...(wantPagination ? { skip, take: limit } : {}),
+    })
 
+    // Ohne expliziten page-Parameter: plain Array zurückgeben (Abwärtskompatibilität)
+    if (!wantPagination) {
+      return NextResponse.json(items)
+    }
+
+    const total = await prisma.saison.count()
     return NextResponse.json({ items, total, page, totalPages: Math.ceil(total / limit) })
   } catch {
     return NextResponse.json({ error: "Fehler beim Laden der Saisons" }, { status: 500 })

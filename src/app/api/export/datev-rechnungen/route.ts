@@ -3,12 +3,26 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { isAdmin } from "@/lib/permissions"
 import { withErrorHandler } from "@/lib/api-handler"
+import { logAudit } from "@/lib/audit"
 
 
 export const GET = withErrorHandler(async (req: Request) => {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  if (!isAdmin(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  // Zugriff: Admin oder Buchhaltung (Steuerberater)
+  const userRole = (session.user as { role?: string }).role
+  if (!isAdmin(session) && userRole !== "accountant") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
+  // DSGVO Audit-Log: DATEV-Export protokollieren
+  const userId = (session.user as { id?: string })?.id
+  await logAudit({
+    userId: userId ?? undefined,
+    action: "CREATE",
+    entityType: "DATEV_EXPORT_RECHNUNGEN",
+    entityId: `export-${new Date().toISOString().slice(0, 10)}`,
+  })
 
   const url = new URL(req.url)
   const von = url.searchParams.get("von")

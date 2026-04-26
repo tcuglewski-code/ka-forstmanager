@@ -31,18 +31,27 @@ export const POST = withErrorHandler(async (req: Request) => {
 
   const body = await req.json()
 
-  // Auto-Nummer generieren
-  const year = new Date().getFullYear()
-  const last = await prisma.angebot.findFirst({
-    where: { nummer: { startsWith: `AN-${year}-` } },
-    orderBy: { nummer: "desc" },
-  })
-  let nextNum = 1
-  if (last?.nummer) {
-    const match = last.nummer.match(/AN-\d{4}-(\d+)/)
-    if (match) nextNum = parseInt(match[1], 10) + 1
+  // Auto-Nummer generieren (robust: Max-Nummer + Kollisionsschutz)
+  let nummer = body.nummer
+  if (!nummer) {
+    const year = new Date().getFullYear()
+    const last = await prisma.angebot.findFirst({
+      where: { nummer: { startsWith: `AN-${year}-` } },
+      orderBy: { nummer: "desc" },
+    })
+    let nextNum = 1
+    if (last?.nummer) {
+      const match = last.nummer.match(/AN-\d{4}-(\d+)/)
+      if (match) nextNum = parseInt(match[1], 10) + 1
+    }
+    nummer = `AN-${year}-${String(nextNum).padStart(4, "0")}`
+    // Prüfe ob Nummer existiert (Kollisionsschutz)
+    const exists = await prisma.angebot.findUnique({ where: { nummer } })
+    if (exists) {
+      nextNum++
+      nummer = `AN-${year}-${String(nextNum).padStart(4, "0")}`
+    }
   }
-  const nummer = body.nummer ?? `AN-${year}-${String(nextNum).padStart(4, "0")}`
 
   // Gesamtpreis berechnen falls nicht angegeben
   let gesamtpreis = body.gesamtpreis

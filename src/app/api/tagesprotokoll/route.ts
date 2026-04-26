@@ -202,11 +202,91 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
     if (existing) warnings.push('Protokoll für diesen Tag + Auftrag + Gruppe existiert bereits')
   }
 
+  // Whitelist: nur Felder die im Prisma-Schema existieren
   const protokoll = await prisma.tagesprotokoll.create({
     data: {
-      ...data,
-      erstellerId: (session.user as { id?: string })?.id,
-      status: data.status || 'entwurf'
+      auftragId: data.auftragId,
+      gruppeId: data.gruppeId ?? null,
+      datum: data.datum ? new Date(data.datum) : new Date(),
+      ersteller: data.ersteller ?? '',
+      erstellerId: (session.user as { id?: string })?.id ?? null,
+      status: data.status || 'entwurf',
+      eingereichtAm: data.eingereichtAm ? new Date(data.eingereichtAm) : null,
+      // Arbeitszeit
+      arbeitsbeginn: data.arbeitsbeginn ?? null,
+      arbeitsende: data.arbeitsende ?? null,
+      pauseMinuten: data.pauseMinuten ?? null,
+      // Fläche & Leistung
+      flaecheBearbeitetHa: data.flaecheBearbeitetHa ?? null,
+      abschnitt: data.abschnitt ?? null,
+      // Pflanzung
+      gepflanztGesamt: data.gepflanztGesamt ?? null,
+      gepflanzt: data.gepflanzt ?? null,
+      pflanzDetails: data.pflanzDetails ?? null,
+      pflanzverband: data.pflanzverband ?? null,
+      pflanztiefe: data.pflanztiefe ?? null,
+      // Boden & Standort
+      bodenVorbereitung: data.bodenVorbereitung ?? null,
+      bodenbeschaffenheit: data.bodenbeschaffenheit ?? null,
+      hangneigung: data.hangneigung ?? null,
+      // Witterung
+      witterung: data.witterung ?? null,
+      temperaturMin: data.temperaturMin ?? null,
+      temperaturMax: data.temperaturMax ?? null,
+      wind: data.wind ?? null,
+      frost: data.frost ?? null,
+      // GPS
+      gpsStartLat: data.gpsStartLat ?? null,
+      gpsStartLon: data.gpsStartLon ?? null,
+      gpsEndLat: data.gpsEndLat ?? null,
+      gpsEndLon: data.gpsEndLon ?? null,
+      gpsTrack: data.gpsTrack ?? null,
+      // Team
+      mitarbeiterAnzahl: data.mitarbeiterAnzahl ?? null,
+      mitarbeiterListe: data.mitarbeiterListe ?? null,
+      // Material & Maschinen
+      materialVerbraucht: data.materialVerbraucht ?? null,
+      maschinenEinsatz: data.maschinenEinsatz ?? null,
+      // Qualitätskontrolle
+      ausfaelleAnzahl: data.ausfaelleAnzahl ?? null,
+      ausfaelleGrund: data.ausfaelleGrund ?? null,
+      nachpflanzungNoetig: data.nachpflanzungNoetig ?? null,
+      qualitaetsBewertung: data.qualitaetsBewertung ?? null,
+      // Protokoll & Notizen
+      bericht: data.bericht ?? '',
+      besonderheiten: data.besonderheiten ?? null,
+      naechsteSchritte: data.naechsteSchritte ?? null,
+      waldbesitzerAnwesend: data.waldbesitzerAnwesend ?? null,
+      waldbesitzerNotiz: data.waldbesitzerNotiz ?? null,
+      // Dokumentation
+      fotos: data.fotos ?? null,
+      unterschriftGf: data.unterschriftGf ?? null,
+      // Legacy-Felder
+      kommentar: data.kommentar ?? null,
+      forstamt: data.forstamt ?? null,
+      revier: data.revier ?? null,
+      revierleiter: data.revierleiter ?? null,
+      abteilung: data.abteilung ?? null,
+      waldbesitzerName: data.waldbesitzerName ?? null,
+      pausezeit: data.pausezeit ?? null,
+      std_einschlag: data.std_einschlag ?? null,
+      std_handpflanzung: data.std_handpflanzung ?? null,
+      stk_pflanzung: data.stk_pflanzung ?? null,
+      std_zum_bohrer: data.std_zum_bohrer ?? null,
+      std_mit_bohrer: data.std_mit_bohrer ?? null,
+      stk_pflanzung_mit_bohrer: data.stk_pflanzung_mit_bohrer ?? null,
+      std_freischneider: data.std_freischneider ?? null,
+      std_motorsaege: data.std_motorsaege ?? null,
+      std_wuchshuellen: data.std_wuchshuellen ?? null,
+      stk_wuchshuellen: data.stk_wuchshuellen ?? null,
+      std_netze_staebe_spiralen: data.std_netze_staebe_spiralen ?? null,
+      stk_netze_staebe_spiralen: data.stk_netze_staebe_spiralen ?? null,
+      std_zaunbau: data.std_zaunbau ?? null,
+      stk_drahtverbinder: data.stk_drahtverbinder ?? null,
+      lfm_zaunbau: data.lfm_zaunbau ?? null,
+      std_nachbesserung: data.std_nachbesserung ?? null,
+      stk_nachbesserung: data.stk_nachbesserung ?? null,
+      std_sonstige_arbeiten: data.std_sonstige_arbeiten ?? null,
     }
   })
 

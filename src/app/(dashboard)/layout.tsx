@@ -12,6 +12,11 @@ export default async function DashboardLayout({
   const session = await auth()
   if (!session) redirect("/login")
 
+  // Rollenbasierte Zugriffskontrolle: Baumschule/Kunde zum Portal umleiten
+  const userRole = (session.user as { role?: string }).role
+  if (userRole === "baumschule") redirect("/baumschule/portal")
+  if (userRole === "kunde") redirect("/kunde/dashboard")
+
   return (
     <SessionProvider>
       <ReadonlyModeProvider>

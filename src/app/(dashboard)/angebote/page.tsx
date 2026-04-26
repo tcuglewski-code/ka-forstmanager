@@ -118,7 +118,7 @@ export default function AngebotePage() {
   useEffect(() => {
     ladeDaten()
     // System-Config laden für Kalkulation
-    fetch("/api/einstellungen")
+    fetch("/api/einstellungen/config")
       .then((r) => r.json())
       .then((d) => {
         if (d && typeof d === "object") setConfig(d)

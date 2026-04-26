@@ -84,9 +84,46 @@ export const PUT = withErrorHandler(async (req: NextRequest,
     data.eingereichtAm = new Date()
   }
 
+  // Whitelist: nur Felder die im Prisma-Schema existieren
+  const updateData: Record<string, unknown> = {}
+  const allowedFields = [
+    'auftragId', 'gruppeId', 'datum', 'ersteller', 'erstellerId', 'status', 'eingereichtAm',
+    'arbeitsbeginn', 'arbeitsende', 'pauseMinuten',
+    'flaecheBearbeitetHa', 'abschnitt',
+    'gepflanztGesamt', 'gepflanzt', 'pflanzDetails', 'pflanzverband', 'pflanztiefe',
+    'bodenVorbereitung', 'bodenbeschaffenheit', 'hangneigung',
+    'witterung', 'temperaturMin', 'temperaturMax', 'wind', 'frost',
+    'gpsStartLat', 'gpsStartLon', 'gpsEndLat', 'gpsEndLon', 'gpsTrack',
+    'mitarbeiterAnzahl', 'mitarbeiterListe',
+    'materialVerbraucht', 'maschinenEinsatz',
+    'ausfaelleAnzahl', 'ausfaelleGrund', 'nachpflanzungNoetig', 'qualitaetsBewertung',
+    'bericht', 'besonderheiten', 'naechsteSchritte', 'waldbesitzerAnwesend', 'waldbesitzerNotiz',
+    'fotos', 'unterschriftGf', 'genehmigungsKommentar',
+    'kommentar', 'forstamt', 'revier', 'revierleiter', 'abteilung', 'waldbesitzerName',
+    'pausezeit',
+    'std_einschlag', 'std_handpflanzung', 'stk_pflanzung',
+    'std_zum_bohrer', 'std_mit_bohrer', 'stk_pflanzung_mit_bohrer',
+    'std_freischneider', 'std_motorsaege',
+    'std_wuchshuellen', 'stk_wuchshuellen', 'std_netze_staebe_spiralen', 'stk_netze_staebe_spiralen',
+    'std_zaunbau', 'stk_drahtverbinder', 'lfm_zaunbau',
+    'std_nachbesserung', 'stk_nachbesserung', 'std_sonstige_arbeiten',
+  ]
+  for (const field of allowedFields) {
+    if (data[field] !== undefined) {
+      updateData[field] = data[field]
+    }
+  }
+  // Datum als Date-Objekt
+  if (updateData.datum && typeof updateData.datum === 'string') {
+    updateData.datum = new Date(updateData.datum as string)
+  }
+  if (updateData.eingereichtAm && typeof updateData.eingereichtAm === 'string') {
+    updateData.eingereichtAm = new Date(updateData.eingereichtAm as string)
+  }
+
   const p = await prisma.tagesprotokoll.update({
     where: { id },
-    data
+    data: updateData,
   })
 
   return NextResponse.json(p)

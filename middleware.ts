@@ -8,6 +8,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { loginRateLimit } from '@/lib/rate-limit'
+import { getToken } from 'next-auth/jwt'
 
 // ============================================
 // Rate Limiting (SC-02)
@@ -172,9 +173,47 @@ function getActionFromMethod(method: string): string {
 // Main Middleware
 // ============================================
 
+// Baumschule-erlaubte API-Pfade (alle anderen werden geblockt)
+const BAUMSCHULE_ALLOWED_API = [
+  '/api/auth/',
+  '/api/baumschule/',
+  '/api/saatguternte/baumschul',
+  '/api/angebote',       // read-only via GET checks in handler
+  '/api/mitarbeiter/me',
+  '/api/mitarbeiter/profil',
+]
+
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const ip = getClientIP(request)
+
+  // ── Baumschule/Kunde API-Schutz: Rolle aus NextAuth Session-Token ──
+  if (pathname.startsWith('/api/') && !pathname.startsWith('/api/auth/')) {
+    try {
+      const token = await getToken({ req: request })
+      if (token?.role === 'baumschule') {
+        const isAllowed = BAUMSCHULE_ALLOWED_API.some(p => pathname.startsWith(p))
+        if (!isAllowed) {
+          return NextResponse.json(
+            { error: 'Zugriff für Baumschule-Rolle nicht erlaubt' },
+            { status: 403 }
+          )
+        }
+      }
+      if (token?.role === 'kunde') {
+        const KUNDE_ALLOWED = ['/api/auth/', '/api/kundenportal/', '/api/mitarbeiter/me', '/api/mitarbeiter/profil']
+        const isAllowed = KUNDE_ALLOWED.some(p => pathname.startsWith(p))
+        if (!isAllowed) {
+          return NextResponse.json(
+            { error: 'Zugriff für Kunden-Rolle nicht erlaubt' },
+            { status: 403 }
+          )
+        }
+      }
+    } catch {
+      // Token-Decode fehlgeschlagen → weiter mit normalem Flow
+    }
+  }
 
   // 0. Upstash Rate-Limiting für Login (5 Versuche / 15 Min)
   // E2E-Tests können via Bypass-Header das Limit umgehen
