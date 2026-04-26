@@ -47,18 +47,21 @@ export const PATCH = withErrorHandler(async (req: Request,
       )
     }
 
-    // Auftragnummer generieren
+    // Auftragnummer generieren (robust: nur gültige NNNN-Nummern)
     const year = new Date().getFullYear()
-    const lastA = await prisma.auftrag.findFirst({
+    const allAuftraege = await prisma.auftrag.findMany({
       where: { nummer: { startsWith: `AU-${year}-` } },
-      orderBy: { nummer: "desc" },
+      select: { nummer: true },
     })
-    let nextANum = 1
-    if (lastA?.nummer) {
-      const match = lastA.nummer.match(/AU-\d{4}-(\d+)/)
-      if (match) nextANum = parseInt(match[1], 10) + 1
+    let maxANum = 0
+    for (const a of allAuftraege) {
+      const match = a.nummer?.match(/^AU-\d{4}-(\d{4})$/)
+      if (match) {
+        const num = parseInt(match[1], 10)
+        if (num > maxANum) maxANum = num
+      }
     }
-    const auftragNummer = `AU-${year}-${String(nextANum).padStart(4, "0")}`
+    const auftragNummer = `AU-${year}-${String(maxANum + 1).padStart(4, "0")}`
 
     const auftrag = await prisma.auftrag.create({
       data: {
