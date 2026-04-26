@@ -107,14 +107,15 @@ const BUNDESLAENDER = [
   { kuerzel: "TH", name: "Thüringen" },
 ]
 
-const TAB_LIST = [
-  { id: "forstamter", label: "Forstamt-Kontakte", icon: Building2, count: "2.546" },
-  { id: "baumschulen", label: "Betriebe", icon: TreePine, count: "2.046" },
-  { id: "foerderprogramme", label: "Förderprogramme", icon: Star, count: "43" },
-  { id: "wissen", label: "Wissen", icon: FileText, count: "1.641" },
+const TAB_DEFS = [
+  { id: "forstamter", label: "Forstamt-Kontakte", icon: Building2, countKey: "forstamter" },
+  { id: "baumschulen", label: "Betriebe", icon: TreePine, countKey: "baumschulen" },
+  { id: "foerderprogramme", label: "Förderprogramme", icon: Star, countKey: "foerderprogramme" },
+  { id: "wissen", label: "Wissen", icon: FileText, countKey: "wissen" },
 ] as const
 
-type TabId = (typeof TAB_LIST)[number]["id"]
+type TabId = (typeof TAB_DEFS)[number]["id"]
+type TabCounts = Record<string, number>
 
 // ──────────────── Betriebsart Badge ────────────────
 
@@ -740,7 +741,7 @@ function FoerderprogrammeTab() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)]" />
           <input
             className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-600"
-            placeholder="Suche nach Programm, Fördergegenstand..."
+            placeholder="Suche nach Programm, Bundesland, Fördergegenstand..."
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
           />
@@ -1052,6 +1053,16 @@ function WissenTab() {
 
 export default function WissensPage() {
   const [activeTab, setActiveTab] = useState<TabId>("forstamter")
+  const [tabCounts, setTabCounts] = useState<TabCounts>({})
+
+  useEffect(() => {
+    fetch("/api/secondbrain/counts")
+      .then((r) => r.json())
+      .then((data) => { if (!data.error) setTabCounts(data) })
+      .catch(() => {})
+  }, [])
+
+  const totalEntries = Object.values(tabCounts).reduce((a, b) => a + b, 0)
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
@@ -1063,7 +1074,7 @@ export default function WissensPage() {
         <div>
           <h1 className="text-xl font-bold" style={{ color: "var(--color-on-surface)" }}>Wissensbank</h1>
           <p className="text-sm text-[var(--color-on-surface-variant)]">
-            7.000+ Datensätze aus dem Forstbereich — Kontakte, Betriebe, Förderprogramme, Wissen
+            {totalEntries > 0 ? `${totalEntries.toLocaleString("de-DE")}` : "7.000+"} Datensätze aus dem Forstbereich — Kontakte, Betriebe, Förderprogramme, Wissen
           </p>
         </div>
         <div className="ml-auto hidden sm:flex gap-2">
@@ -1071,16 +1082,17 @@ export default function WissensPage() {
             🌲 SecondBrain DB
           </div>
           <div className="px-3 py-1.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-xs text-[var(--color-on-surface-variant)]">
-            7.064 Einträge
+            {totalEntries > 0 ? totalEntries.toLocaleString("de-DE") : "..."} Einträge
           </div>
         </div>
       </div>
 
       {/* Tabs */}
       <div className="flex gap-1 bg-[var(--color-surface-container)] p-1 rounded-xl border border-border overflow-x-auto">
-        {TAB_LIST.map((tab) => {
+        {TAB_DEFS.map((tab) => {
           const Icon = tab.icon
           const isActive = activeTab === tab.id
+          const count = tabCounts[tab.countKey]
           return (
             <button
               key={tab.id}
@@ -1093,7 +1105,7 @@ export default function WissensPage() {
             >
               <Icon className="w-4 h-4" />
               <span className="hidden sm:inline">{tab.label}</span>
-              <span className="ml-1 text-xs opacity-60">({tab.count})</span>
+              <span className="ml-1 text-xs opacity-60">({count != null ? count.toLocaleString("de-DE") : "..."})</span>
             </button>
           )
         })}

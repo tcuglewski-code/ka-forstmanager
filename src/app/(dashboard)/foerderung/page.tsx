@@ -494,7 +494,7 @@ export default function FoerderungPage() {
 
         const res = await fetch(`/api/foerderung/suche?${params.toString()}`)
         const data = await res.json()
-        setErgebnisse(data.data || [])
+        setErgebnisse(data.data || data.programme || [])
       } catch (err) {
         console.error("Suchfehler:", err)
         setErgebnisse([])
@@ -656,7 +656,7 @@ export default function FoerderungPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)]" />
           <input
             type="text"
-            placeholder="Suche nach Programmen, Bundesland, Fördergegenstand…"
+            placeholder="Suche nach Programm, Bundesland (z.B. Hessen), Fördergegenstand…"
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
             className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-[var(--color-on-surface)] placeholder-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-600 transition-colors"

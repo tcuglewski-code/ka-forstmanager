@@ -92,15 +92,15 @@ export default function FoerderNewsPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/foerderung"
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-lg hover:bg-[var(--color-surface-container-highest)] transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold" style={{ fontFamily: "Lora, serif" }}>
+            <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>
               Aktuelle Förder-Updates
             </h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">
               {news.length} aktuelle Meldung{news.length !== 1 ? "en" : ""}
             </p>
           </div>

@@ -220,15 +220,17 @@ export default function TagesprotokollFormular({
         // FM-06: Mitternacht-Edge-Case
         if (diffMin < 0) diffMin += 24 * 60
         const diffStunden = diffMin / 60
-        if (diffStunden > 10) {
-          toast.warning('Arbeitszeit darf 10 Stunden nicht überschreiten (ArbZG §3).')
-        }
         // Auto-Pause nach ArbZG §4
         let gesetzlichePause = 0
         if (diffStunden > 9) gesetzlichePause = 45
         else if (diffStunden > 6) gesetzlichePause = 30
         if (gesetzlichePause > 0 && (parseInt(updated.pausezeit) || 0) < gesetzlichePause) {
           updated.pausezeit = gesetzlichePause.toString()
+        }
+        // ArbZG §3: max 10h Netto-Arbeitszeit (nach Pausenabzug)
+        const nettoStd = diffStunden - ((parseInt(updated.pausezeit) || 0) / 60)
+        if (nettoStd > 10) {
+          toast.warning('Netto-Arbeitszeit darf 10 Stunden nicht überschreiten (ArbZG §3).')
         }
       }
       return updated

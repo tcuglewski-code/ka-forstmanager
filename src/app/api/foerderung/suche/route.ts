@@ -88,7 +88,7 @@ export async function GET(req: NextRequest) {
       } else {
         // Standard ILIKE-Suche (Fallback)
         conditions.push(
-          `(name ILIKE $${idx} OR foerdergegenstand ILIKE $${idx} OR traeger ILIKE $${idx} OR foerdersatz ILIKE $${idx} OR kategorie ILIKE $${idx})`
+          `(name ILIKE $${idx} OR foerdergegenstand ILIKE $${idx} OR traeger ILIKE $${idx} OR foerdersatz ILIKE $${idx} OR kategorie ILIKE $${idx} OR bundesland ILIKE $${idx})`
         )
         params.push(`%${q.trim()}%`)
         idx++
@@ -116,6 +116,8 @@ export async function GET(req: NextRequest) {
 
     const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : ""
 
+    const limit = parseInt(searchParams.get("limit") || "200")
+
     const sql = `
       SELECT
         id, name, ebene, bundesland, kategorie, foerderart, traeger,
@@ -128,14 +130,20 @@ export async function GET(req: NextRequest) {
         CASE WHEN status = 'OFFEN' THEN 0 ELSE 1 END,
         CASE WHEN ebene = 'bund' THEN 0 ELSE 1 END,
         name
-      LIMIT 20
+      LIMIT ${Math.min(limit, 500)}
     `
 
-    const rows = await querySecondBrain(sql, params)
+    const countSql = `SELECT COUNT(*) as total FROM foerderprogramme ${where}`
+
+    const [rows, countResult] = await Promise.all([
+      querySecondBrain(sql, params),
+      querySecondBrain(countSql, params),
+    ])
 
     return NextResponse.json({
       data: rows,
-      total: rows.length,
+      total: parseInt(countResult[0]?.total || "0"),
+      programme: rows,
       suchbegriff: q,
     })
   } catch (error) {

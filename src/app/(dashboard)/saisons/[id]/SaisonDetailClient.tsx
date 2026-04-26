@@ -413,12 +413,14 @@ export default function SaisonDetailClient({
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {saison.gruppen.map((g) => (
-                  <div
+                  <Link
                     key={g.id}
-                    className="bg-[var(--color-surface-container-highest)] rounded-lg p-3 border border-border"
+                    href={`/gruppen/${g.id}`}
+                    className="bg-[var(--color-surface-container-highest)] rounded-lg p-3 border border-border hover:border-emerald-900/60 transition-colors group"
                   >
-                    <p className="font-medium text-[var(--color-on-surface)] text-sm mb-1">
+                    <p className="font-medium text-[var(--color-on-surface)] text-sm mb-1 group-hover:text-emerald-400 transition-colors flex items-center gap-1.5">
                       {g.name}
+                      <ExternalLink className="w-3 h-3 text-[var(--color-on-surface-variant)] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </p>
                     <p className="text-xs text-[var(--color-on-surface-variant)] mb-2">
                       {g.mitglieder.length} Mitglieder
@@ -438,7 +440,7 @@ export default function SaisonDetailClient({
                         </span>
                       )}
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

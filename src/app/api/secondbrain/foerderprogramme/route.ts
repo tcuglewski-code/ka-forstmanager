@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     let idx = 1
 
     if (suche) {
-      conditions.push(`(name ILIKE $${idx} OR foerdergegenstand ILIKE $${idx} OR traeger ILIKE $${idx})`)
+      conditions.push(`(name ILIKE $${idx} OR foerdergegenstand ILIKE $${idx} OR traeger ILIKE $${idx} OR bundesland ILIKE $${idx})`)
       params.push(`%${suche}%`)
       idx++
     }

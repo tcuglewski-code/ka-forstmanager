@@ -72,7 +72,7 @@ export function PraxisFormular({ onClose, onSuccess, editData }: PraxisFormularP
       try {
         const res = await fetch("/api/foerderung/suche?limit=500")
         const data = await res.json()
-        setProgramme(data.programme || [])
+        setProgramme(data.data || data.programme || [])
       } catch (err) {
         console.error("Fehler beim Laden der Programme:", err)
       } finally {

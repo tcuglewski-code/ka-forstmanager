@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, UserPlus, Trash2 } from "lucide-react"
+import { ArrowLeft, UserPlus, Trash2, ExternalLink } from "lucide-react"
+import Link from "next/link"
 import { toast } from "sonner"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
 
@@ -131,10 +132,16 @@ export default function GruppeDetailPage() {
             ) : (
               gruppe.mitglieder.map(m => (
                 <div key={m.id} className="flex items-center justify-between py-2 border-b border-border">
-                  <div>
-                    <p className="text-sm text-[var(--color-on-surface)]">{m.mitarbeiter.vorname} {m.mitarbeiter.nachname}</p>
-                    <p className="text-xs text-[var(--color-on-surface-variant)]">{m.rolle}</p>
-                  </div>
+                  <Link
+                    href={`/mitarbeiter/${m.mitarbeiter.id}`}
+                    className="flex items-center gap-2 group hover:text-emerald-400 transition-colors"
+                  >
+                    <div>
+                      <p className="text-sm text-[var(--color-on-surface)] group-hover:text-emerald-400 transition-colors">{m.mitarbeiter.vorname} {m.mitarbeiter.nachname}</p>
+                      <p className="text-xs text-[var(--color-on-surface-variant)]">{m.rolle}</p>
+                    </div>
+                    <ExternalLink className="w-3 h-3 text-[var(--color-on-surface-variant)] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
                   <button
                     onClick={() => removeMitglied(m.mitarbeiter.id)}
                     className="text-zinc-600 hover:text-red-400 transition-colors"

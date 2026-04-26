@@ -108,7 +108,8 @@ function buildDots(
   dotSpacing: number,
   rowSpacing: number,
   aussenreihe: boolean,
-  aussenreiheName: string
+  aussenreiheName: string,
+  leftPad: number = 16
 ): PlantDot[] {
   if (arten.length === 0) return []
 
@@ -139,7 +140,7 @@ function buildDots(
     const xShift = (typ === "quincunx") && row % 2 === 1 ? dotSpacing / 2 : 0
 
     for (let col = 0; col < maxCols; col++) {
-      const xOffset = 16 + col * dotSpacing + xShift
+      const xOffset = leftPad + col * dotSpacing + xShift
 
       if (isFirstOrLastRow) {
         dots.push({
@@ -243,12 +244,13 @@ export function PflanzverbandVorschau({
   const DOT_RADIUS = 5
   const DOT_SPACING = 28
   const ROW_SPACING = 26
+  const LEFT_PAD = 40 // Extra space for row spacing label
 
-  const svgWidth = 16 + MAX_COLS * DOT_SPACING + 16
-  const svgHeight = 16 + MAX_ROWS * ROW_SPACING + 16
+  const svgWidth = LEFT_PAD + MAX_COLS * DOT_SPACING + 16
+  const svgHeight = 16 + MAX_ROWS * ROW_SPACING + 24
 
   const dots = useMemo(
-    () => buildDots(typ, arten, MAX_ROWS, MAX_COLS, DOT_SPACING, ROW_SPACING, hasAussenreihe, aussenreiheName),
+    () => buildDots(typ, arten, MAX_ROWS, MAX_COLS, DOT_SPACING, ROW_SPACING, hasAussenreihe, aussenreiheName, LEFT_PAD),
     [typ, arten, hasAussenreihe, aussenreiheName]
   )
 
@@ -298,7 +300,7 @@ export function PflanzverbandVorschau({
           {Array.from({ length: MAX_ROWS }).map((_, row) => (
             <line
               key={`row-${row}`}
-              x1={8}
+              x1={LEFT_PAD - 8}
               y1={16 + row * ROW_SPACING}
               x2={svgWidth - 8}
               y2={16 + row * ROW_SPACING}
