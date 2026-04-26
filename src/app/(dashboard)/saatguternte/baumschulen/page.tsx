@@ -170,7 +170,7 @@ export default function BaumschulenPage() {
       )}
 
       {filtered.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
+        <div className="text-center py-16 text-gray-500">
           <TreeDeciduous className="w-12 h-12 mx-auto mb-3 opacity-30" />
           <p className="font-medium">Keine Baumschulen gefunden</p>
           <p className="text-sm mt-1">Füge die erste Baumschule hinzu</p>

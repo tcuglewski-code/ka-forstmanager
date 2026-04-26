@@ -34,15 +34,20 @@ export default async function NeuesProtokollPage({ params }: { params: Promise<{
   const userRole = sessionUser?.role ?? 'mitarbeiter'
   const userName = sessionUser?.name ?? ''
 
+  // Aus wizardDaten multi-Flächen: erstes Forstamt/Revier extrahieren falls nicht auf Top-Level
+  const flaechen = (wizardDaten as Record<string, unknown> | null)?.flaechen as Array<Record<string, string>> | undefined
+  const forstamt = wizardDaten?.forstamt || (flaechen?.[0]?.forstamt ?? '')
+  const revier = wizardDaten?.revier || (flaechen?.[0]?.revier ?? '')
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[var(--color-surface)] py-8">
       <TagesprotokollFormular
         auftragId={auftrag.id}
         auftragTitel={auftrag.titel}
         waldbesitzer={auftrag.waldbesitzer ?? undefined}
         gruppeId={auftrag.gruppeId ?? undefined}
-        defaultFoerstamt={wizardDaten?.forstamt ?? ''}
-        defaultRevier={wizardDaten?.revier ?? ''}
+        defaultFoerstamt={forstamt}
+        defaultRevier={revier}
         defaultAbteilung={wizardDaten?.abteilung ?? ''}
         defaultRevierleiter={wizardDaten?.revierleiter ?? ''}
         defaultGpsLat={auftrag.lat ?? undefined}

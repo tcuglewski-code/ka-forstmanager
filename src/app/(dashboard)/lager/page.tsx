@@ -305,15 +305,26 @@ function ArtikelHistorieModal({ artikel, onClose }: { artikel: LagerArtikel; onC
   )
 }
 
+interface MitarbeiterOption {
+  id: string
+  vorname: string
+  nachname: string
+}
+
 function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onClose: () => void; onSave: () => void }) {
   const [loading, setLoading] = useState(false)
   const [auftraege, setAuftraege] = useState<AuftragOption[]>([])
-  const [form, setForm] = useState({ typ: "ausgang", menge: "1", notiz: "", auftragId: "" })
+  const [mitarbeiterListe, setMitarbeiterListe] = useState<MitarbeiterOption[]>([])
+  const [form, setForm] = useState({ typ: "ausgang", menge: "1", notiz: "", auftragId: "", mitarbeiterId: "" })
 
   useEffect(() => {
     fetch("/api/auftraege?statusIn=in_ausfuehrung,bestaetigt,laufend,aktiv&limit=200")
       .then(r => r.json())
       .then(data => setAuftraege(Array.isArray(data) ? data : []))
+      .catch(() => {})
+    fetch("/api/mitarbeiter?status=aktiv")
+      .then(r => r.json())
+      .then(data => setMitarbeiterListe(Array.isArray(data) ? data : []))
       .catch(() => {})
   }, [])
 
@@ -324,7 +335,7 @@ function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onC
       const res = await fetch(`/api/lager/${artikel.id}/bewegung`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, auftragId: form.auftragId || null }),
+        body: JSON.stringify({ ...form, auftragId: form.auftragId || null, mitarbeiterId: form.mitarbeiterId || null }),
       })
       if (!res.ok) {
         const err = await res.json()
@@ -368,6 +379,20 @@ function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onC
               className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
               <option value="">— Kein Auftrag —</option>
               {auftraege.map(a => <option key={a.id} value={a.id}>{a.titel}</option>)}
+            </select>
+            {form.auftragId && (
+              <a href={`/auftraege/${form.auftragId}`} target="_blank" rel="noopener noreferrer"
+                className="text-xs text-emerald-400 hover:underline flex items-center gap-1 mt-1">
+                <Package className="w-3 h-3" /> Auftrag öffnen
+              </a>
+            )}
+          </div>
+          <div>
+            <label className="block text-xs text-on-surface-variant mb-1">Mitarbeiter (optional)</label>
+            <select value={form.mitarbeiterId} onChange={e => setForm(f => ({ ...f, mitarbeiterId: e.target.value }))}
+              className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
+              <option value="">— Kein Mitarbeiter —</option>
+              {mitarbeiterListe.map(m => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
             </select>
           </div>
           <div>

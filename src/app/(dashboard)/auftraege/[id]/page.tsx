@@ -788,9 +788,6 @@ export default function AuftragDetailPage() {
   }
 
   const statusObj = STATUS_LIST.find(s => s.value === status) ?? STATUS_LIST[0]
-  const wpAdminUrl = auftrag.wpProjektId
-    ? `https://peru-otter-113714.hostingersite.com/wp-admin/post.php?post=${auftrag.wpProjektId}&action=edit`
-    : null
 
   // Extract wizard data for contact/project info section
   const w = auftrag.wizardDaten as WizardDaten | null | undefined
@@ -923,17 +920,6 @@ export default function AuftragDetailPage() {
                 className="px-4 py-2 bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 rounded-lg text-sm hover:bg-emerald-500/30 transition-colors"
               >
                 💰 Rechnung erstellen
-              </a>
-            )}
-            {wpAdminUrl && (
-              <a
-                href={wpAdminUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-1.5 px-3 py-2 bg-surface-container-highest hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface rounded-lg text-xs transition-all"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-                WP Admin
               </a>
             )}
           </div>
@@ -1328,7 +1314,17 @@ export default function AuftragDetailPage() {
 
           {/* ── Materialzuweisung ──────────────────────────────────── */}
           <div className="bg-surface-container border border-border rounded-xl p-6">
-            <SectionHeading icon={<Package className="w-4 h-4" />} label="Materialzuweisung" />
+            <div className="flex items-center justify-between mb-4">
+              <SectionHeading icon={<Package className="w-4 h-4" />} label="Materialzuweisung" />
+              <Link
+                href="/lager"
+                target="_blank"
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 border border-outline-variant rounded-lg text-on-surface-variant hover:text-on-surface hover:border-outline-variant transition-all"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                Lager öffnen
+              </Link>
+            </div>
             {materialLoading ? (
               <p className="text-on-surface-variant text-sm mt-2">Laden...</p>
             ) : material.length === 0 ? (
@@ -1386,6 +1382,7 @@ export default function AuftragDetailPage() {
               bundesland={auftrag.bundesland ?? null}
               flaeche_ha={auftrag.flaeche_ha ?? null}
               baumarten={auftrag.baumarten ?? null}
+              plz={w?.flaeche_plz ?? (Array.isArray(w?.flaechen) ? (w.flaechen as FlaecheItem[])[0]?.plz : null) ?? null}
             />
           </div>
 
@@ -1513,8 +1510,11 @@ export default function AuftragDetailPage() {
               <p className="text-xs text-on-surface-variant mb-2 uppercase tracking-wider">Rechnungen</p>
               <div className="space-y-1.5">
                 {auftrag.rechnungen.map(r => (
-                  <div key={r.id} className="flex items-center justify-between text-sm">
-                    <span className="text-on-surface-variant">{r.nummer}</span>
+                  <Link key={r.id} href={`/rechnungen/${r.id}`} className="flex items-center justify-between text-sm hover:bg-surface-container-high rounded-lg px-2 py-1.5 -mx-2 transition-colors">
+                    <span className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5">
+                      <FileText className="w-3.5 h-3.5" />
+                      {r.nummer}
+                    </span>
                     <div className="flex items-center gap-2">
                       <span className="text-on-surface font-medium">{r.betrag.toFixed(2)} €</span>
                       <span className={`text-xs px-1.5 py-0.5 rounded-full ${
@@ -1523,30 +1523,12 @@ export default function AuftragDetailPage() {
                         "bg-gray-100 text-gray-700"
                       }`}>{r.status}</span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
           )}
 
-          {/* WP Info */}
-          {auftrag.wpProjektId && (
-            <div className="bg-surface-container border border-border rounded-xl p-4">
-              <p className="text-xs text-on-surface-variant mb-2">WordPress Post</p>
-              <p className="text-xs font-mono text-on-surface-variant mb-3">ID: {auftrag.wpProjektId}</p>
-              {wpAdminUrl && (
-                <a
-                  href={wpAdminUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2 text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
-                >
-                  <ExternalLink className="w-3 h-3" />
-                  Im WP-Admin öffnen
-                </a>
-              )}
-            </div>
-          )}
 
           {/* Kundenportal-Link */}
           {auftrag.waldbesitzerEmail && (

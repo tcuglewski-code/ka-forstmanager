@@ -1,8 +1,47 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { TreePine, Loader2, Euro, ExternalLink, Save, CheckCircle, MapPin, Ruler, Plus } from "lucide-react"
 import { toast } from "sonner"
+
+// AUF-9: PLZ-Prefix → Bundesland Mapping (grob, deckt häufigste Fälle ab)
+const PLZ_BUNDESLAND: Record<string, string> = {
+  "01": "Sachsen", "02": "Sachsen", "03": "Brandenburg", "04": "Sachsen",
+  "06": "Sachsen-Anhalt", "07": "Thüringen", "08": "Sachsen", "09": "Sachsen",
+  "10": "Berlin", "12": "Berlin", "13": "Berlin", "14": "Brandenburg",
+  "15": "Brandenburg", "16": "Brandenburg", "17": "Mecklenburg-Vorpommern",
+  "18": "Mecklenburg-Vorpommern", "19": "Mecklenburg-Vorpommern",
+  "20": "Hamburg", "21": "Niedersachsen", "22": "Hamburg", "23": "Schleswig-Holstein",
+  "24": "Schleswig-Holstein", "25": "Schleswig-Holstein", "26": "Niedersachsen",
+  "27": "Niedersachsen", "28": "Bremen", "29": "Niedersachsen",
+  "30": "Niedersachsen", "31": "Niedersachsen", "32": "Nordrhein-Westfalen",
+  "33": "Nordrhein-Westfalen", "34": "Hessen", "35": "Hessen", "36": "Hessen",
+  "37": "Niedersachsen", "38": "Niedersachsen", "39": "Sachsen-Anhalt",
+  "40": "Nordrhein-Westfalen", "41": "Nordrhein-Westfalen", "42": "Nordrhein-Westfalen",
+  "44": "Nordrhein-Westfalen", "45": "Nordrhein-Westfalen", "46": "Nordrhein-Westfalen",
+  "47": "Nordrhein-Westfalen", "48": "Nordrhein-Westfalen", "49": "Niedersachsen",
+  "50": "Nordrhein-Westfalen", "51": "Nordrhein-Westfalen", "52": "Nordrhein-Westfalen",
+  "53": "Nordrhein-Westfalen", "54": "Rheinland-Pfalz", "55": "Rheinland-Pfalz",
+  "56": "Rheinland-Pfalz", "57": "Nordrhein-Westfalen", "58": "Nordrhein-Westfalen",
+  "59": "Nordrhein-Westfalen",
+  "60": "Hessen", "61": "Hessen", "63": "Hessen", "64": "Hessen", "65": "Hessen",
+  "66": "Saarland", "67": "Rheinland-Pfalz", "68": "Baden-Württemberg",
+  "69": "Baden-Württemberg",
+  "70": "Baden-Württemberg", "71": "Baden-Württemberg", "72": "Baden-Württemberg",
+  "73": "Baden-Württemberg", "74": "Baden-Württemberg", "75": "Baden-Württemberg",
+  "76": "Baden-Württemberg", "77": "Baden-Württemberg", "78": "Baden-Württemberg",
+  "79": "Baden-Württemberg",
+  "80": "Bayern", "81": "Bayern", "82": "Bayern", "83": "Bayern", "84": "Bayern",
+  "85": "Bayern", "86": "Bayern", "87": "Bayern", "88": "Baden-Württemberg",
+  "89": "Baden-Württemberg",
+  "90": "Bayern", "91": "Bayern", "92": "Bayern", "93": "Bayern", "94": "Bayern",
+  "95": "Bayern", "96": "Bayern", "97": "Bayern", "98": "Thüringen", "99": "Thüringen",
+}
+
+function resolveBundeslandFromPlz(plz: string | null | undefined): string | null {
+  if (!plz || plz.length < 2) return null
+  return PLZ_BUNDESLAND[plz.substring(0, 2)] ?? null
+}
 
 interface FoerderprogrammResult {
   id: number
@@ -40,9 +79,34 @@ interface Props {
   flaeche_ha: number | null
   waldtyp?: string | null
   baumarten?: string | null
+  plz?: string | null
 }
 
-export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp, baumarten }: Props) {
+export function AuftragFoerderCheck({ auftragId, bundesland: bundeslandProp, flaeche_ha, waldtyp, baumarten, plz }: Props) {
+  // AUF-9: PLZ-basiertes Bundesland-Fallback
+  const [resolvedBundesland, setResolvedBundesland] = useState<string | null>(bundeslandProp)
+
+  useEffect(() => {
+    if (bundeslandProp) {
+      // Verifiziere Bundesland gegen PLZ wenn beides vorhanden
+      if (plz) {
+        const plzBundesland = resolveBundeslandFromPlz(plz)
+        if (plzBundesland && plzBundesland !== bundeslandProp) {
+          console.warn(`[FoerderCheck] Bundesland-Mismatch: Auftrag sagt "${bundeslandProp}", PLZ ${plz} → "${plzBundesland}". Nutze PLZ-Wert.`)
+          setResolvedBundesland(plzBundesland)
+          return
+        }
+      }
+      setResolvedBundesland(bundeslandProp)
+    } else if (plz) {
+      const plzBundesland = resolveBundeslandFromPlz(plz)
+      if (plzBundesland) {
+        setResolvedBundesland(plzBundesland)
+      }
+    }
+  }, [bundeslandProp, plz])
+
+  const bundesland = resolvedBundesland
   const [frage, setFrage] = useState("")
   const [kalamitaet, setKalamitaet] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -190,10 +254,10 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
             onChange={(e) => setFrage(e.target.value)}
             placeholder="z.B. Kalamitätsfläche nach Borkenkäfer"
             rows={2}
-            className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 resize-none"
+            className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500/50 resize-none"
           />
 
-          <label className="flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)] cursor-pointer hover:text-zinc-300 transition-colors">
+          <label className="flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)] cursor-pointer hover:text-[var(--color-on-surface)] transition-colors">
             <input
               type="checkbox"
               checked={kalamitaet}
@@ -245,7 +309,7 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
                 </span>
               )}
             </div>
-            <p className="text-sm text-zinc-300 whitespace-pre-line leading-relaxed">
+            <p className="text-sm text-[var(--color-on-surface)] whitespace-pre-line leading-relaxed">
               {result.synthese}
             </p>
           </div>
@@ -290,7 +354,7 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
                       ) : (
                         <button
                           onClick={() => erfasseAntrag(p.id)}
-                          className="flex items-center gap-1 text-xs text-zinc-600 hover:text-emerald-400 transition-colors"
+                          className="flex items-center gap-1 text-xs text-[var(--color-on-surface-variant)] hover:text-emerald-400 transition-colors"
                           title="Antrag als geplant erfassen"
                         >
                           <Plus className="w-3 h-3" />
@@ -324,7 +388,7 @@ export function AuftragFoerderCheck({ auftragId, bundesland, flaeche_ha, waldtyp
                 {result.kombinationen.map((k, i) => (
                   <p key={i} className="text-xs text-[var(--color-on-surface-variant)]">
                     {k.prog_a_name} + {k.prog_b_name}
-                    {k.bedingung && <span className="text-zinc-600"> — {k.bedingung}</span>}
+                    {k.bedingung && <span className="text-[var(--color-on-surface-variant)]"> — {k.bedingung}</span>}
                   </p>
                 ))}
               </div>

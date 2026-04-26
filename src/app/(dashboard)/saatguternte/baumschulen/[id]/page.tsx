@@ -335,7 +335,7 @@ export default function BaumschuleDetailPage() {
 
           {/* Aktive Preislisten */}
           {preislisten.length === 0 ? (
-            <div className="text-center text-gray-400 py-12 text-sm">
+            <div className="text-center text-gray-500 py-12 text-sm">
               Noch keine Preislisten vorhanden. Klicke auf &bdquo;Neuer Preiseintrag&ldquo;.
             </div>
           ) : (
@@ -433,7 +433,7 @@ export default function BaumschuleDetailPage() {
                               </td>
                               <td className="py-2 px-3 text-gray-600">/{p.einheit}</td>
                               <td className="py-2 px-3 text-gray-500">{p.saison ?? "\u2014"}</td>
-                              <td className="py-2 px-3 text-gray-400 text-xs">{p.notizen ?? "\u2014"}</td>
+                              <td className="py-2 px-3 text-gray-500 text-xs">{p.notizen ?? "\u2014"}</td>
                               <td className="py-2 px-3">
                                 <div className="flex gap-1">
                                   <button
@@ -464,7 +464,7 @@ export default function BaumschuleDetailPage() {
               {/* Inaktive Einträge */}
               {inaktivPreislisten.length > 0 && (
                 <details className="mt-4">
-                  <summary className="text-sm text-gray-400 cursor-pointer hover:text-gray-600">
+                  <summary className="text-sm text-gray-500 cursor-pointer hover:text-gray-700">
                     {inaktivPreislisten.length} inaktive Preiseinträge anzeigen
                   </summary>
                   <div className="mt-2 opacity-50">

@@ -87,6 +87,9 @@ export default function TagesprotokollFormular({
   const [gruppenfuehrerListe, setGruppenfuehrerListe] = useState<GruppenfuehrerOption[]>([])
   const isAdmin = userRole === 'admin' || userRole === 'ka_admin'
 
+  // AUF-4: Gruppen-Dropdown (echte Daten statt hardcoded)
+  const [gruppenListe, setGruppenListe] = useState<{ id: string; name: string }[]>([])
+
   // FIX 6: Team-Mitglieder
   const [team, setTeam] = useState<TeamMitglied[]>([])
   const [globalStunden, setGlobalStunden] = useState('')
@@ -155,6 +158,17 @@ export default function TagesprotokollFormular({
       .then((data: GruppenfuehrerOption[]) => setGruppenfuehrerListe(data))
       .catch((err) => { console.error("Gruppenführer Ladefehler:", err) })
   }, [isAdmin])
+
+  // AUF-4: Gruppen laden
+  useEffect(() => {
+    fetch('/api/gruppen')
+      .then(r => r.json())
+      .then((data) => {
+        const items = Array.isArray(data) ? data : (data.items ?? [])
+        setGruppenListe(items)
+      })
+      .catch((err) => { console.error("Gruppen Ladefehler:", err) })
+  }, [])
 
   // ──────────────────────────────────────────────────────────────────────────
   // FIX 6: Gruppenmitglieder laden
@@ -505,7 +519,18 @@ export default function TagesprotokollFormular({
         {field('Revierleiter', inp('revierleiter', 'text', 'Name des Revierleiters'))}
         {field('Abteilung', inp('abteilung', 'text', 'Abt. 12a'))}
         {field('Waldbesitzer', inp('waldbesitzerName', 'text', 'Klaus Hoffmann'))}
-        {field('Gruppe', inp('gruppe', 'text', 'Gruppe A'))}
+        {field('Gruppe', (
+          <select
+            value={form.gruppe}
+            onChange={e => setForm(f => ({ ...f, gruppe: e.target.value }))}
+            className="w-full border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] focus:outline-none focus:ring-2 focus:ring-green-600"
+          >
+            <option value="">— Gruppe wählen —</option>
+            {gruppenListe.map(g => (
+              <option key={g.id} value={g.name}>{g.name}</option>
+            ))}
+          </select>
+        ))}
       </>)}
 
       {/* FM-06: Arbeitszeit Start/Ende/Pause mit Netto-Berechnung */}
