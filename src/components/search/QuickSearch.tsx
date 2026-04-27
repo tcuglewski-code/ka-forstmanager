@@ -129,7 +129,7 @@ export function QuickSearch({ isOpen, onClose }: QuickSearchProps) {
 
         if (mitarbeiterRes.status === "fulfilled" && mitarbeiterRes.value.ok) {
           const data = await mitarbeiterRes.value.json()
-          const mitarbeiter = Array.isArray(data) ? data : data.mitarbeiter ?? []
+          const mitarbeiter = Array.isArray(data) ? data : (data.items ?? data.mitarbeiter ?? [])
           mitarbeiter.forEach((m: { id: string; vorname?: string; nachname?: string; rolle?: string; email?: string }) => {
             searchResults.push({
               id: m.id,

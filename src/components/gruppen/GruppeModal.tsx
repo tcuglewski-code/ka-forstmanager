@@ -31,7 +31,8 @@ export function GruppeModal({
     // Fetch all mitarbeiter and filter by Gruppenführer roles client-side
     fetch("/api/mitarbeiter")
       .then(r => r.json())
-      .then((all: Mitarbeiter[]) => {
+      .then((raw: Mitarbeiter[] | { items: Mitarbeiter[] }) => {
+        const all: Mitarbeiter[] = Array.isArray(raw) ? raw : (raw.items ?? [])
         const GF_ROLES = ["gruppenführer", "gf", "gruppenf\u00fchrer"]
         const gf = all.filter(m => {
           const r = (m.rolle ?? '').toLowerCase().trim()

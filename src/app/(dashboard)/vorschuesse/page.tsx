@@ -30,7 +30,7 @@ export default function VorschuessePage() {
       fetch("/api/mitarbeiter").then((r) => r.json()),
     ])
     setVorschuesse(Array.isArray(v) ? v : [])
-    setMitarbeiter(Array.isArray(m) ? m : [])
+    setMitarbeiter(Array.isArray(m) ? m : (m.items ?? []))
     setLoading(false)
   }, [])
 

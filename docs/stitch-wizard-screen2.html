@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html class="light" lang="de"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#a5d0b9",
+                        "on-tertiary-container": "#d29895",
+                        "primary-fixed": "#c1ecd4",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f9f2ec",
+                        "on-surface-variant": "#414844",
+                        "tertiary-container": "#5a302f",
+                        "surface-bright": "#fff8f2",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#ede7e1",
+                        "surface-container": "#f3ede7",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#dfd9d3",
+                        "tertiary": "#401b1b",
+                        "primary-container": "#1b4332",
+                        "on-secondary-fixed": "#201b15",
+                        "surface": "#fff8f2",
+                        "surface-container-highest": "#e8e1db",
+                        "on-error": "#ffffff",
+                        "outline-variant": "#c1c8c2",
+                        "tertiary-fixed": "#ffdad8",
+                        "secondary-fixed": "#ebe1d6",
+                        "outline": "#717973",
+                        "on-background": "#1d1b18",
+                        "on-primary-fixed-variant": "#274e3d",
+                        "on-secondary-fixed-variant": "#4c463e",
+                        "background": "#fff8f2",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#002114",
+                        "inverse-primary": "#a5d0b9",
+                        "on-primary-container": "#86af99",
+                        "on-tertiary-fixed-variant": "#673a39",
+                        "on-surface": "#1d1b18",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#f5b7b4",
+                        "surface-tint": "#3f6653",
+                        "error": "#ba1a1a",
+                        "secondary-container": "#ebe1d6",
+                        "on-tertiary-fixed": "#331111",
+                        "primary": "#012d1d",
+                        "inverse-surface": "#33302c",
+                        "surface-variant": "#e8e1db",
+                        "on-secondary-container": "#6a635b",
+                        "inverse-on-surface": "#f6f0ea",
+                        "secondary": "#645d55",
+                        "secondary-fixed-dim": "#cfc5bb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "gutter": "24px",
+                        "sm": "12px",
+                        "base": "8px",
+                        "md": "24px",
+                        "lg": "48px",
+                        "xl": "80px",
+                        "container-max": "800px"
+                    },
+                    "fontFamily": {
+                        "h3": ["Manrope"],
+                        "label-sm": ["Manrope"],
+                        "h2": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "h1": ["Manrope"],
+                        "label-bold": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "h3": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                        "h2": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "h1": ["40px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "label-bold": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; background-color: #F8F9F5; }
+    </style>
+</head>
+<body class="bg-[#F8F9F5] text-on-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-[#F8F9F5] border-b border-neutral-200 shadow-[0_10px_20px_rgba(27,67,50,0.05)]">
+<div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-4">
+<div class="text-lg font-extrabold text-[#1B4332]">Forst-Anfrage</div>
+<nav class="hidden md:flex space-x-6">
+<span class="text-[#8B8D88] pb-2 font-manrope text-sm tracking-tight hover:text-[#1B4332] transition-colors">Besitzertyp</span>
+<span class="text-[#8B8D88] pb-2 font-manrope text-sm tracking-tight hover:text-[#1B4332] transition-colors">Standort</span>
+<span class="text-[#8B8D88] pb-2 font-manrope text-sm tracking-tight hover:text-[#1B4332] transition-colors">Schutzart</span>
+<span class="text-[#8B8D88] pb-2 font-manrope text-sm tracking-tight hover:text-[#1B4332] transition-colors">Konfiguration</span>
+<span class="text-[#8B8D88] pb-2 font-manrope text-sm tracking-tight hover:text-[#1B4332] transition-colors">Zeitraum</span>
+<span class="text-[#1B4332] border-b-2 border-[#A3E635] pb-2 font-manrope text-sm tracking-tight font-bold">Abschluss</span>
+</nav>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container text-sm">person</span>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 flex max-w-7xl mx-auto px-8 gap-8">
+<!-- SideNavBar -->
+<aside class="hidden lg:flex flex-col w-64 h-[calc(100vh-120px)] sticky top-24 bg-white border-r border-neutral-100 shadow-sm p-4 rounded-lg space-y-4">
+<div class="mb-4">
+<h3 class="font-bold text-[#1B4332] text-sm">Anfrage-Status</h3>
+<p class="text-xs text-on-surface-variant">Vollständigkeit: 95%</p>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-2">
+<div class="bg-[#A3E635] h-1.5 rounded-full w-[95%]"></div>
+</div>
+</div>
+<nav class="space-y-2">
+<div class="flex items-center gap-3 p-3 rounded-lg text-[#8B8D88] hover:bg-neutral-50 transition-all">
+<span class="material-symbols-outlined text-sm">assignment</span>
+<span class="font-manrope text-sm">Zusammenfassung</span>
+</div>
+<div class="flex items-center gap-3 p-3 rounded-lg text-[#8B8D88] hover:bg-neutral-50 transition-all">
+<span class="material-symbols-outlined text-sm">landscape</span>
+<span class="font-manrope text-sm">Projekt-Details</span>
+</div>
+<div class="flex items-center gap-3 p-3 rounded-lg text-[#8B8D88] hover:bg-neutral-50 transition-all">
+<span class="material-symbols-outlined text-sm">forest</span>
+<span class="font-manrope text-sm">Waldfläche</span>
+</div>
+<div class="flex items-center gap-3 p-3 rounded-lg bg-[#A3E635]/10 text-[#1B4332] font-semibold border-l-4 border-[#1B4332]">
+<span class="material-symbols-outlined text-sm">payments</span>
+<span class="font-manrope text-sm">Kostenübersicht</span>
+</div>
+</nav>
+<div class="mt-auto pt-4 border-t border-neutral-100">
+<button class="w-full py-2 px-4 rounded-lg border border-outline-variant text-on-surface-variant text-sm font-semibold hover:bg-surface-container-low transition-colors">
+                    Hilfe anfordern
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1 max-w-container-max mx-auto">
+<div class="bg-white rounded-xl shadow-[0_10px_20px_rgba(27,67,50,0.05)] p-md border border-[#A3E635]/20">
+<!-- Progress Header -->
+<div class="mb-lg">
+<span class="text-label-sm font-label-sm text-[#8B8D88] uppercase tracking-widest">Schritt 6 von 6</span>
+<h1 class="text-h2 font-h2 text-primary mt-xs">Zusammenfassung &amp; Absenden</h1>
+</div>
+<!-- Review Section (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md mb-lg">
+<!-- Project Summary -->
+<div class="p-md bg-surface-container-lowest rounded-lg border-2 border-surface-container-high">
+<div class="flex items-center gap-2 mb-sm text-primary">
+<span class="material-symbols-outlined text-md">park</span>
+<span class="font-label-bold text-label-bold uppercase">Projektdetails</span>
+</div>
+<ul class="space-y-base text-body-md font-body-md text-on-surface-variant">
+<li class="flex justify-between"><span>Fläche:</span> <span class="font-bold text-on-surface">12.5 Hektar</span></li>
+<li class="flex justify-between"><span>Baumart:</span> <span class="font-bold text-on-surface">Mischwald (Eiche/Buche)</span></li>
+<li class="flex justify-between"><span>Region:</span> <span class="font-bold text-on-surface">Schwarzwald-Nord</span></li>
+</ul>
+</div>
+<!-- Cost Estimate -->
+<div class="p-md bg-primary-container text-on-primary-container rounded-lg relative overflow-hidden">
+<div class="flex items-center gap-2 mb-sm">
+<span class="material-symbols-outlined text-md">monetization_on</span>
+<span class="font-label-bold text-label-bold uppercase">Kostenschätzung</span>
+</div>
+<div class="relative z-10">
+<span class="text-h2 font-h2 text-white">4.850 €</span>
+<p class="text-label-sm opacity-80 mt-xs">Voraussichtliche Investitionssumme</p>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]">analytics</span>
+</div>
+</div>
+<!-- Funding Options -->
+<div class="md:col-span-2 p-md bg-[#A3E635]/10 rounded-lg border-2 border-[#A3E635] flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="bg-[#A3E635] p-sm rounded-full text-primary">
+<span class="material-symbols-outlined" data-weight="fill">verified</span>
+</div>
+<div>
+<h4 class="font-label-bold text-primary">Förderfähigkeit geprüft</h4>
+<p class="text-body-md text-on-primary-fixed-variant">Für dieses Projekt sind bis zu 60% EU-Fördermittel möglich.</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<input checked="" class="w-6 h-6 rounded border-2 border-[#1B4332] text-[#A3E635] focus:ring-[#A3E635]" id="funding" type="checkbox"/>
+<label class="sr-only" for="funding">Förderantrag einschließen</label>
+</div>
+</div>
+</div>
+<!-- Final Form -->
+<div class="space-y-lg">
+<div class="border-t border-surface-container-high pt-lg">
+<h3 class="text-h3 font-h3 text-primary mb-md">Kontaktdaten für das Angebot</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="flex flex-col gap-xs">
+<label class="text-label-bold font-label-bold text-on-surface-variant" for="full_name">Vollständiger Name</label>
+<input class="p-sm bg-white border-2 border-outline-variant rounded-lg focus:border-primary-container focus:ring-4 focus:ring-[#A3E635]/20 transition-all outline-none" id="full_name" placeholder="Maximilian Muster" type="text"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="text-label-bold font-label-bold text-on-surface-variant" for="phone">Telefonnummer</label>
+<input class="p-sm bg-white border-2 border-outline-variant rounded-lg focus:border-primary-container focus:ring-4 focus:ring-[#A3E635]/20 transition-all outline-none" id="phone" placeholder="+49 123 4567890" type="tel"/>
+</div>
+<div class="md:col-span-2 flex flex-col gap-xs">
+<label class="text-label-bold font-label-bold text-on-surface-variant" for="email">E-Mail-Adresse</label>
+<input class="p-sm bg-white border-2 border-outline-variant rounded-lg focus:border-primary-container focus:ring-4 focus:ring-[#A3E635]/20 transition-all outline-none" id="email" placeholder="m.muster@forst.de" type="email"/>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-md rounded-lg flex gap-md">
+<span class="material-symbols-outlined text-primary shrink-0">info</span>
+<p class="text-label-sm text-on-surface-variant">
+                            Durch das Absenden Ihrer Anfrage erklären Sie sich mit der Verarbeitung Ihrer Daten gemäß unserer Datenschutzbestimmungen einverstanden. Wir kontaktieren Sie innerhalb von 48 Stunden mit einem detaillierten Angebot.
+                        </p>
+</div>
+</div>
+</div>
+<!-- Visualization Card -->
+<div class="mt-lg rounded-xl overflow-hidden shadow-sm border border-surface-container-high bg-white">
+<img alt="Forest Map" class="w-full h-48 object-cover opacity-80" data-alt="Satellite view of a detailed forest parcel map with green boundaries highlighting a specific management area in a dense woodland" data-location="Black Forest, Germany" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFNxZy8J4NfrsMa2WRN70bcxyxu1HnIqqLu34gLNAmyRttzFpBuHPSlGoT8LxaXmVMfVviTda5gjaacQwdxbhYN8NWPpvr0WLh5QKpL2W0dGwOQTCl07MXxTSSO2CRrvyxSTvbzlh0ktOXtEpeOb6Jtk5bluoepuxniGhIQj9XoWXOFrb6JBZdVrWOZTlbdvrA5y-cVNlVheXcI0Najf1LBd-Im3l1O0kxgAIw1u-eUDGIcoHOfx8bcDtnOeReJGYwh3yKTTaDnJoG"/>
+<div class="p-md flex justify-between items-center">
+<div>
+<p class="text-label-sm font-label-bold text-[#1B4332] uppercase">Standort-Bestätigung</p>
+<p class="text-body-md text-on-surface-variant">Gemarkung: Kirchzarten, Flur 12, Flurstück 405/1</p>
+</div>
+<span class="material-symbols-outlined text-primary">location_on</span>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<footer class="fixed bottom-0 left-0 w-full z-50 flex justify-between items-center px-8 py-6 bg-white border-t-2 border-[#F8F9F5] shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+<button class="border-2 border-[#8B8D88] text-[#8B8D88] rounded-lg px-12 py-3 flex items-center justify-center font-manrope font-bold uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined mr-2">arrow_back</span>
+            Zurück
+        </button>
+<button class="bg-[#A3E635] text-[#1B4332] rounded-lg px-12 py-3 flex items-center justify-center font-manrope font-bold uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all">
+            Weiter
+            <span class="material-symbols-outlined ml-2">arrow_forward</span>
+</button>
+</footer>
+</body></html>

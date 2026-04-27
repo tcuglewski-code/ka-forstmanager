@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html class="light" lang="de"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed-dim": "#a5d0b9",
+                    "on-tertiary-container": "#d29895",
+                    "primary-fixed": "#c1ecd4",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-low": "#f9f2ec",
+                    "on-surface-variant": "#414844",
+                    "tertiary-container": "#5a302f",
+                    "surface-bright": "#fff8f2",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#ede7e1",
+                    "surface-container": "#f3ede7",
+                    "error-container": "#ffdad6",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-dim": "#dfd9d3",
+                    "tertiary": "#401b1b",
+                    "primary-container": "#1b4332",
+                    "on-secondary-fixed": "#201b15",
+                    "surface": "#fff8f2",
+                    "surface-container-highest": "#e8e1db",
+                    "on-error": "#ffffff",
+                    "outline-variant": "#c1c8c2",
+                    "tertiary-fixed": "#ffdad8",
+                    "secondary-fixed": "#ebe1d6",
+                    "outline": "#717973",
+                    "on-background": "#1d1b18",
+                    "on-primary-fixed-variant": "#274e3d",
+                    "on-secondary-fixed-variant": "#4c463e",
+                    "background": "#fff8f2",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#002114",
+                    "inverse-primary": "#a5d0b9",
+                    "on-primary-container": "#86af99",
+                    "on-tertiary-fixed-variant": "#673a39",
+                    "on-surface": "#1d1b18",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#f5b7b4",
+                    "surface-tint": "#3f6653",
+                    "error": "#ba1a1a",
+                    "secondary-container": "#ebe1d6",
+                    "on-tertiary-fixed": "#331111",
+                    "primary": "#012d1d",
+                    "inverse-surface": "#33302c",
+                    "surface-variant": "#e8e1db",
+                    "on-secondary-container": "#6a635b",
+                    "inverse-on-surface": "#f6f0ea",
+                    "secondary": "#645d55",
+                    "secondary-fixed-dim": "#cfc5bb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "gutter": "24px",
+                    "sm": "12px",
+                    "base": "8px",
+                    "md": "24px",
+                    "lg": "48px",
+                    "xl": "80px",
+                    "container-max": "800px"
+            },
+            "fontFamily": {
+                    "h3": ["Manrope"],
+                    "label-sm": ["Manrope"],
+                    "h2": ["Manrope"],
+                    "body-md": ["Manrope"],
+                    "body-lg": ["Manrope"],
+                    "h1": ["Manrope"],
+                    "label-bold": ["Manrope"]
+            },
+            "fontSize": {
+                    "h3": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                    "h2": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "h1": ["40px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "label-bold": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #F8F9F5;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased">
+<!-- TopAppBar -->
+<header class="bg-[#F8F9F5] dark:bg-neutral-950 border-b border-neutral-200 dark:border-neutral-800 shadow-[0_10px_20px_rgba(27,67,50,0.05)] sticky top-0 z-40">
+<div class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
+<div class="text-lg font-extrabold text-[#1B4332] dark:text-emerald-400 font-manrope">Forst-Anfrage</div>
+<nav class="hidden md:flex items-center space-x-8 font-manrope text-sm tracking-tight">
+<a class="text-[#1B4332] dark:text-emerald-400 font-bold border-b-2 border-[#A3E635] pb-2" href="#">Besitzertyp</a>
+<a class="text-[#8B8D88] dark:text-neutral-500 pb-2 hover:text-[#1B4332] transition-colors" href="#">Standort</a>
+<a class="text-[#8B8D88] dark:text-neutral-500 pb-2 hover:text-[#1B4332] transition-colors" href="#">Schutzart</a>
+<a class="text-[#8B8D88] dark:text-neutral-500 pb-2 hover:text-[#1B4332] transition-colors" href="#">Konfiguration</a>
+<a class="text-[#8B8D88] dark:text-neutral-500 pb-2 hover:text-[#1B4332] transition-colors" href="#">Zeitraum</a>
+<a class="text-[#8B8D88] dark:text-neutral-500 pb-2 hover:text-[#1B4332] transition-colors" href="#">Abschluss</a>
+</nav>
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined text-primary-container">account_circle</span>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-8 py-12 flex flex-col lg:flex-row gap-12 min-h-[calc(100vh-160px)]">
+<!-- SideNavBar (Progress & Summary) -->
+<aside class="hidden lg:flex flex-col w-64 p-4 space-y-4 bg-white dark:bg-neutral-900 rounded-lg h-fit border-r border-neutral-100 dark:border-neutral-800 shadow-sm font-manrope text-sm">
+<div class="mb-6">
+<h2 class="font-bold text-[#1B4332] text-body-lg">Anfrage-Status</h2>
+<p class="text-on-surface-variant text-label-sm">Vollständigkeit: 15%</p>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-2 overflow-hidden">
+<div class="bg-[#A3E635] h-full w-[15%]"></div>
+</div>
+</div>
+<nav class="space-y-1">
+<div class="flex items-center gap-3 p-3 bg-[#A3E635]/10 text-[#1B4332] font-semibold border-l-4 border-[#1B4332] transition-all Active: translate-x-1 duration-150">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">assignment</span>
+<span>Zusammenfassung</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-[#8B8D88] hover:bg-neutral-50 transition-all">
+<span class="material-symbols-outlined">landscape</span>
+<span>Projekt-Details</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-[#8B8D88] hover:bg-neutral-50 transition-all">
+<span class="material-symbols-outlined">forest</span>
+<span>Waldfläche</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-[#8B8D88] hover:bg-neutral-50 transition-all">
+<span class="material-symbols-outlined">payments</span>
+<span>Kostenübersicht</span>
+</div>
+</nav>
+<div class="mt-8 pt-6 border-t border-neutral-100">
+<button class="w-full py-3 px-4 border-2 border-[#1B4332] text-[#1B4332] font-bold rounded-lg hover:bg-[#1B4332] hover:text-white transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">help</span>
+                    Hilfe anfordern
+                </button>
+</div>
+</aside>
+<!-- Main Content (Wizard Container) -->
+<section class="flex-1 max-w-container-max mx-auto lg:mx-0">
+<div class="mb-12">
+<span class="text-[#8B8D88] font-label-bold uppercase tracking-widest text-xs">Schritt 1 von 6</span>
+<h1 class="font-h1 text-h1 text-[#1B4332] mt-2">Waldbesitzertyp wählen</h1>
+<p class="text-on-surface-variant font-body-lg mt-4 max-w-2xl">
+                    Um Ihnen das passende Forstmanagement-Modell anbieten zu können, müssen wir die rechtliche Struktur Ihrer Waldfläche kennen.
+                </p>
+</div>
+<!-- Bento Grid Selection Interface -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Option 1: Privatperson (Selected) -->
+<div class="group relative bg-white border-2 border-[#1B4332] p-6 rounded-xl shadow-[0_10px_20px_rgba(27,67,50,0.05)] cursor-pointer transition-all hover:scale-[1.02]">
+<div class="absolute top-4 right-4 bg-[#A3E635] text-[#1B4332] w-6 h-6 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="bg-[#F8F9F5] w-14 h-14 rounded-lg flex items-center justify-center mb-6 text-[#1B4332] group-hover:bg-[#A3E635]/20 transition-colors">
+<span class="material-symbols-outlined text-3xl">person</span>
+</div>
+<h3 class="font-h3 text-h3 text-[#1B4332] mb-2">Privatperson</h3>
+<p class="text-on-surface-variant text-body-md">Einzelbesitzer oder Familienforst ohne gewerbliche Registereintragung.</p>
+</div>
+<!-- Option 2: Personengesellschaft -->
+<div class="group bg-white border-2 border-neutral-100 p-6 rounded-xl hover:border-[#1B4332]/30 cursor-pointer transition-all hover:shadow-lg">
+<div class="bg-[#F8F9F5] w-14 h-14 rounded-lg flex items-center justify-center mb-6 text-[#8B8D88] group-hover:text-[#1B4332] transition-colors">
+<span class="material-symbols-outlined text-3xl">group</span>
+</div>
+<h3 class="font-h3 text-h3 text-[#1B4332] mb-2">Personengesellschaft</h3>
+<p class="text-on-surface-variant text-body-md">GbR, KG oder OHG. Fokus auf gemeinschaftliche Bewirtschaftung.</p>
+</div>
+<!-- Option 3: Körperschaft -->
+<div class="group bg-white border-2 border-neutral-100 p-6 rounded-xl hover:border-[#1B4332]/30 cursor-pointer transition-all hover:shadow-lg">
+<div class="bg-[#F8F9F5] w-14 h-14 rounded-lg flex items-center justify-center mb-6 text-[#8B8D88] group-hover:text-[#1B4332] transition-colors">
+<span class="material-symbols-outlined text-3xl">account_balance</span>
+</div>
+<h3 class="font-h3 text-h3 text-[#1B4332] mb-2">Körperschaft d. öff. Rechts</h3>
+<p class="text-on-surface-variant text-body-md">Kirchenforst, Stiftungen oder andere öffentlich-rechtliche Träger.</p>
+</div>
+<!-- Option 4: Kommunal/Staatlich -->
+<div class="group bg-white border-2 border-neutral-100 p-6 rounded-xl hover:border-[#1B4332]/30 cursor-pointer transition-all hover:shadow-lg">
+<div class="bg-[#F8F9F5] w-14 h-14 rounded-lg flex items-center justify-center mb-6 text-[#8B8D88] group-hover:text-[#1B4332] transition-colors">
+<span class="material-symbols-outlined text-3xl">domain</span>
+</div>
+<h3 class="font-h3 text-h3 text-[#1B4332] mb-2">Kommunal/Staatlich</h3>
+<p class="text-on-surface-variant text-body-md">Gemeindewald oder Staatsforstflächen in kommunaler Verwaltung.</p>
+</div>
+</div>
+<!-- Asymmetric Informational Card -->
+<div class="mt-12 bg-primary-container text-white p-8 rounded-2xl flex flex-col md:flex-row items-center gap-8 overflow-hidden relative">
+<div class="relative z-10 md:w-2/3">
+<h4 class="font-h3 text-xl mb-3 text-[#A3E635]">Warum ist das wichtig?</h4>
+<p class="text-primary-fixed opacity-90 leading-relaxed">
+                        Die rechtliche Einstufung beeinflusst Förderprogramme der EU und nationale Zuschüsse für den Waldumbau. Wir validieren Ihre Angabe im nächsten Schritt gegen das Grundbuch.
+                    </p>
+</div>
+<div class="md:w-1/3 flex justify-center">
+<div class="w-32 h-32 bg-[#A3E635]/10 rounded-full flex items-center justify-center outline outline-1 outline-[#A3E635]/30">
+<span class="material-symbols-outlined text-5xl text-[#A3E635]" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+</div>
+<!-- Decorative background graphic -->
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-white/5 rounded-full blur-3xl"></div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<footer class="fixed bottom-0 left-0 w-full z-50 flex justify-between items-center px-8 py-6 bg-white dark:bg-neutral-900 border-t-2 border-[#F8F9F5] shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+<button class="font-manrope font-bold uppercase tracking-wider border-2 border-[#8B8D88] text-[#8B8D88] rounded-lg px-12 py-3 flex items-center justify-center hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined mr-2">arrow_back</span>
+            Zurück
+        </button>
+<button class="font-manrope font-bold uppercase tracking-wider bg-[#A3E635] text-[#1B4332] rounded-lg px-12 py-3 flex items-center justify-center hover:brightness-110 active:scale-95 transition-all">
+            Weiter
+            <span class="material-symbols-outlined ml-2">arrow_forward</span>
+</button>
+</footer>
+<!-- Padding for bottom nav -->
+<div class="h-32"></div>
+</body></html>

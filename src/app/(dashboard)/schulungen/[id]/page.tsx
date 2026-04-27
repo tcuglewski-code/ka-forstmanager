@@ -51,7 +51,7 @@ export default function SchulungDetailPage() {
       fetch("/api/mitarbeiter").then((r) => r.json()),
     ])
     setSchulung(s)
-    setAlleMitarbeiter(Array.isArray(m) ? m : [])
+    setAlleMitarbeiter(Array.isArray(m) ? m : (m.items ?? []))
     setLoading(false)
   }, [id])
 

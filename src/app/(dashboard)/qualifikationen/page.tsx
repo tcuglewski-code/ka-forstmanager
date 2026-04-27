@@ -75,7 +75,7 @@ export default function QualifikationenPage() {
     ])
     setQualifikationen(Array.isArray(q) ? q : [])
     setMitarbeiterQuals(Array.isArray(mq) ? mq : [])
-    setMitarbeiter(Array.isArray(m) ? m : [])
+    setMitarbeiter(Array.isArray(m) ? m : (m.items ?? []))
     setLoading(false)
   }, [filter])
 

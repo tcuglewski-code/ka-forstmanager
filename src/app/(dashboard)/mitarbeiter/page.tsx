@@ -71,7 +71,7 @@ export default function MitarbeiterPage() {
       if (rolleFilter) params.set("rolle", rolleFilter)
       const res = await fetchWithTimeout(`/api/mitarbeiter?${params}`)
       const data = await res.json()
-      setMitarbeiter(data)
+      setMitarbeiter(Array.isArray(data) ? data : (data.items ?? []))
       // Auswahl zurücksetzen wenn neue Daten geladen
       setSelected([])
     } catch (e) {

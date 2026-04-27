@@ -324,7 +324,7 @@ function BuchungModal({ artikel, onClose, onSave }: { artikel: LagerArtikel; onC
       .catch(() => {})
     fetch("/api/mitarbeiter?status=aktiv")
       .then(r => r.json())
-      .then(data => setMitarbeiterListe(Array.isArray(data) ? data : []))
+      .then(data => setMitarbeiterListe(Array.isArray(data) ? data : (data.items ?? [])))
       .catch(() => {})
   }, [])
 

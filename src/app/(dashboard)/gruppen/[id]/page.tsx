@@ -39,7 +39,7 @@ export default function GruppeDetailPage() {
       if (!gRes.ok) { router.push("/gruppen"); return }
       const [g, ma] = await Promise.all([gRes.json(), maRes.json()])
       setGruppe(g)
-      setAllMitarbeiter(Array.isArray(ma) ? ma : [])
+      setAllMitarbeiter(Array.isArray(ma) ? ma : (ma.items ?? []))
     } catch {
       router.push("/gruppen")
     }

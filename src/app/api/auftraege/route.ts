@@ -106,6 +106,33 @@ export async function GET(req: NextRequest) {
     ]
   }
 
+  // Role-based filtering: GF/MA only see their group's orders
+  const userRole = (user as { role?: string }).role
+  const userEmail = (user as { email?: string }).email
+  const isAdmin = userRole && ["admin", "ka_admin", "administrator"].includes(userRole)
+
+  if (!isAdmin && (userRole === "ka_gruppenführer" || userRole === "ka_gruppenfuhrer") && userEmail) {
+    const ownMitarbeiter = await prisma.mitarbeiter.findFirst({
+      where: { email: userEmail, deletedAt: null },
+      select: { id: true },
+    })
+    const meineGruppen = await prisma.gruppe.findMany({
+      where: { gruppenfuehrerId: ownMitarbeiter?.id ?? "" },
+      select: { id: true },
+    })
+    where.gruppeId = { in: meineGruppen.map(g => g.id) }
+  } else if (!isAdmin && userRole === "ka_mitarbeiter" && userEmail) {
+    const ownMitarbeiter = await prisma.mitarbeiter.findFirst({
+      where: { email: userEmail, deletedAt: null },
+      select: { id: true },
+    })
+    const mitgliedschaften = await prisma.gruppeMitglied.findMany({
+      where: { mitarbeiterId: ownMitarbeiter?.id ?? "" },
+      select: { gruppeId: true },
+    })
+    where.gruppeId = { in: mitgliedschaften.map(m => m.gruppeId) }
+  }
+
   const [auftraege, total] = await Promise.all([
     prisma.auftrag.findMany({
       where,
@@ -120,7 +147,12 @@ export async function GET(req: NextRequest) {
     prisma.auftrag.count({ where }),
   ])
 
-  return NextResponse.json(auftraege, {
+  // Strip waldbesitzer contact details for non-admin roles
+  const sanitizedAuftraege = isAdmin
+    ? auftraege
+    : auftraege.map(a => ({ ...a, waldbesitzerEmail: null, waldbesitzerTelefon: null }))
+
+  return NextResponse.json(sanitizedAuftraege, {
     headers: { "X-Total-Count": String(total) },
   })
 }

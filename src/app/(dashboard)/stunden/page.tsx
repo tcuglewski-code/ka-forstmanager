@@ -144,7 +144,7 @@ export default function StundenPage() {
     ])
     setStunden(Array.isArray(s) ? s : [])
     setAbwesenheiten(Array.isArray(a) ? a : [])
-    setMitarbeiter(Array.isArray(m) ? m : [])
+    setMitarbeiter(Array.isArray(m) ? m : (m.items ?? []))
     setAuftraege(Array.isArray(au) ? au : (Array.isArray(au?.data) ? au.data : []))
     setLoading(false)
   }, [filterMitarbeiter, filterMonat, filterJahr, filterGenehmigt])
