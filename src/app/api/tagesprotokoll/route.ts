@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { auth } from '@/lib/auth'
+import { verifyToken } from '@/lib/auth-helpers'
 import { withErrorHandler } from "@/lib/api-handler"
 
 
 export const GET = withErrorHandler(async (req: NextRequest) => {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const auftragId = req.nextUrl.searchParams.get('auftragId')
   const gruppeId = req.nextUrl.searchParams.get('gruppeId')
@@ -45,8 +45,8 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
 })
 
 export const POST = withErrorHandler(async (req: NextRequest) => {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const data = await req.json()
 
@@ -213,7 +213,7 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
       gruppeId: data.gruppeId ?? null,
       datum: data.datum ? new Date(data.datum) : new Date(),
       ersteller: data.ersteller ?? '',
-      erstellerId: (session.user as { id?: string })?.id ?? null,
+      erstellerId: (user as { id?: string })?.id ?? null,
       status: data.status || 'entwurf',
       eingereichtAm: data.eingereichtAm ? new Date(data.eingereichtAm) : null,
       // Arbeitszeit

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
+import { verifyToken } from "@/lib/auth-helpers"
 import { prisma } from "@/lib/prisma"
 import { sanitizeStrings } from "@/lib/sanitize"
 import { z } from "zod"
@@ -16,8 +16,8 @@ const MitarbeiterSchema = z.object({
 })
 
 export async function GET(req: NextRequest) {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const { searchParams } = new URL(req.url)
   const suche = searchParams.get("suche") || searchParams.get("search") || ""
@@ -48,8 +48,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
     const body = sanitizeStrings(await req.json())

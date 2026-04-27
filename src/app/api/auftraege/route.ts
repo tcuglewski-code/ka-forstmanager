@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { auth } from "@/lib/auth"
+import { verifyToken } from "@/lib/auth-helpers"
 // Sprint AG: E-Mail-Benachrichtigung beim Erstellen eines Auftrags
 import { emailService } from "@/lib/email"
 import { sendKANotification } from "@/lib/telegram-notify"
@@ -77,8 +77,8 @@ const AuftragCreateSchema = z.object({
 
 export async function GET(req: NextRequest) {
   // ⚠️ GET ist auth-geschützt — Aufträge sind interne Dashboard-Daten
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const { searchParams } = new URL(req.url)
   const status = searchParams.get("status")
@@ -126,8 +126,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
     const body = await req.json()
