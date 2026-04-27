@@ -97,7 +97,8 @@ export async function getGruppenIdsForUser(
       where: { gruppenfuehrerId: own.id },
       select: { id: true },
     })
-    return gruppen.map((g) => g.id)
+    // Keine Gruppen = kein Zugriff (nicht: alles sehen!)
+    return gruppen.length > 0 ? gruppen.map((g) => g.id) : ["__none__"]
   }
 
   // MA or other roles: via GruppeMitglied
@@ -105,7 +106,8 @@ export async function getGruppenIdsForUser(
     where: { mitarbeiterId: own.id },
     select: { gruppeId: true },
   })
-  return mitgliedschaften.map((m) => m.gruppeId)
+  // Keine Mitgliedschaften = kein Zugriff
+  return mitgliedschaften.length > 0 ? mitgliedschaften.map((m) => m.gruppeId) : ["__none__"]
 }
 
 /**
