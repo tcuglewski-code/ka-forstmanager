@@ -67,6 +67,7 @@ export async function GET(req: NextRequest) {
   if (isAdminRole(userRole)) {
     const mitarbeiter = await prisma.mitarbeiter.findMany({
       where: { AND: [{ deletedAt: null }, searchFilter, rolleFilter] },
+      include: { user: { select: { id: true, active: true } } },
       orderBy: { nachname: "asc" },
       take: limit,
     })

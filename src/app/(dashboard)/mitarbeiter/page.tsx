@@ -19,6 +19,8 @@ interface Mitarbeiter {
   rolle: string
   status: string
   stundenlohn?: number | null
+  userId?: string | null
+  user?: { id: string; active: boolean } | null
 }
 
 // RolleBadge Komponente für schnelle Sichtbarkeit
@@ -54,6 +56,7 @@ export default function MitarbeiterPage() {
   const [loading, setLoading] = useState(true)
   const [suche, setSuche] = useState("")
   const [rolleFilter, setRolleFilter] = useState("")
+  const [appZugangFilter, setAppZugangFilter] = useState("")
   const [modalOpen, setModalOpen] = useState(false)
   const [editItem, setEditItem] = useState<Mitarbeiter | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
@@ -199,8 +202,18 @@ export default function MitarbeiterPage() {
     setModalOpen(true)
   }
 
-  const alleAusgewaehlt = mitarbeiter.length > 0 && selected.length === mitarbeiter.length
-  const teilweiseAusgewaehlt = selected.length > 0 && selected.length < mitarbeiter.length
+  // App-Zugang Filter (client-side)
+  const filteredMitarbeiter = appZugangFilter
+    ? mitarbeiter.filter((m) => {
+        if (appZugangFilter === "ohne") return !m.userId && !m.user
+        if (appZugangFilter === "aktiv") return m.user?.active === true
+        if (appZugangFilter === "gesperrt") return m.userId && m.user?.active === false
+        return true
+      })
+    : mitarbeiter
+
+  const alleAusgewaehlt = filteredMitarbeiter.length > 0 && selected.length === filteredMitarbeiter.length
+  const teilweiseAusgewaehlt = selected.length > 0 && selected.length < filteredMitarbeiter.length
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -209,7 +222,7 @@ export default function MitarbeiterPage() {
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>Mitarbeiter</h1>
           <p className="text-[var(--color-on-surface-variant)] text-sm mt-0.5">
-            {mitarbeiter.length} Einträge
+            {filteredMitarbeiter.length} Einträge{appZugangFilter ? ` (gefiltert)` : ""}
           </p>
         </div>
         <button
@@ -245,6 +258,16 @@ export default function MitarbeiterPage() {
           <option value="gruppenfuehrer">Gruppenführer (alt)</option>
           <option value="buero">Büro</option>
           <option value="admin">Admin</option>
+        </select>
+        <select
+          value={appZugangFilter}
+          onChange={(e) => setAppZugangFilter(e.target.value)}
+          className="px-3 py-2.5 bg-[var(--color-surface-container)] border border-border rounded-lg text-sm text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+        >
+          <option value="">App-Zugang: Alle</option>
+          <option value="ohne">Ohne App-Zugang</option>
+          <option value="aktiv">App aktiv</option>
+          <option value="gesperrt">App gesperrt</option>
         </select>
       </div>
 
@@ -345,11 +368,12 @@ export default function MitarbeiterPage() {
                 <th className="text-left text-xs font-medium text-[var(--color-on-surface-variant)] px-4 py-3">Rolle</th>
                 <th className="text-left text-xs font-medium text-[var(--color-on-surface-variant)] px-4 py-3">Telefon</th>
                 <th className="text-left text-xs font-medium text-[var(--color-on-surface-variant)] px-4 py-3">Status</th>
+                <th className="text-left text-xs font-medium text-[var(--color-on-surface-variant)] px-4 py-3">App-Zugang</th>
                 <th className="text-right text-xs font-medium text-[var(--color-on-surface-variant)] px-4 py-3">Aktionen</th>
               </tr>
             </thead>
             <tbody>
-              {mitarbeiter.map((m) => {
+              {filteredMitarbeiter.map((m) => {
                 const istAusgewaehlt = selected.includes(m.id)
                 return (
                   <tr
@@ -396,6 +420,15 @@ export default function MitarbeiterPage() {
                       >
                         {m.status}
                       </span>
+                    </td>
+                    <td className="px-4 py-4">
+                      {!m.userId && !m.user ? (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs border bg-gray-100 text-gray-500 border-gray-300">Kein Zugang</span>
+                      ) : m.user?.active ? (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs border bg-emerald-100 text-emerald-800 border-emerald-500/30">Aktiv</span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs border bg-red-100 text-red-800 border-red-500/30">Gesperrt</span>
+                      )}
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>

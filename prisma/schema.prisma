@@ -31,6 +31,10 @@ model User {
   // B2B Unternehmererklärung (§14 BGB)
   unternehmerErklaerung   Boolean   @default(false)
   unternehmerErklaerungAt DateTime?
+  // AAF-5b: App-Account Management
+  mustChangePassword   Boolean      @default(false)
+  passwordExpiresAt    DateTime?
+  tokenVersion         Int          @default(0)
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
   sessions             Session[]

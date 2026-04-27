@@ -1,11 +1,13 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { isAdminRole } from "@/lib/auth-helpers"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, User, MapPin, Phone, Mail, CreditCard, AlertTriangle } from "lucide-react"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
 import { StatistikWidget } from "./StatistikWidget"
 import { AbwesenheitenSection } from "./AbwesenheitenSection"
+import { AppZugangSection } from "@/components/mitarbeiter/AppZugangSection"
 
 // Sprint Q: RolleBadge Komponente
 function RolleBadge({ rolle }: { rolle: string }) {
@@ -43,6 +45,7 @@ async function getMitarbeiter(id: string) {
       lohneintraege: { orderBy: [{ jahr: "desc" }, { monat: "desc" }], take: 12 },
       abwesenheiten: { orderBy: { von: "desc" }, take: 10 },
       gruppen: { include: { gruppe: { select: { id: true, name: true } } } },
+      user: { select: { id: true, active: true } },
     },
   })
 }
@@ -52,7 +55,9 @@ async function getSaisons() {
 }
 
 export default async function MitarbeiterDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  await auth()
+  const session = await auth()
+  const sessionRole = (session?.user as { role?: string } | undefined)?.role
+  const adminUser = isAdminRole(sessionRole)
   const { id } = await params
   const [ma, saisons] = await Promise.all([getMitarbeiter(id), getSaisons()])
   if (!ma) notFound()
@@ -113,6 +118,12 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
           )}
         </div>
       )}
+
+      {/* AAF-1: App-Zugang Section */}
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6 mb-6">
+        <h2 className="font-semibold text-[var(--color-on-surface)] mb-4">App-Zugang</h2>
+        <AppZugangSection mitarbeiterId={ma.id} isAdmin={adminUser} mitarbeiterEmail={ma.email} />
+      </div>
 
       {/* Sprint R: Statistik-Widget */}
       <StatistikWidget mitarbeiterId={ma.id} saisons={saisons} />
