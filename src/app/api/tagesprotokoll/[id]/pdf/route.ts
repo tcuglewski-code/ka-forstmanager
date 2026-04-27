@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { auth } from '@/lib/auth'
+import { verifyToken, getGruppenIdsForUser } from '@/lib/auth-helpers'
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 
 const GREEN = rgb(0.17, 0.23, 0.11) // #2C3A1C
@@ -21,23 +21,31 @@ function fmtTime(t: string | null | undefined) {
 }
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
 
   const protokoll = await prisma.tagesprotokoll.findUnique({
     where: { id },
     include: {
-      auftrag: { select: { titel: true, nummer: true, waldbesitzer: true, standort: true } },
+      auftrag: { select: { titel: true, nummer: true, waldbesitzer: true, standort: true, gruppeId: true } },
     },
   })
 
   if (!protokoll) {
     return NextResponse.json({ error: 'Protokoll nicht gefunden' }, { status: 404 })
+  }
+
+  // Role-based: GF/MA can only access PDFs for their group's Aufträge
+  const userRole = (user as { role?: string }).role
+  const userEmail = (user as { email?: string }).email
+  const gruppenIds = await getGruppenIdsForUser(userEmail, userRole)
+  if (gruppenIds.length > 0 && (!protokoll.auftrag?.gruppeId || !gruppenIds.includes(protokoll.auftrag.gruppeId))) {
+    return NextResponse.json({ error: 'Keine Berechtigung' }, { status: 403 })
   }
 
   const pdfDoc = await PDFDocument.create()

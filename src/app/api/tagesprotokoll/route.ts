@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyToken } from '@/lib/auth-helpers'
+import { verifyToken, getGruppenIdsForUser } from '@/lib/auth-helpers'
 import { withErrorHandler } from "@/lib/api-handler"
 
 
 export const GET = withErrorHandler(async (req: NextRequest) => {
   const user = await verifyToken(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const userRole = (user as { role?: string }).role
+  const userEmail = (user as { email?: string }).email
+  const gruppenIds = await getGruppenIdsForUser(userEmail, userRole)
+  const hasRestriction = gruppenIds.length > 0
 
   const auftragId = req.nextUrl.searchParams.get('auftragId')
   const gruppeId = req.nextUrl.searchParams.get('gruppeId')
@@ -16,6 +21,11 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
   if (auftragId) where.auftragId = auftragId
   if (gruppeId) where.gruppeId = gruppeId
   if (status) where.status = status
+
+  // Role-based: GF/MA only see protocols for their group's Aufträge
+  if (hasRestriction) {
+    where.auftrag = { gruppeId: { in: gruppenIds } }
+  }
 
   const protokolle = await prisma.tagesprotokoll.findMany({
     where,
@@ -48,7 +58,23 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
   const user = await verifyToken(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
+  const userRole = (user as { role?: string }).role
+  const userEmail = (user as { email?: string }).email
+  const gruppenIds = await getGruppenIdsForUser(userEmail, userRole)
+  const hasRestriction = gruppenIds.length > 0
+
   const data = await req.json()
+
+  // Role-based: GF/MA can only create protocols for their group's Aufträge
+  if (hasRestriction && data.auftragId) {
+    const auftrag = await prisma.auftrag.findUnique({
+      where: { id: data.auftragId },
+      select: { gruppeId: true },
+    })
+    if (!auftrag || !auftrag.gruppeId || !gruppenIds.includes(auftrag.gruppeId)) {
+      return NextResponse.json({ error: 'Keine Berechtigung für diesen Auftrag' }, { status: 403 })
+    }
+  }
 
   // FM-08: Server-seitige Validierung (BLOCKIEREND — nicht umgehbar)
   const errors: string[] = []

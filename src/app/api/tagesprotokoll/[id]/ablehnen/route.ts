@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { auth } from '@/lib/auth'
+import { verifyToken } from '@/lib/auth-helpers'
 import { withErrorHandler } from "@/lib/api-handler"
 
 /**
@@ -9,10 +9,10 @@ import { withErrorHandler } from "@/lib/api-handler"
  */
 export const POST = withErrorHandler(async (req: NextRequest,
   { params }: { params: Promise<{ id: string }> }) => {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const role = (session.user as { role?: string })?.role
+  const role = (user as { role?: string })?.role
   if (role !== 'admin' && role !== 'ka_admin' && role !== 'supervisor') {
     return NextResponse.json({ error: 'Keine Berechtigung' }, { status: 403 })
   }

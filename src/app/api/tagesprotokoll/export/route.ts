@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { auth } from '@/lib/auth'
+import { verifyToken, getGruppenIdsForUser } from '@/lib/auth-helpers'
 
 function fmtDate(d: Date) {
   return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
@@ -14,8 +14,13 @@ function escapeCSV(val: string): string {
 }
 
 export async function GET(req: NextRequest) {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const userRole = (user as { role?: string }).role
+  const userEmail = (user as { email?: string }).email
+  const gruppenIds = await getGruppenIdsForUser(userEmail, userRole)
+  const hasRestriction = gruppenIds.length > 0
 
   const sp = req.nextUrl.searchParams
   const auftragId = sp.get('auftragId')
@@ -31,6 +36,10 @@ export async function GET(req: NextRequest) {
       ...(vonDatum ? { gte: new Date(vonDatum) } : {}),
       ...(bisDatum ? { lte: new Date(bisDatum + 'T23:59:59') } : {}),
     }
+  }
+  // Role-based: GF/MA only see protocols for their group's Aufträge
+  if (hasRestriction) {
+    where.auftrag = { gruppeId: { in: gruppenIds } }
   }
 
   const protokolle = await prisma.tagesprotokoll.findMany({

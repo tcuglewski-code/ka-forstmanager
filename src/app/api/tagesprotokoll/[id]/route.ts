@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { auth } from '@/lib/auth'
+import { verifyToken, getGruppenIdsForUser } from '@/lib/auth-helpers'
 import { withErrorHandler } from "@/lib/api-handler"
 
 
 export const GET = withErrorHandler(async (req: NextRequest,
   { params }: { params: Promise<{ id: string }> }) => {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
 
@@ -22,26 +22,50 @@ export const GET = withErrorHandler(async (req: NextRequest,
           waldbesitzerEmail: true,
           waldbesitzerTelefon: true,
           standort: true,
-          flaeche_ha: true
+          flaeche_ha: true,
+          gruppeId: true,
         }
       }
     }
   })
 
   if (!p) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
+
+  // Role-based: GF/MA can only see protocols for their group's Aufträge
+  const userRole = (user as { role?: string }).role
+  const userEmail = (user as { email?: string }).email
+  const gruppenIds = await getGruppenIdsForUser(userEmail, userRole)
+  if (gruppenIds.length > 0 && (!p.auftrag?.gruppeId || !gruppenIds.includes(p.auftrag.gruppeId))) {
+    return NextResponse.json({ error: 'Keine Berechtigung' }, { status: 403 })
+  }
+
   return NextResponse.json(p)
 })
 
 export const PUT = withErrorHandler(async (req: NextRequest,
   { params }: { params: Promise<{ id: string }> }) => {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
 
-  // Lock-Guard: gesperrte Protokolle können nicht bearbeitet werden
-  const existing = await prisma.tagesprotokoll.findUnique({ where: { id }, select: { lockedAt: true, status: true } })
+  // Load existing protocol with auftrag.gruppeId for role check
+  const existing = await prisma.tagesprotokoll.findUnique({
+    where: { id },
+    select: { lockedAt: true, status: true, erstellerId: true, auftrag: { select: { gruppeId: true } } },
+  })
   if (!existing) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
+
+  // Role-based: GF/MA can only edit protocols for their group's Aufträge
+  const userRole = (user as { role?: string }).role
+  const userEmail = (user as { email?: string }).email
+  const userId = (user as { id?: string }).id
+  const gruppenIds = await getGruppenIdsForUser(userEmail, userRole)
+  if (gruppenIds.length > 0 && (!existing.auftrag?.gruppeId || !gruppenIds.includes(existing.auftrag.gruppeId))) {
+    return NextResponse.json({ error: 'Keine Berechtigung' }, { status: 403 })
+  }
+
+  // Lock-Guard: gesperrte Protokolle können nicht bearbeitet werden
   if (existing.lockedAt) {
     return NextResponse.json({ error: 'Protokoll ist gesperrt (eingereicht/genehmigt)' }, { status: 423 })
   }
@@ -131,10 +155,32 @@ export const PUT = withErrorHandler(async (req: NextRequest,
 
 export const DELETE = withErrorHandler(async (req: NextRequest,
   { params }: { params: Promise<{ id: string }> }) => {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
+
+  // Role-based: GF/MA can only delete protocols for their group, and only own protocols
+  const userRole = (user as { role?: string }).role
+  const userEmail = (user as { email?: string }).email
+  const userId = (user as { id?: string }).id
+  const gruppenIds = await getGruppenIdsForUser(userEmail, userRole)
+
+  if (gruppenIds.length > 0) {
+    const existing = await prisma.tagesprotokoll.findUnique({
+      where: { id },
+      select: { erstellerId: true, auftrag: { select: { gruppeId: true } } },
+    })
+    if (!existing) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
+    if (!existing.auftrag?.gruppeId || !gruppenIds.includes(existing.auftrag.gruppeId)) {
+      return NextResponse.json({ error: 'Keine Berechtigung' }, { status: 403 })
+    }
+    // Non-admins can only delete their own protocols
+    if (existing.erstellerId && userId && existing.erstellerId !== userId) {
+      return NextResponse.json({ error: 'Nur eigene Protokolle können gelöscht werden' }, { status: 403 })
+    }
+  }
+
   await prisma.tagesprotokoll.delete({ where: { id } })
   return NextResponse.json({ ok: true })
 })

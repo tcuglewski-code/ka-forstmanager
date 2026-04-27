@@ -57,11 +57,55 @@ export async function verifyToken(req: NextRequest) {
   return null
 }
 
+const ADMIN_ROLES = ["admin", "ka_admin", "administrator"]
+
 /**
  * Check if user has admin role
  */
 export function isAdmin(user: { role?: string } | null): boolean {
   return user?.role === "admin"
+}
+
+/**
+ * Check if user has any admin role variant
+ */
+export function isAdminRole(role: string | undefined | null): boolean {
+  return !!role && ADMIN_ROLES.includes(role)
+}
+
+/**
+ * Get Gruppen-IDs the user has access to based on their role.
+ * Returns empty array for admins (= no restriction).
+ * Returns ['__none__'] if user not found (= no access).
+ */
+export async function getGruppenIdsForUser(
+  userEmail: string | undefined | null,
+  userRole: string | undefined | null
+): Promise<string[]> {
+  if (!userRole || isAdminRole(userRole)) return [] // admins: no restriction
+
+  if (!userEmail) return ["__none__"]
+
+  const own = await prisma.mitarbeiter.findFirst({
+    where: { email: userEmail, deletedAt: null },
+    select: { id: true },
+  })
+  if (!own) return ["__none__"]
+
+  if (userRole === "ka_gruppenführer" || userRole === "ka_gruppenfuhrer") {
+    const gruppen = await prisma.gruppe.findMany({
+      where: { gruppenfuehrerId: own.id },
+      select: { id: true },
+    })
+    return gruppen.map((g) => g.id)
+  }
+
+  // MA or other roles: via GruppeMitglied
+  const mitgliedschaften = await prisma.gruppeMitglied.findMany({
+    where: { mitarbeiterId: own.id },
+    select: { gruppeId: true },
+  })
+  return mitgliedschaften.map((m) => m.gruppeId)
 }
 
 /**
