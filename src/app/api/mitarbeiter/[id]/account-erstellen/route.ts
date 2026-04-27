@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyToken, isAdminRole } from '@/lib/auth-helpers'
 import bcrypt from 'bcryptjs'
+import crypto from 'crypto'
 import { withErrorHandler } from "@/lib/api-handler"
 
 const ALLOWED_ROLES = ["ka_mitarbeiter", "ka_gruppenführer", "ka_admin"]
@@ -31,9 +32,10 @@ export const POST = withErrorHandler(async (req: NextRequest, { params }: { para
     return NextResponse.json({ error: `Ungültige Rolle. Erlaubt: ${ALLOWED_ROLES.join(', ')}` }, { status: 400 })
   }
 
-  // Passwort: entweder angegeben oder Vorname+Geburtsjahr
-  const gj = mitarbeiter.geburtsdatum ? new Date(mitarbeiter.geburtsdatum).getFullYear() : '2024'
-  const defaultPw = `${mitarbeiter.vorname}${gj}!`
+  // AAF-FIX-1: Sicheres zufälliges Passwort statt vorhersagbarem Vorname+Geburtsjahr
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'
+  const randomPart = Array.from(crypto.randomBytes(7)).map(b => chars[b % chars.length]).join('')
+  const defaultPw = randomPart + '!'
   const passwort = data.passwort || defaultPw
   const hash = await bcrypt.hash(passwort, 10)
 
@@ -67,6 +69,7 @@ export const POST = withErrorHandler(async (req: NextRequest, { params }: { para
         password: hash,
         role: rolle,
         active: true,
+        mustChangePassword: true,
       }
     })
   } else {

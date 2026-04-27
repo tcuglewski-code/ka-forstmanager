@@ -21,6 +21,8 @@ export const authConfig = {
         session.user.id = token.id as string
         session.user.role = token.role
         session.user.baumschuleId = token.baumschuleId ?? null
+        // AAF-SEC-3: mustChangePassword in Session verfügbar machen
+        session.user.mustChangePassword = token.mustChangePassword as boolean ?? false
       }
       return session
     },

@@ -69,6 +69,18 @@ export default auth((req) => {
     }
   }
 
+  // AAF-SEC-3: mustChangePassword enforcing — redirect to /change-password
+  if (isLoggedIn) {
+    const mustChange = (req.auth as any)?.user?.mustChangePassword
+    const isChangePasswordPage = pathname === "/change-password"
+    const isAuthApi = pathname.startsWith("/api/auth/")
+    const isLogout = pathname === "/logout"
+
+    if (mustChange && !isChangePasswordPage && !isAuthApi && !isLogout) {
+      return NextResponse.redirect(new URL("/change-password", req.url))
+    }
+  }
+
   // RBAC: Rollenbasierte Route-Beschränkungen
   if (isLoggedIn) {
     const role = (req.auth as any)?.user?.role as string | undefined

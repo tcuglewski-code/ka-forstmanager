@@ -8,6 +8,41 @@ const getAuth = async () => {
   return auth
 }
 
+// AAF-SEC-1/2: In-memory cache for user active/tokenVersion checks (TTL 60s)
+const userCache = new Map<string, { active: boolean; tokenVersion: number; expiresAt: number }>()
+const CACHE_TTL_MS = 60_000
+
+async function checkUserStatus(userId: string, jwtTokenVersion?: number): Promise<boolean> {
+  const now = Date.now()
+  const cached = userCache.get(userId)
+
+  if (cached && cached.expiresAt > now) {
+    if (!cached.active) return false
+    if (jwtTokenVersion !== undefined && jwtTokenVersion !== cached.tokenVersion) return false
+    return true
+  }
+
+  const dbUser = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { active: true, tokenVersion: true },
+  })
+
+  if (!dbUser) {
+    userCache.delete(userId)
+    return false
+  }
+
+  userCache.set(userId, {
+    active: dbUser.active,
+    tokenVersion: dbUser.tokenVersion,
+    expiresAt: now + CACHE_TTL_MS,
+  })
+
+  if (!dbUser.active) return false
+  if (jwtTokenVersion !== undefined && jwtTokenVersion !== dbUser.tokenVersion) return false
+  return true
+}
+
 /**
  * Verify token from Authorization header or session
  * Returns user object or null
@@ -24,6 +59,13 @@ export async function verifyToken(req: NextRequest) {
         const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET)
         const { payload } = await jwtVerify(token, secret)
         if (payload.sub) {
+          // AAF-SEC-1/2: Check user is still active + tokenVersion matches
+          const isValid = await checkUserStatus(
+            payload.sub,
+            typeof payload.tv === "number" ? payload.tv : undefined
+          )
+          if (!isValid) return null
+
           return {
             id: payload.sub,
             email: payload.email as string,

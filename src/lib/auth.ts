@@ -9,6 +9,30 @@ export { verifyToken, isAdmin, isAccountant, canAccessAccounting } from "@/lib/a
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
+  callbacks: {
+    ...authConfig.callbacks,
+    async jwt({ token, user, trigger }) {
+      // Base fields from auth.config.ts
+      if (user) {
+        token.id = user.id
+        token.role = user.role
+        token.baumschuleId = user.baumschuleId ?? null
+      }
+      // AAF-SEC-1/2/3: Load tokenVersion + mustChangePassword into JWT
+      if (token.sub && (trigger === "signIn" || token.tv === undefined)) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.sub },
+          select: { tokenVersion: true, mustChangePassword: true },
+        })
+        if (dbUser) {
+          token.tv = dbUser.tokenVersion
+          token.mustChangePassword = dbUser.mustChangePassword
+        }
+      }
+      return token
+    },
+    session: authConfig.callbacks!.session!,
+  },
   providers: [
     // Standard Login mit Passwort
     Credentials({
