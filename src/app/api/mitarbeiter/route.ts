@@ -20,7 +20,7 @@ const MitarbeiterSchema = z.object({
 const SAFE_MITARBEITER_SELECT = {
   id: true, vorname: true, nachname: true, email: true,
   telefon: true, mobil: true, rolle: true, qualifikationen: true,
-  fuehrerschein: true, status: true, personalNr: true,
+  fuehrerschein: true, status: true,
   adresse: true, plz: true, ort: true,
   eintrittsdatum: true, austrittsdatum: true,
   createdAt: true, updatedAt: true,
