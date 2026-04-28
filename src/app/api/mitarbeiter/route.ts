@@ -26,7 +26,7 @@ const SAFE_MITARBEITER_SELECT = {
   createdAt: true, updatedAt: true,
 } as const
 
-const ADMIN_ROLES = ["admin", "ka_admin", "administrator"]
+const ADMIN_ROLES = ["admin", "ka_admin", "administrator", "supervisor"]
 
 function isAdminRole(role: string | undefined): boolean {
   return !!role && ADMIN_ROLES.includes(role)
