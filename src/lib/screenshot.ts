@@ -1,25 +1,31 @@
 "use client"
 
-export async function captureScreenshot(): Promise<string | null> {
+export async function captureScreenshot(): Promise<{dataUrl: string | null; error: string | null}> {
   try {
     const html2canvas = (await import("html2canvas")).default
-    const canvas = await html2canvas(document.body, {
+    const canvas = await html2canvas(document.documentElement, {
+      allowTaint: true,
+      useCORS: true,
+      scale: 0.6,
+      logging: false,
+      windowWidth: document.documentElement.scrollWidth,
+      windowHeight: document.documentElement.scrollHeight,
       ignoreElements: (el) => {
         const tag = el.tagName?.toLowerCase()
         const type = (el as HTMLInputElement).type?.toLowerCase()
-        const cls = (el as HTMLElement).className || ""
+        const cls = String((el as HTMLElement).className || "")
         return (
           (tag === "input" && (type === "password" || type === "hidden")) ||
-          (typeof cls === "string" && cls.includes("sensitive"))
+          cls.includes("sensitive") ||
+          tag === "iframe"
         )
       },
-      scale: 0.75,
-      useCORS: true,
-      logging: false,
     })
-    return canvas.toDataURL("image/jpeg", 0.8)
-  } catch {
-    return null
+    return { dataUrl: canvas.toDataURL("image/jpeg", 0.75), error: null }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error("[screenshot] html2canvas failed:", msg)
+    return { dataUrl: null, error: msg }
   }
 }
 

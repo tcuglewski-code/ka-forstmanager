@@ -76,20 +76,28 @@ export function FeedbackButton({ nutzer }: FeedbackButtonProps) {
         setShowExpected(false)
         setScreenshotEnabled(false)
         setScreenshotDataUrl(null)
+        setScreenshotError(null)
         setError(null)
         setShowSuccess(false)
       }, 200)
     }
   }, [isOpen])
 
+  const [screenshotError, setScreenshotError] = useState<string | null>(null)
+
   const doCapture = async () => {
     setIsCapturingScreenshot(true)
+    setScreenshotError(null)
     try {
       const { captureScreenshot } = await import("@/lib/screenshot")
-      const dataUrl = await captureScreenshot()
-      setScreenshotDataUrl(dataUrl)
-    } catch {
+      const result = await captureScreenshot()
+      setScreenshotDataUrl(result.dataUrl)
+      if (result.error) {
+        setScreenshotError(result.error)
+      }
+    } catch (err) {
       setScreenshotDataUrl(null)
+      setScreenshotError(err instanceof Error ? err.message : "Screenshot fehlgeschlagen")
     } finally {
       setIsCapturingScreenshot(false)
     }
@@ -131,6 +139,7 @@ export function FeedbackButton({ nutzer }: FeedbackButtonProps) {
           technicalContext: {
             consoleErrors: errorLogRef.current,
             loadTime: performance.now(),
+            screenshotBase64: !screenshotUrl && screenshotDataUrl ? screenshotDataUrl : undefined,
           },
         }),
       })
@@ -424,9 +433,11 @@ export function FeedbackButton({ nutzer }: FeedbackButtonProps) {
                         ) : (
                           <p
                             className="text-xs"
-                            style={{ color: "var(--color-on-surface-variant)" }}
+                            style={{ color: screenshotError ? "#dc2626" : "var(--color-on-surface-variant)" }}
                           >
-                            Screenshot konnte nicht aufgenommen werden.
+                            {screenshotError
+                              ? `Screenshot fehlgeschlagen: ${screenshotError}`
+                              : "Screenshot konnte nicht aufgenommen werden."}
                           </p>
                         )}
                       </div>
