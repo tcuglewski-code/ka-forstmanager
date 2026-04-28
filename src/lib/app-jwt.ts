@@ -1,7 +1,8 @@
 import { SignJWT, jwtVerify } from "jose"
 
+// JWT-Secret muss mit Login-Route übereinstimmen (die NEXTAUTH_SECRET nutzt)
 const secret = new TextEncoder().encode(
-  process.env.APP_JWT_SECRET || "forstmanager-app-secret-2026"
+  process.env.NEXTAUTH_SECRET || process.env.APP_JWT_SECRET || "forstmanager-app-secret-2026"
 )
 
 export async function signAppToken(payload: object) {

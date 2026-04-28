@@ -18,8 +18,14 @@ export async function POST(req: NextRequest) {
     // Support login via email or username
     const isEmail = username.includes("@")
     const user = isEmail
-      ? await prisma.user.findUnique({ where: { email: username } })
-      : await prisma.user.findUnique({ where: { username: username } })
+      ? await prisma.user.findUnique({
+          where: { email: username },
+          select: { id: true, email: true, username: true, name: true, role: true, active: true, password: true, tokenVersion: true, mustChangePassword: true }
+        })
+      : await prisma.user.findUnique({
+          where: { username: username },
+          select: { id: true, email: true, username: true, name: true, role: true, active: true, password: true, tokenVersion: true, mustChangePassword: true }
+        })
 
     if (!user || !user.active) {
       return NextResponse.json(
@@ -43,26 +49,40 @@ export async function POST(req: NextRequest) {
     })
 
     // Create JWT
-    const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET)
+    const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET || "forstmanager-app-secret-2026")
     const access_token = await new SignJWT({
       sub: user.id,
       email: user.email,
       role: user.role,
       name: user.name,
+      tv: user.tokenVersion,
     })
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime("7d")
       .sign(secret)
 
+    // Refresh Token
+    const refresh_token = await new SignJWT({
+      sub: user.id,
+      type: "refresh",
+      tv: user.tokenVersion,
+    })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("30d")
+      .sign(secret)
+
     return NextResponse.json({
       access_token,
+      refresh_token,
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
         role: user.role,
         roles: [user.role],
+        mustChangePassword: user.mustChangePassword ?? false,
       },
     })
   } catch (error) {
