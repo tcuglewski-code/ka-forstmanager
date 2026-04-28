@@ -19,7 +19,52 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
   const skip = parseInt(searchParams.get("offset") ?? "0")
 
   const where: Record<string, unknown> = {}
-  if (mitarbeiterId) where.mitarbeiterId = mitarbeiterId
+
+  // DSGVO: Rollen-basierter Filter (SEC-01)
+  const user = session.user as { id?: string; role?: string; email?: string }
+  const userRole = user.role ?? ""
+  const isAdmin = ["admin", "ka_admin"].includes(userRole)
+  const isGF = userRole === "ka_gruppenführer" || userRole === "ka_gruppenfuhrer"
+  const isMitarbeiter = userRole === "ka_mitarbeiter"
+
+  if (!isAdmin) {
+    if (isMitarbeiter && user.email) {
+      const ownMitarbeiter = await prisma.mitarbeiter.findFirst({
+        where: { email: user.email, deletedAt: null },
+        select: { id: true },
+      })
+      if (ownMitarbeiter) {
+        where.mitarbeiterId = ownMitarbeiter.id
+      } else {
+        return NextResponse.json([], { headers: { "X-Total-Count": "0" } })
+      }
+    } else if (isGF && user.email) {
+      const ownMitarbeiter = await prisma.mitarbeiter.findFirst({
+        where: { email: user.email, deletedAt: null },
+        select: { id: true },
+      })
+      if (ownMitarbeiter) {
+        const meineGruppen = await prisma.gruppe.findMany({
+          where: { gruppenfuehrerId: ownMitarbeiter.id },
+          select: { id: true },
+        })
+        const mitglieder = await prisma.gruppeMitglied.findMany({
+          where: { gruppeId: { in: meineGruppen.map((g) => g.id) } },
+          select: { mitarbeiterId: true },
+        })
+        const alleMitarbeiterIds = [
+          ownMitarbeiter.id,
+          ...mitglieder.map((m) => m.mitarbeiterId),
+        ]
+        where.mitarbeiterId = { in: alleMitarbeiterIds }
+      }
+    }
+  }
+
+  // Query-Filter: mitarbeiterId nur wenn Admin oder im erlaubten Scope
+  if (mitarbeiterId && isAdmin) {
+    where.mitarbeiterId = mitarbeiterId
+  }
   if (genehmigt !== null && genehmigt !== "") where.genehmigt = genehmigt === "true"
   if (monat && jahr) {
     const m = parseInt(monat), y = parseInt(jahr)

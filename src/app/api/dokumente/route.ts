@@ -13,7 +13,30 @@ export async function GET(req: NextRequest) {
   const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 200)
   const skip = (page - 1) * limit
 
-  const where: Record<string, unknown> = {}
+  const where: Record<string, unknown> = { deletedAt: null }
+
+  // DSGVO: Rollen-basierter Filter (SEC-02)
+  const user = session.user as { id?: string; role?: string; email?: string }
+  const userRole = user.role ?? ""
+  const isAdmin = ["admin", "ka_admin"].includes(userRole)
+  const isNonAdmin =
+    userRole === "ka_mitarbeiter" ||
+    userRole === "ka_gruppenführer" ||
+    userRole === "ka_gruppenfuhrer"
+
+  if (isNonAdmin && user.email) {
+    const ownMitarbeiter = await prisma.mitarbeiter.findFirst({
+      where: { email: user.email, deletedAt: null },
+      select: { id: true },
+    })
+    if (ownMitarbeiter) {
+      where.mitarbeiterId = ownMitarbeiter.id
+      where.vertraulich = false
+    } else {
+      return NextResponse.json({ items: [], total: 0, page: 1, totalPages: 0 })
+    }
+  }
+
   if (typ) where.typ = typ
   if (auftragId) where.auftragId = auftragId
   if (saisonId) where.saisonId = saisonId
