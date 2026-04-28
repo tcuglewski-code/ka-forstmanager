@@ -129,6 +129,7 @@ model Mitarbeiter {
   lagerBewegungen           LagerBewegung[]
   lohnabrechnungen          Lohnabrechnung[]
   dokumente                 Dokument[]
+  onboardingAbschluesse     SaisonOnboardingAbschluss[]
 
   @@index([status])
   @@index([createdAt])
@@ -145,11 +146,12 @@ model Saison {
   ziel             String?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
-  anmeldungen      SaisonAnmeldung[]
-  dokumente        Dokument[]
-  gruppen          Gruppe[]
-  auftraege        Auftrag[]
-  lohnabrechnungen Lohnabrechnung[]
+  anmeldungen        SaisonAnmeldung[]
+  dokumente          Dokument[]
+  gruppen            Gruppe[]
+  auftraege          Auftrag[]
+  lohnabrechnungen   Lohnabrechnung[]
+  onboardingSchritte SaisonOnboardingSchritt[]
 }
 
 // ============================================================
@@ -2528,4 +2530,43 @@ model ProduktVariante {
   produkt       Produkt @relation(fields: [produktId], references: [id], onDelete: Cascade)
 
   @@index([produktId])
+}
+
+// ============================================================
+// SAISON ONBOARDING (Loop 2 Block 6)
+// Dynamische Onboarding-Schritte pro Saison (z.B. A1-Formular, Dokument-Upload)
+// ============================================================
+
+model SaisonOnboardingSchritt {
+  id                 String   @id @default(cuid())
+  saisonId           String
+  saison             Saison   @relation(fields: [saisonId], references: [id], onDelete: Cascade)
+  typ                String   @default("bestaetigung") // bestaetigung | formular | dokument_upload | dokument_download
+  titel              String
+  beschreibung       String?
+  reihenfolge        Int      @default(0)
+  pflicht            Boolean  @default(true)
+  dokumentVorlageUrl String?
+  formularFelder     Json?
+  createdAt          DateTime @default(now())
+
+  abschluesse SaisonOnboardingAbschluss[]
+
+  @@index([saisonId])
+}
+
+model SaisonOnboardingAbschluss {
+  id                    String                  @id @default(cuid())
+  schrittId             String
+  schritt               SaisonOnboardingSchritt @relation(fields: [schrittId], references: [id], onDelete: Cascade)
+  mitarbeiterId         String
+  mitarbeiter           Mitarbeiter             @relation(fields: [mitarbeiterId], references: [id], onDelete: Cascade)
+  status                String                  @default("ausstehend") // ausstehend | eingereicht | genehmigt | abgelehnt
+  antwortDaten          Json?
+  eingereichtAm         DateTime?
+  genehmigungsKommentar String?
+  createdAt             DateTime                @default(now())
+
+  @@unique([schrittId, mitarbeiterId])
+  @@index([mitarbeiterId])
 }

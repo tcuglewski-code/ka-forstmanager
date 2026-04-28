@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, UserPlus, Trash2, ExternalLink } from "lucide-react"
+import { ArrowLeft, UserPlus, Trash2, ExternalLink, Download, Clock, TreePine, Ruler, FileCheck } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
@@ -22,6 +22,13 @@ interface Gruppe {
 }
 interface Mitarbeiter { id: string; vorname: string; nachname: string }
 
+interface GruppeStatistik {
+  gruppe: { id: string; name: string; mitarbeiterAnzahl: number }
+  kpis: { stundenGesamt: number; gepflanztGesamt: number; haGesamt: number; protokolleCount: number; genehmigte: number }
+  perMitarbeiter: { id: string; name: string; stunden: number }[]
+  perAuftrag: { id: string; titel: string; typ: string; protokolleCount: number; gepflanzt: number; ha: number }[]
+}
+
 export default function GruppeDetailPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
@@ -29,6 +36,7 @@ export default function GruppeDetailPage() {
   const [allMitarbeiter, setAllMitarbeiter] = useState<Mitarbeiter[]>([])
   const [selectedMitarbeiterId, setSelectedMitarbeiterId] = useState("")
   const [adding, setAdding] = useState(false)
+  const [statistik, setStatistik] = useState<GruppeStatistik | null>(null)
 
   const load = useCallback(async () => {
     try {
@@ -40,6 +48,11 @@ export default function GruppeDetailPage() {
       const [g, ma] = await Promise.all([gRes.json(), maRes.json()])
       setGruppe(g)
       setAllMitarbeiter(Array.isArray(ma) ? ma : (ma.items ?? []))
+      // Load statistik
+      try {
+        const sRes = await fetch(`/api/gruppen/${id}/statistik`)
+        if (sRes.ok) setStatistik(await sRes.json())
+      } catch { /* statistik is optional */ }
     } catch {
       router.push("/gruppen")
     }
@@ -192,6 +205,95 @@ export default function GruppeDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Statistiken */}
+      {statistik && (
+        <div className="mt-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold text-[var(--color-on-surface)]">Statistiken</h2>
+            <a
+              href={`/api/export/csv?typ=gruppen`}
+              className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300"
+            >
+              <Download className="w-3 h-3" /> CSV Export
+            </a>
+          </div>
+
+          {/* KPI Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { label: "Stunden", value: statistik.kpis.stundenGesamt.toFixed(1), unit: "h", icon: Clock },
+              { label: "Gepflanzt", value: statistik.kpis.gepflanztGesamt.toLocaleString("de-DE"), unit: "", icon: TreePine },
+              { label: "Fläche", value: statistik.kpis.haGesamt.toFixed(2), unit: "ha", icon: Ruler },
+              { label: "Protokolle", value: `${statistik.kpis.genehmigte}/${statistik.kpis.protokolleCount}`, unit: "", icon: FileCheck },
+            ].map((kpi) => (
+              <div key={kpi.label} className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <kpi.icon className="w-3.5 h-3.5 text-emerald-400" />
+                  <p className="text-xs text-[var(--color-on-surface-variant)]">{kpi.label}</p>
+                </div>
+                <p className="text-xl font-bold text-[var(--color-on-surface)]">
+                  {kpi.value}{kpi.unit && <span className="text-sm font-normal text-[var(--color-on-surface-variant)]"> {kpi.unit}</span>}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Mitarbeiter-Rangliste */}
+          {statistik.perMitarbeiter.length > 0 && (
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
+              <div className="px-5 py-3 border-b border-border">
+                <h3 className="text-sm font-medium text-[var(--color-on-surface)]">Mitarbeiter-Stunden</h3>
+              </div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left px-5 py-2 text-xs text-[var(--color-on-surface-variant)]">Name</th>
+                    <th className="text-right px-5 py-2 text-xs text-[var(--color-on-surface-variant)]">Stunden</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {statistik.perMitarbeiter.map((m) => (
+                    <tr key={m.id} className="hover:bg-[var(--color-surface-container-low)]">
+                      <td className="px-5 py-2 text-[var(--color-on-surface)]">{m.name}</td>
+                      <td className="px-5 py-2 text-right text-[var(--color-on-surface-variant)]">{m.stunden.toFixed(1)} h</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Auftrags-Aufschlüsselung */}
+          {statistik.perAuftrag.length > 0 && (
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
+              <div className="px-5 py-3 border-b border-border">
+                <h3 className="text-sm font-medium text-[var(--color-on-surface)]">Auftrags-Aufschlüsselung</h3>
+              </div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left px-5 py-2 text-xs text-[var(--color-on-surface-variant)]">Auftrag</th>
+                    <th className="text-right px-5 py-2 text-xs text-[var(--color-on-surface-variant)]">Protokolle</th>
+                    <th className="text-right px-5 py-2 text-xs text-[var(--color-on-surface-variant)]">Gepflanzt</th>
+                    <th className="text-right px-5 py-2 text-xs text-[var(--color-on-surface-variant)]">ha</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {statistik.perAuftrag.map((a) => (
+                    <tr key={a.id} className="hover:bg-[var(--color-surface-container-low)]">
+                      <td className="px-5 py-2 text-[var(--color-on-surface)]">{a.titel}</td>
+                      <td className="px-5 py-2 text-right text-[var(--color-on-surface-variant)]">{a.protokolleCount}</td>
+                      <td className="px-5 py-2 text-right text-emerald-400">{a.gepflanzt.toLocaleString("de-DE")}</td>
+                      <td className="px-5 py-2 text-right text-[var(--color-on-surface-variant)]">{a.ha.toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

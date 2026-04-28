@@ -149,7 +149,7 @@ export default function SaisonDetailClient({
 }: Props) {
   const router = useRouter()
   const [tab, setTab] = useState<
-    "uebersicht" | "auftraege" | "mitarbeiter" | "statistiken" | "abschluss"
+    "uebersicht" | "auftraege" | "mitarbeiter" | "statistiken" | "onboarding" | "abschluss"
   >("uebersicht")
 
   // Anmeldungen lokal verwalten (für Status-Updates)
@@ -164,11 +164,64 @@ export default function SaisonDetailClient({
   // KJ-1: Quick Add Modal State
   const [showQuickAdd, setShowQuickAdd] = useState(false)
 
+  // Onboarding State
+  const [onboardingSchritte, setOnboardingSchritte] = useState<any[]>([])
+  const [onboardingLoading, setOnboardingLoading] = useState(false)
+  const [showAddSchritt, setShowAddSchritt] = useState(false)
+  const [neuerSchritt, setNeuerSchritt] = useState({ titel: "", typ: "bestaetigung", beschreibung: "", pflicht: true, dokumentVorlageUrl: "" })
+
   // Manuelle Checklisten-Checks für Abschluss
   const [checkGeraete, setCheckGeraete] = useState(false)
   const [checkFahrzeuge, setCheckFahrzeuge] = useState(false)
   const [checkBericht, setCheckBericht] = useState(false)
   const [abschliessend, setAbschliessend] = useState(false)
+
+  // ─── Onboarding laden ────────────────────────────────────────────────────
+
+  const loadOnboarding = async () => {
+    setOnboardingLoading(true)
+    try {
+      const res = await fetch(`/api/saisons/${saisonId}/onboarding`)
+      if (res.ok) {
+        const data = await res.json()
+        setOnboardingSchritte(data.schritte ?? [])
+      }
+    } catch { /* ignore */ }
+    setOnboardingLoading(false)
+  }
+
+  const addOnboardingSchritt = async () => {
+    if (!neuerSchritt.titel) return
+    try {
+      const res = await fetch(`/api/saisons/${saisonId}/onboarding`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(neuerSchritt),
+      })
+      if (res.ok) {
+        toast.success("Schritt hinzugefügt")
+        setShowAddSchritt(false)
+        setNeuerSchritt({ titel: "", typ: "bestaetigung", beschreibung: "", pflicht: true, dokumentVorlageUrl: "" })
+        loadOnboarding()
+      } else {
+        toast.error("Fehler beim Hinzufügen")
+      }
+    } catch { toast.error("Netzwerkfehler") }
+  }
+
+  const deleteOnboardingSchritt = async (schrittId: string) => {
+    try {
+      const res = await fetch(`/api/saisons/${saisonId}/onboarding`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ schrittId }),
+      })
+      if (res.ok) {
+        toast.success("Schritt gelöscht")
+        loadOnboarding()
+      }
+    } catch { toast.error("Netzwerkfehler") }
+  }
 
   // ─── Auto-Checks für Abschluss ────────────────────────────────────────────
 
@@ -307,6 +360,7 @@ export default function SaisonDetailClient({
     { key: "auftraege", label: `Aufträge (${saison.auftraege.length})` },
     { key: "mitarbeiter", label: `Mitarbeiter (${anmeldungen.length})` },
     { key: "statistiken", label: "Statistiken" },
+    { key: "onboarding", label: "Onboarding" },
     ...(saison.status !== "abgeschlossen"
       ? [{ key: "abschluss" as const, label: "Abschluss" }]
       : []),
@@ -796,6 +850,182 @@ export default function SaisonDetailClient({
                 </div>
               )}
             </>
+          )}
+        </div>
+      )}
+
+      {/* ─── Tab: Onboarding ──────────────────────────────────────────── */}
+      {tab === "onboarding" && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-semibold text-[var(--color-on-surface)]">Onboarding-Schritte</h3>
+            <div className="flex gap-2">
+              {onboardingSchritte.length === 0 && !onboardingLoading && (
+                <button onClick={loadOnboarding} className="px-3 py-1.5 text-xs bg-emerald-600 text-white rounded-lg hover:bg-emerald-500">
+                  Laden
+                </button>
+              )}
+              <button
+                onClick={() => { loadOnboarding(); setShowAddSchritt(true) }}
+                className="flex items-center gap-1 px-3 py-1.5 text-xs bg-emerald-600 text-white rounded-lg hover:bg-emerald-500"
+              >
+                <Plus className="w-3 h-3" /> Schritt hinzufügen
+              </button>
+            </div>
+          </div>
+
+          {/* Add modal */}
+          {showAddSchritt && (
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-[var(--color-on-surface-variant)]">Titel *</label>
+                  <input
+                    value={neuerSchritt.titel}
+                    onChange={e => setNeuerSchritt(s => ({ ...s, titel: e.target.value }))}
+                    className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
+                    placeholder="z.B. A1-Formular einreichen"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-[var(--color-on-surface-variant)]">Typ</label>
+                  <select
+                    value={neuerSchritt.typ}
+                    onChange={e => setNeuerSchritt(s => ({ ...s, typ: e.target.value }))}
+                    className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
+                  >
+                    <option value="bestaetigung">Bestätigung</option>
+                    <option value="formular">Formular</option>
+                    <option value="dokument_upload">Dokument-Upload</option>
+                    <option value="dokument_download">Dokument-Download</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-[var(--color-on-surface-variant)]">Beschreibung</label>
+                <textarea
+                  value={neuerSchritt.beschreibung}
+                  onChange={e => setNeuerSchritt(s => ({ ...s, beschreibung: e.target.value }))}
+                  rows={2}
+                  className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
+                />
+              </div>
+              {(neuerSchritt.typ === "dokument_upload" || neuerSchritt.typ === "dokument_download") && (
+                <div>
+                  <label className="text-xs text-[var(--color-on-surface-variant)]">Vorlage-URL</label>
+                  <input
+                    value={neuerSchritt.dokumentVorlageUrl}
+                    onChange={e => setNeuerSchritt(s => ({ ...s, dokumentVorlageUrl: e.target.value }))}
+                    className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
+                    placeholder="https://..."
+                  />
+                </div>
+              )}
+              <div className="flex items-center gap-4">
+                <label className="flex items-center gap-2 text-sm text-[var(--color-on-surface)]">
+                  <input type="checkbox" checked={neuerSchritt.pflicht} onChange={e => setNeuerSchritt(s => ({ ...s, pflicht: e.target.checked }))} />
+                  Pflicht
+                </label>
+                <div className="flex-1" />
+                <button onClick={() => setShowAddSchritt(false)} className="px-3 py-1.5 text-xs text-[var(--color-on-surface-variant)] hover:text-white">Abbrechen</button>
+                <button onClick={addOnboardingSchritt} disabled={!neuerSchritt.titel} className="px-4 py-1.5 text-xs bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 disabled:opacity-50">Speichern</button>
+              </div>
+            </div>
+          )}
+
+          {/* Schritte-Liste */}
+          {onboardingLoading ? (
+            <div className="text-center py-8 text-[var(--color-on-surface-variant)]">
+              <Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" />
+              Laden...
+            </div>
+          ) : onboardingSchritte.length === 0 ? (
+            <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-8 text-center">
+              <p className="text-[var(--color-on-surface-variant)]">Noch keine Onboarding-Schritte definiert</p>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Klicke &quot;Schritt hinzufügen&quot; um zu starten</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {onboardingSchritte.map((s: any, i: number) => (
+                <div key={s.id} className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-3">
+                      <span className="w-6 h-6 rounded-full bg-forest text-emerald-400 text-xs flex items-center justify-center font-bold">{i + 1}</span>
+                      <div>
+                        <p className="text-sm font-medium text-[var(--color-on-surface)]">{s.titel}</p>
+                        <div className="flex gap-2 mt-1">
+                          <span className="px-2 py-0.5 rounded text-xs bg-[var(--color-surface-container-low)] text-[var(--color-on-surface-variant)]">{s.typ}</span>
+                          {s.pflicht && <span className="px-2 py-0.5 rounded text-xs bg-amber-500/20 text-amber-400">Pflicht</span>}
+                        </div>
+                        {s.beschreibung && <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">{s.beschreibung}</p>}
+                      </div>
+                    </div>
+                    <button onClick={() => deleteOnboardingSchritt(s.id)} className="text-zinc-600 hover:text-red-400 transition-colors">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Abschlüsse (Admin view) */}
+                  {Array.isArray(s.abschluesse) && s.abschluesse.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-border">
+                      <p className="text-xs text-[var(--color-on-surface-variant)] mb-2">Abschlüsse ({s.abschluesse.length})</p>
+                      <div className="space-y-1">
+                        {s.abschluesse.map((a: any) => (
+                          <div key={a.id} className="flex items-center justify-between text-xs">
+                            <span className="text-[var(--color-on-surface)]">{a.mitarbeiter?.vorname} {a.mitarbeiter?.nachname}</span>
+                            <span className={`px-2 py-0.5 rounded ${
+                              a.status === "genehmigt" ? "bg-emerald-500/20 text-emerald-400" :
+                              a.status === "eingereicht" ? "bg-blue-500/20 text-blue-400" :
+                              a.status === "abgelehnt" ? "bg-red-500/20 text-red-400" :
+                              "bg-zinc-500/20 text-zinc-400"
+                            }`}>{a.status}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {/* Mitarbeiter × Schritt Matrix */}
+              {anmeldungen.length > 0 && onboardingSchritte.some((s: any) => Array.isArray(s.abschluesse)) && (
+                <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
+                  <div className="px-5 py-3 border-b border-border">
+                    <h3 className="text-sm font-medium text-[var(--color-on-surface)]">Status-Übersicht</h3>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-border">
+                          <th className="text-left px-4 py-2 text-[var(--color-on-surface-variant)]">Mitarbeiter</th>
+                          {onboardingSchritte.map((s: any) => (
+                            <th key={s.id} className="text-center px-3 py-2 text-[var(--color-on-surface-variant)] max-w-[100px] truncate">{s.titel}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {anmeldungen.map(a => (
+                          <tr key={a.id}>
+                            <td className="px-4 py-2 text-[var(--color-on-surface)]">{a.mitarbeiter.vorname} {a.mitarbeiter.nachname}</td>
+                            {onboardingSchritte.map((s: any) => {
+                              const abschluss = Array.isArray(s.abschluesse) ? s.abschluesse.find((ab: any) => ab.mitarbeiterId === a.mitarbeiter.id) : null
+                              return (
+                                <td key={s.id} className="text-center px-3 py-2">
+                                  {abschluss?.status === "genehmigt" ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> :
+                                   abschluss?.status === "eingereicht" ? <span className="text-blue-400">...</span> :
+                                   abschluss?.status === "abgelehnt" ? <X className="w-4 h-4 text-red-400 mx-auto" /> :
+                                   <span className="text-zinc-600">–</span>}
+                                </td>
+                              )
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
       )}
