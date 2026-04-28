@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { AppShell } from "@/components/layout/AppShell"
 import { SessionProvider } from "@/components/providers/SessionProvider"
 import { ReadonlyModeProvider } from "@/components/providers/ReadonlyModeProvider"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 export default async function DashboardLayout({
   children,
@@ -20,7 +21,9 @@ export default async function DashboardLayout({
   return (
     <SessionProvider>
       <ReadonlyModeProvider>
-        <AppShell>{children}</AppShell>
+        <AppShell>
+          <ErrorBoundary>{children}</ErrorBoundary>
+        </AppShell>
       </ReadonlyModeProvider>
     </SessionProvider>
   )

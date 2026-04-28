@@ -1528,12 +1528,19 @@ model TelegramRegistrierung {
 
 // FEEDBACK-SYSTEM (Sprint Feedback)
 model FeedbackEintrag {
-  id        String   @id @default(cuid())
-  typ       String // bug | wunsch | frage
-  text      String
-  seite     String?
-  nutzer    String?
-  createdAt DateTime @default(now())
+  id                String   @id @default(cuid())
+  typ               String   // bug | wunsch | frage | ux_problem | datenfehler | performance
+  text              String
+  seite             String?
+  nutzer            String?
+  severity          String?  // blocker | kritisch | hoch | mittel | niedrig
+  browserInfo       Json?    // {userAgent, viewport, os, language, online}
+  screenshotUrl     String?
+  technicalContext  Json?    // {consoleErrors, failedRequests, loadTime, errorStack}
+  expectedBehavior  String?
+  appVersion        String?
+  gitCommit         String?
+  createdAt         DateTime @default(now())
 }
 
 // ============================================================
