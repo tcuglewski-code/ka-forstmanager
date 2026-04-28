@@ -27,7 +27,16 @@ export const POST = withErrorHandler(async (req: NextRequest, { params }: { para
   const email = data.email || mitarbeiter.email
   if (!email) return NextResponse.json({ error: 'Keine E-Mail Adresse' }, { status: 400 })
 
-  const rolle = data.rolle || mitarbeiter.rolle || 'ka_mitarbeiter'
+  // Rolle-Mapping: interne FM-Rollen → App-Rollen
+  const GF_ROLLEN = ['gf_standard', 'gf_senior', 'gruppenfuehrer', 'gruppenführer']
+  const rawRolle = data.rolle || mitarbeiter.rolle || 'ka_mitarbeiter'
+  const rolle = GF_ROLLEN.includes(rawRolle)
+    ? 'ka_gruppenführer'
+    : rawRolle === 'admin' || rawRolle === 'ka_admin'
+    ? 'ka_admin'
+    : rawRolle.startsWith('ka_')
+    ? rawRolle
+    : 'ka_mitarbeiter'
   if (!ALLOWED_ROLES.includes(rolle)) {
     return NextResponse.json({ error: `Ungültige Rolle. Erlaubt: ${ALLOWED_ROLES.join(', ')}` }, { status: 400 })
   }
