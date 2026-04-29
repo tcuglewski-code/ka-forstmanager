@@ -215,14 +215,27 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 0. Upstash Rate-Limiting für Login (5 Versuche / 15 Min)
+  // 0. Upstash Rate-Limiting für Login-Endpoints (5 Versuche / 15 Min)
+  // SC-02-FIX: Alle Login-Endpoints werden jetzt mit Upstash rate-limited (persistent)
   // E2E-Tests können via Bypass-Header das Limit umgehen
   const bypassHeader = request.headers.get('x-vercel-bypass-automation-protection')
   const isAutomatedTest = bypassHeader === process.env.AUTOMATION_BYPASS_SECRET ||
                           bypassHeader === 'rpFNEmGS7CB0FunapN20rLGDCG0foMzx' // Fallback für E2E
 
+  // Login-Endpoints die rate-limited werden müssen (Brute-Force-Schutz)
+  const LOGIN_ENDPOINTS = [
+    '/api/auth/callback/credentials',  // NextAuth Credentials Login
+    '/api/auth/signin',                // NextAuth signin page
+    '/api/auth/login',                 // Custom JWT Login (Mobile App)
+    '/api/auth/magic-link/validate',   // Magic Link validation
+    '/api/auth/forgot-password',       // Password reset requests
+    '/api/auth/2fa/validate',          // 2FA code validation
+  ]
+
+  const isLoginEndpoint = LOGIN_ENDPOINTS.some(ep => pathname === ep || pathname.startsWith(ep + '/'))
+
   if (
-    pathname === '/api/auth/callback/credentials' &&
+    isLoginEndpoint &&
     request.method === 'POST' &&
     !isAutomatedTest // E2E-Tests überspringen Rate-Limit
   ) {
