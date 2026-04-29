@@ -213,6 +213,20 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     orderBy: { datum: "asc" },
   })
 
+  // Arbeitskleidung-Buchungen im Abrechnungszeitraum laden
+  const kleidungBewegungen = await prisma.lagerBewegung.findMany({
+    where: {
+      mitarbeiterId: abrechnung.mitarbeiterId,
+      createdAt: {
+        gte: abrechnung.zeitraumVon,
+        lte: abrechnung.zeitraumBis,
+      },
+      artikel: { kategorie: "arbeitskleidung" },
+    },
+    include: { artikel: { select: { einkaufspreis: true, name: true } } },
+    orderBy: { createdAt: "asc" },
+  })
+
   // Vorschüsse im Abrechnungszeitraum laden
   const vorschuesse = await prisma.vorschuss.findMany({
     where: {
@@ -395,6 +409,12 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
               <Text style={{ fontFamily: "Helvetica-Bold" }}>− {fmt(abrechnung.vorschuesse)}</Text>
             </View>
           )}
+          {abrechnung.arbeitskleidungAbzug > 0 && (
+            <View style={styles.berechnungZeileRot}>
+              <Text>Arbeitskleidung (50% MA-Anteil):</Text>
+              <Text style={{ fontFamily: "Helvetica-Bold" }}>− {fmt(abrechnung.arbeitskleidungAbzug)}</Text>
+            </View>
+          )}
           <View style={styles.gesamtZeile}>
             <Text style={styles.gesamtText}>GESAMTLOHN / AUSZAHLUNG:</Text>
             <Text style={styles.gesamtText}>{fmt(abrechnung.auszahlung)}</Text>
@@ -421,6 +441,34 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
                     {fmt(v.betrag)}
                   </Text>
                   <Text style={{ width: "50%", fontSize: 9 }}>{v.grund ?? "—"}</Text>
+                </View>
+              ))}
+            </View>
+          </>
+        )}
+
+        {/* ── Arbeitskleidung Detail ────────────────────────────── */}
+        {kleidungBewegungen.length > 0 && (
+          <>
+            <Text style={styles.abschnittTitel}>Arbeitskleidung (50% Mitarbeiteranteil)</Text>
+            <View style={styles.tabelle}>
+              <View style={styles.tabelleKopf}>
+                <Text style={{ width: "30%" }}>Datum</Text>
+                <Text style={{ width: "30%" }}>Artikel</Text>
+                <Text style={{ width: "15%", textAlign: "right" }}>Menge</Text>
+                <Text style={{ width: "25%", textAlign: "right" }}>Abzug (50%)</Text>
+              </View>
+              {kleidungBewegungen.map((b, i) => (
+                <View
+                  key={b.id}
+                  style={i % 2 === 0 ? styles.tabelleZeile : styles.tabelleZeileAlternativ}
+                >
+                  <Text style={{ width: "30%", fontSize: 9 }}>{fmtDatum(b.createdAt)}</Text>
+                  <Text style={{ width: "30%", fontSize: 9 }}>{b.artikel.name ?? "—"}</Text>
+                  <Text style={{ width: "15%", textAlign: "right", fontSize: 9 }}>{Math.abs(b.menge)}</Text>
+                  <Text style={{ width: "25%", textAlign: "right", fontSize: 9 }}>
+                    {fmt(((b.artikel.einkaufspreis ?? 0) * Math.abs(b.menge)) / 2)}
+                  </Text>
                 </View>
               ))}
             </View>

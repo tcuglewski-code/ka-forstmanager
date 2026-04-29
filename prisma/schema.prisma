@@ -984,10 +984,11 @@ model Lohnabrechnung {
   stunden        Float
   bruttoLohn     Float
   gesamtLohn     Float
-  maschinenBonus Float       @default(0)
-  vorschuesse    Float       @default(0)
-  auszahlung     Float
-  status         String      @default("erstellt")
+  maschinenBonus        Float       @default(0)
+  vorschuesse           Float       @default(0)
+  arbeitskleidungAbzug  Float       @default(0)
+  auszahlung            Float
+  status                String      @default("erstellt")
   notizen        String?
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt

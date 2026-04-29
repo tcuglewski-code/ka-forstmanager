@@ -97,7 +97,24 @@ export const POST = withErrorHandler(async (req: Request) => {
   })
   const vorschussGesamt = vorschuesse.reduce((s, v) => s + (v.betrag ?? 0), 0)
 
-  const auszahlung = bruttoLohn + maschinenBonus - vorschussGesamt
+  // Arbeitskleidung-Abzug: LagerBewegungen mit Kategorie "arbeitskleidung" im Zeitraum
+  const kleidungBewegungen = await prisma.lagerBewegung.findMany({
+    where: {
+      mitarbeiterId,
+      createdAt: {
+        gte: zeitraumVon ? new Date(zeitraumVon) : undefined,
+        lte: zeitraumBis ? new Date(zeitraumBis) : undefined,
+      },
+      artikel: { kategorie: "arbeitskleidung" },
+    },
+    include: { artikel: { select: { einkaufspreis: true, name: true } } },
+  })
+  const arbeitskleidungAbzug = kleidungBewegungen.reduce(
+    (s, b) => s + ((b.artikel.einkaufspreis ?? 0) * Math.abs(b.menge)) / 2,
+    0
+  )
+
+  const auszahlung = bruttoLohn + maschinenBonus - vorschussGesamt - arbeitskleidungAbzug
 
   const abrechnung = await prisma.lohnabrechnung.create({
     data: {
@@ -110,6 +127,7 @@ export const POST = withErrorHandler(async (req: Request) => {
       gesamtLohn,
       maschinenBonus,
       vorschuesse: vorschussGesamt,
+      arbeitskleidungAbzug,
       auszahlung,
       status: "erstellt",
       notizen: body.notizen ?? null,

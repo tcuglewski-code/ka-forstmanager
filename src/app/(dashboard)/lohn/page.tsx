@@ -53,6 +53,7 @@ interface Lohnabrechnung {
   gesamtLohn: number
   maschinenBonus: number
   vorschuesse: number
+  arbeitskleidungAbzug: number
   auszahlung: number
   status: string
   notizen?: string | null
@@ -120,7 +121,7 @@ function NeueLohnabrechnungModal({ mitarbeiter, saisons, onClose, onSave }: {
     zeitraumBis: "",
     notizen: "",
   })
-  const [vorschau, setVorschau] = useState<{ stunden: number; bruttoLohn: number; maschinenBonus: number; vorschuesse: number; auszahlung: number } | null>(null)
+  const [vorschau, setVorschau] = useState<{ stunden: number; bruttoLohn: number; maschinenBonus: number; vorschuesse: number; arbeitskleidungAbzug: number; auszahlung: number } | null>(null)
   const [vorschauLoading, setVorschauLoading] = useState(false)
 
   // Saison ausgewählt → Zeitraum vorausfüllen
@@ -230,6 +231,9 @@ function NeueLohnabrechnungModal({ mitarbeiter, saisons, onClose, onSave }: {
                 <div><span className="text-[var(--color-on-surface-variant)]">Bruttolohn:</span> <span className="text-[var(--color-on-surface)] font-medium">{vorschau.bruttoLohn.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
                 <div><span className="text-[var(--color-on-surface-variant)]">Maschinenbonus:</span> <span className="text-emerald-400 font-medium">{vorschau.maschinenBonus.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
                 <div><span className="text-[var(--color-on-surface-variant)]">Vorschüsse:</span> <span className="text-amber-400 font-medium">{vorschau.vorschuesse.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
+                {vorschau.arbeitskleidungAbzug > 0 && (
+                  <div><span className="text-[var(--color-on-surface-variant)]">Arbeitskleidung:</span> <span className="text-amber-400 font-medium">{vorschau.arbeitskleidungAbzug.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
+                )}
               </div>
               <div className="border-t border-border pt-2 flex justify-between">
                 <span className="text-xs text-[var(--color-on-surface-variant)]">Auszahlung:</span>
@@ -678,7 +682,10 @@ export default function LohnPage() {
                     <div><p className="text-[var(--color-on-surface-variant)]">Auszahlung</p><p className="font-medium text-emerald-400">{a.auszahlung?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p></div>
                   </div>
                   {a.vorschuesse > 0 && (
-                    <p className="text-xs text-amber-400 mb-2">Vorschüsse abgezogen: {a.vorschuesse?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p>
+                    <p className="text-xs text-amber-400 mb-1">Vorschüsse abgezogen: {a.vorschuesse?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p>
+                  )}
+                  {a.arbeitskleidungAbzug > 0 && (
+                    <p className="text-xs text-amber-400 mb-2">Arbeitskleidung abgezogen: {a.arbeitskleidungAbzug?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p>
                   )}
                   {a.notizen && (
                     <p className="text-xs text-[var(--color-on-surface-variant)] mb-2 italic">{a.notizen}</p>

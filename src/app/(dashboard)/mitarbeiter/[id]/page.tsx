@@ -8,6 +8,7 @@ import { Breadcrumb } from "@/components/layout/Breadcrumb"
 import { StatistikWidget } from "./StatistikWidget"
 import { AbwesenheitenSection } from "./AbwesenheitenSection"
 import { AppZugangSection } from "@/components/mitarbeiter/AppZugangSection"
+import { MitarbeiterAnalyseButton } from "@/components/mitarbeiter/MitarbeiterAnalyseButton"
 
 // Sprint Q: RolleBadge Komponente
 function RolleBadge({ rolle }: { rolle: string }) {
@@ -89,6 +90,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
               <h1 className="text-2xl font-bold" style={{ color: "var(--color-on-surface)" }}>{ma.vorname} {ma.nachname}</h1>
               <RolleBadge rolle={ma.rolle} />
               <span className={`px-2 py-0.5 rounded-full text-xs border ${statusBadge[ma.status] ?? "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]"}`}>{ma.status}</span>
+              {adminUser && <MitarbeiterAnalyseButton mitarbeiterId={ma.id} />}
             </div>
             <div className="flex flex-wrap gap-4 text-sm text-[var(--color-on-surface-variant)]">
               {ma.email && <span className="flex items-center gap-1"><Mail className="w-3 h-3" /> {ma.email}</span>}
