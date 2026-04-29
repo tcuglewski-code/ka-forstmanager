@@ -96,30 +96,38 @@ export async function POST(req: NextRequest) {
       ).catch(() => {})
     }
 
-    // 3. Forward to Mission Control debug-reports API (fire-and-forget)
-    fetch(`${MC_API_URL}/debug-reports`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${MC_TOKEN}`,
-        "x-vercel-bypass-automation-protection": MC_BYPASS_TOKEN,
-      },
-      body: JSON.stringify({
-        productKey: "forstmanager",
-        productName: "ForstManager",
-        environment: process.env.NODE_ENV || "production",
-        type: body.typ,
-        severity: sev,
-        title: `${TYP_LABELS[body.typ] ?? body.typ}: ${body.text.substring(0, 80)}`,
-        description: body.text,
-        expectedBehavior: body.expectedBehavior,
-        route: body.seite,
-        userEmail: body.nutzer,
-        screenshotUrl: body.screenshotUrl,
-        browserInfo: body.browserInfo,
-        technicalContext: body.technicalContext,
-      }),
-    }).catch(() => {}) // fire-and-forget, MC route built in Phase 2
+    // 3. Forward to Mission Control debug-reports API
+    try {
+      const mcRes = await fetch(`${MC_API_URL}/debug-reports`, {
+        signal: AbortSignal.timeout(5000),
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${MC_TOKEN}`,
+          "x-vercel-bypass-automation-protection": MC_BYPASS_TOKEN,
+        },
+        body: JSON.stringify({
+          productKey: "forstmanager",
+          productName: "ForstManager",
+          environment: process.env.NODE_ENV || "production",
+          type: body.typ,
+          severity: sev,
+          title: `${TYP_LABELS[body.typ] ?? body.typ}: ${body.text.substring(0, 80)}`,
+          description: body.text,
+          expectedBehavior: body.expectedBehavior,
+          route: body.seite,
+          userEmail: body.nutzer,
+          screenshotUrl: body.screenshotUrl,
+          browserInfo: body.browserInfo,
+          technicalContext: body.technicalContext,
+        }),
+      })
+      if (!mcRes.ok) {
+        console.error("[Feedback API] MC forwarding failed:", mcRes.status, await mcRes.text().catch(() => ""))
+      }
+    } catch (mcErr) {
+      console.error("[Feedback API] MC forwarding error:", mcErr)
+    }
 
     return NextResponse.json({
       success: true,

@@ -74,7 +74,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
   return (
     <div className="max-w-5xl mx-auto">
       <Breadcrumb items={[{ label: "Mitarbeiter", href: "/mitarbeiter" }, { label: `${ma.vorname} ${ma.nachname}` }]} />
-      <Link href="/mitarbeiter" className="flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:text-white text-sm mb-6 transition-all">
+      <Link href="/mitarbeiter" className="flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] text-sm mb-6 transition-all">
         <ArrowLeft className="w-4 h-4" /> Zurück zu Mitarbeiter
       </Link>
 
@@ -155,7 +155,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
           {ma.notizen && (
             <div className="mt-4">
               <p className="text-xs text-[var(--color-on-surface-variant)] mb-1">Notizen</p>
-              <p className="text-sm text-zinc-300 whitespace-pre-wrap">{ma.notizen}</p>
+              <p className="text-sm text-[var(--color-on-surface)] whitespace-pre-wrap">{ma.notizen}</p>
             </div>
           )}
         </Section>
@@ -316,7 +316,7 @@ function Field({ label, value }: { label: string; value?: string | null }) {
   return (
     <div>
       <p className="text-xs text-[var(--color-on-surface-variant)] mb-0.5">{label}</p>
-      <p className="text-sm text-zinc-300">{value ?? "—"}</p>
+      <p className="text-sm text-[var(--color-on-surface)]">{value ?? "—"}</p>
     </div>
   )
 }

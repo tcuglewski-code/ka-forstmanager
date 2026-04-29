@@ -31,11 +31,13 @@ export const GET = withErrorHandler(async (req: NextRequest,
 
   if (!p) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
 
-  // Role-based: GF/MA can only see protocols for their group's Aufträge
+  // Role-based: GF/MA can only see protocols for their group's Aufträge or ones they created
   const userRole = (user as { role?: string }).role
   const userEmail = (user as { email?: string }).email
+  const userId = (user as { id?: string; sub?: string }).id || (user as { sub?: string }).sub
   const gruppenIds = await getGruppenIdsForUser(userEmail, userRole)
-  if (gruppenIds.length > 0 && (!p.auftrag?.gruppeId || !gruppenIds.includes(p.auftrag.gruppeId))) {
+  const isCreator = userId && p.erstellerId === userId
+  if (gruppenIds.length > 0 && !isCreator && (!p.auftrag?.gruppeId || !gruppenIds.includes(p.auftrag.gruppeId))) {
     return NextResponse.json({ error: 'Keine Berechtigung' }, { status: 403 })
   }
 

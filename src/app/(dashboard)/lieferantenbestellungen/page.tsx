@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import {
   Plus, ShoppingCart, Truck, Check, X, FileText, Clock,
-  Sparkles, Trash2, ChevronDown, Search,
+  Sparkles, Trash2, ChevronDown, Search, Upload,
 } from "lucide-react"
 import { toast } from "sonner"
 
@@ -65,9 +65,27 @@ function NeueBestellungModal({ onClose, onSave }: { onClose: () => void; onSave:
   const [aiText, setAiText] = useState("")
   const [aiLoading, setAiLoading] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [pdfFile, setPdfFile] = useState<File | null>(null)
 
   const addPosition = () => setPositionen((p) => [...p, { baumart: "", menge: "", einheit: "Stück", preisProEinheit: "", qualitaet: "" }])
   const removePosition = (idx: number) => setPositionen((p) => p.filter((_, i) => i !== idx))
+
+  const applyExtractedPositions = (data: { positionen?: { baumart: string; menge: number; einheit: string; preisProEinheit: number | null; qualitaet: string | null }[] }) => {
+    if (data.positionen?.length) {
+      setPositionen(
+        data.positionen.map((p) => ({
+          baumart: p.baumart || "",
+          menge: String(p.menge || ""),
+          einheit: p.einheit || "Stück",
+          preisProEinheit: p.preisProEinheit ? String(p.preisProEinheit) : "",
+          qualitaet: p.qualitaet || "",
+        }))
+      )
+      toast.success(`${data.positionen.length} Positionen extrahiert`)
+    } else {
+      toast.error("Keine Positionen gefunden")
+    }
+  }
 
   const extractAI = async () => {
     if (!aiText.trim()) return
@@ -78,22 +96,35 @@ function NeueBestellungModal({ onClose, onSave }: { onClose: () => void; onSave:
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: aiText }),
       })
-      if (!res.ok) throw new Error("Fehler")
-      const data = await res.json()
-      if (data.positionen?.length) {
-        setPositionen(
-          data.positionen.map((p: { baumart: string; menge: number; einheit: string; preisProEinheit: number | null; qualitaet: string | null }) => ({
-            baumart: p.baumart || "",
-            menge: String(p.menge || ""),
-            einheit: p.einheit || "Stück",
-            preisProEinheit: p.preisProEinheit ? String(p.preisProEinheit) : "",
-            qualitaet: p.qualitaet || "",
-          }))
-        )
-        toast.success(`${data.positionen.length} Positionen extrahiert`)
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || "Fehler")
       }
-    } catch {
-      toast.error("KI-Extraktion fehlgeschlagen")
+      applyExtractedPositions(await res.json())
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "KI-Extraktion fehlgeschlagen")
+    } finally {
+      setAiLoading(false)
+    }
+  }
+
+  const extractFromPDF = async () => {
+    if (!pdfFile) return
+    setAiLoading(true)
+    try {
+      const formData = new FormData()
+      formData.append("file", pdfFile)
+      const res = await fetch("/api/lieferantenbestellungen/ai-extract", {
+        method: "POST",
+        body: formData,
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || "Fehler")
+      }
+      applyExtractedPositions(await res.json())
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "KI-Extraktion fehlgeschlagen")
     } finally {
       setAiLoading(false)
     }
@@ -167,24 +198,57 @@ function NeueBestellungModal({ onClose, onSave }: { onClose: () => void; onSave:
 
           {/* KI-Extraktion */}
           <div className="bg-[var(--color-surface-container)] rounded-xl border border-border p-4">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-3">
               <Sparkles className="w-4 h-4 text-amber-500" />
-              <span className="text-sm font-medium text-[var(--color-on-surface)]">KI-Import aus Text</span>
+              <span className="text-sm font-medium text-[var(--color-on-surface)]">KI-Import</span>
             </div>
-            <textarea
-              className={`${inputCls} h-24 resize-none`}
-              value={aiText}
-              onChange={(e) => setAiText(e.target.value)}
-              placeholder="Rechnung/Lieferschein-Text einfügen... z.B.: 500 Stk Rotbuche Qualität A 40-60cm à 0,85€"
-            />
-            <button
-              onClick={extractAI}
-              disabled={aiLoading || !aiText.trim()}
-              className="mt-2 px-4 py-2 rounded-lg text-sm font-medium bg-amber-600 text-white hover:bg-amber-500 disabled:opacity-50 flex items-center gap-2"
-            >
-              {aiLoading ? "Extrahiere..." : "Positionen extrahieren"}
-              <Sparkles className="w-3.5 h-3.5" />
-            </button>
+
+            {/* PDF Upload */}
+            <div className="mb-3">
+              <label className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">PDF-Datei hochladen</label>
+              <div className="flex items-center gap-2">
+                <label className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm border border-border bg-[var(--color-surface)] cursor-pointer hover:bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface)]">
+                  <Upload className="w-4 h-4" />
+                  {pdfFile ? pdfFile.name : "PDF auswählen"}
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    className="hidden"
+                    onChange={(e) => setPdfFile(e.target.files?.[0] || null)}
+                  />
+                </label>
+                {pdfFile && (
+                  <button
+                    onClick={extractFromPDF}
+                    disabled={aiLoading}
+                    className="px-4 py-2 rounded-lg text-sm font-medium bg-amber-600 text-white hover:bg-amber-500 disabled:opacity-50 flex items-center gap-2"
+                  >
+                    {aiLoading ? "Extrahiere..." : "PDF auswerten"}
+                    <Sparkles className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">Max. 10 MB, nur Text-PDFs (keine Scans)</p>
+            </div>
+
+            {/* Text Input */}
+            <div className="border-t border-border pt-3">
+              <label className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">Oder Text einfügen</label>
+              <textarea
+                className={`${inputCls} h-24 resize-none`}
+                value={aiText}
+                onChange={(e) => setAiText(e.target.value)}
+                placeholder="Rechnung/Lieferschein-Text einfügen... z.B.: 500 Stk Rotbuche Qualität A 40-60cm à 0,85€"
+              />
+              <button
+                onClick={extractAI}
+                disabled={aiLoading || !aiText.trim()}
+                className="mt-2 px-4 py-2 rounded-lg text-sm font-medium bg-amber-600 text-white hover:bg-amber-500 disabled:opacity-50 flex items-center gap-2"
+              >
+                {aiLoading ? "Extrahiere..." : "Positionen extrahieren"}
+                <Sparkles className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
 
           {/* Positionen */}

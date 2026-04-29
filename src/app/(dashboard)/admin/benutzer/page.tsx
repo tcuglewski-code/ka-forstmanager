@@ -18,6 +18,7 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react"
+import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { ALL_PERMISSIONS, PERMISSION_GROUPS, ROLE_TEMPLATES, Permission } from "@/lib/permissions"
 import { useConfirm } from "@/hooks/useConfirm"
@@ -33,6 +34,7 @@ interface UserData {
   permissions: string[]
   lastLoginAt?: string
   createdAt: string
+  mitarbeiter?: { id: string } | null
 }
 
 const ROLES = [
@@ -119,11 +121,18 @@ export default function BenutzerVerwaltungPage() {
   }
 
   // Rolle-Template anwenden
-  const applyRoleTemplate = () => {
-    const template = ROLE_TEMPLATES[formRole as keyof typeof ROLE_TEMPLATES]
+  const applyRoleTemplate = (role?: string) => {
+    const r = role ?? formRole
+    const template = ROLE_TEMPLATES[r as keyof typeof ROLE_TEMPLATES]
     if (template) {
       setFormPermissions([...template])
     }
+  }
+
+  // Auto-apply role template when role changes
+  const handleRoleChange = (newRole: string) => {
+    setFormRole(newRole)
+    applyRoleTemplate(newRole)
   }
 
   // Permission togglen
@@ -300,7 +309,17 @@ export default function BenutzerVerwaltungPage() {
                         <User className="w-4 h-4 text-on-surface-variant" />
                       )}
                     </div>
-                    <span className="text-on-surface">{user.name}</span>
+                    <div>
+                      <span className="text-on-surface">{user.name}</span>
+                      {user.mitarbeiter && (
+                        <Link
+                          href={`/mitarbeiter/${user.mitarbeiter.id}`}
+                          className="block text-xs text-emerald-500 hover:text-emerald-400 hover:underline"
+                        >
+                          Mitarbeiter-Profil →
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </td>
                 <td className="px-4 py-3 text-on-surface-variant">{user.email}</td>
@@ -438,7 +457,7 @@ export default function BenutzerVerwaltungPage() {
                     <div className="flex gap-2">
                       <select
                         value={formRole}
-                        onChange={(e) => setFormRole(e.target.value)}
+                        onChange={(e) => handleRoleChange(e.target.value)}
                         className="flex-1 px-3 py-2 bg-surface-container-low border border-border rounded-lg text-on-surface outline-none"
                       >
                         {ROLES.map((r) => (

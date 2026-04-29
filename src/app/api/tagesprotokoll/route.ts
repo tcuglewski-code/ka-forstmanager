@@ -10,6 +10,7 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
 
   const userRole = (user as { role?: string }).role
   const userEmail = (user as { email?: string }).email
+  const userId = (user as { id?: string; sub?: string }).id || (user as { sub?: string }).sub
   const gruppenIds = await getGruppenIdsForUser(userEmail, userRole)
   const hasRestriction = gruppenIds.length > 0
 
@@ -22,9 +23,12 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
   if (gruppeId) where.gruppeId = gruppeId
   if (status) where.status = status
 
-  // Role-based: GF/MA only see protocols for their group's Aufträge
+  // Role-based: GF/MA see protocols for their group's Aufträge OR ones they created
   if (hasRestriction) {
-    where.auftrag = { gruppeId: { in: gruppenIds } }
+    where.OR = [
+      { auftrag: { gruppeId: { in: gruppenIds } } },
+      ...(userId ? [{ erstellerId: userId }] : []),
+    ]
   }
 
   const protokolle = await prisma.tagesprotokoll.findMany({

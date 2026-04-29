@@ -25,6 +25,7 @@ export async function GET() {
         lastLoginAt: true,
         createdAt: true,
         updatedAt: true,
+        mitarbeiter: { select: { id: true } },
       },
       orderBy: { name: "asc" },
     })
