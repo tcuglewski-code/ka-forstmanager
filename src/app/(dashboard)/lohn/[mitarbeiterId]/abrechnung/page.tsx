@@ -330,12 +330,10 @@ export default async function LohnabrechnungPage({
               <span className="font-medium">− {fmt(gesamtVorschuesse)} €</span>
             </div>
           )}
-          {arbeitskleidungAbzug > 0 && (
-            <div className="flex justify-between text-red-700">
-              <span>Arbeitskleidung (50% Einkaufspreis):</span>
-              <span className="font-medium">− {fmt(arbeitskleidungAbzug)} €</span>
-            </div>
-          )}
+          <div className={`flex justify-between ${arbeitskleidungAbzug > 0 ? "text-red-700" : "text-gray-500"}`}>
+            <span>Arbeitskleidung (50% MA-Anteil):</span>
+            <span className="font-medium">{arbeitskleidungAbzug > 0 ? `− ${fmt(arbeitskleidungAbzug)}` : fmt(0)} €</span>
+          </div>
         </div>
 
         {/* Trennlinie + Auszahlung */}

@@ -231,9 +231,7 @@ function NeueLohnabrechnungModal({ mitarbeiter, saisons, onClose, onSave }: {
                 <div><span className="text-[var(--color-on-surface-variant)]">Bruttolohn:</span> <span className="text-[var(--color-on-surface)] font-medium">{vorschau.bruttoLohn.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
                 <div><span className="text-[var(--color-on-surface-variant)]">Maschinenbonus:</span> <span className="text-emerald-400 font-medium">{vorschau.maschinenBonus.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
                 <div><span className="text-[var(--color-on-surface-variant)]">Vorschüsse:</span> <span className="text-amber-400 font-medium">{vorschau.vorschuesse.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
-                {vorschau.arbeitskleidungAbzug > 0 && (
-                  <div><span className="text-[var(--color-on-surface-variant)]">Arbeitskleidung:</span> <span className="text-amber-400 font-medium">{vorschau.arbeitskleidungAbzug.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
-                )}
+                <div><span className="text-[var(--color-on-surface-variant)]">Arbeitskleidung (50%):</span> <span className={`font-medium ${vorschau.arbeitskleidungAbzug > 0 ? "text-amber-400" : "text-[var(--color-on-surface-variant)]"}`}>{vorschau.arbeitskleidungAbzug.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span></div>
               </div>
               <div className="border-t border-border pt-2 flex justify-between">
                 <span className="text-xs text-[var(--color-on-surface-variant)]">Auszahlung:</span>
@@ -684,9 +682,7 @@ export default function LohnPage() {
                   {a.vorschuesse > 0 && (
                     <p className="text-xs text-amber-400 mb-1">Vorschüsse abgezogen: {a.vorschuesse?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p>
                   )}
-                  {a.arbeitskleidungAbzug > 0 && (
-                    <p className="text-xs text-amber-400 mb-2">Arbeitskleidung abgezogen: {a.arbeitskleidungAbzug?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p>
-                  )}
+                  <p className={`text-xs mb-2 ${a.arbeitskleidungAbzug > 0 ? "text-amber-400" : "text-[var(--color-on-surface-variant)]"}`}>Arbeitskleidung (50% MA-Anteil): {(a.arbeitskleidungAbzug ?? 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</p>
                   {a.notizen && (
                     <p className="text-xs text-[var(--color-on-surface-variant)] mb-2 italic">{a.notizen}</p>
                   )}

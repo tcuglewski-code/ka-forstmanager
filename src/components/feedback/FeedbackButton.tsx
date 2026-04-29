@@ -33,6 +33,8 @@ const collectBrowserInfo = () => ({
   online: navigator.onLine,
   url: window.location.href,
   title: document.title,
+  route: window.location.pathname,
+  appVersion: process.env.NEXT_PUBLIC_APP_VERSION || "unknown",
 })
 
 export function FeedbackButton({ nutzer }: FeedbackButtonProps) {

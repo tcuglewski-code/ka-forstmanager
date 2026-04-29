@@ -165,7 +165,7 @@ function ArtikelModal({ onClose, onSave }: { onClose: () => void; onSave: () => 
               <label className="block text-xs text-on-surface-variant mb-1">Kategorie</label>
               <select value={form.kategorie} onChange={e => setForm(f => ({ ...f, kategorie: e.target.value }))}
                 className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
-                {["material", "werkzeug", "pflanzgut", "schutz", "chemie", "sonstiges"].map(k => <option key={k} value={k}>{k}</option>)}
+                {["material", "werkzeug", "pflanzgut", "schutz", "chemie", "arbeitskleidung", "sonstiges"].map(k => <option key={k} value={k}>{k}</option>)}
               </select>
             </div>
             <div>
@@ -472,7 +472,7 @@ function EditArtikelModal({ artikel, onClose, onSave }: { artikel: LagerArtikel;
               <label className="block text-xs text-on-surface-variant mb-1">Kategorie</label>
               <select value={form.kategorie} onChange={e => setForm(f => ({ ...f, kategorie: e.target.value }))}
                 className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
-                {["material", "werkzeug", "pflanzgut", "schutz", "chemie", "sonstiges"].map(k => <option key={k} value={k}>{k}</option>)}
+                {["material", "werkzeug", "pflanzgut", "schutz", "chemie", "arbeitskleidung", "sonstiges"].map(k => <option key={k} value={k}>{k}</option>)}
               </select>
             </div>
             <div>
