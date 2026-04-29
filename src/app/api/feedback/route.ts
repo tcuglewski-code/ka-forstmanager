@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { auth } from "@/lib/auth"
 import { sendTelegramNotification } from "@/lib/telegram"
 import { stripHtml } from "@/lib/sanitize"
 
@@ -142,9 +143,16 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET endpoint for admin page
+// GET endpoint for admin page — requires authenticated admin/supervisor
+const ADMIN_ROLES = ["admin", "ka_admin", "administrator", "supervisor"]
+
 export async function GET(req: NextRequest) {
   try {
+    const session = await auth()
+    if (!session?.user || !ADMIN_ROLES.includes(session.user.role ?? "")) {
+      return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
+    }
+
     const { searchParams } = new URL(req.url)
     const typ = searchParams.get("typ")
 
