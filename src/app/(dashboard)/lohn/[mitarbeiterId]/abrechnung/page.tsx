@@ -77,6 +77,18 @@ export default async function LohnabrechnungPage({
     orderBy: { datum: "asc" },
   })
 
+  // ── Arbeitskleidung-Abzug laden ──────────────────────────────────
+  const kleidungBewegungen = await prisma.lagerBewegung.findMany({
+    where: {
+      mitarbeiterId,
+      ...(zeitraumVon && zeitraumBis
+        ? { createdAt: { gte: zeitraumVon, lte: zeitraumBis } }
+        : {}),
+      artikel: { kategorie: "arbeitskleidung" },
+    },
+    include: { artikel: { select: { einkaufspreis: true, name: true } } },
+  })
+
   // ── Berechnungen ──────────────────────────────────────────────────
   // Reguläre Stunden: alle außer "maschine"
   const regularStunden = stundeneintraege
@@ -115,9 +127,17 @@ export default async function LohnabrechnungPage({
     ? lohnabrechnung.vorschuesse
     : vorschuesse.reduce((s, v) => s + v.betrag, 0)
 
+  const arbeitskleidungAbzug = lohnabrechnung
+    ? lohnabrechnung.arbeitskleidungAbzug
+    : kleidungBewegungen.reduce(
+        (s: number, b: { artikel: { einkaufspreis: number | null }; menge: number }) =>
+          s + ((b.artikel.einkaufspreis ?? 0) * Math.abs(b.menge)) / 2,
+        0
+      )
+
   const auszahlung = lohnabrechnung
     ? lohnabrechnung.auszahlung
-    : grundlohn + maschinenBonus - gesamtVorschuesse
+    : grundlohn + maschinenBonus - gesamtVorschuesse - arbeitskleidungAbzug
 
   // ── Hilfsfunktionen ───────────────────────────────────────────────
   const fmt = (n: number) =>
@@ -308,6 +328,12 @@ export default async function LohnabrechnungPage({
             <div className="flex justify-between text-red-700">
               <span>Vorschüsse:</span>
               <span className="font-medium">− {fmt(gesamtVorschuesse)} €</span>
+            </div>
+          )}
+          {arbeitskleidungAbzug > 0 && (
+            <div className="flex justify-between text-red-700">
+              <span>Arbeitskleidung (50% Einkaufspreis):</span>
+              <span className="font-medium">− {fmt(arbeitskleidungAbzug)} €</span>
             </div>
           )}
         </div>
