@@ -2,9 +2,20 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { SignJWT } from "jose"
+import { loginRateLimit } from "@/lib/rate-limit"
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate-limiting: 5 Versuche pro IP pro 15 Minuten
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.ip || "unknown"
+    const { success, remaining } = await loginRateLimit.limit(ip)
+    if (!success) {
+      return NextResponse.json(
+        { error: "Zu viele Anmeldeversuche. Bitte warten Sie 15 Minuten." },
+        { status: 429, headers: { "Retry-After": "900", "X-RateLimit-Remaining": "0" } }
+      )
+    }
+
     const body = await req.json()
     const { username, password } = body
 

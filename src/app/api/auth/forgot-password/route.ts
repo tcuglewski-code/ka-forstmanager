@@ -2,11 +2,19 @@ import { NextRequest, NextResponse } from "next/server"
 import crypto from "crypto"
 import { prisma } from "@/lib/prisma"
 import { sendEmail } from "@/lib/email"
+import { loginRateLimit } from "@/lib/rate-limit"
 
 const GENERIC_MESSAGE = "Falls die E-Mail-Adresse existiert, wurde eine Nachricht gesendet."
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate-limiting: prevent email enumeration / spam
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.ip || "unknown"
+    const { success } = await loginRateLimit.limit(`forgot:${ip}`)
+    if (!success) {
+      return NextResponse.json({ message: GENERIC_MESSAGE })
+    }
+
     const { email } = await req.json()
     if (!email) {
       return NextResponse.json({ message: GENERIC_MESSAGE })

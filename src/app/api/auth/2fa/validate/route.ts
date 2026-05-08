@@ -7,15 +7,26 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyToken, verifyBackupCode } from '@/lib/totp'
 import bcrypt from 'bcryptjs'
+import { loginRateLimit } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate-limiting: prevent 2FA brute-force
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.ip || "unknown"
+    const { success } = await loginRateLimit.limit(`2fa:${ip}`)
+    if (!success) {
+      return NextResponse.json(
+        { error: "Zu viele Versuche. Bitte warten Sie 15 Minuten." },
+        { status: 429, headers: { "Retry-After": "900" } }
+      )
+    }
+
     const body = await req.json()
     const { email, password, token, isBackupCode } = body
 
     if (!email || !password || !token) {
-      return NextResponse.json({ 
-        error: 'Email, Passwort und Token erforderlich' 
+      return NextResponse.json({
+        error: 'Email, Passwort und Token erforderlich'
       }, { status: 400 })
     }
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import crypto from "crypto"
+import { loginRateLimit } from "@/lib/rate-limit"
 
 // Optional: Resend für E-Mail-Versand
 let resend: any = null
@@ -15,6 +16,16 @@ try {
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate-limiting: prevent magic-link spam
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.ip || "unknown"
+    const { success } = await loginRateLimit.limit(`magic:${ip}`)
+    if (!success) {
+      return NextResponse.json({
+        success: true,
+        message: "Falls ein Konto mit dieser E-Mail existiert, wurde ein Login-Link gesendet.",
+      })
+    }
+
     const { email } = await request.json()
 
     if (!email || typeof email !== "string") {

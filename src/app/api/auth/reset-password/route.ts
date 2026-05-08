@@ -1,9 +1,20 @@
 import { NextRequest, NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
+import { loginRateLimit } from "@/lib/rate-limit"
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate-limiting: prevent brute-force token guessing
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.ip || "unknown"
+    const { success } = await loginRateLimit.limit(`reset:${ip}`)
+    if (!success) {
+      return NextResponse.json(
+        { error: "Zu viele Anfragen. Bitte warten Sie 15 Minuten." },
+        { status: 429, headers: { "Retry-After": "900" } }
+      )
+    }
+
     const { token, password } = await req.json()
 
     if (!token || !password) {
