@@ -30,5 +30,33 @@ export const GET = withErrorHandler(async (req: NextRequest, { params }: { param
     }),
   ])
 
-  return NextResponse.json({ reservierungen, bewegungen })
+  // Transform to App-expected format: AuftragMaterial[]
+  const materialMap = new Map<string, { geplant: number; verbraucht: number; name: string; einheit: string }>()
+
+  // Sum reservierungen as "geplant"
+  for (const r of reservierungen) {
+    const key = r.artikel?.id ?? r.artikelId
+    const existing = materialMap.get(key) || { geplant: 0, verbraucht: 0, name: r.artikel?.name ?? "Unbekannt", einheit: r.artikel?.einheit ?? "Stk" }
+    existing.geplant += r.menge ?? 0
+    materialMap.set(key, existing)
+  }
+
+  // Sum bewegungen (typ=entnahme) as "verbraucht"
+  for (const b of bewegungen) {
+    if (b.typ !== "entnahme") continue
+    const key = b.artikel?.id ?? b.artikelId
+    const existing = materialMap.get(key) || { geplant: 0, verbraucht: 0, name: b.artikel?.name ?? "Unbekannt", einheit: b.artikel?.einheit ?? "Stk" }
+    existing.verbraucht += Math.abs(b.menge ?? 0)
+    materialMap.set(key, existing)
+  }
+
+  const auftragMaterial = Array.from(materialMap.entries()).map(([material_id, data]) => ({
+    material_id: parseInt(material_id) || 0,
+    material_name: data.name,
+    einheit: data.einheit,
+    geplant: data.geplant,
+    verbraucht: data.verbraucht,
+  }))
+
+  return NextResponse.json(auftragMaterial)
 })
