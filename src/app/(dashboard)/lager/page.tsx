@@ -165,7 +165,7 @@ function ArtikelModal({ onClose, onSave }: { onClose: () => void; onSave: () => 
               <label className="block text-xs text-on-surface-variant mb-1">Kategorie</label>
               <select value={form.kategorie} onChange={e => setForm(f => ({ ...f, kategorie: e.target.value }))}
                 className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
-                {["material", "werkzeug", "pflanzgut", "schutz", "chemie", "arbeitskleidung", "sonstiges"].map(k => <option key={k} value={k}>{k}</option>)}
+                {["material", "werkzeug", "pflanzgut", "schutz", "chemie", "arbeitskleidung", "arbeitsschuhe", "sonstiges"].map(k => <option key={k} value={k}>{k}</option>)}
               </select>
             </div>
             <div>
@@ -472,7 +472,7 @@ function EditArtikelModal({ artikel, onClose, onSave }: { artikel: LagerArtikel;
               <label className="block text-xs text-on-surface-variant mb-1">Kategorie</label>
               <select value={form.kategorie} onChange={e => setForm(f => ({ ...f, kategorie: e.target.value }))}
                 className="w-full bg-surface-container-low border border-border rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-emerald-500">
-                {["material", "werkzeug", "pflanzgut", "schutz", "chemie", "arbeitskleidung", "sonstiges"].map(k => <option key={k} value={k}>{k}</option>)}
+                {["material", "werkzeug", "pflanzgut", "schutz", "chemie", "arbeitskleidung", "arbeitsschuhe", "sonstiges"].map(k => <option key={k} value={k}>{k}</option>)}
               </select>
             </div>
             <div>
@@ -720,17 +720,21 @@ function LagerPageInner() {
                   <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Name</th>
                   <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Kategorie</th>
                   <th className="text-right px-4 py-3 text-on-surface-variant font-medium">Bestand</th>
+                  <th className="text-right px-4 py-3 text-on-surface-variant font-medium">Gesamtwert</th>
                   <th className="text-left px-4 py-3 text-on-surface-variant font-medium">Lagerort</th>
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={6} className="text-center py-12 text-on-surface-variant">Laden...</td></tr>
+                  <tr><td colSpan={7} className="text-center py-12 text-on-surface-variant">Laden...</td></tr>
                 ) : filteredArtikel.length === 0 ? (
-                  <tr><td colSpan={6} className="text-center py-12 text-on-surface-variant">Keine Artikel gefunden</td></tr>
+                  <tr><td colSpan={7} className="text-center py-12 text-on-surface-variant">Keine Artikel gefunden</td></tr>
                 ) : (
-                  filteredArtikel.map(a => (
+                  filteredArtikel.map(a => {
+                    const stueckpreis = a.einkaufspreis ?? a.verkaufspreis ?? 0
+                    const gesamtwert = a.bestand * stueckpreis
+                    return (
                     <tr key={a.id} className="border-b border-outline-variant hover:bg-surface-container-high transition-colors">
                       <td className="px-4 py-3">
                         <BestandsAmpel bestand={a.bestand} mindestbestand={a.mindestbestand} />
@@ -742,6 +746,13 @@ function LagerPageInner() {
                       <td className="px-4 py-3 text-right">
                         <span className="text-on-surface">{a.bestand}</span>
                         <span className="text-on-surface-variant">/{a.mindestbestand} {a.einheit}</span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {stueckpreis > 0 ? (
+                          <span className="text-on-surface font-medium">{gesamtwert.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</span>
+                        ) : (
+                          <span className="text-on-surface-variant">–</span>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-on-surface-variant">{a.lagerort ?? "–"}</td>
                       <td className="px-4 py-3">
@@ -782,9 +793,28 @@ function LagerPageInner() {
                         </div>
                       </td>
                     </tr>
-                  ))
+                  )})
                 )}
               </tbody>
+              {filteredArtikel.length > 0 && (() => {
+                const summe = filteredArtikel.reduce(
+                  (s, a) => s + a.bestand * (a.einkaufspreis ?? a.verkaufspreis ?? 0),
+                  0
+                )
+                return (
+                  <tfoot>
+                    <tr className="border-t border-border bg-surface-container-high">
+                      <td colSpan={4} className="px-4 py-3 text-right text-on-surface-variant font-medium">
+                        Gesamtwert ({filteredArtikel.length} Artikel)
+                      </td>
+                      <td className="px-4 py-3 text-right text-on-surface font-bold">
+                        {summe.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+                      </td>
+                      <td colSpan={2}></td>
+                    </tr>
+                  </tfoot>
+                )
+              })()}
             </table>
           </div>
         </>

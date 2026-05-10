@@ -71,20 +71,21 @@ export const GET = withErrorHandler(async (req: Request) => {
   })
   const vorschussGesamt = vorschuesse.reduce((s, v) => s + (v.betrag ?? 0), 0)
 
-  // Arbeitskleidung-Abzug
+  // Arbeitskleidung & Arbeitsschuhe-Abzug
   const kleidungBewegungen = await prisma.lagerBewegung.findMany({
     where: {
       mitarbeiterId,
+      typ: { in: ["ausgang", "zuweisung", "reserve"] },
       createdAt: {
         gte: zeitraumVon ? new Date(zeitraumVon) : undefined,
         lte: zeitraumBis ? new Date(zeitraumBis) : undefined,
       },
-      artikel: { kategorie: "arbeitskleidung" },
+      artikel: { kategorie: { in: ["arbeitskleidung", "arbeitsschuhe"] } },
     },
-    include: { artikel: { select: { einkaufspreis: true } } },
+    include: { artikel: { select: { einkaufspreis: true, verkaufspreis: true } } },
   })
   const arbeitskleidungAbzug = kleidungBewegungen.reduce(
-    (s, b) => s + ((b.artikel.einkaufspreis ?? 0) * Math.abs(b.menge)) / 2,
+    (s, b) => s + ((b.artikel.einkaufspreis ?? b.artikel.verkaufspreis ?? 0) * Math.abs(b.menge)) / 2,
     0
   )
 

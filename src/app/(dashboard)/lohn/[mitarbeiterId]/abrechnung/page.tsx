@@ -77,16 +77,17 @@ export default async function LohnabrechnungPage({
     orderBy: { datum: "asc" },
   })
 
-  // ── Arbeitskleidung-Abzug laden ──────────────────────────────────
+  // ── Arbeitskleidung & Arbeitsschuhe-Abzug laden ─────────────────
   const kleidungBewegungen = await prisma.lagerBewegung.findMany({
     where: {
       mitarbeiterId,
+      typ: { in: ["ausgang", "zuweisung", "reserve"] },
       ...(zeitraumVon && zeitraumBis
         ? { createdAt: { gte: zeitraumVon, lte: zeitraumBis } }
         : {}),
-      artikel: { kategorie: "arbeitskleidung" },
+      artikel: { kategorie: { in: ["arbeitskleidung", "arbeitsschuhe"] } },
     },
-    include: { artikel: { select: { einkaufspreis: true, name: true } } },
+    include: { artikel: { select: { einkaufspreis: true, verkaufspreis: true, name: true } } },
   })
 
   // ── Berechnungen ──────────────────────────────────────────────────
@@ -130,8 +131,8 @@ export default async function LohnabrechnungPage({
   const arbeitskleidungAbzug = lohnabrechnung
     ? lohnabrechnung.arbeitskleidungAbzug
     : kleidungBewegungen.reduce(
-        (s: number, b: { artikel: { einkaufspreis: number | null }; menge: number }) =>
-          s + ((b.artikel.einkaufspreis ?? 0) * Math.abs(b.menge)) / 2,
+        (s: number, b: { artikel: { einkaufspreis: number | null; verkaufspreis: number | null }; menge: number }) =>
+          s + ((b.artikel.einkaufspreis ?? b.artikel.verkaufspreis ?? 0) * Math.abs(b.menge)) / 2,
         0
       )
 
@@ -331,7 +332,7 @@ export default async function LohnabrechnungPage({
             </div>
           )}
           <div className={`flex justify-between ${arbeitskleidungAbzug > 0 ? "text-red-700" : "text-gray-500"}`}>
-            <span>Arbeitskleidung (50% MA-Anteil):</span>
+            <span>Arbeitskleidung & Schuhe (50% MA-Anteil):</span>
             <span className="font-medium">{arbeitskleidungAbzug > 0 ? `− ${fmt(arbeitskleidungAbzug)}` : fmt(0)} €</span>
           </div>
         </div>

@@ -224,14 +224,14 @@ function ForstamterTab() {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)]" />
           <input
-            className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-600"
+            className="w-full bg-[var(--color-surface-container-lowest)] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-600"
             placeholder="Suche nach Name, Funktion, Forstamt, Ort..."
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
           />
         </div>
         <select
-          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
+          className="bg-[var(--color-surface-container-lowest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
           value={bundesland}
           onChange={(e) => setBundesland(e.target.value)}
         >
@@ -241,7 +241,7 @@ function ForstamterTab() {
           ))}
         </select>
         <select
-          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
+          className="bg-[var(--color-surface-container-lowest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
           value={sort}
           onChange={(e) => setSort(e.target.value)}
         >
@@ -252,7 +252,7 @@ function ForstamterTab() {
         </select>
         <button
           onClick={() => setOrder(order === "asc" ? "desc" : "asc")}
-          className="flex items-center gap-1.5 bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
+          className="flex items-center gap-1.5 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
         >
           <ArrowUpDown className="w-3.5 h-3.5" />
           {order === "asc" ? "A→Z" : "Z→A"}
@@ -357,7 +357,7 @@ function ForstamterTab() {
           <button
             onClick={() => setOffset(Math.max(0, offset - limit))}
             disabled={offset === 0}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--color-surface-container-lowest)] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
           >
             <ChevronLeft className="w-4 h-4" /> Zurück
           </button>
@@ -367,7 +367,7 @@ function ForstamterTab() {
           <button
             onClick={() => setOffset(offset + limit)}
             disabled={offset + limit >= total}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--color-surface-container-lowest)] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
           >
             Weiter <ChevronRight className="w-4 h-4" />
           </button>
@@ -441,14 +441,14 @@ function BetriebeTab() {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)]" />
           <input
-            className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-600"
+            className="w-full bg-[var(--color-surface-container-lowest)] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-600"
             placeholder="Suche nach Name oder Ort..."
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
           />
         </div>
         <select
-          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
+          className="bg-[var(--color-surface-container-lowest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
           value={betriebsartFilter}
           onChange={(e) => setBetriebsartFilter(e.target.value)}
         >
@@ -458,7 +458,7 @@ function BetriebeTab() {
           ))}
         </select>
         <select
-          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
+          className="bg-[var(--color-surface-container-lowest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
           value={sortField}
           onChange={(e) => setSortField(e.target.value)}
         >
@@ -468,7 +468,7 @@ function BetriebeTab() {
         </select>
         <button
           onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-          className="flex items-center gap-1.5 bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
+          className="flex items-center gap-1.5 bg-[var(--color-surface-container-lowest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
         >
           <ArrowUpDown className="w-3.5 h-3.5" />
           {sortOrder === "asc" ? "A→Z" : "Z→A"}
@@ -545,7 +545,7 @@ function BetriebeTab() {
           <button
             onClick={() => setPage(Math.max(0, page - 1))}
             disabled={page === 0}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--color-surface-container-lowest)] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
           >
             <ChevronLeft className="w-4 h-4" /> Zurück
           </button>
@@ -555,7 +555,7 @@ function BetriebeTab() {
           <button
             onClick={() => setPage(page + 1)}
             disabled={(page + 1) * PAGE_SIZE >= total}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--color-surface-container-lowest)] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
           >
             Weiter <ChevronRight className="w-4 h-4" />
           </button>
@@ -740,14 +740,14 @@ function FoerderprogrammeTab() {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)]" />
           <input
-            className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-600"
+            className="w-full bg-[var(--color-surface-container-lowest)] border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-600"
             placeholder="Suche nach Programm, Bundesland, Fördergegenstand..."
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
           />
         </div>
         <select
-          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
+          className="bg-[var(--color-surface-container-lowest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
           value={bundesland}
           onChange={(e) => setBundesland(e.target.value)}
         >
@@ -758,7 +758,7 @@ function FoerderprogrammeTab() {
         </select>
         {kategorien.length > 0 && (
           <select
-            className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
+            className="bg-[var(--color-surface-container-lowest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
             value={kategorie}
             onChange={(e) => setKategorie(e.target.value)}
           >
@@ -769,7 +769,7 @@ function FoerderprogrammeTab() {
           </select>
         )}
         <select
-          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
+          className="bg-[var(--color-surface-container-lowest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
         >
@@ -778,7 +778,7 @@ function FoerderprogrammeTab() {
           <option value="GESCHLOSSEN">Geschlossen</option>
         </select>
         <select
-          className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
+          className="bg-[var(--color-surface-container-lowest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
           value={sort}
           onChange={(e) => setSort(e.target.value)}
         >
@@ -912,7 +912,7 @@ function WissenTab() {
           <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-on-surface-variant)]" />
             <input
-              className="w-full bg-[#1c1c1c] border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-600"
+              className="w-full bg-[var(--color-surface-container-lowest)] border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-600"
               placeholder="z.B. Pflanzverband, Borkenkäfer, Fördersatz..."
               value={suche}
               onChange={(e) => setSuche(e.target.value)}
@@ -921,7 +921,7 @@ function WissenTab() {
           </div>
           {kategorien.length > 0 && (
             <select
-              className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
+              className="bg-[var(--color-surface-container-lowest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
               value={kategorie}
               onChange={(e) => setKategorie(e.target.value)}
             >
@@ -932,7 +932,7 @@ function WissenTab() {
             </select>
           )}
           <select
-            className="bg-[#1c1c1c] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
+            className="bg-[var(--color-surface-container-lowest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-600"
             value={sort}
             onChange={(e) => {
               setSort(e.target.value)
@@ -1027,7 +1027,7 @@ function WissenTab() {
               <button
                 onClick={() => setOffset(Math.max(0, offset - limit))}
                 disabled={offset === 0}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--color-surface-container-lowest)] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" /> Zurück
               </button>
@@ -1037,7 +1037,7 @@ function WissenTab() {
               <button
                 onClick={() => setOffset(offset + limit)}
                 disabled={offset + limit >= total}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--color-surface-container-lowest)] border border-border text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] disabled:opacity-40 transition-colors"
               >
                 Weiter <ChevronRight className="w-4 h-4" />
               </button>

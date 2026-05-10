@@ -103,24 +103,34 @@ interface Auftrag {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
+// Vereinfachte Status-Liste (Bug-Report TASK 7):
+// Klare Pipeline: anfrage → angebot → geplant → aktiv → abgeschlossen / storniert
+// Mängel offen + Abnahme bleiben als Sonderzustände.
+// Alt-Begriffe (in_ausfuehrung, laufend, geprueft, bestaetigt, angenommen, auftrag,
+// in_bearbeitung, in_planung) werden weiter als Werte erkannt (siehe STATUS_LABELS_LEGACY),
+// aber nicht mehr im Dropdown angeboten.
 const STATUS_LIST = [
   { value: "anfrage", label: "Anfrage", color: "bg-blue-100 text-blue-800 border-blue-500/30" },
-  { value: "geplant", label: "Geplant", color: "bg-cyan-100 text-cyan-800 border-cyan-500/30" },  // QA-01: WCAG AA
-  { value: "aktiv", label: "Aktiv", color: "bg-lime-100 text-lime-800 border-lime-500/30" },  // QA-01: WCAG AA
-  { value: "geprueft", label: "Geprüft", color: "bg-sky-100 text-sky-800 border-sky-500/30" },
   { value: "angebot", label: "Angebot", color: "bg-violet-100 text-violet-800 border-violet-500/30" },
-  { value: "bestaetigt", label: "Bestätigt", color: "bg-amber-100 text-amber-800 border-amber-500/30" },
-  { value: "angenommen", label: "Angenommen", color: "bg-green-100 text-green-800 border-green-500/30" },
-  { value: "auftrag", label: "Auftrag", color: "bg-amber-100 text-amber-800 border-amber-500/30" },
-  { value: "in_ausfuehrung", label: "In Ausführung", color: "bg-emerald-100 text-emerald-800 border-emerald-500/30" },
-  { value: "laufend", label: "Laufend", color: "bg-emerald-100 text-emerald-800 border-emerald-500/30" },
+  { value: "geplant", label: "Geplant", color: "bg-cyan-100 text-cyan-800 border-cyan-500/30" },
+  { value: "aktiv", label: "Aktiv", color: "bg-lime-100 text-lime-800 border-lime-500/30" },
   { value: "maengel_offen", label: "Mängel offen", color: "bg-red-100 text-red-800 border-red-500/30" },
   { value: "abnahme", label: "Abnahme", color: "bg-purple-100 text-purple-800 border-purple-500/30" },
   { value: "abgeschlossen", label: "Abgeschlossen", color: "bg-gray-100 text-gray-700 border-zinc-500/30" },
-  { value: "in_bearbeitung", label: "In Bearbeitung", color: "bg-yellow-100 text-yellow-800 border-yellow-500/30" },
-  { value: "in_planung", label: "In Planung", color: "bg-indigo-100 text-indigo-800 border-indigo-500/30" },
   { value: "storniert", label: "Storniert", color: "bg-gray-100 text-gray-600 border-gray-500/30" },
 ]
+
+// Legacy-Statuswerte: weiter angezeigt für historische Aufträge.
+const STATUS_LABELS_LEGACY: Record<string, { label: string; color: string }> = {
+  in_ausfuehrung: { label: "In Ausführung", color: "bg-emerald-100 text-emerald-800 border-emerald-500/30" },
+  laufend: { label: "Laufend", color: "bg-emerald-100 text-emerald-800 border-emerald-500/30" },
+  geprueft: { label: "Geprüft", color: "bg-sky-100 text-sky-800 border-sky-500/30" },
+  bestaetigt: { label: "Bestätigt", color: "bg-amber-100 text-amber-800 border-amber-500/30" },
+  angenommen: { label: "Angenommen", color: "bg-green-100 text-green-800 border-green-500/30" },
+  auftrag: { label: "Auftrag", color: "bg-amber-100 text-amber-800 border-amber-500/30" },
+  in_bearbeitung: { label: "In Bearbeitung", color: "bg-yellow-100 text-yellow-800 border-yellow-500/30" },
+  in_planung: { label: "In Planung", color: "bg-indigo-100 text-indigo-800 border-indigo-500/30" },
+}
 
 const TYP_LABEL: Record<string, string> = {
   pflanzung: "Pflanzung",
@@ -787,7 +797,9 @@ export default function AuftragDetailPage() {
     )
   }
 
-  const statusObj = STATUS_LIST.find(s => s.value === status) ?? STATUS_LIST[0]
+  const legacy = STATUS_LABELS_LEGACY[status]
+  const statusObj = STATUS_LIST.find(s => s.value === status)
+    ?? (legacy ? { value: status, label: legacy.label, color: legacy.color } : STATUS_LIST[0])
 
   // Extract wizard data for contact/project info section
   const w = auftrag.wizardDaten as WizardDaten | null | undefined

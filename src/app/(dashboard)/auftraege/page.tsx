@@ -399,12 +399,10 @@ export default function AuftraegePage() {
           <option value="">Alle Status</option>
           <option value="anfrage">Anfrage</option>
           <option value="angebot">Angebot</option>
-          <option value="auftrag">Auftrag</option>
-          <option value="laufend">Laufend</option>
+          <option value="geplant">Geplant</option>
+          <option value="aktiv">Aktiv</option>
           <option value="abgeschlossen">Abgeschlossen</option>
-          <option value="geprueft">Geprüft</option>
-          <option value="bestaetigt">Bestätigt</option>
-          <option value="in_ausfuehrung">In Ausführung</option>
+          <option value="storniert">Storniert</option>
         </select>
         <select
           value={filterTyp}

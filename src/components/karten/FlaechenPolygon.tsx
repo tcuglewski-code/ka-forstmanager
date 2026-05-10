@@ -149,6 +149,23 @@ export function FlaechenPolygon({
           document.head.appendChild(script)
         })
       }
+      // Polyfill: leaflet-draw 1.0.4 + leaflet 1.9.x → showArea wirft
+      // "L.GeometryUtil.readableArea is not a function" → Polygon-Tool reagiert nicht.
+      // Fix übernommen aus Leaflet 1.7 GeometryUtil.
+      const LExt = window.L as unknown as { GeometryUtil?: { readableArea?: (area: number, isMetric: boolean | number[], precision?: { km?: number; ha?: number; m?: number; mi?: number; ac?: number; yd?: number; ft?: number }) => string } }
+      if (!LExt.GeometryUtil) LExt.GeometryUtil = {}
+      if (typeof LExt.GeometryUtil.readableArea !== "function") {
+        LExt.GeometryUtil.readableArea = function (area, isMetric, precision) {
+          const p = precision || { km: 2, ha: 2, m: 0 }
+          const fmt = (n: number, d: number) => n.toFixed(d)
+          if (isMetric) {
+            if (area >= 1_000_000) return `${fmt(area / 1_000_000, p.km ?? 2)} km²`
+            if (area >= 10_000) return `${fmt(area / 10_000, p.ha ?? 2)} ha`
+            return `${fmt(area, p.m ?? 0)} m²`
+          }
+          return `${fmt(area, p.m ?? 0)} m²`
+        }
+      }
       setLeafletReady(true)
     }
     loadLeaflet()

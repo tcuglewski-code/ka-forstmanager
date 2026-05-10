@@ -159,7 +159,7 @@ export default function SaisonsPage() {
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2.5 bg-forest hover:bg-[#3a4d26] text-[var(--color-on-surface)] text-sm font-medium rounded-lg transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 bg-forest hover:bg-[#3a4d26] text-white text-sm font-medium rounded-lg transition-all"
         >
           <Plus className="w-4 h-4" />
           Neue Saison
@@ -372,7 +372,7 @@ export default function SaisonsPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 py-2.5 px-4 bg-forest hover:bg-[#3a4d26] text-[var(--color-on-surface)] rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+                  className="flex-1 py-2.5 px-4 bg-forest hover:bg-[#3a4d26] text-white rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                 >
                   {saving ? (
                     <>
