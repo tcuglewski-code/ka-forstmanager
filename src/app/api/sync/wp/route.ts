@@ -51,8 +51,55 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { action, auftragId } = body
-    
+    const { action, auftragId, type, data } = body
+
+    // Bug-Reports vom WP-Widget an Mission Control weiterleiten
+    if (type === "wizard_bug_report" && data) {
+      const mcApiKey = process.env.MC_API_KEY
+      const mcUrl = "https://mission-control-tawny-omega.vercel.app/api/debug-reports"
+      if (!mcApiKey) {
+        console.error("[sync/wp] MC_API_KEY env not set")
+        return NextResponse.json({ error: "Forwarding not configured" }, { status: 500 })
+      }
+      const truncate = (s: unknown, n: number) =>
+        typeof s === "string" ? s.slice(0, n) : ""
+      const wizard = truncate(data.wizard, 100)
+      const message = truncate(data.message, 5000)
+      const title = `WP-Wizard Bug: ${wizard} (Step ${data.step ?? "?"})`
+      const payload = {
+        productKey: "wp-website",
+        productName: "Koch Aufforstung Website",
+        type: "bug",
+        severity: "mittel",
+        title,
+        description: message || "(kein Text)",
+        route: wizard || null,
+        browserInfo: {
+          url: data.url || null,
+          userAgent: data.ua || null,
+          timestamp: data.timestamp || null,
+        },
+        environment: "production",
+      }
+      const mcResp = await fetch(mcUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${mcApiKey}`,
+        },
+        body: JSON.stringify(payload),
+      })
+      const mcBody = await mcResp.json().catch(() => ({}))
+      if (!mcResp.ok) {
+        console.error("[sync/wp] MC forwarding failed", mcResp.status, mcBody)
+        return NextResponse.json(
+          { error: "Forwarding failed", status: mcResp.status, mc: mcBody },
+          { status: 502 }
+        )
+      }
+      return NextResponse.json({ ok: true, debugReportId: mcBody.id })
+    }
+
     if (action === "sync_all") {
       // Alle Aufträge synchronisieren
       const results = await wpSyncEngine.syncAlle()
