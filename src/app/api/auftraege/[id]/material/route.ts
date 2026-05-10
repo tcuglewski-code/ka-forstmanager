@@ -12,36 +12,40 @@ export const GET = withErrorHandler(async (req: NextRequest, { params }: { param
 
   const { id } = await params
 
-  const [bewegungen, reservierungen] = await Promise.all([
-    prisma.lagerBewegung.findMany({
+  // Dashboard (web session) expects raw LagerBewegung[] for the Materialzuweisung table.
+  // App (Bearer JWT) expects transformed AuftragMaterial[] (geplant vs. verbraucht).
+  // Same endpoint serves both consumers — branch on auth type.
+  if (session) {
+    const bewegungen = await prisma.lagerBewegung.findMany({
       where: { auftragId: id },
       include: {
         artikel: { select: { id: true, name: true, einheit: true } },
         mitarbeiter: { select: { id: true, vorname: true, nachname: true } },
       },
       orderBy: { createdAt: "desc" },
+    })
+    return NextResponse.json(bewegungen)
+  }
+
+  // App path: aggregate reservierungen + bewegungen → AuftragMaterial[]
+  const [bewegungen, reservierungen] = await Promise.all([
+    prisma.lagerBewegung.findMany({
+      where: { auftragId: id },
+      include: { artikel: { select: { id: true, name: true, einheit: true } } },
     }),
     prisma.lagerReservierung.findMany({
       where: { auftragId: id },
-      include: {
-        artikel: { select: { id: true, name: true, einheit: true } },
-      },
-      orderBy: { createdAt: "desc" },
+      include: { artikel: { select: { id: true, name: true, einheit: true } } },
     }),
   ])
 
-  // Transform to App-expected format: AuftragMaterial[]
   const materialMap = new Map<string, { geplant: number; verbraucht: number; name: string; einheit: string }>()
-
-  // Sum reservierungen as "geplant"
   for (const r of reservierungen) {
     const key = r.artikel?.id ?? r.artikelId
     const existing = materialMap.get(key) || { geplant: 0, verbraucht: 0, name: r.artikel?.name ?? "Unbekannt", einheit: r.artikel?.einheit ?? "Stk" }
     existing.geplant += r.menge ?? 0
     materialMap.set(key, existing)
   }
-
-  // Sum bewegungen (typ=entnahme) as "verbraucht"
   for (const b of bewegungen) {
     if (b.typ !== "entnahme") continue
     const key = b.artikel?.id ?? b.artikelId
