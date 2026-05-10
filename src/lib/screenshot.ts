@@ -153,25 +153,36 @@ export async function captureScreenshot(): Promise<{dataUrl: string | null; erro
   }
 }
 
+/**
+ * Persist a captured screenshot so it can be viewed inside Mission Control's
+ * Debug-Report-Admin.
+ *
+ * Strategy:
+ *  - Upload the JPEG to Nextcloud (private storage) for archival.
+ *  - Always return the inline `data:image/jpeg;base64,…` URL — this is what
+ *    Mission Control stores in `screenshotUrl` and renders directly in the UI.
+ *    The Nextcloud WebDAV URL is not publicly viewable (requires Basic-Auth),
+ *    which is why the previous implementation looked broken to users.
+ *
+ * Returns the inline data URL on success, or `null` if the screenshot couldn't
+ * be persisted at all (we still attach it via `technicalContext.screenshotBase64`
+ * as a last-resort fallback in the caller).
+ */
 export async function uploadScreenshot(dataUrl: string): Promise<string | null> {
+  // Fire-and-forget: archive to Nextcloud for record keeping. We don't await
+  // success — even if Nextcloud is unreachable, the data URL below makes the
+  // screenshot viewable in MC.
   try {
     const res = await fetch(dataUrl)
     const blob = await res.blob()
     const file = new File([blob], `debug-screenshot-${Date.now()}.jpg`, { type: "image/jpeg" })
-
     const form = new FormData()
     form.append("file", file)
     form.append("context", "debug-screenshot")
-
-    const uploadRes = await fetch("/api/upload", {
-      method: "POST",
-      body: form,
-    })
-
-    if (!uploadRes.ok) return null
-    const data = await uploadRes.json()
-    return data.url || data.path || null
+    fetch("/api/upload", { method: "POST", body: form }).catch(() => {})
   } catch {
-    return null
+    // Ignore — we still return the data URL below.
   }
+  // Inline data URL is what MC actually displays.
+  return dataUrl
 }
