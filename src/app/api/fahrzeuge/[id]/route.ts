@@ -1,11 +1,11 @@
 // Alias route: App calls /api/fahrzeuge/[id], mirrors /api/fuhrpark/[id] logic
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { auth } from "@/lib/auth"
+import { verifyToken } from "@/lib/auth-helpers"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
     const { id } = await params
@@ -28,9 +28,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   }
 }
 
-export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
     const { id } = await params

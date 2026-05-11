@@ -1,19 +1,19 @@
 // Alias route: App calls /api/fahrzeuge, mirrors /api/fuhrpark logic
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { auth } from "@/lib/auth"
+import { verifyToken } from "@/lib/auth-helpers"
 
-export async function GET() {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+export async function GET(req: NextRequest) {
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const fahrzeuge = await prisma.fahrzeug.findMany({ orderBy: { createdAt: "desc" } })
   return NextResponse.json(fahrzeuge)
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const user = await verifyToken(req)
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
     const body = await req.json()
