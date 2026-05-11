@@ -1,7 +1,7 @@
 "use client"
 
 // W3: Vollständige SaisonDetailClient mit 5 Tabs
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import {
@@ -197,6 +197,14 @@ export default function SaisonDetailClient({
     } catch { /* ignore */ }
     setOnboardingLoading(false)
   }
+
+  // Auto-Load: Sobald Tab 'onboarding' aktiv wird und noch keine Daten geladen
+  useEffect(() => {
+    if (tab === "onboarding" && onboardingSchritte.length === 0 && !onboardingLoading) {
+      loadOnboarding()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab])
 
   const addOnboardingSchritt = async () => {
     if (!neuerSchritt.titel) return
