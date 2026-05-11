@@ -56,6 +56,10 @@ const AuftragCreateSchema = z.object({
     turnus: z.string().optional().nullable(),
     bestandstyp: z.string().optional().nullable(),
     pflegeart: z.string().optional().nullable(),
+    // F-5: zusätzliche Auftrags-Wizard-Felder
+    hangneigung: z.string().optional().nullable(),
+    bodenbeschaffenheit: z.string().optional().nullable(),
+    begleitvegetation: z.string().optional().nullable(),
   }).optional().nullable(),
 }).refine(
   (data) => {

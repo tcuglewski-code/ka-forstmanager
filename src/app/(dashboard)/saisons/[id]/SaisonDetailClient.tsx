@@ -13,6 +13,11 @@ import {
   Loader2,
   AlertTriangle,
   Plus,
+  Pencil,
+  ArrowUp,
+  ArrowDown,
+  Upload,
+  FileText,
 } from "lucide-react"
 import { toast } from "sonner"
 import { QuickAddAuftragModal } from "@/components/auftraege/QuickAddAuftragModal"
@@ -169,6 +174,9 @@ export default function SaisonDetailClient({
   const [onboardingLoading, setOnboardingLoading] = useState(false)
   const [showAddSchritt, setShowAddSchritt] = useState(false)
   const [neuerSchritt, setNeuerSchritt] = useState({ titel: "", typ: "bestaetigung", beschreibung: "", pflicht: true, dokumentVorlageUrl: "" })
+  const [editSchrittId, setEditSchrittId] = useState<string | null>(null)
+  const [editForm, setEditForm] = useState({ titel: "", typ: "bestaetigung", beschreibung: "", pflicht: true, dokumentVorlageUrl: "" })
+  const [pdfUploading, setPdfUploading] = useState(false)
 
   // Manuelle Checklisten-Checks für Abschluss
   const [checkGeraete, setCheckGeraete] = useState(false)
@@ -210,6 +218,7 @@ export default function SaisonDetailClient({
   }
 
   const deleteOnboardingSchritt = async (schrittId: string) => {
+    if (!confirm("Schritt wirklich löschen?")) return
     try {
       const res = await fetch(`/api/saisons/${saisonId}/onboarding`, {
         method: "DELETE",
@@ -221,6 +230,83 @@ export default function SaisonDetailClient({
         loadOnboarding()
       }
     } catch { toast.error("Netzwerkfehler") }
+  }
+
+  const startEditSchritt = (s: any) => {
+    setEditSchrittId(s.id)
+    setEditForm({
+      titel: s.titel ?? "",
+      typ: s.typ ?? "bestaetigung",
+      beschreibung: s.beschreibung ?? "",
+      pflicht: !!s.pflicht,
+      dokumentVorlageUrl: s.dokumentVorlageUrl ?? "",
+    })
+  }
+
+  const saveEditSchritt = async () => {
+    if (!editSchrittId || !editForm.titel) return
+    try {
+      const res = await fetch(`/api/saisons/${saisonId}/onboarding`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ schrittId: editSchrittId, ...editForm }),
+      })
+      if (res.ok) {
+        toast.success("Schritt aktualisiert")
+        setEditSchrittId(null)
+        loadOnboarding()
+      } else {
+        toast.error("Fehler beim Speichern")
+      }
+    } catch { toast.error("Netzwerkfehler") }
+  }
+
+  const moveSchritt = async (index: number, direction: -1 | 1) => {
+    const next = index + direction
+    if (next < 0 || next >= onboardingSchritte.length) return
+    const a = onboardingSchritte[index]
+    const b = onboardingSchritte[next]
+    const reorder = [
+      { schrittId: a.id, reihenfolge: b.reihenfolge },
+      { schrittId: b.id, reihenfolge: a.reihenfolge },
+    ]
+    try {
+      const res = await fetch(`/api/saisons/${saisonId}/onboarding`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reorder }),
+      })
+      if (res.ok) loadOnboarding()
+    } catch { toast.error("Netzwerkfehler") }
+  }
+
+  // PDF-Upload für add/edit Modal — setzt dokumentVorlageUrl auf Proxy-URL
+  const uploadPdf = async (file: File, target: "add" | "edit") => {
+    if (file.type !== "application/pdf") {
+      toast.error("Nur PDF-Dateien erlaubt")
+      return
+    }
+    setPdfUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append("file", file)
+      const res = await fetch(`/api/saisons/${saisonId}/onboarding/upload`, {
+        method: "POST",
+        body: fd,
+      })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        if (target === "add") {
+          setNeuerSchritt((s) => ({ ...s, dokumentVorlageUrl: data.url }))
+        } else {
+          setEditForm((s) => ({ ...s, dokumentVorlageUrl: data.url }))
+        }
+        toast.success("PDF hochgeladen")
+      } else {
+        toast.error(data.error ?? "Upload fehlgeschlagen")
+      }
+    } catch { toast.error("Netzwerkfehler") }
+    setPdfUploading(false)
   }
 
   // ─── Auto-Checks für Abschluss ────────────────────────────────────────────
@@ -911,14 +997,43 @@ export default function SaisonDetailClient({
                 />
               </div>
               {(neuerSchritt.typ === "dokument_upload" || neuerSchritt.typ === "dokument_download") && (
-                <div>
-                  <label className="text-xs text-[var(--color-on-surface-variant)]">Vorlage-URL</label>
-                  <input
-                    value={neuerSchritt.dokumentVorlageUrl}
-                    onChange={e => setNeuerSchritt(s => ({ ...s, dokumentVorlageUrl: e.target.value }))}
-                    className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
-                    placeholder="https://..."
-                  />
+                <div className="space-y-2">
+                  <div>
+                    <label className="text-xs text-[var(--color-on-surface-variant)]">Vorlage-URL (extern) oder PDF hochladen</label>
+                    <input
+                      value={neuerSchritt.dokumentVorlageUrl}
+                      onChange={e => setNeuerSchritt(s => ({ ...s, dokumentVorlageUrl: e.target.value }))}
+                      className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
+                      placeholder="https://... oder leer lassen und PDF hochladen"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <label className="flex items-center gap-2 px-3 py-1.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-xs text-[var(--color-on-surface)] cursor-pointer hover:border-emerald-500">
+                      <Upload className="w-3.5 h-3.5" />
+                      {pdfUploading ? "Lade hoch..." : "PDF auswählen"}
+                      <input
+                        type="file"
+                        accept="application/pdf"
+                        className="hidden"
+                        disabled={pdfUploading}
+                        onChange={e => {
+                          const f = e.target.files?.[0]
+                          if (f) uploadPdf(f, "add")
+                          e.target.value = ""
+                        }}
+                      />
+                    </label>
+                    {neuerSchritt.dokumentVorlageUrl && (
+                      <a
+                        href={neuerSchritt.dokumentVorlageUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300"
+                      >
+                        <FileText className="w-3.5 h-3.5" /> Vorschau
+                      </a>
+                    )}
+                  </div>
                 </div>
               )}
               <div className="flex items-center gap-4">
@@ -929,6 +1044,94 @@ export default function SaisonDetailClient({
                 <div className="flex-1" />
                 <button onClick={() => setShowAddSchritt(false)} className="px-3 py-1.5 text-xs text-[var(--color-on-surface-variant)] hover:text-white">Abbrechen</button>
                 <button onClick={addOnboardingSchritt} disabled={!neuerSchritt.titel} className="px-4 py-1.5 text-xs bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 disabled:opacity-50">Speichern</button>
+              </div>
+            </div>
+          )}
+
+          {/* Edit modal */}
+          {editSchrittId && (
+            <div className="bg-[var(--color-surface-container)] border border-emerald-500/40 rounded-xl p-5 space-y-3">
+              <h4 className="text-sm font-semibold text-emerald-400">Schritt bearbeiten</h4>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-[var(--color-on-surface-variant)]">Titel *</label>
+                  <input
+                    value={editForm.titel}
+                    onChange={e => setEditForm(s => ({ ...s, titel: e.target.value }))}
+                    className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-[var(--color-on-surface-variant)]">Typ</label>
+                  <select
+                    value={editForm.typ}
+                    onChange={e => setEditForm(s => ({ ...s, typ: e.target.value }))}
+                    className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
+                  >
+                    <option value="bestaetigung">Bestätigung</option>
+                    <option value="formular">Formular</option>
+                    <option value="dokument_upload">Dokument-Upload</option>
+                    <option value="dokument_download">Dokument-Download</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-[var(--color-on-surface-variant)]">Beschreibung</label>
+                <textarea
+                  value={editForm.beschreibung}
+                  onChange={e => setEditForm(s => ({ ...s, beschreibung: e.target.value }))}
+                  rows={2}
+                  className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
+                />
+              </div>
+              {(editForm.typ === "dokument_upload" || editForm.typ === "dokument_download") && (
+                <div className="space-y-2">
+                  <div>
+                    <label className="text-xs text-[var(--color-on-surface-variant)]">Vorlage-URL (extern) oder PDF hochladen</label>
+                    <input
+                      value={editForm.dokumentVorlageUrl}
+                      onChange={e => setEditForm(s => ({ ...s, dokumentVorlageUrl: e.target.value }))}
+                      className="w-full mt-1 bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]"
+                      placeholder="https://..."
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <label className="flex items-center gap-2 px-3 py-1.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-xs text-[var(--color-on-surface)] cursor-pointer hover:border-emerald-500">
+                      <Upload className="w-3.5 h-3.5" />
+                      {pdfUploading ? "Lade hoch..." : "PDF auswählen"}
+                      <input
+                        type="file"
+                        accept="application/pdf"
+                        className="hidden"
+                        disabled={pdfUploading}
+                        onChange={e => {
+                          const f = e.target.files?.[0]
+                          if (f) uploadPdf(f, "edit")
+                          e.target.value = ""
+                        }}
+                      />
+                    </label>
+                    {editForm.dokumentVorlageUrl && (
+                      <a
+                        href={editForm.dokumentVorlageUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300"
+                      >
+                        <FileText className="w-3.5 h-3.5" /> Vorschau
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+              <div className="flex items-center gap-4">
+                <label className="flex items-center gap-2 text-sm text-[var(--color-on-surface)]">
+                  <input type="checkbox" checked={editForm.pflicht} onChange={e => setEditForm(s => ({ ...s, pflicht: e.target.checked }))} />
+                  Pflicht
+                </label>
+                <div className="flex-1" />
+                <button onClick={() => setEditSchrittId(null)} className="px-3 py-1.5 text-xs text-[var(--color-on-surface-variant)] hover:text-white">Abbrechen</button>
+                <button onClick={saveEditSchritt} disabled={!editForm.titel} className="px-4 py-1.5 text-xs bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 disabled:opacity-50">Speichern</button>
               </div>
             </div>
           )}
@@ -948,21 +1151,60 @@ export default function SaisonDetailClient({
             <div className="space-y-3">
               {onboardingSchritte.map((s: any, i: number) => (
                 <div key={s.id} className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-3">
-                      <span className="w-6 h-6 rounded-full bg-forest text-emerald-400 text-xs flex items-center justify-center font-bold">{i + 1}</span>
-                      <div>
-                        <p className="text-sm font-medium text-[var(--color-on-surface)]">{s.titel}</p>
-                        <div className="flex gap-2 mt-1">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 min-w-0">
+                      <span className="w-6 h-6 rounded-full bg-forest text-emerald-400 text-xs flex items-center justify-center font-bold flex-shrink-0">{i + 1}</span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-[var(--color-on-surface)] break-words">{s.titel}</p>
+                        <div className="flex gap-2 mt-1 flex-wrap">
                           <span className="px-2 py-0.5 rounded text-xs bg-[var(--color-surface-container-low)] text-[var(--color-on-surface-variant)]">{s.typ}</span>
                           {s.pflicht && <span className="px-2 py-0.5 rounded text-xs bg-amber-500/20 text-amber-400">Pflicht</span>}
+                          {s.dokumentVorlageUrl && (
+                            <a
+                              href={s.dokumentVorlageUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="px-2 py-0.5 rounded text-xs bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 flex items-center gap-1"
+                            >
+                              <FileText className="w-3 h-3" /> Vorschau
+                            </a>
+                          )}
                         </div>
-                        {s.beschreibung && <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">{s.beschreibung}</p>}
+                        {s.beschreibung && <p className="text-xs text-[var(--color-on-surface-variant)] mt-1 break-words">{s.beschreibung}</p>}
                       </div>
                     </div>
-                    <button onClick={() => deleteOnboardingSchritt(s.id)} className="text-zinc-600 hover:text-red-400 transition-colors">
-                      <X className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <button
+                        onClick={() => moveSchritt(i, -1)}
+                        disabled={i === 0}
+                        className="text-zinc-500 hover:text-emerald-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors p-1"
+                        title="Nach oben"
+                      >
+                        <ArrowUp className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => moveSchritt(i, 1)}
+                        disabled={i === onboardingSchritte.length - 1}
+                        className="text-zinc-500 hover:text-emerald-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors p-1"
+                        title="Nach unten"
+                      >
+                        <ArrowDown className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => startEditSchritt(s)}
+                        className="text-zinc-500 hover:text-emerald-400 transition-colors p-1"
+                        title="Bearbeiten"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => deleteOnboardingSchritt(s.id)}
+                        className="text-zinc-500 hover:text-red-400 transition-colors p-1"
+                        title="Löschen"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
 
                   {/* Abschlüsse (Admin view) */}

@@ -86,3 +86,53 @@ export const DELETE = withErrorHandler(async (req: NextRequest, { params }: { pa
   await prisma.saisonOnboardingSchritt.delete({ where: { id: schrittId } })
   return NextResponse.json({ success: true })
 })
+
+// PATCH — Schritt bearbeiten (Titel, Beschreibung, Typ, Pflicht, URL) ODER Reihenfolge (bulk)
+export const PATCH = withErrorHandler(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const session = await auth()
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  const userRole = (session.user as any)?.role as string
+  if (!["admin", "ka_admin"].includes(userRole)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
+  const { id } = await params
+  const body = await req.json()
+
+  // Bulk-Reorder: { reorder: [{schrittId, reihenfolge}, ...] }
+  if (Array.isArray(body.reorder)) {
+    await prisma.$transaction(
+      body.reorder.map((r: { schrittId: string; reihenfolge: number }) =>
+        prisma.saisonOnboardingSchritt.update({
+          where: { id: r.schrittId },
+          data: { reihenfolge: r.reihenfolge },
+        })
+      )
+    )
+    return NextResponse.json({ success: true })
+  }
+
+  // Einzel-Edit: { schrittId, titel?, beschreibung?, typ?, pflicht?, dokumentVorlageUrl? }
+  const schrittId = body.schrittId as string
+  if (!schrittId) return NextResponse.json({ error: "schrittId required" }, { status: 400 })
+
+  const existing = await prisma.saisonOnboardingSchritt.findUnique({ where: { id: schrittId } })
+  if (!existing || existing.saisonId !== id) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 })
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const updateData: any = {}
+  if (typeof body.titel === "string") updateData.titel = body.titel
+  if (body.beschreibung !== undefined) updateData.beschreibung = body.beschreibung ?? null
+  if (typeof body.typ === "string") updateData.typ = body.typ
+  if (typeof body.pflicht === "boolean") updateData.pflicht = body.pflicht
+  if (body.dokumentVorlageUrl !== undefined) updateData.dokumentVorlageUrl = body.dokumentVorlageUrl ?? null
+
+  const updated = await prisma.saisonOnboardingSchritt.update({
+    where: { id: schrittId },
+    data: updateData,
+  })
+  return NextResponse.json(updated)
+})

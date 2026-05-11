@@ -24,11 +24,16 @@ const TYPEN = [
 
 export function QuickAddAuftragModal({ saisonId, saisonName, onClose, onCreated }: Props) {
   const [loading, setLoading] = useState(false)
+  const [showAdvanced, setShowAdvanced] = useState(false)
   const [form, setForm] = useState({
     typ: "pflanzung",
     waldbesitzer: "",
     flaeche_ha: "",
     standort: "",
+    // F-5: erweiterte Wizard-Felder
+    hangneigung: "",
+    bodenbeschaffenheit: "",
+    begleitvegetation: "",
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,6 +51,16 @@ export function QuickAddAuftragModal({ saisonId, saisonName, onClose, onCreated 
       const typLabel = TYPEN.find(t => t.value === form.typ)?.label || form.typ
       const titel = `${typLabel} - ${form.waldbesitzer}`
 
+      // F-5: Erweiterte Felder nur senden wenn ausgefüllt — in wizardDaten gebündelt
+      const wizardDaten =
+        form.hangneigung || form.bodenbeschaffenheit || form.begleitvegetation
+          ? {
+              hangneigung: form.hangneigung || null,
+              bodenbeschaffenheit: form.bodenbeschaffenheit || null,
+              begleitvegetation: form.begleitvegetation || null,
+            }
+          : null
+
       const res = await fetch("/api/auftraege", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -57,6 +72,7 @@ export function QuickAddAuftragModal({ saisonId, saisonName, onClose, onCreated 
           flaeche_ha: form.flaeche_ha ? parseFloat(form.flaeche_ha) : null,
           standort: form.standort || null,
           saisonId, // Automatisch aus Kontext
+          ...(wizardDaten ? { wizardDaten } : {}),
         }),
       })
 
@@ -147,6 +163,60 @@ export function QuickAddAuftragModal({ saisonId, saisonName, onClose, onCreated 
                 className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
               />
             </div>
+          </div>
+
+          {/* F-5: Erweiterte Felder (optional, einklappbar) */}
+          <div className="border-t border-border pt-3">
+            <button
+              type="button"
+              onClick={() => setShowAdvanced((v) => !v)}
+              className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300"
+            >
+              {showAdvanced ? "−" : "+"} Erweiterte Felder
+            </button>
+            {showAdvanced && (
+              <div className="mt-3 space-y-3">
+                <div>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Hangneigung</label>
+                  <select
+                    value={form.hangneigung}
+                    onChange={(e) => setForm((f) => ({ ...f, hangneigung: e.target.value }))}
+                    className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
+                  >
+                    <option value="">– bitte wählen –</option>
+                    <option value="kein">Kein Hang (eben)</option>
+                    <option value="leicht">Leicht (bis 15%)</option>
+                    <option value="mittel">Mittel (15–30%)</option>
+                    <option value="stark">Stark (über 30%)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Bodenbeschaffenheit</label>
+                  <select
+                    value={form.bodenbeschaffenheit}
+                    onChange={(e) => setForm((f) => ({ ...f, bodenbeschaffenheit: e.target.value }))}
+                    className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
+                  >
+                    <option value="">– bitte wählen –</option>
+                    <option value="lehmig">Lehmig</option>
+                    <option value="sandig">Sandig</option>
+                    <option value="steinig">Steinig</option>
+                    <option value="moorig">Moorig</option>
+                    <option value="gemischt">Gemischt</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Begleitvegetation</label>
+                  <input
+                    type="text"
+                    value={form.begleitvegetation}
+                    onChange={(e) => setForm((f) => ({ ...f, begleitvegetation: e.target.value }))}
+                    placeholder="z.B. Brombeere, Adlerfarn, Gras"
+                    className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Info */}
