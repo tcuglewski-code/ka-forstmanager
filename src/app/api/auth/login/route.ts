@@ -28,15 +28,21 @@ export async function POST(req: NextRequest) {
 
     // Support login via email or username
     const isEmail = username.includes("@")
+    const userSelect = {
+      id: true,
+      email: true,
+      username: true,
+      name: true,
+      role: true,
+      active: true,
+      password: true,
+      tokenVersion: true,
+      mustChangePassword: true,
+      mitarbeiter: { select: { id: true } },
+    } as const
     const user = isEmail
-      ? await prisma.user.findUnique({
-          where: { email: username },
-          select: { id: true, email: true, username: true, name: true, role: true, active: true, password: true, tokenVersion: true, mustChangePassword: true }
-        })
-      : await prisma.user.findUnique({
-          where: { username: username },
-          select: { id: true, email: true, username: true, name: true, role: true, active: true, password: true, tokenVersion: true, mustChangePassword: true }
-        })
+      ? await prisma.user.findUnique({ where: { email: username }, select: userSelect })
+      : await prisma.user.findUnique({ where: { username: username }, select: userSelect })
 
     if (!user || !user.active) {
       return NextResponse.json(
@@ -61,12 +67,14 @@ export async function POST(req: NextRequest) {
 
     // Create JWT
     const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET || "forstmanager-app-secret-2026")
+    const mitarbeiterId = user.mitarbeiter?.id ?? null
     const access_token = await new SignJWT({
       sub: user.id,
       email: user.email,
       role: user.role,
       name: user.name,
       tv: user.tokenVersion,
+      mitarbeiterId,
     })
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()

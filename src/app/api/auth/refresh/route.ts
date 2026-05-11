@@ -29,7 +29,8 @@ export async function POST(req: NextRequest) {
       where: { id: payload.sub as string },
       select: {
         id: true, email: true, name: true, role: true, active: true,
-        tokenVersion: true, mustChangePassword: true
+        tokenVersion: true, mustChangePassword: true,
+        mitarbeiter: { select: { id: true } },
       }
     })
 
@@ -46,12 +47,14 @@ export async function POST(req: NextRequest) {
 
     // Neuer Access Token
     const secret = getSecret()
+    const mitarbeiterId = user.mitarbeiter?.id ?? null
     const newToken = await new SignJWT({
       sub: user.id,
       email: user.email,
       role: user.role,
       name: user.name,
       tv: user.tokenVersion,
+      mitarbeiterId,
     })
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
