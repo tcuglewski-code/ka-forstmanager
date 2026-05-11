@@ -111,9 +111,10 @@ export const PATCH = withErrorHandler(async (req: NextRequest, { params }: { par
   if (action === "reset-password") {
     const pw = newPassword || generatePassword()
     const hash = await bcrypt.hash(pw, 10)
+    // AAF-5b: Bei Admin-Reset alle bestehenden Tokens invalidieren
     await prisma.user.update({
       where: { id: userId },
-      data: { password: hash, mustChangePassword: true },
+      data: { password: hash, mustChangePassword: true, tokenVersion: { increment: 1 } },
     })
     await logAudit(user, "APP_ACCOUNT_PW_RESET", id, { action })
     return NextResponse.json({ ok: true, action: "password-reset", temporaresPasswort: pw })
