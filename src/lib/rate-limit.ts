@@ -17,6 +17,13 @@ export const loginRateLimit = new Ratelimit({
   prefix: "ratelimit:login",
 })
 
+// AAF-SEC-4: 3 Account-Erstellungen pro IP pro Stunde
+export const accountErstellenRateLimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(3, "1 h"),
+  prefix: "ratelimit:account-erstellen",
+})
+
 // Simple in-memory rate limiter for non-Redis use cases
 const memoryStore = new Map<string, { count: number; resetAt: number }>()
 

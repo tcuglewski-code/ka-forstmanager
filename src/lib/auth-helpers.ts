@@ -8,39 +8,62 @@ const getAuth = async () => {
   return auth
 }
 
-// AAF-SEC-1/2: In-memory cache for user active/tokenVersion checks (TTL 60s)
-const userCache = new Map<string, { active: boolean; tokenVersion: number; expiresAt: number }>()
+// AAF-SEC-1/2/3: In-memory cache for user active/tokenVersion/mustChangePassword checks (TTL 60s)
+const userCache = new Map<
+  string,
+  { active: boolean; tokenVersion: number; mustChangePassword: boolean; expiresAt: number }
+>()
 const CACHE_TTL_MS = 60_000
 
-async function checkUserStatus(userId: string, jwtTokenVersion?: number): Promise<boolean> {
+const PASSWORD_CHANGE_ALLOWLIST = [
+  "/api/auth/change-password",
+  "/api/auth/logout",
+  "/api/auth/refresh",
+]
+
+function isPathAllowedDuringPasswordChange(url: string): boolean {
+  try {
+    const u = new URL(url)
+    return PASSWORD_CHANGE_ALLOWLIST.some((p) => u.pathname.startsWith(p))
+  } catch {
+    return false
+  }
+}
+
+type UserStatusResult =
+  | { ok: true; mustChangePassword: boolean }
+  | { ok: false }
+
+async function checkUserStatus(userId: string, jwtTokenVersion?: number): Promise<UserStatusResult> {
   const now = Date.now()
   const cached = userCache.get(userId)
 
   if (cached && cached.expiresAt > now) {
-    if (!cached.active) return false
-    if (jwtTokenVersion !== undefined && jwtTokenVersion !== cached.tokenVersion) return false
-    return true
+    if (!cached.active) return { ok: false }
+    if (jwtTokenVersion !== undefined && jwtTokenVersion !== cached.tokenVersion) return { ok: false }
+    return { ok: true, mustChangePassword: cached.mustChangePassword }
   }
 
   const dbUser = await prisma.user.findUnique({
     where: { id: userId },
-    select: { active: true, tokenVersion: true },
+    select: { active: true, tokenVersion: true, mustChangePassword: true },
   })
 
   if (!dbUser) {
     userCache.delete(userId)
-    return false
+    return { ok: false }
   }
 
   userCache.set(userId, {
     active: dbUser.active,
     tokenVersion: dbUser.tokenVersion,
+    mustChangePassword: dbUser.mustChangePassword,
     expiresAt: now + CACHE_TTL_MS,
   })
 
-  if (!dbUser.active) return false
-  if (jwtTokenVersion !== undefined && jwtTokenVersion !== dbUser.tokenVersion) return false
-  return true
+  if (!dbUser.active) return { ok: false }
+  if (jwtTokenVersion !== undefined && jwtTokenVersion !== dbUser.tokenVersion) return { ok: false }
+  return { ok: true, mustChangePassword: dbUser.mustChangePassword }
 }
 
 /**
@@ -60,11 +83,16 @@ export async function verifyToken(req: NextRequest) {
         const { payload } = await jwtVerify(token, secret)
         if (payload.sub) {
           // AAF-SEC-1/2: Check user is still active + tokenVersion matches
-          const isValid = await checkUserStatus(
+          const status = await checkUserStatus(
             payload.sub,
             typeof payload.tv === "number" ? payload.tv : undefined
           )
-          if (!isValid) return null
+          if (!status.ok) return null
+
+          // AAF-SEC-3: enforce mustChangePassword for Bearer tokens
+          if (status.mustChangePassword && !isPathAllowedDuringPasswordChange(req.url)) {
+            return null
+          }
 
           return {
             id: payload.sub,
