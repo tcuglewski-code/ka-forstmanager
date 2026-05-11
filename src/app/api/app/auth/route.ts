@@ -22,6 +22,8 @@ export async function POST(req: NextRequest) {
     }
     const mitarbeiter = await prisma.mitarbeiter.findUnique({ where: { userId: user.id } })
     const token = await signAppToken({
+      sub: user.id,
+      tv: user.tokenVersion,
       userId: user.id,
       mitarbeiterId: mitarbeiter?.id ?? null,
       email: user.email,
