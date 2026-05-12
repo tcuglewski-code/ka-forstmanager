@@ -10,9 +10,9 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
   try {
-    // Authentifizierung prüfen
-    const authResult = await verifyToken(req);
-    if (!authResult.success) {
+    // Authentifizierung prüfen — verifyToken returns user object or null
+    const user = await verifyToken(req);
+    if (!user) {
       return NextResponse.json(
         { error: 'Nicht authentifiziert' },
         { status: 401 }

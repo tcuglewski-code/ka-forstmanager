@@ -10,9 +10,17 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
   const mitarbeiterId = appUser.mitarbeiterId as string | null
   const role = (appUser.role as string | undefined) ?? (appUser.rolle as string | undefined)
   const isGF = role === "ka_gruppenführer" || role === "ka_gruppenfuehrer" || role === "gruppenfuehrer" || role === "gruppenführer"
-  // If Gruppenführer, return only their group's auftraege
+  const isAdmin = role === "ka_admin" || role === "admin" || role === "administrator"
+
   let auftraege
-  if (mitarbeiterId && isGF) {
+  if (isAdmin) {
+    // Admin: alle Aufträge
+    auftraege = await prisma.auftrag.findMany({
+      where: { status: { notIn: ["abgeschlossen"] } },
+      include: { saison: { select: { id: true, name: true } } },
+      orderBy: { updatedAt: "desc" },
+    })
+  } else if (mitarbeiterId && isGF) {
     // GF: Gruppen wo sie Gruppenführer sind + Gruppen wo sie Mitglied sind
     const [leadGruppen, memberGruppen] = await Promise.all([
       prisma.gruppe.findMany({ where: { gruppenfuehrerId: mitarbeiterId }, select: { id: true } }),
@@ -27,12 +35,21 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
       include: { saison: { select: { id: true, name: true } } },
       orderBy: { updatedAt: "desc" },
     })
-  } else {
+  } else if (mitarbeiterId) {
+    // MA (und alle anderen Rollen): nur Aufträge der eigenen Gruppen
+    const memberGruppen = await prisma.gruppeMitglied.findMany({
+      where: { mitarbeiterId },
+      select: { gruppeId: true },
+    })
+    const gruppenIds = memberGruppen.map((g: { gruppeId: string }) => g.gruppeId)
     auftraege = await prisma.auftrag.findMany({
-      where: { status: { notIn: ["abgeschlossen"] } },
+      where: { gruppeId: { in: gruppenIds }, status: { notIn: ["abgeschlossen"] } },
       include: { saison: { select: { id: true, name: true } } },
       orderBy: { updatedAt: "desc" },
     })
+  } else {
+    // Kein Mitarbeiter-Datensatz verknüpft → keine Aufträge
+    auftraege = []
   }
   return NextResponse.json(auftraege)
 })

@@ -45,8 +45,9 @@ export const GET = withErrorHandler(async (
   )
 
   // Map to response format expected by app
+  // Artikel-IDs sind CUIDs (Strings) — kein parseInt, das würde NaN erzeugen
   const material = reservierungen.map(r => ({
-    material_id: parseInt(r.artikel.id, 10) || r.artikel.id,
+    material_id: r.artikel.id,
     material_name: r.artikel.name,
     einheit: r.artikel.einheit,
     geplant: r.menge,

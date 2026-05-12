@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { getAppUser } from "@/lib/app-auth"
 
 // GET: Artikel-Detail mit letzten 10 Buchungen für Mobile App
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const appUser = await getAppUser(req)
+  if (!appUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const { id } = await params
-  
+
   try {
     const artikel = await prisma.lagerArtikel.findUnique({
       where: { id },

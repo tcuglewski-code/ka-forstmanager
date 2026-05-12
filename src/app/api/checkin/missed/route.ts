@@ -130,9 +130,10 @@ export async function POST(request: NextRequest) {
           OR: [
             { rolle: 'koordinator' },
             { rolle: 'admin' },
-            { rolle: 'gf' },
+            { rolle: 'gruppenfuehrer' },
           ],
-          aktiv: true,
+          status: 'aktiv',
+          deletedAt: null,
         },
         select: {
           id: true,

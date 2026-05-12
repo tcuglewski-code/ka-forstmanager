@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { getAppUser } from "@/lib/app-auth"
 
 interface BuchungBody {
   artikelId: string
@@ -13,6 +14,9 @@ interface BuchungBody {
 
 // POST: Neue Buchung von Mobile App erstellen
 export async function POST(req: NextRequest) {
+  const appUser = await getAppUser(req)
+  if (!appUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
   try {
     const body: BuchungBody = await req.json()
     const { artikelId, typ, menge, notiz, auftragId, mitarbeiterId, offlineId } = body
