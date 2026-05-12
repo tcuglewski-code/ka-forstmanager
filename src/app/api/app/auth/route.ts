@@ -27,6 +27,8 @@ export async function POST(req: NextRequest) {
       userId: user.id,
       mitarbeiterId: mitarbeiter?.id ?? null,
       email: user.email,
+      name: user.name,
+      role: user.role,
       rolle: user.role,
     })
     

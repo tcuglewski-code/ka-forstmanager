@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
     email: user.email,
     role: user.role,
     roles: [user.role],
-    gruppe_id: gruppe?.id ? Number(gruppe.id) || undefined : undefined,
+    gruppe_id: gruppe?.id ?? undefined,
     gruppe_name: gruppe?.name,
     mitarbeiter_id: mitarbeiter?.id,
   })

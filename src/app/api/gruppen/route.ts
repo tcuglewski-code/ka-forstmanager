@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { Prisma } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
 import { verifyToken } from "@/lib/auth-helpers"
 
@@ -11,7 +12,27 @@ export async function GET(req: NextRequest) {
   const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 200)
   const skip = (page - 1) * limit
 
+  // Role-based filter: GF should only see their own group(s)
+  const userRole = (user as { role?: string; email?: string }).role
+  const userEmail = (user as { role?: string; email?: string }).email
+  const isAdmin = !!userRole && ["admin", "ka_admin", "administrator"].includes(userRole)
+  const isGF = userRole === "ka_gruppenführer" || userRole === "ka_gruppenfuehrer"
+
+  const where: Prisma.GruppeWhereInput = {}
+  if (!isAdmin && isGF && userEmail) {
+    const ownMitarbeiter = await prisma.mitarbeiter.findFirst({
+      where: { email: userEmail, deletedAt: null },
+      select: { id: true },
+    })
+    const mitarbeiterId = ownMitarbeiter?.id ?? "__none__"
+    where.OR = [
+      { gruppenfuehrerId: mitarbeiterId },
+      { mitglieder: { some: { mitarbeiterId } } },
+    ]
+  }
+
   const gruppen = await prisma.gruppe.findMany({
+    where,
     include: {
       saison: { select: { id: true, name: true } },
       mitglieder: {
@@ -44,7 +65,7 @@ export async function GET(req: NextRequest) {
     gruppenfuehrer: g.gruppenfuehrerId ? (fuellerMap[g.gruppenfuehrerId] ?? null) : null,
   }))
 
-  const total = await prisma.gruppe.count()
+  const total = await prisma.gruppe.count({ where })
   return NextResponse.json({ items: result, total, page, totalPages: Math.ceil(total / limit) })
 }
 

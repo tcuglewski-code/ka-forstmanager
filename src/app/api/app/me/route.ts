@@ -27,5 +27,11 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
     include: { gruppen: { include: { gruppe: { select: { id: true, name: true } } } } },
   })
   if (!mitarbeiter) return NextResponse.json({ error: "Not found" }, { status: 404 })
-  return NextResponse.json(mitarbeiter)
+  const firstGruppe = mitarbeiter.gruppen?.[0]?.gruppe ?? null
+  return NextResponse.json({
+    ...mitarbeiter,
+    gruppeId: firstGruppe?.id ?? null,
+    gruppe_id: firstGruppe?.id ?? null,
+    gruppeName: firstGruppe?.name ?? null,
+  })
 })
