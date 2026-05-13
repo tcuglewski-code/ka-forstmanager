@@ -51,6 +51,14 @@ async function getMitarbeiter(id: string) {
   })
 }
 
+async function getVorschuesse(mitarbeiterId: string) {
+  return prisma.vorschuss.findMany({
+    where: { mitarbeiterId },
+    orderBy: { datum: "desc" },
+    take: 20,
+  })
+}
+
 async function getSaisons() {
   return prisma.saison.findMany({ select: { id: true, name: true }, orderBy: { startDatum: "desc" } })
 }
@@ -62,6 +70,7 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
   const { id } = await params
   const [ma, saisons] = await Promise.all([getMitarbeiter(id), getSaisons()])
   if (!ma) notFound()
+  const vorschuesse = await getVorschuesse(ma.id)
 
   const tabs = [
     { key: "stammdaten", label: "Stammdaten" },
@@ -275,6 +284,46 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
                 ))}
               </tbody>
             </table>
+            </div>
+          )}
+        </Section>
+
+        {/* Vorschüsse */}
+        <Section title={`Vorschüsse (${vorschuesse.length})`} link="/vorschuesse">
+          {vorschuesse.length === 0 ? (
+            <p className="text-zinc-600 text-sm">Keine Vorschüsse</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-2 text-xs text-[var(--color-on-surface-variant)]">Datum</th>
+                    <th className="text-left py-2 text-xs text-[var(--color-on-surface-variant)]">Betrag</th>
+                    <th className="text-left py-2 text-xs text-[var(--color-on-surface-variant)]">Grund</th>
+                    <th className="text-left py-2 text-xs text-[var(--color-on-surface-variant)]">Genehmigt</th>
+                    <th className="text-left py-2 text-xs text-[var(--color-on-surface-variant)]">Zurückgezahlt</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {vorschuesse.map((v) => (
+                    <tr key={v.id} className="border-b border-border last:border-0">
+                      <td className="py-2 text-sm text-[var(--color-on-surface-variant)]">{new Date(v.datum).toLocaleDateString("de-DE")}</td>
+                      <td className="py-2 text-sm font-medium text-amber-400">{v.betrag.toFixed(2)} €</td>
+                      <td className="py-2 text-sm text-[var(--color-on-surface-variant)]">{v.grund ?? "—"}</td>
+                      <td className="py-2 text-sm">
+                        <span className={`text-xs ${v.genehmigt ? "text-emerald-400" : "text-amber-400"}`}>
+                          {v.genehmigt ? "Ja" : "Nein"}
+                        </span>
+                      </td>
+                      <td className="py-2 text-sm">
+                        <span className={`text-xs ${v.zurueckgezahlt ? "text-emerald-400" : "text-zinc-500"}`}>
+                          {v.zurueckgezahlt ? "Ja" : "Nein"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </Section>

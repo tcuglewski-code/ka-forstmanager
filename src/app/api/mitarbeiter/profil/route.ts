@@ -15,13 +15,41 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "mitarbeiterId fehlt" }, { status: 400 })
     }
 
-    // In SystemConfig speichern als JSON (Fallback falls kein Profil-Modell)
+    // Primär: Direkt in Mitarbeiter-Tabelle schreiben, damit Notfallkontakt
+    // im FM-Profil sichtbar wird (Sprint AS Bugfix 2026-05).
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: Record<string, any> = {}
+    if (telefon != null) data.telefon = telefon
+    if (fuehrerschein != null) data.fuehrerschein = fuehrerschein
+    if (iban != null) data.iban = iban
+    if (bankName != null) data.bankname = bankName
+    if (notfallkontakt && typeof notfallkontakt === "object") {
+      if (notfallkontakt.name != null) {
+        data.notfallName = notfallkontakt.name
+        data.notfallkontakt = notfallkontakt.name // Legacy-Feld zusätzlich
+      }
+      if (notfallkontakt.telefon != null) {
+        data.notfallTelefon = notfallkontakt.telefon
+        data.notfalltelefon = notfallkontakt.telefon // Legacy-Feld zusätzlich
+      }
+      if (notfallkontakt.beziehung != null) data.notfallBeziehung = notfallkontakt.beziehung
+    }
+
+    if (Object.keys(data).length > 0) {
+      await prisma.mitarbeiter.update({
+        where: { id: mitarbeiterId },
+        data,
+      }).catch((err) => {
+        console.warn("[mitarbeiter/profil] Mitarbeiter-Update fehlgeschlagen:", err)
+      })
+    }
+
+    // Sekundär: SystemConfig als Backup für Felder ohne Mitarbeiter-Spalte (z.B. bic)
     const profilData = { telefon, notfallkontakt, fuehrerschein, iban, bic, bankName, updatedAt: new Date().toISOString() }
-    
     await prisma.systemConfig.upsert({
       where: { key: `mitarbeiter_profil_${mitarbeiterId}` },
       update: { value: JSON.stringify(profilData) },
-      create: { 
+      create: {
         key: `mitarbeiter_profil_${mitarbeiterId}`,
         value: JSON.stringify(profilData),
       },
