@@ -871,6 +871,18 @@ export function AuftragModal({
 
             {/* FM-03: Treffpunkt */}
             {field("Treffpunkt mit Förster", "treffpunkt", "text", "z.B. Parkplatz Forsthaus Revier Nord")}
+            {form.treffpunkt && (
+              <div className="-mt-3 mb-2">
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(form.treffpunkt)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300"
+                >
+                  🗺️ In Google Maps öffnen
+                </a>
+              </div>
+            )}
             
             <div className="grid grid-cols-2 gap-4">
               <div>

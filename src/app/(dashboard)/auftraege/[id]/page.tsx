@@ -683,6 +683,8 @@ export default function AuftragDetailPage() {
   const [auftragLog, setAuftragLog] = useState<{ id: string; aktion: string; von?: string | null; nach?: string | null; createdAt: string }[]>([])
   const [tagesprotokolle, setTagesprotokolle] = useState<TagesprotokollFull[]>([])
   const [tagesprotokollExpanded, setTagesprotokollExpanded] = useState<string | null>(null)
+  // Pre-Build Sprint: Dokumente (Fotos, PDFs) für diesen Auftrag
+  const [dokumente, setDokumente] = useState<Array<{ id: string; name: string; typ?: string | null; url?: string | null; mimeType?: string | null; createdAt: string }>>([])
 
   useEffect(() => {
     async function fetchData() {
@@ -741,6 +743,19 @@ export default function AuftragDetailPage() {
         .then(r => r.json())
         .then(data => setTagesprotokolle(Array.isArray(data) ? data : []))
         .catch((err) => { console.error("Tagesprotokolle Ladefehler:", err) })
+    }
+  }, [id])
+
+  // Pre-Build Sprint: Lade Dokumente (Fotos, PDFs) verknüpft mit diesem Auftrag
+  useEffect(() => {
+    if (id) {
+      fetch(`/api/dokumente?auftragId=${id}&limit=200`)
+        .then(r => r.json())
+        .then(data => {
+          const items = Array.isArray(data) ? data : (data?.items ?? [])
+          setDokumente(items)
+        })
+        .catch((err) => { console.error("Dokumente Ladefehler:", err) })
     }
   }, [id])
 
@@ -1377,6 +1392,46 @@ export default function AuftragDetailPage() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+          </div>
+
+          {/* ── Pre-Build Sprint: Fotos & Dokumente ──────────────────── */}
+          <div className="bg-surface-container border border-border rounded-xl p-6">
+            <SectionHeading icon={<Camera className="w-4 h-4" />} label={`Fotos & Dokumente (${dokumente.length})`} />
+            {dokumente.length === 0 ? (
+              <p className="text-on-surface-variant text-sm mt-2">Noch keine Dokumente zu diesem Auftrag hochgeladen.</p>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-3">
+                {dokumente.map((d) => {
+                  const isImage = (d.mimeType ?? "").startsWith("image/") || /\.(jpe?g|png|webp|gif|heic)$/i.test(d.name)
+                  return (
+                    <a
+                      key={d.id}
+                      href={d.url ?? "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group block bg-surface-container-low border border-border rounded-lg overflow-hidden hover:border-emerald-500/50 transition-all"
+                      title={d.name}
+                    >
+                      {isImage && d.url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={d.url} alt={d.name} className="w-full h-24 object-cover" />
+                      ) : (
+                        <div className="w-full h-24 flex items-center justify-center bg-surface-container-high">
+                          <FileText className="w-8 h-8 text-on-surface-variant" />
+                        </div>
+                      )}
+                      <div className="p-2">
+                        <p className="text-xs text-on-surface truncate" title={d.name}>{d.name}</p>
+                        <p className="text-[10px] text-on-surface-variant mt-0.5">
+                          {new Date(d.createdAt).toLocaleDateString("de-DE")}
+                          {d.typ ? ` · ${d.typ}` : ""}
+                        </p>
+                      </div>
+                    </a>
+                  )
+                })}
               </div>
             )}
           </div>
