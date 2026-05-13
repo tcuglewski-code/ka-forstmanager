@@ -6,6 +6,196 @@ import Link from "next/link"
 import { FoerderungWidget } from "@/components/foerderung/FoerderungWidget"
 import { AiUsageWidget } from "@/components/dashboard/AiUsageWidget"
 import { StatCard, QuickLink, HoverLink, HoverActionCard } from "@/components/dashboard/InteractiveCards"
+import { isAdminRole, getGruppenIdsForUser } from "@/lib/auth-helpers"
+
+const GF_ROLES = ["ka_gruppenführer", "ka_gruppenfuhrer", "gruppenfuehrer", "gruppenführer"]
+
+// FIX 2 (DSGVO): role-scoped stats for GF/MA — no global Umsatz/Lohn/all-mitarbeiter
+async function getRoleScopedStats(role: string, email: string | null | undefined) {
+  try {
+    const heute = new Date()
+    const in30Tagen = new Date(heute.getTime() + 30 * 24 * 60 * 60 * 1000)
+    const heuteStart = new Date(heute.getFullYear(), heute.getMonth(), heute.getDate())
+    const heuteEnde = new Date(heuteStart.getTime() + 24 * 60 * 60 * 1000)
+
+    const own = email
+      ? await prisma.mitarbeiter.findFirst({
+          where: { email, deletedAt: null },
+          select: { id: true, stundenlohn: true },
+        })
+      : null
+
+    const gruppenIds = await getGruppenIdsForUser(email ?? null, role)
+    // gruppenIds === [] means admin (no restriction), but role is non-admin here
+    // ["__none__"] or actual ids
+    const hasGruppen = gruppenIds.length > 0 && !gruppenIds.includes("__none__")
+    const isGF = GF_ROLES.includes(role)
+
+    // Members visible: GF sees its group members; MA sees its group members
+    let memberIds: string[] = []
+    if (hasGruppen) {
+      const memberships = await prisma.gruppeMitglied.findMany({
+        where: { gruppeId: { in: gruppenIds } },
+        select: { mitarbeiterId: true },
+      })
+      memberIds = [...new Set(memberships.map(m => m.mitarbeiterId))]
+      if (own) memberIds = [...new Set([...memberIds, own.id])]
+    } else if (own) {
+      memberIds = [own.id]
+    }
+
+    // Aufträge der Gruppe(n)
+    const auftraegeFilter = hasGruppen
+      ? { gruppeId: { in: gruppenIds }, status: { notIn: ["abgeschlossen"] } }
+      : { id: "__never__" }
+
+    const [
+      gruppenAuftraege,
+      auftragStatusVerteilung,
+      ablaufendeQualifikationen,
+      offeneAbnahmen,
+      aktiveMitarbeiterHeute,
+      neuesteAuftraege,
+      letzteProtokolle,
+      stundenScope,
+    ] = await Promise.all([
+      prisma.auftrag.count({ where: auftraegeFilter }),
+      hasGruppen
+        ? prisma.auftrag.groupBy({
+            by: ["status"],
+            where: { gruppeId: { in: gruppenIds } },
+            _count: true,
+          })
+        : Promise.resolve([] as { status: string; _count: number }[]),
+      // Eigene Qualifikationen ablaufend (nur für MA/GF eigene)
+      own
+        ? prisma.mitarbeiterQualifikation.count({
+            where: {
+              mitarbeiterId: own.id,
+              ablaufDatum: { lte: in30Tagen, gte: heute },
+            },
+          })
+        : Promise.resolve(0),
+      hasGruppen
+        ? prisma.abnahme.count({
+            where: {
+              status: "offen",
+              auftrag: { gruppeId: { in: gruppenIds } },
+            },
+          })
+        : Promise.resolve(0),
+      // Aktive heute: nur Mitglieder der Gruppe(n)
+      memberIds.length > 0
+        ? prisma.stundeneintrag
+            .groupBy({
+              by: ["mitarbeiterId"],
+              where: {
+                datum: { gte: heuteStart, lt: heuteEnde },
+                mitarbeiterId: { in: memberIds },
+              },
+            })
+            .then(r => r.length)
+        : Promise.resolve(0),
+      hasGruppen
+        ? prisma.auftrag.findMany({
+            where: { gruppeId: { in: gruppenIds } },
+            orderBy: { createdAt: "desc" },
+            take: 5,
+            select: {
+              id: true,
+              titel: true,
+              status: true,
+              waldbesitzer: true,
+              createdAt: true,
+              bundesland: true,
+            },
+          })
+        : Promise.resolve(
+            [] as {
+              id: string
+              titel: string
+              status: string
+              waldbesitzer: string | null
+              createdAt: Date
+              bundesland: string | null
+            }[],
+          ),
+      hasGruppen
+        ? prisma.tagesprotokoll.findMany({
+            where: { auftrag: { gruppeId: { in: gruppenIds } } },
+            orderBy: { createdAt: "desc" },
+            take: 5,
+            select: {
+              id: true,
+              datum: true,
+              ersteller: true,
+              auftrag: { select: { titel: true, id: true } },
+            },
+          })
+        : Promise.resolve(
+            [] as {
+              id: string
+              datum: Date | string
+              ersteller: string | null
+              auftrag: { titel: string; id: string } | null
+            }[],
+          ),
+      // Eigene Stunden (Summe für aktuellen Monat)
+      own
+        ? prisma.stundeneintrag.aggregate({
+            where: { mitarbeiterId: own.id },
+            _sum: { stunden: true },
+          })
+        : Promise.resolve({ _sum: { stunden: 0 } }),
+    ])
+
+    const gruppenMitglieder = memberIds.length
+    const eigeneStunden = stundenScope._sum?.stunden ?? 0
+    const eigenerLohn = own?.stundenlohn ? eigeneStunden * own.stundenlohn : 0
+
+    return {
+      isAdmin: false,
+      isGF,
+      gruppenAuftraege,
+      auftragStatusVerteilung,
+      ablaufendeQualifikationen,
+      offeneAbnahmen,
+      aktiveMitarbeiterHeute,
+      gruppenMitglieder,
+      neuesteAuftraege,
+      letzteProtokolle,
+      eigeneStunden,
+      eigenerLohn,
+    }
+  } catch {
+    return {
+      isAdmin: false,
+      isGF: false,
+      gruppenAuftraege: 0,
+      auftragStatusVerteilung: [] as { status: string; _count: number }[],
+      ablaufendeQualifikationen: 0,
+      offeneAbnahmen: 0,
+      aktiveMitarbeiterHeute: 0,
+      gruppenMitglieder: 0,
+      neuesteAuftraege: [] as {
+        id: string
+        titel: string
+        status: string
+        waldbesitzer: string | null
+        createdAt: Date
+        bundesland: string | null
+      }[],
+      letzteProtokolle: [] as {
+        id: string
+        datum: Date | string
+        ersteller: string | null
+        auftrag: { titel: string; id: string } | null
+      }[],
+      eigeneStunden: 0,
+      eigenerLohn: 0,
+    }
+  }
+}
 
 async function getStats() {
   try {
@@ -227,6 +417,198 @@ const SCHULUNG_TYP: Record<string, string> = {
 
 export default async function DashboardPage() {
   const session = await auth()
+  const userRole = (session?.user as { role?: string } | undefined)?.role
+  const userEmail = session?.user?.email ?? null
+  const isAdmin = isAdminRole(userRole)
+
+  // FIX 2 (DSGVO): Non-admin users see role-scoped data only
+  if (!isAdmin) {
+    const scoped = await getRoleScopedStats(userRole ?? "", userEmail)
+    const heuteRender = new Date().toLocaleDateString("de-DE", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+    return (
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-8">
+          <h1
+            className="text-3xl font-extrabold tracking-tight"
+            style={{ fontFamily: "var(--font-display)", color: "var(--color-on-surface)" }}
+          >
+            Guten Tag, {session?.user?.name?.split(" ")[0] ?? ""} 👋
+          </h1>
+          <p className="mt-1 text-sm" style={{ color: "var(--color-on-surface-variant)" }}>
+            {heuteRender}
+          </p>
+        </div>
+
+        {/* Role-scoped KPIs — NO Umsatz, NO global Mitarbeiterzahl, NO Vorschüsse */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          {scoped.isGF && (
+            <StatCard
+              label="Gruppenmitglieder"
+              value={scoped.gruppenMitglieder.toString()}
+              icon={<Users className="w-5 h-5 text-emerald-400" />}
+              href="/mitarbeiter"
+            />
+          )}
+          <StatCard
+            label="Gruppen-Aufträge"
+            value={scoped.gruppenAuftraege.toString()}
+            icon={<ClipboardList className="w-5 h-5 text-emerald-400" />}
+            href="/auftraege"
+          />
+          <StatCard
+            label="Aktiv heute (Gruppe)"
+            value={scoped.aktiveMitarbeiterHeute.toString()}
+            icon={<UserCheck className="w-5 h-5 text-emerald-400" />}
+            href="/stunden?datum=heute"
+          />
+          <StatCard
+            label="Offene Abnahmen"
+            value={scoped.offeneAbnahmen.toString()}
+            icon={
+              <CheckSquare
+                className={`w-5 h-5 ${scoped.offeneAbnahmen > 0 ? "text-amber-400" : "text-emerald-400"}`}
+              />
+            }
+            href="/abnahmen"
+            alert={scoped.offeneAbnahmen > 0}
+          />
+        </div>
+
+        {/* Eigene Werte (nur eigene Stunden/Lohn, keine Aggregate) */}
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div
+            className="rounded-xl p-5 ambient-shadow-md"
+            style={{ backgroundColor: "var(--color-surface-container-low)" }}
+          >
+            <p
+              className="text-xs font-semibold uppercase tracking-wider mb-2"
+              style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
+            >
+              Eigene Stunden
+            </p>
+            <p
+              className="text-3xl font-bold"
+              style={{ fontFamily: "var(--font-mono)", color: "var(--color-on-surface)" }}
+            >
+              {scoped.eigeneStunden.toFixed(0)}h
+            </p>
+          </div>
+          <div
+            className="rounded-xl p-5 ambient-shadow-md"
+            style={{ backgroundColor: "var(--color-surface-container-low)" }}
+          >
+            <p
+              className="text-xs font-semibold uppercase tracking-wider mb-2"
+              style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
+            >
+              Eigener Lohn (geschätzt)
+            </p>
+            <p
+              className="text-3xl font-bold"
+              style={{ fontFamily: "var(--font-mono)", color: "var(--color-tertiary)" }}
+            >
+              {scoped.eigenerLohn.toLocaleString("de-DE", {
+                style: "currency",
+                currency: "EUR",
+              })}
+            </p>
+          </div>
+          <div
+            className="rounded-xl p-5 ambient-shadow-md"
+            style={{ backgroundColor: "var(--color-surface-container-low)" }}
+          >
+            <p
+              className="text-xs font-semibold uppercase tracking-wider mb-2"
+              style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
+            >
+              Qual. ablaufend (eigene)
+            </p>
+            <p
+              className="text-3xl font-bold"
+              style={{ fontFamily: "var(--font-mono)", color: "var(--color-on-surface)" }}
+            >
+              {scoped.ablaufendeQualifikationen}
+            </p>
+          </div>
+        </div>
+
+        {/* Gruppen-Aufträge */}
+        {scoped.neuesteAuftraege.length > 0 && (
+          <div className="mt-8">
+            <div className="flex items-center justify-between mb-3">
+              <h2
+                className="text-xs font-semibold uppercase tracking-widest"
+                style={{ color: "var(--color-outline)", fontFamily: "var(--font-display)" }}
+              >
+                Aufträge in deiner Gruppe
+              </h2>
+              <Link
+                href="/auftraege"
+                className="text-xs font-medium"
+                style={{ color: "var(--color-primary)" }}
+              >
+                Alle anzeigen →
+              </Link>
+            </div>
+            <div
+              className="rounded-xl overflow-hidden ambient-shadow-md"
+              style={{ backgroundColor: "var(--color-surface-container-low)" }}
+            >
+              {scoped.neuesteAuftraege.map((a, i) => (
+                <Link
+                  key={a.id}
+                  href={`/auftraege/${a.id}`}
+                  className="flex items-center justify-between px-4 py-3 tonal-transition"
+                  style={
+                    i > 0 ? { borderTop: "1px solid var(--color-surface-container-high)" } : {}
+                  }
+                >
+                  <div>
+                    <p
+                      className="text-sm font-medium truncate max-w-xs"
+                      style={{ color: "var(--color-on-surface)" }}
+                    >
+                      {a.titel}
+                    </p>
+                    <p
+                      className="text-xs mt-0.5"
+                      style={{ color: "var(--color-on-surface-variant)" }}
+                    >
+                      {a.bundesland || "—"}
+                    </p>
+                  </div>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#dedad0] text-[#4b6457]">
+                    {a.status}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Schnellzugriff */}
+        <div className="mt-8">
+          <h2
+            className="text-xs font-semibold mb-3 uppercase tracking-widest"
+            style={{ color: "var(--color-outline)", fontFamily: "var(--font-display)" }}
+          >
+            Schnellzugriff
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <QuickLink href="/auftraege" label="→ Aufträge" />
+            <QuickLink href="/stunden" label="→ Stunden" />
+            <QuickLink href="/profil" label="→ Mein Profil" />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const stats = await getCachedStats()
 
   const heute = new Date().toLocaleDateString("de-DE", {
