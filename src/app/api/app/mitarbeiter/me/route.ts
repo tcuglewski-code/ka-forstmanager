@@ -1,7 +1,10 @@
-import { prisma } from "@/lib/prisma"
-import { getAppUser } from "@/lib/app-auth"
+/**
+ * GET /api/app/mitarbeiter/me — Aktuellen Mitarbeiter zurückgeben
+ * App nutzt diesen Endpoint nach Login um eigene gruppe_id + rolle zu laden.
+ */
 import { NextRequest, NextResponse } from "next/server"
-import { withErrorHandler } from "@/lib/api-handler"
+import { getAppUser } from "@/lib/app-auth"
+import { prisma } from "@/lib/prisma"
 
 // Normalisiert DB-Rollen auf App-kompatible Rollen (ka_*)
 function normalizeRole(rolle: string | null | undefined): string | null {
@@ -29,11 +32,10 @@ function normalizeRole(rolle: string | null | undefined): string | null {
   return map[key] ?? key
 }
 
-export const GET = withErrorHandler(async (req: NextRequest) => {
+export async function GET(req: NextRequest) {
   const appUser = await getAppUser(req)
   if (!appUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  // Try mitarbeiterId from token first, then fall back to lookup via User.id (sub)
   let mitarbeiterId = (appUser.mitarbeiterId as string | null) ?? null
   const sub = typeof appUser.sub === "string" ? appUser.sub : null
 
@@ -45,28 +47,60 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
     mitarbeiterId = linked?.id ?? null
   }
 
-  if (!mitarbeiterId) return NextResponse.json({ error: "No mitarbeiter profile" }, { status: 404 })
+  if (!mitarbeiterId) {
+    return NextResponse.json({ error: "No mitarbeiter profile" }, { status: 404 })
+  }
 
   const mitarbeiter = await prisma.mitarbeiter.findUnique({
     where: { id: mitarbeiterId },
-    include: { gruppen: { include: { gruppe: { select: { id: true, name: true } } } } },
+    select: {
+      id: true,
+      vorname: true,
+      nachname: true,
+      email: true,
+      telefon: true,
+      mobil: true,
+      rolle: true,
+      status: true,
+      gruppen: {
+        select: {
+          gruppeId: true,
+          rolle: true,
+          gruppe: { select: { id: true, name: true } },
+        },
+      },
+    },
   })
-  if (!mitarbeiter) return NextResponse.json({ error: "Not found" }, { status: 404 })
-  let firstGruppe = mitarbeiter.gruppen?.[0]?.gruppe ?? null
-  if (!firstGruppe) {
-    const led = await prisma.gruppe.findFirst({
+
+  if (!mitarbeiter) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 })
+  }
+
+  // Primäre Gruppe: zuerst Mitgliedschaft, sonst geführte Gruppe
+  let primaryGruppeId: string | null = mitarbeiter.gruppen[0]?.gruppeId ?? null
+  let primaryGruppeName: string | null = mitarbeiter.gruppen[0]?.gruppe?.name ?? null
+
+  if (!primaryGruppeId) {
+    const ledGruppe = await prisma.gruppe.findFirst({
       where: { gruppenfuehrerId: mitarbeiterId },
       select: { id: true, name: true },
     })
-    firstGruppe = led ?? null
+    primaryGruppeId = ledGruppe?.id ?? null
+    primaryGruppeName = ledGruppe?.name ?? null
   }
+
   const normalizedRolle = normalizeRole(mitarbeiter.rolle)
+  const name = [mitarbeiter.vorname, mitarbeiter.nachname].filter(Boolean).join(" ")
+
   return NextResponse.json({
     ...mitarbeiter,
-    gruppeId: firstGruppe?.id ?? null,
-    gruppe_id: firstGruppe?.id ?? null,
-    gruppeName: firstGruppe?.name ?? null,
+    name,
+    username: mitarbeiter.email,
+    gruppe_id: primaryGruppeId,
+    gruppeId: primaryGruppeId,
+    gruppe_name: primaryGruppeName,
+    gruppeName: primaryGruppeName,
     role: normalizedRolle,
     roles: normalizedRolle ? [normalizedRolle] : [],
   })
-})
+}
