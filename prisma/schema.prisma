@@ -130,6 +130,7 @@ model Mitarbeiter {
   lohnabrechnungen          Lohnabrechnung[]
   dokumente                 Dokument[]
   onboardingAbschluesse     SaisonOnboardingAbschluss[]
+  fotos                     Foto[]
 
   @@index([status])
   @@index([createdAt])
@@ -264,6 +265,7 @@ model Auftrag {
   stundeneintraege    Stundeneintrag[]
   logs                AuftragLog[]
   angebote            Angebot[]
+  fotos               Foto[]
 
   @@index([status])
   @@index([createdAt])
@@ -794,6 +796,8 @@ model Tagesprotokoll {
   items             TagesprotokollItem[]
   // Sprint P2-1: Protokoll ↔ Rechnung Verknüpfung
   rechnungLinks     RechnungProtokollLink[]
+  // Foto-Uploads (zusätzlich zu legacy fotos Json-Feld)
+  fotoUploads       Foto[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -2569,5 +2573,28 @@ model SaisonOnboardingAbschluss {
   createdAt             DateTime                @default(now())
 
   @@unique([schrittId, mitarbeiterId])
+  @@index([mitarbeiterId])
+}
+
+model Foto {
+  id            String      @id @default(cuid())
+  url           String
+  nextcloudPath String?
+  caption       String?
+  lat           Float?
+  lon           Float?
+  createdAt     DateTime    @default(now())
+
+  // Zuordnungen (beide optional — Foto kann zu Auftrag ODER Protokoll gehören)
+  auftragId     String?
+  auftrag       Auftrag?    @relation(fields: [auftragId], references: [id], onDelete: SetNull)
+
+  protokollId   String?
+  protokoll     Tagesprotokoll? @relation(fields: [protokollId], references: [id], onDelete: SetNull)
+
+  mitarbeiterId String
+  mitarbeiter   Mitarbeiter @relation(fields: [mitarbeiterId], references: [id])
+
+  @@index([auftragId])
   @@index([mitarbeiterId])
 }
