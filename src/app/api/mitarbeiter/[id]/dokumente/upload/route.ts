@@ -28,32 +28,41 @@ export const POST = withErrorHandler(async (req: NextRequest, { params }: { para
   const ncFolder = `/Koch-Aufforstung/Mitarbeiter/${safeName}`
   const ncPath = `${ncFolder}/${fileName}`
 
-  // WebDAV Upload
+  // WebDAV Upload (graceful: bei Fehler DB-Eintrag trotzdem anlegen)
   const buffer = Buffer.from(await file.arrayBuffer())
   const ncBase = 'http://187.124.18.244:32774/remote.php/dav/files/polskagenetic'
   const auth64 = Buffer.from('polskagenetic:Sz9S4-2XZpG-HjzXc-pPQy8-38THR').toString('base64')
 
-  // Ordner erstellen (ignoriere Fehler wenn Ordner existiert)
-  await fetch(`${ncBase}${ncFolder}`, {
-    method: 'MKCOL',
-    headers: { Authorization: `Basic ${auth64}` }
-  }).catch(() => { /* Ordner existiert bereits - kein Problem */ })
+  let nextcloudOk = false
+  let warning: string | null = null
 
-  // Datei hochladen
-  const uploadRes = await fetch(`${ncBase}${ncPath}`, {
-    method: 'PUT',
-    headers: {
-      Authorization: `Basic ${auth64}`,
-      'Content-Type': file.type || 'application/octet-stream',
-    },
-    body: buffer
-  })
+  try {
+    // Ordner erstellen (ignoriere Fehler wenn Ordner existiert)
+    await fetch(`${ncBase}${ncFolder}`, {
+      method: 'MKCOL',
+      headers: { Authorization: `Basic ${auth64}` }
+    }).catch(() => { /* Ordner existiert bereits - kein Problem */ })
 
-  if (!uploadRes.ok) {
-    return NextResponse.json({ error: `Nextcloud Upload fehlgeschlagen: ${uploadRes.status}` }, { status: 500 })
+    // Datei hochladen
+    const uploadRes = await fetch(`${ncBase}${ncPath}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Basic ${auth64}`,
+        'Content-Type': file.type || 'application/octet-stream',
+      },
+      body: buffer
+    })
+
+    if (!uploadRes.ok) {
+      warning = `Nextcloud-Upload fehlgeschlagen (HTTP ${uploadRes.status}) — Datei nicht gespeichert. Dokument-Eintrag wurde trotzdem angelegt.`
+    } else {
+      nextcloudOk = true
+    }
+  } catch (err: any) {
+    warning = `Nextcloud nicht erreichbar — Datei nicht gespeichert. Dokument-Eintrag wurde trotzdem angelegt.`
   }
 
-  // In DB speichern
+  // In DB speichern (auch wenn Nextcloud fehlschlug)
   const doc = await prisma.dokument.create({
     data: {
       name: file.name,
@@ -61,8 +70,8 @@ export const POST = withErrorHandler(async (req: NextRequest, { params }: { para
       kategorie,
       jahr,
       mitarbeiterId: id,
-      nextcloudPath: ncPath,
-      url: `${ncBase}${ncPath}`,
+      nextcloudPath: nextcloudOk ? ncPath : null,
+      url: nextcloudOk ? `${ncBase}${ncPath}` : null,
       vertraulich,
       groesse: file.size,
       mimeType: file.type,
@@ -71,5 +80,8 @@ export const POST = withErrorHandler(async (req: NextRequest, { params }: { para
     }
   })
 
-  return NextResponse.json({ doc, nextcloudPath: ncPath }, { status: 201 })
+  return NextResponse.json(
+    { doc, nextcloudPath: nextcloudOk ? ncPath : null, ...(warning ? { warning } : {}) },
+    { status: 201 }
+  )
 })
