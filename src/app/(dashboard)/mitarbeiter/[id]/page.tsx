@@ -7,6 +7,7 @@ import { ArrowLeft, User, MapPin, Phone, Mail, CreditCard, AlertTriangle } from 
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
 import { StatistikWidget } from "./StatistikWidget"
 import { AbwesenheitenSection } from "./AbwesenheitenSection"
+import { DokumenteSection } from "./DokumenteSection"
 import { AppZugangSection } from "@/components/mitarbeiter/AppZugangSection"
 import { MitarbeiterAnalyseButton } from "@/components/mitarbeiter/MitarbeiterAnalyseButton"
 
@@ -342,6 +343,12 @@ export default async function MitarbeiterDetailPage({ params }: { params: Promis
             }))}
           />
         </Section>
+
+        {/* Dokumente */}
+        <DokumenteSection
+          mitarbeiterId={ma.id}
+          mitarbeiterName={`${ma.vorname} ${ma.nachname}`}
+        />
       </div>
     </div>
   )
