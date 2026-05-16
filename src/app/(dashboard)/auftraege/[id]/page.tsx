@@ -39,6 +39,8 @@ interface FlaecheItem {
   abstand_r?: string
   stueckzahl?: number
   baumarten_verteilung?: Record<string, number>
+  gps?: string
+  maps_link?: string
 }
 
 interface MaterialBewegung {
@@ -60,6 +62,8 @@ interface FlaecheVorbereitung {
   besonderheiten?: string
   forstamt?: string
   revier?: string
+  gps?: string
+  maps_link?: string
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -230,7 +234,10 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
               <p className="text-xs text-on-surface-variant font-semibold uppercase tracking-wide">
                 {w.flaechen.length} Fläche{w.flaechen.length > 1 ? "n" : ""}
               </p>
-              {(w.flaechen as FlaecheItem[]).map((fl, i) => (
+              {(w.flaechen as FlaecheItem[]).map((fl, i) => {
+                const mapsUrl = fl.maps_link ||
+                  (fl.gps && fl.gps.trim() ? `https://maps.google.com/?q=${encodeURIComponent(fl.gps)}` : null)
+                return (
                 <div key={i} className="bg-surface-container-low border border-border rounded-lg p-3 space-y-1">
                   <p className="text-xs font-semibold text-on-surface">
                     Fläche {i + 1} — {fl.ha} ha
@@ -247,8 +254,16 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
                   {(fl.stueckzahl ?? 0) > 0 && (
                     <Field label="Stückzahl" value={`≈ ${(fl.stueckzahl as number).toLocaleString('de-DE')} Pflanzen`} />
                   )}
+                  {fl.gps && <Field label="GPS" value={fl.gps} />}
+                  {mapsUrl && (
+                    <a href={mapsUrl} target="_blank" rel="noreferrer"
+                       className="inline-flex items-center gap-1 text-emerald-400 hover:underline text-sm mt-1">
+                      <MapPin className="w-3 h-3" /> In Google Maps öffnen
+                    </a>
+                  )}
                 </div>
-              ))}
+                )
+              })}
             </div>
           ) : (
             <>
@@ -317,6 +332,20 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
         />
       )}
 
+      {/* Treffpunkt */}
+      {(w.treffpunkt || w.treffpunkt_maps_link) && (
+        <div className="pt-3 border-t border-border">
+          <p className="text-xs text-on-surface-variant mb-2 font-medium">Treffpunkt Förster</p>
+          {w.treffpunkt && <p className="text-on-surface text-sm">{w.treffpunkt}</p>}
+          {w.treffpunkt_maps_link && (
+            <a href={w.treffpunkt_maps_link} target="_blank" rel="noreferrer"
+               className="inline-flex items-center gap-1 text-emerald-400 hover:underline text-sm mt-1">
+              <MapPin className="w-3 h-3" /> Treffpunkt in Maps öffnen
+            </a>
+          )}
+        </div>
+      )}
+
       {/* Bezugsquelle */}
       {(w.bezugsquelle || w.lieferant || w.lieferort || w.lieferAdresse) && (
         <div className="pt-3 border-t border-border">
@@ -371,7 +400,10 @@ function WizardFlaechenvorbereitung({ w }: { w: WizardDaten }) {
       {flaechen.length > 0 && (
         <div className="space-y-3">
           <p className="text-xs text-on-surface-variant font-medium">{flaechen.length} Fläche{flaechen.length > 1 ? "n" : ""}</p>
-          {flaechen.map((f, i) => (
+          {flaechen.map((f, i) => {
+            const mapsUrl = f.maps_link ||
+              (f.gps && f.gps.trim() ? `https://maps.google.com/?q=${encodeURIComponent(f.gps)}` : null)
+            return (
             <div key={i} className="bg-surface-container-lowest border border-outline-variant rounded-lg p-4">
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-6 h-6 bg-blue-100 text-blue-800 rounded-full text-xs flex items-center justify-center font-bold">{f.nr ?? i + 1}</span>
@@ -384,10 +416,18 @@ function WizardFlaechenvorbereitung({ w }: { w: WizardDaten }) {
                 <Field label="Zugänglichkeit" value={f.zugaenglichkeit} />
                 <Field label="Forstamt" value={f.forstamt} />
                 <Field label="Revier" value={f.revier} />
+                {f.gps && <Field label="GPS" value={f.gps} />}
                 {f.besonderheiten && <div className="col-span-2"><Field label="Besonderheiten" value={f.besonderheiten} /></div>}
               </Grid2>
+              {mapsUrl && (
+                <a href={mapsUrl} target="_blank" rel="noreferrer"
+                   className="inline-flex items-center gap-1 text-emerald-400 hover:underline text-sm mt-2">
+                  <MapPin className="w-3 h-3" /> In Google Maps öffnen
+                </a>
+              )}
             </div>
-          ))}
+            )
+          })}
         </div>
       )}
 
@@ -404,6 +444,20 @@ function WizardFlaechenvorbereitung({ w }: { w: WizardDaten }) {
           {w.bundesland && <Field label="Bundesland" value={w.bundesland} />}
         </Grid2>
       </div>
+
+      {/* Treffpunkt */}
+      {(w.treffpunkt || w.treffpunkt_maps_link) && (
+        <div className="pt-3 border-t border-border">
+          <p className="text-xs text-on-surface-variant mb-2 font-medium">Treffpunkt Förster</p>
+          {w.treffpunkt && <p className="text-on-surface text-sm">{w.treffpunkt}</p>}
+          {w.treffpunkt_maps_link && (
+            <a href={w.treffpunkt_maps_link} target="_blank" rel="noreferrer"
+               className="inline-flex items-center gap-1 text-emerald-400 hover:underline text-sm mt-1">
+              <MapPin className="w-3 h-3" /> Treffpunkt in Maps öffnen
+            </a>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -458,6 +512,34 @@ function WizardKulturschutz({ w }: { w: WizardDaten }) {
           <Field label="Waldbesitztyp" value={w.waldbesitztyp} />
         </Grid2>
       </div>
+
+      {/* Standort + Treffpunkt */}
+      {(w.gps || w.treffpunkt || w.treffpunkt_maps_link || w.maps_link) && (
+        <div className="pt-3 border-t border-border space-y-2">
+          {w.gps && <Field label="GPS" value={w.gps} />}
+          {(() => {
+            const mapsUrl = w.maps_link || (w.gps && String(w.gps).trim() ? `https://maps.google.com/?q=${encodeURIComponent(String(w.gps))}` : null)
+            return mapsUrl ? (
+              <a href={mapsUrl} target="_blank" rel="noreferrer"
+                 className="inline-flex items-center gap-1 text-emerald-400 hover:underline text-sm">
+                <MapPin className="w-3 h-3" /> In Google Maps öffnen
+              </a>
+            ) : null
+          })()}
+          {w.treffpunkt && (
+            <div>
+              <span className="text-xs text-on-surface-variant block">Treffpunkt</span>
+              <p className="text-on-surface text-sm">{w.treffpunkt}</p>
+            </div>
+          )}
+          {w.treffpunkt_maps_link && (
+            <a href={w.treffpunkt_maps_link} target="_blank" rel="noreferrer"
+               className="inline-flex items-center gap-1 text-emerald-400 hover:underline text-sm">
+              <MapPin className="w-3 h-3" /> Treffpunkt in Maps öffnen
+            </a>
+          )}
+        </div>
+      )}
 
       {/* Kosten */}
       {kosten && (
@@ -529,6 +611,34 @@ function WizardKulturpflege({ w }: { w: WizardDaten }) {
         </div>
       )}
 
+      {/* Standort + Treffpunkt */}
+      {(w.gps || w.treffpunkt || w.treffpunkt_maps_link || w.maps_link) && (
+        <div className="pt-3 border-t border-border space-y-2">
+          {w.gps && <Field label="GPS" value={w.gps} />}
+          {(() => {
+            const mapsUrl = w.maps_link || (w.gps && String(w.gps).trim() ? `https://maps.google.com/?q=${encodeURIComponent(String(w.gps))}` : null)
+            return mapsUrl ? (
+              <a href={mapsUrl} target="_blank" rel="noreferrer"
+                 className="inline-flex items-center gap-1 text-emerald-400 hover:underline text-sm">
+                <MapPin className="w-3 h-3" /> In Google Maps öffnen
+              </a>
+            ) : null
+          })()}
+          {w.treffpunkt && (
+            <div>
+              <span className="text-xs text-on-surface-variant block">Treffpunkt</span>
+              <p className="text-on-surface text-sm">{w.treffpunkt}</p>
+            </div>
+          )}
+          {w.treffpunkt_maps_link && (
+            <a href={w.treffpunkt_maps_link} target="_blank" rel="noreferrer"
+               className="inline-flex items-center gap-1 text-emerald-400 hover:underline text-sm">
+              <MapPin className="w-3 h-3" /> Treffpunkt in Maps öffnen
+            </a>
+          )}
+        </div>
+      )}
+
       {/* Kosten */}
       {w.kostenindikation && (
         <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3">
@@ -572,6 +682,34 @@ function WizardSaatguternte({ w }: { w: WizardDaten }) {
         <Field label="Erntefenster" value={w.erntefenster} />
         <Field label="Planungshorizont" value={w.planungshorizont} />
       </Grid2>
+
+      {/* Standort + Treffpunkt */}
+      {(w.gps || w.treffpunkt || w.treffpunkt_maps_link || w.maps_link) && (
+        <div className="pt-3 border-t border-border space-y-2">
+          {w.gps && <Field label="GPS" value={w.gps} />}
+          {(() => {
+            const mapsUrl = w.maps_link || (w.gps && String(w.gps).trim() ? `https://maps.google.com/?q=${encodeURIComponent(String(w.gps))}` : null)
+            return mapsUrl ? (
+              <a href={mapsUrl} target="_blank" rel="noreferrer"
+                 className="inline-flex items-center gap-1 text-emerald-400 hover:underline text-sm">
+                <MapPin className="w-3 h-3" /> In Google Maps öffnen
+              </a>
+            ) : null
+          })()}
+          {w.treffpunkt && (
+            <div>
+              <span className="text-xs text-on-surface-variant block">Treffpunkt</span>
+              <p className="text-on-surface text-sm">{w.treffpunkt}</p>
+            </div>
+          )}
+          {w.treffpunkt_maps_link && (
+            <a href={w.treffpunkt_maps_link} target="_blank" rel="noreferrer"
+               className="inline-flex items-center gap-1 text-emerald-400 hover:underline text-sm">
+              <MapPin className="w-3 h-3" /> Treffpunkt in Maps öffnen
+            </a>
+          )}
+        </div>
+      )}
 
       {/* Kosten */}
       {w.kostenindikation && (
