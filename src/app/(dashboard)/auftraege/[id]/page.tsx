@@ -337,8 +337,8 @@ function WizardPflanzung({ w }: { w: WizardDaten }) {
         <div className="pt-3 border-t border-border">
           <p className="text-xs text-on-surface-variant mb-2 font-medium">Treffpunkt Förster</p>
           {w.treffpunkt && <p className="text-on-surface text-sm">{w.treffpunkt}</p>}
-          {w.treffpunkt_maps_link && (
-            <a href={w.treffpunkt_maps_link} target="_blank" rel="noreferrer"
+          {(w.treffpunkt_maps_link || w.treffpunkt) && (
+            <a href={w.treffpunkt_maps_link || `https://maps.google.com/?q=${encodeURIComponent(w.treffpunkt || "")}`} target="_blank" rel="noreferrer"
                className="inline-flex items-center gap-1 text-emerald-400 hover:underline text-sm mt-1">
               <MapPin className="w-3 h-3" /> Treffpunkt in Maps öffnen
             </a>
@@ -450,8 +450,8 @@ function WizardFlaechenvorbereitung({ w }: { w: WizardDaten }) {
         <div className="pt-3 border-t border-border">
           <p className="text-xs text-on-surface-variant mb-2 font-medium">Treffpunkt Förster</p>
           {w.treffpunkt && <p className="text-on-surface text-sm">{w.treffpunkt}</p>}
-          {w.treffpunkt_maps_link && (
-            <a href={w.treffpunkt_maps_link} target="_blank" rel="noreferrer"
+          {(w.treffpunkt_maps_link || w.treffpunkt) && (
+            <a href={w.treffpunkt_maps_link || `https://maps.google.com/?q=${encodeURIComponent(w.treffpunkt || "")}`} target="_blank" rel="noreferrer"
                className="inline-flex items-center gap-1 text-emerald-400 hover:underline text-sm mt-1">
               <MapPin className="w-3 h-3" /> Treffpunkt in Maps öffnen
             </a>
@@ -532,8 +532,8 @@ function WizardKulturschutz({ w }: { w: WizardDaten }) {
               <p className="text-on-surface text-sm">{w.treffpunkt}</p>
             </div>
           )}
-          {w.treffpunkt_maps_link && (
-            <a href={w.treffpunkt_maps_link} target="_blank" rel="noreferrer"
+          {(w.treffpunkt_maps_link || w.treffpunkt) && (
+            <a href={w.treffpunkt_maps_link || `https://maps.google.com/?q=${encodeURIComponent(w.treffpunkt || "")}`} target="_blank" rel="noreferrer"
                className="inline-flex items-center gap-1 text-emerald-400 hover:underline text-sm">
               <MapPin className="w-3 h-3" /> Treffpunkt in Maps öffnen
             </a>
@@ -630,8 +630,8 @@ function WizardKulturpflege({ w }: { w: WizardDaten }) {
               <p className="text-on-surface text-sm">{w.treffpunkt}</p>
             </div>
           )}
-          {w.treffpunkt_maps_link && (
-            <a href={w.treffpunkt_maps_link} target="_blank" rel="noreferrer"
+          {(w.treffpunkt_maps_link || w.treffpunkt) && (
+            <a href={w.treffpunkt_maps_link || `https://maps.google.com/?q=${encodeURIComponent(w.treffpunkt || "")}`} target="_blank" rel="noreferrer"
                className="inline-flex items-center gap-1 text-emerald-400 hover:underline text-sm">
               <MapPin className="w-3 h-3" /> Treffpunkt in Maps öffnen
             </a>
@@ -702,8 +702,8 @@ function WizardSaatguternte({ w }: { w: WizardDaten }) {
               <p className="text-on-surface text-sm">{w.treffpunkt}</p>
             </div>
           )}
-          {w.treffpunkt_maps_link && (
-            <a href={w.treffpunkt_maps_link} target="_blank" rel="noreferrer"
+          {(w.treffpunkt_maps_link || w.treffpunkt) && (
+            <a href={w.treffpunkt_maps_link || `https://maps.google.com/?q=${encodeURIComponent(w.treffpunkt || "")}`} target="_blank" rel="noreferrer"
                className="inline-flex items-center gap-1 text-emerald-400 hover:underline text-sm">
               <MapPin className="w-3 h-3" /> Treffpunkt in Maps öffnen
             </a>
