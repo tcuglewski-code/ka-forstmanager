@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { withErrorHandler } from "@/lib/api-handler"
 
 // GET /api/app/auftraege/[id]/material
-// Returns materials assigned to an Auftrag with planned vs consumed amounts
+// Returns LagerBewegung records assigned to an Auftrag
 export const GET = withErrorHandler(async (
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -14,44 +14,23 @@ export const GET = withErrorHandler(async (
 
   const { id: auftragId } = await params
 
-  // Get all LagerReservierungen for this Auftrag
-  const reservierungen = await prisma.lagerReservierung.findMany({
+  const bewegungen = await prisma.lagerBewegung.findMany({
     where: { auftragId },
     include: {
-      artikel: {
-        select: {
-          id: true,
-          name: true,
-          einheit: true,
-        },
-      },
+      artikel: { select: { id: true, name: true, einheit: true } },
+      mitarbeiter: { select: { id: true, vorname: true, nachname: true } },
     },
+    orderBy: { createdAt: 'desc' },
   })
 
-  // Get consumed amounts from LagerBewegung
-  const verbrauch = await prisma.lagerBewegung.groupBy({
-    by: ['artikelId'],
-    where: {
-      auftragId,
-      typ: 'VERBRAUCH',
-    },
-    _sum: {
-      menge: true,
-    },
-  })
-
-  const verbrauchMap = new Map(
-    verbrauch.map(v => [v.artikelId, v._sum.menge ?? 0])
-  )
-
-  // Map to response format expected by app
-  // Artikel-IDs sind CUIDs (Strings) — kein parseInt, das würde NaN erzeugen
-  const material = reservierungen.map(r => ({
-    material_id: r.artikel.id,
-    material_name: r.artikel.name,
-    einheit: r.artikel.einheit,
-    geplant: r.menge,
-    verbraucht: verbrauchMap.get(r.artikelId) ?? 0,
+  const material = bewegungen.map(b => ({
+    id: b.id,
+    datum: b.createdAt,
+    artikel_name: b.artikel.name,
+    einheit: b.artikel.einheit,
+    menge: b.menge,
+    typ: b.typ,
+    mitarbeiter: b.mitarbeiter ? b.mitarbeiter.vorname + ' ' + b.mitarbeiter.nachname : null,
   }))
 
   return NextResponse.json(material)
