@@ -157,6 +157,27 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
         }
       : null)
 
+  // Baumarten- + Material-Verbrauch (vom App-Protokollformular)
+  const baumartenVerbrauch = Array.isArray(body.baumarten_verbrauch)
+    ? body.baumarten_verbrauch
+    : null
+  const materialVerbrauch = Array.isArray(body.material_verbrauch)
+    ? body.material_verbrauch
+    : null
+
+  // pflanzDetails: bestehende Leistungsblöcke + baumarten_verbrauch zusammenführen
+  const pflanzDetailsValue =
+    baumartenVerbrauch || body.leistungsbloecke
+      ? {
+          ...(body.leistungsbloecke
+            ? { leistungsbloecke: body.leistungsbloecke }
+            : {}),
+          ...(baumartenVerbrauch
+            ? { baumarten_verbrauch: baumartenVerbrauch }
+            : {}),
+        }
+      : null
+
   const proto = await prisma.tagesprotokoll.create({
     data: {
       auftragId,
@@ -171,6 +192,8 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
       gepflanzt,
       witterung,
       fotos: fotosValue,
+      pflanzDetails: pflanzDetailsValue ?? undefined,
+      materialVerbraucht: materialVerbrauch ?? undefined,
       mitarbeiterListe:
         body.mitarbeiter_namen ?? body.mitarbeiterListe ?? null,
       mitarbeiterAnzahl:
@@ -179,6 +202,32 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
       gpsStartLon: body.gps_lng ?? body.gpsStartLon ?? null,
     },
   })
+
+  // LagerBewegung pro verbrauchtem Material erzeugen
+  if (materialVerbrauch && materialVerbrauch.length > 0) {
+    for (const mv of materialVerbrauch) {
+      const menge = Number(mv?.menge)
+      const artikelId = mv?.material_id ? String(mv.material_id) : null
+      if (!artikelId || !Number.isFinite(menge) || menge <= 0) continue
+      try {
+        await prisma.lagerBewegung.create({
+          data: {
+            artikelId,
+            menge,
+            typ: "VERBRAUCH",
+            auftragId,
+            mitarbeiterId: mitarbeiterId ?? null,
+            referenz: proto.id,
+            notiz: `Tagesprotokoll ${proto.datum.toISOString().slice(0, 10)}`,
+          },
+        })
+      } catch (e) {
+        // Einzelne Buchungsfehler dürfen Protokoll-Create nicht abbrechen
+        console.error("[protokolle.POST] LagerBewegung-Fehler:", e)
+      }
+    }
+  }
+
   // KA-Bot: Protokoll eingereicht (fire-and-forget)
   sendKANotification({
     event: "protokoll_eingereicht",
