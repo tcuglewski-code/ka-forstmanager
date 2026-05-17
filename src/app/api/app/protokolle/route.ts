@@ -84,12 +84,28 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
   if (!appUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const body = await req.json()
 
-  // FIX 3: Idempotency — same mitarbeiter + auftrag + same day returns existing
+  // Akzeptiere snake_case und camelCase aus App-Payload
   const mitarbeiterId = (appUser.mitarbeiterId as string | null) ?? null
-  const auftragId = body.auftragId ?? null
-  const datumInput = body.datum ? new Date(body.datum) : new Date()
+  let auftragId: string | null = body.auftragId ?? body.auftrag_id ?? null
+  const gruppeId: string | null = body.gruppeId ?? body.gruppe_id ?? null
 
-  if (mitarbeiterId && auftragId && !Number.isNaN(datumInput.getTime())) {
+  if (!auftragId) {
+    return NextResponse.json(
+      { error: "Ungültige Daten", detail: "auftrag_id ist erforderlich" },
+      { status: 400 },
+    )
+  }
+
+  const datumInput = body.datum ? new Date(body.datum) : new Date()
+  if (Number.isNaN(datumInput.getTime())) {
+    return NextResponse.json(
+      { error: "Ungültige Daten", detail: "datum ist ungültig" },
+      { status: 400 },
+    )
+  }
+
+  // Idempotency — gleicher Mitarbeiter + Auftrag + Tag → bestehendes Protokoll
+  if (mitarbeiterId) {
     const dayStart = new Date(
       datumInput.getFullYear(),
       datumInput.getMonth(),
@@ -109,17 +125,58 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
     }
   }
 
+  // Map snake_case → camelCase für gängige Felder
+  const pauseMinutenRaw = body.pauseMinuten ?? body.pause_minuten
+  const pauseMinuten =
+    pauseMinutenRaw !== undefined && pauseMinutenRaw !== null
+      ? parseInt(String(pauseMinutenRaw), 10) || 0
+      : null
+
+  const gepflanztRaw = body.gepflanzt ?? body.gepflanzt_gesamt ?? body.gepflanztGesamt
+  const gepflanzt =
+    gepflanztRaw !== undefined && gepflanztRaw !== null
+      ? parseInt(String(gepflanztRaw), 10) || null
+      : null
+
+  const bericht =
+    body.bericht ??
+    body.notizen ??
+    body.notes ??
+    null
+
+  const witterung = body.witterung ?? body.wetter ?? body.wetter_beschreibung ?? null
+
+  // Fotos: array oder count — sicher als JSON ablegen
+  const fotosValue =
+    body.fotos ??
+    (body.fotos_count !== undefined
+      ? {
+          count: body.fotos_count,
+          kategorien: body.fotos_kategorien ?? [],
+          koordinaten: body.fotos_koordinaten ?? [],
+        }
+      : null)
+
   const proto = await prisma.tagesprotokoll.create({
     data: {
-      auftragId: body.auftragId ?? null,
-      gruppeId: body.gruppeId ?? null,
+      auftragId,
+      gruppeId,
       datum: datumInput,
       ersteller: body.ersteller ?? String(appUser.email ?? ""),
       erstellerId: mitarbeiterId,
-      bericht: body.bericht ?? null,
-      gepflanzt: body.gepflanzt ? parseInt(body.gepflanzt) : null,
-      witterung: body.witterung ?? null,
-      fotos: body.fotos ?? null,
+      arbeitsbeginn: body.arbeitsbeginn ?? null,
+      arbeitsende: body.arbeitsende ?? null,
+      pauseMinuten,
+      bericht: bericht ?? "",
+      gepflanzt,
+      witterung,
+      fotos: fotosValue,
+      mitarbeiterListe:
+        body.mitarbeiter_namen ?? body.mitarbeiterListe ?? null,
+      mitarbeiterAnzahl:
+        body.mitarbeiter_ids?.length ?? body.mitarbeiterAnzahl ?? null,
+      gpsStartLat: body.gps_lat ?? body.gpsStartLat ?? null,
+      gpsStartLon: body.gps_lng ?? body.gpsStartLon ?? null,
     },
   })
   // KA-Bot: Protokoll eingereicht (fire-and-forget)
