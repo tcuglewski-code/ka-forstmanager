@@ -25,7 +25,7 @@ export async function GET() {
         userId: true,
         createdAt: true,
         updatedAt: true,
-        _count: { select: { anfragen: true } },
+        _count: { select: { anfragen: true, preislisten: true } },
       },
     })
     return NextResponse.json(baumschulen)

@@ -70,7 +70,7 @@ const navItems = [
   { href: "/dokumente", label: "Dokumente", icon: FileText },
   { href: "/protokolle", label: "Protokolle", icon: ScrollText, tourId: "protokolle" },
   { href: "/abnahmen", label: "Abnahmen", icon: CheckSquare, tourId: "abnahmen" },
-  { href: "/saatguternte/baumschulen", label: "Baumschulen", icon: TreeDeciduous },
+  { href: "/baumschulen", label: "Baumschulen", icon: TreeDeciduous },
   { href: "/baumschule/katalog", label: "Produktkatalog", icon: Package },
   { href: "/kontakte", label: "Kontakte", icon: MapPin },
   { href: "/wissensbank", label: "Wissensbank", icon: BookOpen },

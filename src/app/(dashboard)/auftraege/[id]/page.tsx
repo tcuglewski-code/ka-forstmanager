@@ -824,6 +824,20 @@ export default function AuftragDetailPage() {
   // Pre-Build Sprint: Dokumente (Fotos, PDFs) für diesen Auftrag
   const [dokumente, setDokumente] = useState<Array<{ id: string; name: string; typ?: string | null; url?: string | null; mimeType?: string | null; createdAt: string }>>([])
 
+  // Baumschule Loop 2: PflanzItems (Soll/Ist je Baumart-Sorte-HKG)
+  const [pflanzItems, setPflanzItems] = useState<Array<{
+    id: string
+    baumart: string
+    sorte: string | null
+    hkg: string | null
+    fovg: boolean
+    sollMenge: number
+    istMenge: number
+    preisProStk: number | null
+    notizen: string | null
+    preisliste?: { id: string; baumschuleId: string; baumschule: { id: string; name: string } | null } | null
+  }>>([])
+
   useEffect(() => {
     async function fetchData() {
       const [auftragRes, saionsRes, gruppenRes, materialRes] = await Promise.all([
@@ -881,6 +895,16 @@ export default function AuftragDetailPage() {
         .then(r => r.json())
         .then(data => setTagesprotokolle(Array.isArray(data) ? data : []))
         .catch((err) => { console.error("Tagesprotokolle Ladefehler:", err) })
+    }
+  }, [id])
+
+  // Baumschule Loop 2: Lade PflanzItems
+  useEffect(() => {
+    if (id) {
+      fetch(`/api/auftraege/${id}/pflanzitems`)
+        .then(r => r.json())
+        .then(data => setPflanzItems(Array.isArray(data) ? data : []))
+        .catch((err) => { console.error("PflanzItems Ladefehler:", err) })
     }
   }, [id])
 
@@ -1213,6 +1237,67 @@ export default function AuftragDetailPage() {
 
           {/* Wizard-Details (typ-spezifisch) */}
           {auftrag.wizardDaten && <WizardDetails auftrag={auftrag} />}
+
+          {/* Pflanzplan (strukturierte PflanzItems mit Soll/Ist-Fortschritt) */}
+          {pflanzItems.length > 0 && (
+            <div className="bg-surface-container border border-border rounded-xl p-6">
+              <SectionHeading icon={<TreePine className="w-4 h-4" />} label="Pflanzplan" />
+              <div className="mt-3 space-y-3">
+                {pflanzItems.map(item => {
+                  const prozent = item.sollMenge > 0
+                    ? Math.round((item.istMenge / item.sollMenge) * 100)
+                    : 0
+                  const barColor = prozent >= 100 ? "#22c55e" : prozent > 50 ? "#eab308" : "#3b82f6"
+                  const lieferant = item.preisliste?.baumschule?.name ?? null
+                  return (
+                    <div key={item.id} className="border border-outline-variant rounded-lg p-3">
+                      <div className="flex justify-between items-start gap-3">
+                        <div className="min-w-0">
+                          <span className="font-medium text-sm text-on-surface">{item.baumart}</span>
+                          {item.sorte && <span className="text-xs text-on-surface-variant ml-2">{item.sorte}</span>}
+                          {item.hkg && <span className="text-xs text-on-surface-variant ml-2">HKG {item.hkg}</span>}
+                          {item.fovg && <span className="text-xs bg-green-100 text-green-800 px-1.5 rounded ml-2">FoVG</span>}
+                          {lieferant && (
+                            <span className="text-xs text-on-surface-variant block mt-0.5">📦 {lieferant}</span>
+                          )}
+                          {item.notizen && (
+                            <span className="text-xs text-on-surface-variant block mt-0.5">{item.notizen}</span>
+                          )}
+                        </div>
+                        <div className="text-right whitespace-nowrap">
+                          <span className="text-sm font-mono text-on-surface">
+                            {item.istMenge}/{item.sollMenge} Stk.
+                          </span>
+                          <span className="text-xs text-on-surface-variant block">{prozent}% gepflanzt</span>
+                        </div>
+                      </div>
+                      <div className="mt-2 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all"
+                          style={{
+                            width: Math.min(prozent, 100) + "%",
+                            backgroundColor: barColor,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              <div className="mt-3 pt-3 border-t border-outline-variant flex justify-between text-sm">
+                <span className="text-on-surface-variant">Gesamt geplant</span>
+                <span className="font-medium text-on-surface">
+                  {pflanzItems.reduce((s, i) => s + i.sollMenge, 0).toLocaleString("de-DE")} Stk.
+                </span>
+              </div>
+              <div className="flex justify-between text-sm mt-1">
+                <span className="text-on-surface-variant">Gepflanzt</span>
+                <span className="font-medium text-emerald-400">
+                  {pflanzItems.reduce((s, i) => s + i.istMenge, 0).toLocaleString("de-DE")} Stk.
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* Kosten-Vorschau */}
           {auftrag.wizardDaten && <KostenVorschau auftrag={auftrag} />}

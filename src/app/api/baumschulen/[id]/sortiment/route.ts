@@ -62,7 +62,8 @@ export const POST = withErrorHandler(async (req: Request, { params }: { params: 
   }
 
   const body = await req.json()
-  const { baumart, preis, einheit, saison, aktiv, notizen, menge, verfuegbar } = body
+  const { baumart, preis, einheit, saison, aktiv, notizen, menge, verfuegbar,
+          sorte, hkg, fovg, preis_pro_100, min_bestellung } = body
 
   if (!baumart?.trim()) {
     return NextResponse.json({ error: "Baumart ist Pflichtfeld" }, { status: 400 })
@@ -82,6 +83,11 @@ export const POST = withErrorHandler(async (req: Request, { params }: { params: 
       notizen: notizen?.trim() ?? null,
       menge: menge != null ? parseInt(menge) : null,
       verfuegbar: verfuegbar !== false,
+      sorte: sorte?.trim() || null,
+      hkg: hkg?.trim() || null,
+      fovg: fovg === true,
+      preis_pro_100: preis_pro_100 != null && preis_pro_100 !== "" ? parseFloat(preis_pro_100) : null,
+      min_bestellung: min_bestellung != null && min_bestellung !== "" ? parseInt(min_bestellung) : 100,
     },
   })
 

@@ -45,6 +45,15 @@ export const PATCH = withErrorHandler(async (req: Request,
       notizen: body.notizen !== undefined ? (body.notizen?.trim() ?? null) : undefined,
       menge: body.menge !== undefined ? (body.menge != null ? parseInt(body.menge) : null) : undefined,
       verfuegbar: body.verfuegbar !== undefined ? Boolean(body.verfuegbar) : undefined,
+      sorte: body.sorte !== undefined ? (body.sorte?.trim() || null) : undefined,
+      hkg: body.hkg !== undefined ? (body.hkg?.trim() || null) : undefined,
+      fovg: body.fovg !== undefined ? Boolean(body.fovg) : undefined,
+      preis_pro_100: body.preis_pro_100 !== undefined
+        ? (body.preis_pro_100 != null && body.preis_pro_100 !== "" ? parseFloat(body.preis_pro_100) : null)
+        : undefined,
+      min_bestellung: body.min_bestellung !== undefined
+        ? (body.min_bestellung != null && body.min_bestellung !== "" ? parseInt(body.min_bestellung) : null)
+        : undefined,
     },
   })
 
