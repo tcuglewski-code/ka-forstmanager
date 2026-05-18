@@ -23,8 +23,8 @@ function parseBaumartenText(text: string): Parsed[] {
 
   const items: Parsed[] = []
   for (const part of parts) {
-    // Match z.B. "Eiche 500", "Buche: 300", "200 Fichten"
-    const m1 = part.match(/^(.+?)\s*[:=]?\s*(\d+)\s*(stk|stück|stueck)?$/i)
+    // Match z.B. "Eiche 500", "Buche: 300", "200 Fichten", "Eiche: 500 Stk."
+    const m1 = part.match(/^(.+?)\s*[:=]?\s*(\d+)\s*(?:stk\.?|stück\.?|stueck\.?)?$/i)
     const m2 = part.match(/^(\d+)\s+(.+?)$/)
     if (m1) {
       items.push({ baumart: m1[1].trim(), menge: parseInt(m1[2]) })
