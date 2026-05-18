@@ -1,10 +1,21 @@
 /**
  * GET /api/app/mitarbeiter — App (Bearer-Auth) Mitarbeiter-Liste
+ * POST /api/app/mitarbeiter — Mitarbeiter anlegen (nur Admin via App)
  * Liefert aktive Mitarbeiter mit eingeschränktem, sicherem Feld-Set.
  */
 import { NextRequest, NextResponse } from "next/server"
 import { getAppUser } from "@/lib/app-auth"
 import { prisma } from "@/lib/prisma"
+import { z } from "zod"
+
+const CreateMitarbeiterSchema = z.object({
+  vorname: z.string().min(1).max(100),
+  nachname: z.string().min(1).max(100),
+  email: z.string().email().optional().nullable(),
+  telefon: z.string().max(50).optional().nullable(),
+  rolle: z.enum(["mitarbeiter", "gruppenfuehrer", "admin", "koordinator"]).optional(),
+  status: z.string().optional(),
+})
 
 const SAFE_SELECT = {
   id: true,
@@ -71,4 +82,34 @@ export async function GET(req: NextRequest) {
   })
 
   return NextResponse.json(mitarbeiter)
+}
+
+export async function POST(req: NextRequest) {
+  const appUser = await getAppUser(req)
+  if (!appUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  const role = (appUser.role as string | undefined) ?? (appUser.rolle as string | undefined)
+  const isAdmin = role === "ka_admin" || role === "admin" || role === "administrator"
+  if (!isAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+
+  try {
+    const parsed = CreateMitarbeiterSchema.safeParse(await req.json())
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          error: "Ungültige Daten",
+          details: parsed.error.issues.map(e => ({ field: e.path.join("."), message: e.message })),
+        },
+        { status: 400 }
+      )
+    }
+    const { vorname, nachname, email, telefon, rolle, status } = parsed.data
+    const mitarbeiter = await prisma.mitarbeiter.create({
+      data: { vorname, nachname, email, telefon, rolle, status },
+    })
+    return NextResponse.json(mitarbeiter, { status: 201 })
+  } catch (err) {
+    console.error("[app/mitarbeiter/POST]", err)
+    return NextResponse.json({ error: "Fehler beim Erstellen" }, { status: 500 })
+  }
 }
