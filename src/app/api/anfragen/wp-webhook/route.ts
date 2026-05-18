@@ -146,6 +146,39 @@ export async function POST(request: NextRequest) {
 
     console.log("[WP-Webhook] Auftrag erstellt:", auftrag.id, auftrag.nummer)
 
+    // Loop 4: Auto-create AuftragPflanzItems aus wizard_daten.baumarten
+    const baumartenStr = data.wizard_daten?.baumarten
+    if (baumartenStr && typeof baumartenStr === "string") {
+      const parts = baumartenStr.split(",").map((s: string) => s.trim()).filter(Boolean)
+      for (const part of parts) {
+        const m = part.match(/^(.+?):\s*(\d+)\s*Stk\.?/i)
+        if (!m) continue
+        const baumart = m[1].trim()
+        const stueckzahl = parseInt(m[2], 10)
+        try {
+          const firstWord = baumart.split(/\s+/)[0]
+          const preisliste = await prisma.baumschulPreisliste.findFirst({
+            where: { baumart: { contains: firstWord, mode: "insensitive" }, aktiv: true },
+          })
+          await prisma.auftragPflanzItem.create({
+            data: {
+              auftragId: auftrag.id,
+              preislisteId: preisliste?.id ?? null,
+              baumart,
+              sorte: preisliste?.sorte ?? null,
+              hkg: preisliste?.hkg ?? null,
+              fovg: preisliste?.fovg ?? false,
+              sollMenge: stueckzahl,
+              preisProStk: preisliste?.preis
+                ?? (preisliste?.preis_pro_100 != null ? preisliste.preis_pro_100 / 100 : null),
+            },
+          })
+        } catch (err) {
+          console.warn("[WP-Webhook] PflanzItem auto-create failed:", part, err)
+        }
+      }
+    }
+
     // Activity-Log
     await prisma.activityLog.create({
       data: {

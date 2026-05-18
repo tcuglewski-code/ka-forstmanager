@@ -231,6 +231,41 @@ export async function POST(req: NextRequest) {
         endDatum: validatedData.endDatum ? new Date(validatedData.endDatum) : null,
       },
     })
+
+    // Loop 4: Auto-create AuftragPflanzItems aus wizardDaten.baumarten
+    // Format: "Eiche: 500 Stk., Buche: 300 Stk., ..."
+    const baumartenStr = validatedData.wizardDaten?.baumarten
+    if (baumartenStr && typeof baumartenStr === "string") {
+      const parts = baumartenStr.split(",").map((s) => s.trim()).filter(Boolean)
+      for (const part of parts) {
+        const m = part.match(/^(.+?):\s*(\d+)\s*Stk\.?/i)
+        if (!m) continue
+        const baumart = m[1].trim()
+        const stueckzahl = parseInt(m[2], 10)
+        try {
+          const firstWord = baumart.split(/\s+/)[0]
+          const preisliste = await prisma.baumschulPreisliste.findFirst({
+            where: { baumart: { contains: firstWord, mode: "insensitive" }, aktiv: true },
+          })
+          await prisma.auftragPflanzItem.create({
+            data: {
+              auftragId: auftrag.id,
+              preislisteId: preisliste?.id ?? null,
+              baumart,
+              sorte: preisliste?.sorte ?? null,
+              hkg: preisliste?.hkg ?? null,
+              fovg: preisliste?.fovg ?? false,
+              sollMenge: stueckzahl,
+              preisProStk: preisliste?.preis
+                ?? (preisliste?.preis_pro_100 != null ? preisliste.preis_pro_100 / 100 : null),
+            },
+          })
+        } catch (err) {
+          console.warn("[Auftraege POST] PflanzItem auto-create failed:", part, err)
+        }
+      }
+    }
+
     // Sprint AG: E-Mail-Benachrichtigung — Auftrag erstellt
     emailService.auftragErstellt({
       auftragId: auftrag.id,
