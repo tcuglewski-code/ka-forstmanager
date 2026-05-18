@@ -266,6 +266,7 @@ model Auftrag {
   logs                AuftragLog[]
   angebote            Angebot[]
   fotos               Foto[]
+  pflanzItems         AuftragPflanzItem[]
 
   @@index([status])
   @@index([createdAt])
@@ -1407,8 +1408,14 @@ model BaumschulPreisliste {
   notizen      String?
   menge        Int?       // Verfügbare Stückzahl/Menge
   verfuegbar   Boolean    @default(true)
+  sorte            String?   // z.B. '1+0', '2+2', '1+2P 15-30cm'
+  hkg              String?   // Herkunftsgebiet z.B. '848 02'
+  fovg             Boolean   @default(false)  // FoVG zertifiziert
+  preis_pro_100    Float?    // Preis pro 100 Stk. (alias/ergänzung zu preis)
+  min_bestellung   Int?      @default(100)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+  auftragItems     AuftragPflanzItem[]
 }
 
 model BaumschulBestellung {
@@ -2597,4 +2604,28 @@ model Foto {
 
   @@index([auftragId])
   @@index([mitarbeiterId])
+}
+
+// Pflanzitems pro Auftrag — Soll/Ist Buchung der Pflanzungen
+model AuftragPflanzItem {
+  id              String                @id @default(cuid())
+  auftragId       String
+  auftrag         Auftrag               @relation(fields: [auftragId], references: [id], onDelete: Cascade)
+  preislisteId    String?
+  preisliste      BaumschulPreisliste?  @relation(fields: [preislisteId], references: [id], onDelete: SetNull)
+  baumart         String
+  sorte           String?
+  hkg             String?
+  fovg            Boolean               @default(false)
+  sollMenge       Int                   @default(0)
+  istMenge        Int                   @default(0)
+  preisProStk     Float?
+  notizen         String?
+  gebuchtAt       DateTime?
+  gebuchtVon      String?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  @@index([auftragId])
+  @@index([preislisteId])
 }
