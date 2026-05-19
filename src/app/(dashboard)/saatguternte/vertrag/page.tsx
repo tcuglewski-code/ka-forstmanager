@@ -156,7 +156,7 @@ function VertragPageInner() {
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-foreground">Ernteüberlassungsvertrag</h1>
+            <h1 className="text-xl font-semibold text-[var(--color-on-surface)]">Ernteüberlassungsvertrag</h1>
             <p className="text-sm text-[var(--color-on-surface-variant)]">{flaechen.length} Fläche(n) ausgewählt</p>
           </div>
           <div className="flex-1" />
@@ -182,6 +182,27 @@ function VertragPageInner() {
           <div className="no-print mb-4 p-3 bg-blue-900/30 border border-blue-600/30 rounded-lg text-sm text-blue-300">
             ℹ️ Du hast Flächen aus {forstaemter.length} verschiedenen Forstämtern ausgewählt.
             Bitte generiere für jedes Forstamt einen separaten Vertrag (Tab wechseln → herunterladen).
+          </div>
+        )}
+
+        {/* FIX 7: Warnung wenn Flächen ohne Forstamt-Zuordnung */}
+        {flaechenByForstamt["Unbekannt"]?.length > 0 && (
+          <div className="no-print mb-4 p-3 bg-yellow-900/30 border border-yellow-600/30 rounded-lg text-sm text-yellow-300 flex items-start gap-2">
+            <span className="text-base">⚠️</span>
+            <div>
+              <p className="font-medium">
+                {flaechenByForstamt["Unbekannt"].length} Fläche(n) ohne Forstamt-Zuordnung.
+              </p>
+              <p className="text-yellow-200/80 mt-1">
+                Für separate Verträge pro Forstamt muss jeder Fläche ein Forstamt zugeordnet sein.{" "}
+                <button
+                  onClick={() => router.push("/saatguternte/register")}
+                  className="underline hover:text-yellow-100"
+                >
+                  Im Register ergänzen →
+                </button>
+              </p>
+            </div>
           </div>
         )}
 
