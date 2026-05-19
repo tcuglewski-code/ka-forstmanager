@@ -19,6 +19,18 @@ interface Ernte {
   positionen: { sammlerName: string }[]
 }
 
+interface Einsatz {
+  id: string
+  datum: string | null
+  baumart: string
+  saison: number | null
+  gruppeName: string | null
+  forstamt: string | null
+  ort: string | null
+  mengeKg: number
+  sammler: string
+}
+
 interface FlaechenProfil {
   id: string
   status: string
@@ -77,6 +89,7 @@ interface Flaeche {
   }
   profil: FlaechenProfil | null
   ernten: Ernte[]
+  einsaetze?: Einsatz[]
   osmUrl: string | null
 }
 
@@ -252,8 +265,45 @@ function ProfilTab({
   )
 }
 
-function ErntehistorieTab({ ernten }: { ernten: Ernte[] }) {
-  if (ernten.length === 0) {
+function ErntehistorieTab({ ernten, einsaetze = [] }: { ernten: Ernte[]; einsaetze?: Einsatz[] }) {
+  // Unify both sources into one timeline
+  type Row = {
+    id: string
+    datum: string | null
+    saison: string | number | null
+    baumart: string
+    mengeKg: number | null
+    sammler: string
+    quelle: "ernte" | "einsatz"
+    extra?: string | null
+  }
+  const rows: Row[] = [
+    ...ernten.map<Row>((e) => ({
+      id: `ernte-${e.id}`,
+      datum: e.datum,
+      saison: e.saison,
+      baumart: e.baumart,
+      mengeKg: e.mengeKgGesamt,
+      sammler: e.positionen.length > 0 ? e.positionen.map((p) => p.sammlerName).join(", ") : "–",
+      quelle: "ernte",
+    })),
+    ...einsaetze.map<Row>((e) => ({
+      id: `einsatz-${e.id}`,
+      datum: e.datum,
+      saison: e.saison,
+      baumart: e.baumart,
+      mengeKg: e.mengeKg || null,
+      sammler: e.sammler || "–",
+      quelle: "einsatz",
+      extra: e.gruppeName,
+    })),
+  ].sort((a, b) => {
+    const ta = a.datum ? new Date(a.datum).getTime() : 0
+    const tb = b.datum ? new Date(b.datum).getTime() : 0
+    return tb - ta
+  })
+
+  if (rows.length === 0) {
     return (
       <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-10 flex flex-col items-center justify-center text-center">
         <ClipboardList className="w-10 h-10 text-zinc-700 mb-3" />
@@ -266,7 +316,7 @@ function ErntehistorieTab({ ernten }: { ernten: Ernte[] }) {
     <div className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
       <div className="px-5 py-4 border-b border-border">
         <h2 className="text-sm font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide">
-          Erntehistorie ({ernten.length} Einträge)
+          Erntehistorie ({rows.length} Einträge)
         </h2>
       </div>
       <div className="overflow-x-auto">
@@ -276,23 +326,23 @@ function ErntehistorieTab({ ernten }: { ernten: Ernte[] }) {
               <th className="px-4 py-3 text-left">Saison</th>
               <th className="px-4 py-3 text-left">Datum</th>
               <th className="px-4 py-3 text-left">Baumart</th>
+              <th className="px-4 py-3 text-left">Gruppe</th>
               <th className="px-4 py-3 text-right">kg gesamt</th>
               <th className="px-4 py-3 text-left">Sammler</th>
             </tr>
           </thead>
           <tbody>
-            {ernten.map((ernte) => (
-              <tr key={ernte.id} className="border-b border-border hover:bg-[var(--color-surface-container-lowest)] transition-colors">
-                <td className="px-4 py-3 text-[var(--color-on-surface)] font-mono font-medium">{ernte.saison}</td>
-                <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">{formatDatum(ernte.datum)}</td>
-                <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">{ernte.baumart}</td>
+            {rows.map((row) => (
+              <tr key={row.id} className="border-b border-border hover:bg-[var(--color-surface-container-lowest)] transition-colors">
+                <td className="px-4 py-3 text-[var(--color-on-surface)] font-mono font-medium">{row.saison ?? "–"}</td>
+                <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">{formatDatum(row.datum)}</td>
+                <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">{row.baumart}</td>
+                <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-xs">{row.extra ?? "–"}</td>
                 <td className="px-4 py-3 text-right text-[var(--color-on-surface)] font-medium">
-                  {ernte.mengeKgGesamt != null ? `${ernte.mengeKgGesamt.toFixed(1)} kg` : "–"}
+                  {row.mengeKg != null && row.mengeKg > 0 ? `${row.mengeKg.toFixed(1)} kg` : "–"}
                 </td>
                 <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-xs">
-                  {ernte.positionen.length > 0
-                    ? ernte.positionen.map((p) => p.sammlerName).join(", ")
-                    : "–"}
+                  {row.sammler}
                 </td>
               </tr>
             ))}
@@ -621,7 +671,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
       )}
 
       {activeTab === "erntehistorie" && (
-        <ErntehistorieTab ernten={flaeche.profil?.ernten ?? []} />
+        <ErntehistorieTab ernten={flaeche.profil?.ernten ?? []} einsaetze={flaeche.einsaetze ?? []} />
       )}
 
       {activeTab === "wetter" && (

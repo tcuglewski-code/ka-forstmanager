@@ -33,6 +33,26 @@ export default async function FlaecheDetailPage({
 
   if (!flaeche) notFound()
 
+  // FIX 1: Erntehistorie zeigt auch ErnteEinsatz-Daten (matched by flaecheId OR registerNr text-match)
+  const einsaetze = await prisma.ernteEinsatz.findMany({
+    where: {
+      OR: [
+        { flaecheId: flaeche.id },
+        { registerNr: flaeche.registerNr },
+      ],
+    },
+    include: {
+      gruppe: { select: { name: true } },
+      saison: { select: { jahr: true } },
+      leistungen: {
+        include: {
+          person: { select: { name: true } },
+        },
+      },
+    },
+    orderBy: { datum: "desc" },
+  })
+
   const lat = flaeche.latDez
   const lon = flaeche.lonDez
   const hasKoord = lat != null && lon != null
@@ -79,6 +99,20 @@ export default async function FlaecheDetailPage({
       createdAt: flaeche.quelle.createdAt?.toISOString() ?? null,
       updatedAt: flaeche.quelle.updatedAt?.toISOString() ?? null,
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    einsaetze: einsaetze.map((e: any) => ({
+      id: e.id,
+      datum: e.datum?.toISOString() ?? null,
+      baumart: e.baumart,
+      saison: e.saison?.jahr ?? null,
+      gruppeName: e.gruppe?.name ?? null,
+      forstamt: e.forstamt,
+      ort: e.ort,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mengeKg: e.leistungen.reduce((sum: number, l: any) => sum + (l.gesammeltKg ?? 0), 0),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      sammler: e.leistungen.map((l: any) => l.person?.name).filter(Boolean).join(", "),
+    })),
   }
 
   return (
