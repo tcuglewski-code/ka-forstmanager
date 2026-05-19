@@ -33,7 +33,11 @@ export const GET = withErrorHandler(async (req: Request) => {
         _sum: { stunden: true }
       }),
       prisma.rechnung.findMany({
-        where: { auftragId: { in: auftragIds } },
+        where: {
+          auftragId: { in: auftragIds },
+          status: { in: ["bezahlt", "offen", "freigegeben", "mahnung", "versendet"] },
+          deletedAt: null,
+        },
         select: { betrag: true, status: true }
       }),
       prisma.gruppeMitglied.findMany({
@@ -43,7 +47,9 @@ export const GET = withErrorHandler(async (req: Request) => {
       })
     ])
 
-    const umsatz = rechnungen.reduce((s, r) => s + (r.betrag ?? 0), 0)
+    const umsatzBezahlt = rechnungen.filter(r => r.status === "bezahlt").reduce((s, r) => s + (r.betrag ?? 0), 0)
+    const umsatzOffen = rechnungen.filter(r => r.status !== "bezahlt").reduce((s, r) => s + (r.betrag ?? 0), 0)
+    const umsatz = umsatzBezahlt + umsatzOffen
     const gesamtStunden = stunden._sum?.stunden ?? 0
     const lohnkosten = gesamtStunden * vollkosten
 
@@ -59,6 +65,8 @@ export const GET = withErrorHandler(async (req: Request) => {
       mitarbeiter: mitarbeiter.length,
       gesamtStunden,
       umsatz,
+      umsatzBezahlt,
+      umsatzOffen,
       lohnkosten,
       deckungsbeitrag: umsatz - lohnkosten,
       marge: umsatz > 0 ? Math.round(((umsatz - lohnkosten) / umsatz) * 1000) / 10 : 0,

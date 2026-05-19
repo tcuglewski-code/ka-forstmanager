@@ -324,10 +324,17 @@ async function getStats() {
     const stundenGesamt = await prisma.stundeneintrag.aggregate({
       _sum: { stunden: true }
     })
-    const rechnungenGesamt = await prisma.rechnung.aggregate({
+    const realisierterUmsatz = await prisma.rechnung.aggregate({
       _sum: { betrag: true },
       where: {
-        status: { in: ["versendet", "bezahlt"] },
+        status: "bezahlt",
+        deletedAt: null,
+      },
+    })
+    const offeneForderungen = await prisma.rechnung.aggregate({
+      _sum: { betrag: true },
+      where: {
+        status: { in: ["offen", "freigegeben", "mahnung", "versendet"] },
         deletedAt: null,
       },
     })
@@ -335,7 +342,17 @@ async function getStats() {
       _avg: { stundenlohn: true }
     })
     const durchschnittslohn = mitarbeiterLohn._avg?.stundenlohn ?? 12
-    const geschaetzterLohn = (stundenGesamt._sum?.stunden ?? 0) * durchschnittslohn
+
+    // Lohnkosten nur für aktive Saison
+    const aktiveSaisonObj = await prisma.saison.findFirst({ where: { status: "aktiv" } })
+    const auftragIdsAktiveSaison = aktiveSaisonObj
+      ? await prisma.auftrag.findMany({ where: { saisonId: aktiveSaisonObj.id }, select: { id: true } })
+      : []
+    const stundenAktiveSaison = await prisma.stundeneintrag.aggregate({
+      where: { auftragId: { in: auftragIdsAktiveSaison.map(a => a.id) } },
+      _sum: { stunden: true }
+    })
+    const geschaetzterLohn = (stundenAktiveSaison._sum?.stunden ?? 0) * durchschnittslohn
 
     return {
       aktiveMitarbeiter,
@@ -358,7 +375,8 @@ async function getStats() {
       letzteProtokolle,
       letzteAbnahmen,
       stundenGesamt,
-      rechnungenGesamt,
+      realisierterUmsatz,
+      offeneForderungen,
       geschaetzterLohn,
     }
   } catch {
@@ -383,7 +401,8 @@ async function getStats() {
       letzteProtokolle: [] as { id: string; datum: Date | string; ersteller: string | null; auftrag: { titel: string; id: string } | null }[],
       letzteAbnahmen: [] as { id: string; datum: Date | string; status: string; auftrag: { titel: string; id: string } | null }[],
       stundenGesamt: { _sum: { stunden: 0 } },
-      rechnungenGesamt: { _sum: { betrag: 0 } },
+      realisierterUmsatz: { _sum: { betrag: 0 } },
+      offeneForderungen: { _sum: { betrag: 0 } },
       geschaetzterLohn: 0,
     }
   }
@@ -791,7 +810,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Wirtschaftlichkeits-Widget */}
-      <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div
           className="rounded-xl p-5 ambient-shadow-md"
           style={{ backgroundColor: "var(--color-surface-container-low)" }}
@@ -817,13 +836,13 @@ export default async function DashboardPage() {
             className="text-xs font-semibold uppercase tracking-wider mb-2"
             style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
           >
-            Gesamtumsatz
+            Realisierter Umsatz
           </p>
           <p
             className="text-3xl font-bold"
-            style={{ fontFamily: "var(--font-mono)", color: "var(--color-primary)" }}
+            style={{ fontFamily: "var(--font-mono)", color: "#10b981" }}
           >
-            {((stats.rechnungenGesamt._sum?.betrag ?? 0)).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+            {((stats.realisierterUmsatz._sum?.betrag ?? 0)).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
           </p>
         </div>
         <div
@@ -834,7 +853,24 @@ export default async function DashboardPage() {
             className="text-xs font-semibold uppercase tracking-wider mb-2"
             style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
           >
-            Geschätzter Lohn
+            Offene Forderungen
+          </p>
+          <p
+            className="text-3xl font-bold"
+            style={{ fontFamily: "var(--font-mono)", color: "#f59e0b" }}
+          >
+            {((stats.offeneForderungen._sum?.betrag ?? 0)).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+          </p>
+        </div>
+        <div
+          className="rounded-xl p-5 ambient-shadow-md"
+          style={{ backgroundColor: "var(--color-surface-container-low)" }}
+        >
+          <p
+            className="text-xs font-semibold uppercase tracking-wider mb-2"
+            style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
+          >
+            Lohnkosten (akt. Saison)
           </p>
           <p
             className="text-3xl font-bold"
