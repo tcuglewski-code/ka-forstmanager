@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { withErrorHandler } from "@/lib/api-handler"
+import { sendEmail } from "@/lib/email"
+import crypto from "crypto"
 
 const ADMIN_ROLES = ["admin", "ka_admin", "administrator", "supervisor"]
 const VALID_STATUS = ["neu", "zugewiesen", "angeboten", "bestaetigt", "geliefert", "storniert"]
@@ -91,12 +93,69 @@ export const PATCH = withErrorHandler(async (
     where: { id },
     data,
     include: {
-      baumschule: { select: { id: true, name: true, ort: true, bundesland: true } },
+      baumschule: { select: { id: true, name: true, ort: true, bundesland: true, email: true, ansprechpartner: true, status: true } },
     },
   })
 
+  // BS-MKT-01 Phase 2 (A3): Bei *neu* Zuweisung einer Baumschule → Notification-Mail
+  // Trigger: zuvor keine Baumschule, jetzt eine Baumschule zugewiesen, Status = "zugewiesen"
+  const istNeueZuweisung =
+    existing.baumschuleId !== updated.baumschuleId &&
+    updated.baumschuleId !== null &&
+    updated.baumschule?.email &&
+    updated.baumschule?.status === "aktiv"
+
+  if (istNeueZuweisung && updated.baumschule) {
+    // Frischen Login-Token generieren (72h gültig), damit die Baumschule
+    // direkt aus der Mail ins Portal springen kann
+    const token = crypto.randomBytes(32).toString("hex")
+    const tokenExpiry = new Date(Date.now() + 72 * 60 * 60 * 1000)
+    await prisma.baumschule.update({
+      where: { id: updated.baumschule.id },
+      data: { loginToken: token, loginTokenExpiry: tokenExpiry },
+    }).catch((e) => console.warn("[Bestellung] Token-Refresh fehlgeschlagen:", e))
+
+    const baseUrl = process.env.NEXTAUTH_URL ?? "https://ka-forstmanager.vercel.app"
+    const loginLink = `${baseUrl}/baumschule/login?token=${token}`
+
+    void sendEmail({
+      to: updated.baumschule.email!,
+      subject: `🌱 Neue Pflanzanfrage: ${updated.baumart}`,
+      html: `
+        <p>Hallo ${escapeHtml(updated.baumschule.ansprechpartner || updated.baumschule.name)},</p>
+        <p>Sie haben über Koch Aufforstung eine neue Pflanzanfrage erhalten:</p>
+        <table style="border-collapse:collapse; margin: 16px 0;">
+          <tr><td style="padding: 4px 16px 4px 0; color:#666;">Baumart:</td><td style="font-weight:600;">${escapeHtml(updated.baumart)}</td></tr>
+          ${updated.menge > 0 ? `<tr><td style="padding: 4px 16px 4px 0; color:#666;">Menge:</td><td>${updated.menge} ${escapeHtml(updated.einheit || "Stück")}</td></tr>` : ""}
+          ${updated.flaecheHa ? `<tr><td style="padding: 4px 16px 4px 0; color:#666;">Fläche:</td><td>${updated.flaecheHa} ha</td></tr>` : ""}
+          ${updated.bundesland ? `<tr><td style="padding: 4px 16px 4px 0; color:#666;">Bundesland:</td><td>${escapeHtml(updated.bundesland)}</td></tr>` : ""}
+        </table>
+        <p>Bitte öffnen Sie Ihr Baumschul-Portal, um die Anfrage einzusehen und zu beantworten:</p>
+        <p style="margin: 20px 0;">
+          <a href="${loginLink}"
+             style="display:inline-block; padding: 12px 24px; background:#012d1d; color:#fff; border-radius:8px; text-decoration:none; font-weight:bold;">
+            🌲 Portal öffnen
+          </a>
+        </p>
+        <p style="font-size: 11px; color: #888;">
+          Link 72h gültig (bis ${tokenExpiry.toLocaleDateString("de-DE")}).
+        </p>
+        <p>Mit freundlichen Grüßen<br>Koch Aufforstung GmbH</p>
+      `,
+    }).catch((e) => console.warn("[Bestellung] Zuweisungs-Mail fehlgeschlagen:", e))
+  }
+
   return NextResponse.json(updated)
 })
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;")
+}
 
 // GET: einzelne Bestellung (Admin)
 export const GET = withErrorHandler(async (

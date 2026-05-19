@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Plus, Search, TreeDeciduous, MapPin, Phone, Mail, ExternalLink, Key, X } from "lucide-react"
+import { Plus, Search, TreeDeciduous, MapPin, Phone, Mail, ExternalLink, Key, X, Check, Ban, Sparkles } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
 
@@ -16,6 +16,11 @@ interface Baumschule {
   email?: string
   telefon?: string
   aktiv: boolean
+  // BS-MKT-01 Phase 2
+  status?: "pending" | "aktiv" | "abgelehnt"
+  lieferBundeslaender?: string[]
+  zufZertifiziert?: boolean
+  notizen?: string
   userId?: string
 }
 
@@ -33,6 +38,7 @@ export default function BaumschulenPage() {
   const [search, setSearch] = useState("")
   const [generatingLink, setGeneratingLink] = useState<string | null>(null)
   const [linkResult, setLinkResult] = useState<{ id: string; link: string } | null>(null)
+  const [freigeben, setFreigeben] = useState<string | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [creating, setCreating] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
@@ -56,6 +62,37 @@ export default function BaumschulenPage() {
       .then(d => { setBaumschulen(Array.isArray(d) ? d : d.baumschulen || []); setLoading(false) })
       .catch(err => { setError("Baumschulen konnten nicht geladen werden"); setLoading(false) })
   }, [])
+
+  const handleFreigabe = async (id: string, action: "approve" | "reject") => {
+    if (action === "reject" && !confirm("Diese Bewerbung wirklich ablehnen? Die Baumschule wird per E-Mail informiert.")) return
+    setFreigeben(id)
+    try {
+      const r = await fetch(`/api/saatguternte/baumschulen/${id}/freigabe`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action }),
+      })
+      if (!r.ok) {
+        const j = await r.json().catch(() => ({}))
+        throw new Error(j.error || `HTTP ${r.status}`)
+      }
+      const d = await r.json()
+      // Liste aktualisieren
+      setBaumschulen(prev =>
+        prev.map(b => b.id === id ? { ...b, status: d.status, aktiv: d.status === "aktiv" } : b)
+      )
+      if (action === "approve") {
+        toast.success(`Baumschule freigegeben${d.emailGesendet ? " — Login-Link versendet" : ""}`)
+        if (d.loginLink) setLinkResult({ id, link: d.loginLink })
+      } else {
+        toast.success("Bewerbung abgelehnt")
+      }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Fehler bei der Freigabe")
+    } finally {
+      setFreigeben(null)
+    }
+  }
 
   const generateLoginLink = async (id: string) => {
     setGeneratingLink(id)
@@ -112,6 +149,8 @@ export default function BaumschulenPage() {
     (b.ort || "").toLowerCase().includes(search.toLowerCase())
   )
 
+  const pendingCount = baumschulen.filter(b => b.status === "pending").length
+
   if (loading) return (
     <div className="p-8 flex items-center gap-3 text-gray-500">
       <TreeDeciduous className="w-5 h-5 animate-pulse" />
@@ -136,7 +175,14 @@ export default function BaumschulenPage() {
             <TreeDeciduous className="w-6 h-6 text-green-600" />
             Baumschulen
           </h1>
-          <p className="text-sm text-gray-500 mt-1">{baumschulen.length} registrierte Baumschulen</p>
+          <p className="text-sm text-gray-500 mt-1">
+            {baumschulen.length} registrierte Baumschulen
+            {pendingCount > 0 && (
+              <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold">
+                <Sparkles className="w-3 h-3" /> {pendingCount} neue Bewerbung{pendingCount === 1 ? "" : "en"}
+              </span>
+            )}
+          </p>
         </div>
         <button
           onClick={() => { setModalOpen(true); setCreateError(null) }}
@@ -177,40 +223,87 @@ export default function BaumschulenPage() {
         </div>
       ) : (
         <div className="grid gap-3">
-          {filtered.map(b => (
-            <div key={b.id} className={`bg-white border rounded-lg p-4 flex items-center justify-between hover:shadow-sm transition-shadow ${!b.aktiv ? "opacity-60" : ""}`}>
+          {filtered.map(b => {
+            const isPending = b.status === "pending"
+            const isAbgelehnt = b.status === "abgelehnt"
+            return (
+            <div
+              key={b.id}
+              className={`bg-white border rounded-lg p-4 flex items-center justify-between hover:shadow-sm transition-shadow ${
+                isPending ? "border-amber-400 ring-2 ring-amber-200" : ""
+              } ${isAbgelehnt || !b.aktiv ? "opacity-60" : ""}`}
+            >
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <TreeDeciduous className="w-5 h-5 text-green-600" />
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                  isPending ? "bg-amber-100" : "bg-green-100"
+                }`}>
+                  <TreeDeciduous className={`w-5 h-5 ${isPending ? "text-amber-600" : "text-green-600"}`} />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center flex-wrap gap-2">
                     <span className="font-semibold text-gray-900">{b.name}</span>
-                    {!b.aktiv && <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">Inaktiv</span>}
-                    {b.userId && <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Portal-Zugang</span>}
+                    {isPending && (
+                      <span className="text-xs bg-amber-500 text-white px-2 py-0.5 rounded font-semibold inline-flex items-center gap-1">
+                        <Sparkles className="w-3 h-3" /> Neu — wartet auf Freigabe
+                      </span>
+                    )}
+                    {isAbgelehnt && <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">Abgelehnt</span>}
+                    {!isPending && !isAbgelehnt && !b.aktiv && <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">Inaktiv</span>}
+                    {b.userId && !isPending && <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Portal-Zugang</span>}
+                    {b.zufZertifiziert && <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">ZÜF</span>}
                   </div>
-                  <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
+                  <div className="flex items-center flex-wrap gap-4 mt-1 text-xs text-gray-500">
                     {b.ort && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{b.ort}{b.bundesland ? `, ${b.bundesland}` : ""}</span>}
                     {b.email && <span className="flex items-center gap-1"><Mail className="w-3 h-3" />{b.email}</span>}
                     {b.telefon && <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{b.telefon}</span>}
                   </div>
+                  {b.lieferBundeslaender && b.lieferBundeslaender.length > 0 && (
+                    <div className="text-[11px] text-gray-500 mt-1">
+                      Liefert nach: {b.lieferBundeslaender.join(", ")}
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => generateLoginLink(b.id)}
-                  disabled={generatingLink === b.id}
-                  className="text-xs border border-green-200 text-green-700 px-3 py-1.5 rounded-lg hover:bg-green-50 flex items-center gap-1 disabled:opacity-50"
-                >
-                  <Key className="w-3 h-3" />
-                  {generatingLink === b.id ? "..." : "Login-Link"}
-                </button>
-                <Link href={`/saatguternte/baumschulen/${b.id}`} className="text-xs border px-3 py-1.5 rounded-lg hover:bg-gray-50 flex items-center gap-1 text-gray-600">
-                  <ExternalLink className="w-3 h-3" /> Details
-                </Link>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                {isPending ? (
+                  <>
+                    <button
+                      onClick={() => handleFreigabe(b.id, "approve")}
+                      disabled={freigeben === b.id}
+                      className="text-xs bg-green-600 text-white px-3 py-1.5 rounded-lg hover:bg-green-700 flex items-center gap-1 disabled:opacity-50"
+                    >
+                      <Check className="w-3 h-3" />
+                      {freigeben === b.id ? "..." : "Freigeben"}
+                    </button>
+                    <button
+                      onClick={() => handleFreigabe(b.id, "reject")}
+                      disabled={freigeben === b.id}
+                      className="text-xs border border-red-200 text-red-700 px-3 py-1.5 rounded-lg hover:bg-red-50 flex items-center gap-1 disabled:opacity-50"
+                    >
+                      <Ban className="w-3 h-3" /> Ablehnen
+                    </button>
+                    <Link href={`/saatguternte/baumschulen/${b.id}`} className="text-xs border px-3 py-1.5 rounded-lg hover:bg-gray-50 flex items-center gap-1 text-gray-600">
+                      <ExternalLink className="w-3 h-3" /> Details
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => generateLoginLink(b.id)}
+                      disabled={generatingLink === b.id}
+                      className="text-xs border border-green-200 text-green-700 px-3 py-1.5 rounded-lg hover:bg-green-50 flex items-center gap-1 disabled:opacity-50"
+                    >
+                      <Key className="w-3 h-3" />
+                      {generatingLink === b.id ? "..." : "Login-Link"}
+                    </button>
+                    <Link href={`/saatguternte/baumschulen/${b.id}`} className="text-xs border px-3 py-1.5 rounded-lg hover:bg-gray-50 flex items-center gap-1 text-gray-600">
+                      <ExternalLink className="w-3 h-3" /> Details
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
-          ))}
+          )})}
         </div>
       )}
 

@@ -1384,6 +1384,10 @@ model Baumschule {
   telefon          String?
   notizen          String?
   aktiv            Boolean   @default(true)
+  // BS-MKT-01 Phase 2: Selbst-Registrierung
+  status              String   @default("aktiv") // pending | aktiv | abgelehnt
+  lieferBundeslaender String[] @default([]) // Bundesländer die beliefert werden (leer = bundesweit)
+  zufZertifiziert     Boolean  @default(false) // ZÜF-Zertifizierung (Zentralstelle der Forstpflanzenzucht)
   // Sprint AJ: Baumschul-Authentifizierung
   loginToken       String?   @unique // Login-Link-Token (einmalig, zeitlich begrenzt)
   loginTokenExpiry DateTime? // Ablaufzeit des Login-Tokens

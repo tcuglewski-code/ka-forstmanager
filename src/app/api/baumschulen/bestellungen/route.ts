@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { withErrorHandler } from "@/lib/api-handler"
 import { checkRateLimit } from "@/lib/rate-limit"
+import { sendEmail } from "@/lib/email"
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -113,12 +114,26 @@ export const POST = withErrorHandler(async (req: Request) => {
       ? (body.pflanzenArten as object)
       : null
 
+  // BS-MKT-01 Phase 2: optional direkter Lieferant-Wunsch aus Wizard
+  let preselectedBaumschuleId: string | null = null
+  let initialStatus = "neu"
+  if (typeof body.baumschuleId === "string" && body.baumschuleId.trim()) {
+    const bs = await prisma.baumschule.findFirst({
+      where: { id: body.baumschuleId, status: "aktiv", aktiv: true },
+      select: { id: true },
+    })
+    if (bs) {
+      preselectedBaumschuleId = bs.id
+      initialStatus = "zugewiesen"
+    }
+  }
+
   const created = await prisma.baumschulBestellung.create({
     data: {
-      baumschuleId: null,
+      baumschuleId: preselectedBaumschuleId,
       baumart: baumart.slice(0, 100),
       menge,
-      status: "neu",
+      status: initialStatus,
       kontaktName: kontaktName.slice(0, 200),
       kontaktEmail: kontaktEmail.slice(0, 200),
       kontaktTelefon,
@@ -131,8 +146,38 @@ export const POST = withErrorHandler(async (req: Request) => {
     select: { id: true, status: true, createdAt: true },
   })
 
+  // BS-MKT-01 Phase-1-Fix: Bestätigungsmail an Anfrager (Best-Effort)
+  void sendEmail({
+    to: kontaktEmail,
+    subject: "Ihre Pflanzenanfrage bei Koch Aufforstung",
+    html: `
+      <p>Sehr geehrte/r ${escapeHtml(kontaktName)},</p>
+      <p>vielen Dank für Ihre Anfrage. Wir haben Ihre Pflanzenbestellung erfolgreich erhalten:</p>
+      <ul>
+        <li><strong>Baumart:</strong> ${escapeHtml(baumart.slice(0, 100))}</li>
+        ${menge > 0 ? `<li><strong>Menge:</strong> ${menge} Stück</li>` : ""}
+        ${flaecheHa ? `<li><strong>Fläche:</strong> ${flaecheHa} ha</li>` : ""}
+        ${bundesland ? `<li><strong>Bundesland:</strong> ${escapeHtml(bundesland)}</li>` : ""}
+      </ul>
+      <p>Wir prüfen Ihre Anfrage und melden uns innerhalb von <strong>48 Stunden</strong> mit einem unverbindlichen Angebot bei Ihnen.</p>
+      <p>Mit freundlichen Grüßen<br>Ihr Team der Koch Aufforstung GmbH</p>
+      <p style="font-size:11px;color:#888;margin-top:24px;">
+        Diese Bestätigung wurde automatisch generiert. Anfrage-Nummer: ${created.id}
+      </p>
+    `,
+  }).catch((e) => console.warn("[BaumschulBestellung] Bestätigungsmail fehlgeschlagen:", e))
+
   return NextResponse.json(created, { status: 201, headers: cors })
 })
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;")
+}
 
 // GET: Liste aller Bestellanfragen (Admin)
 // Optional Query: ?status=neu&baumart=Eiche&from=ISO&to=ISO

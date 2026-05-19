@@ -190,21 +190,8 @@ export default function BestellungenAdminPage() {
       if (bsRes.ok) {
         const bsJson = await bsRes.json()
         const list: BaumschuleLite[] = Array.isArray(bsJson) ? bsJson : []
-        // Sortiment für Match-Filter nachladen (parallel, optional)
-        const enriched = await Promise.all(
-          list.map(async (b) => {
-            try {
-              const r = await fetch(`/api/baumschulen/${b.id}/sortiment`)
-              if (!r.ok) return b
-              const j = await r.json()
-              const sort = Array.isArray(j) ? j : Array.isArray(j?.preislisten) ? j.preislisten : []
-              return { ...b, preislisten: sort.map((p: { baumart: string }) => ({ baumart: p.baumart })) }
-            } catch {
-              return b
-            }
-          })
-        )
-        setBaumschulen(enriched)
+        // Phase-1-Fix: API liefert preislisten jetzt direkt mit (keine N+1 Fetches mehr)
+        setBaumschulen(list)
       }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Fehler beim Laden")

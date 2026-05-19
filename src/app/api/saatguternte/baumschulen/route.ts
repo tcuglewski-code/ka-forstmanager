@@ -10,8 +10,10 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    // BS-MKT-01 Phase 2: pending zuerst sortieren, Sortiment direkt mitliefern
+    // (Phase-1-Fix: N+1-Fetches in /baumschulen/bestellungen Admin-View vermeiden)
     const baumschulen = await prisma.baumschule.findMany({
-      orderBy: { name: "asc" },
+      orderBy: [{ status: "asc" }, { name: "asc" }],
       select: {
         id: true,
         name: true,
@@ -22,9 +24,16 @@ export async function GET() {
         telefon: true,
         notizen: true,
         aktiv: true,
+        status: true,
+        lieferBundeslaender: true,
+        zufZertifiziert: true,
         userId: true,
         createdAt: true,
         updatedAt: true,
+        preislisten: {
+          where: { aktiv: true },
+          select: { baumart: true, verfuegbar: true },
+        },
         _count: { select: { anfragen: true, preislisten: true } },
       },
     })
