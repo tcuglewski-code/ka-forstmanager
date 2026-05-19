@@ -8,6 +8,9 @@ ALTER TABLE "BaumschulBestellung"
   ADD CONSTRAINT "BaumschulBestellung_baumschuleId_fkey"
   FOREIGN KEY ("baumschuleId") REFERENCES "Baumschule"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
+-- Bundesland-Spalte für Website-Anfragen
+ALTER TABLE "BaumschulBestellung" ADD COLUMN IF NOT EXISTS "bundesland" TEXT;
+
 -- Index for filtering by status (admin list)
 CREATE INDEX IF NOT EXISTS "BaumschulBestellung_status_idx" ON "BaumschulBestellung"("status");
 CREATE INDEX IF NOT EXISTS "BaumschulBestellung_baumschuleId_idx" ON "BaumschulBestellung"("baumschuleId");

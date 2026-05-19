@@ -1436,6 +1436,7 @@ model BaumschulBestellung {
   kontaktEmail   String?
   kontaktTelefon String?
   flaecheHa      Float?
+  bundesland     String?
   pflanzenArten  Json?      // Array von Pflanzenarten bei Website-Anfragen
   quelle         String?    // z.B. "website-wizard", "intern"
   createdAt    DateTime   @default(now())
