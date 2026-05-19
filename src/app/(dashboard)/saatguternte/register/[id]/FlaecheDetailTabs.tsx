@@ -283,10 +283,10 @@ function ErntehistorieTab({ ernten }: { ernten: Ernte[] }) {
           <tbody>
             {ernten.map((ernte) => (
               <tr key={ernte.id} className="border-b border-border hover:bg-[var(--color-surface-container-lowest)] transition-colors">
-                <td className="px-4 py-3 text-zinc-300 font-mono">{ernte.saison}</td>
+                <td className="px-4 py-3 text-[var(--color-on-surface)] font-mono font-medium">{ernte.saison}</td>
                 <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">{formatDatum(ernte.datum)}</td>
-                <td className="px-4 py-3 text-zinc-300">{ernte.baumart}</td>
-                <td className="px-4 py-3 text-right text-zinc-300">
+                <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">{ernte.baumart}</td>
+                <td className="px-4 py-3 text-right text-[var(--color-on-surface)] font-medium">
                   {ernte.mengeKgGesamt != null ? `${ernte.mengeKgGesamt.toFixed(1)} kg` : "–"}
                 </td>
                 <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-xs">
@@ -314,7 +314,7 @@ function AnsprechpartnerBlock({ flaeche }: { flaeche: Flaeche }) {
       <h2 className="text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide mb-3">Ansprechpartner</h2>
       <div className="space-y-2 text-sm">
         {flaeche.ansprechpartner != null && (
-          <div className="text-zinc-300">{flaeche.ansprechpartner}</div>
+          <div className="text-[var(--color-on-surface)] font-medium">{flaeche.ansprechpartner}</div>
         )}
         {flaeche.hoheitlicheStelle != null && (
           <div className="text-[var(--color-on-surface-variant)] text-xs">{flaeche.hoheitlicheStelle}</div>
@@ -408,7 +408,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
                 ].map(([label, value]) => (
                   <div key={label}>
                     <dt className="text-zinc-600 text-xs">{label}</dt>
-                    <dd className="text-zinc-300 mt-0.5">{value}</dd>
+                    <dd className="text-[var(--color-on-surface)] font-medium mt-0.5">{value}</dd>
                   </div>
                 ))}
               </div>
@@ -430,7 +430,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
                 ].map(([label, value]) => (
                   <div key={label}>
                     <dt className="text-zinc-600 text-xs">{label}</dt>
-                    <dd className="text-zinc-300 mt-0.5">{value}</dd>
+                    <dd className="text-[var(--color-on-surface)] font-medium mt-0.5">{value}</dd>
                   </div>
                 ))}
               </div>
@@ -468,7 +468,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
               <div className="space-y-2 text-sm">
                 <div>
                   <dt className="text-zinc-600 text-xs">Name</dt>
-                  <dd className="text-zinc-300">{flaeche.quelle.name}</dd>
+                  <dd className="text-[var(--color-on-surface)] font-medium">{flaeche.quelle.name}</dd>
                 </div>
                 <div>
                   <dt className="text-zinc-600 text-xs">Kürzel</dt>
@@ -480,7 +480,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
                 </div>
                 <div>
                   <dt className="text-zinc-600 text-xs">Bundesländer</dt>
-                  <dd className="text-zinc-300 text-xs">{flaeche.quelle.bundeslaender.join(", ")}</dd>
+                  <dd className="text-[var(--color-on-surface)] font-medium text-xs">{flaeche.quelle.bundeslaender.join(", ")}</dd>
                 </div>
                 {flaeche.quelle.baseUrl && (
                   <div>
@@ -520,7 +520,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
               <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
                 <h2 className="text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide mb-3">Ansprechpartner</h2>
                 <div className="space-y-2 text-sm">
-                  {flaeche.ansprechpartner != null ? <div className="text-zinc-300">{flaeche.ansprechpartner}</div> : null}
+                  {flaeche.ansprechpartner != null ? <div className="text-[var(--color-on-surface)] font-medium">{flaeche.ansprechpartner}</div> : null}
                   {flaeche.hoheitlicheStelle != null ? <div className="text-[var(--color-on-surface-variant)] text-xs">{flaeche.hoheitlicheStelle}</div> : null}
                   {flaeche.ansprechpartnerTel != null ? (
                     <a href={`tel:${flaeche.ansprechpartnerTel}`} className="flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] text-xs">
@@ -575,7 +575,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
       )}
 
       {activeTab === "erntehistorie" && (
-        <ErntehistorieTab ernten={flaeche.ernten} />
+        <ErntehistorieTab ernten={flaeche.profil?.ernten ?? []} />
       )}
 
       {activeTab === "wetter" && (

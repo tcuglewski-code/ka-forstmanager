@@ -237,7 +237,7 @@ export default async function ErnteHistoriePage({
                           {e.saison}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-zinc-300">
+                      <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">
                         {new Date(e.datum).toLocaleDateString("de-DE")}
                       </td>
                       <td className="px-4 py-3">
@@ -255,7 +255,7 @@ export default async function ErnteHistoriePage({
                       <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-xs">
                         {e.profil?.flaeche?.bundesland ?? "—"}
                       </td>
-                      <td className="px-4 py-3 text-zinc-300">{e.baumart}</td>
+                      <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">{e.baumart}</td>
                       <td className="px-4 py-3 text-right text-[var(--color-on-surface)] font-medium">
                         {e.mengeKgGesamt !== null
                           ? e.mengeKgGesamt.toLocaleString("de-DE", { maximumFractionDigits: 1 })

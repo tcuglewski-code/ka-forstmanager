@@ -130,7 +130,7 @@ function BaumartGruppe({ baumart, items, collapsed, onToggle }: {
             <div>{a.baumschule?.name ?? "—"}</div>
             <div className="text-xs text-[var(--color-on-surface-variant)]">{a.saison?.jahr ?? ""}</div>
           </td>
-          <td className="px-4 py-3 text-zinc-300">{a.baumart}</td>
+          <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">{a.baumart}</td>
           <td className="px-4 py-3">
             <HerkunftCell anfrage={a} />
             <RegisterLink anfrage={a} />
@@ -138,7 +138,7 @@ function BaumartGruppe({ baumart, items, collapsed, onToggle }: {
           <td className="px-4 py-3">
             <SHKBadge anfrage={a} />
           </td>
-          <td className="px-4 py-3 text-right text-zinc-300 tabular-nums">
+          <td className="px-4 py-3 text-right text-[var(--color-on-surface)] font-medium tabular-nums">
             {a.zielmenge.toLocaleString("de-DE")} kg
           </td>
           <td className="px-4 py-3 text-right text-[var(--color-on-surface-variant)] tabular-nums">

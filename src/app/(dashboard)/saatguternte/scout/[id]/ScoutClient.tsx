@@ -124,7 +124,7 @@ export function ScoutClient({ flaeche }: { flaeche: Flaeche }) {
           ].map(([label, value]) => (
             <div key={label as string}>
               <div className="text-[11px] text-zinc-600 uppercase tracking-wide">{label}</div>
-              <div className="text-zinc-300 mt-0.5">{value}</div>
+              <div className="text-[var(--color-on-surface)] font-medium mt-0.5">{value}</div>
             </div>
           ))}
         </div>

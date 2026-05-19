@@ -325,7 +325,11 @@ async function getStats() {
       _sum: { stunden: true }
     })
     const rechnungenGesamt = await prisma.rechnung.aggregate({
-      _sum: { betrag: true }
+      _sum: { betrag: true },
+      where: {
+        status: { in: ["versendet", "bezahlt"] },
+        deletedAt: null,
+      },
     })
     const mitarbeiterLohn = await prisma.mitarbeiter.aggregate({
       _avg: { stundenlohn: true }
@@ -631,37 +635,7 @@ export default async function DashboardPage() {
         <p className="mt-1 text-sm" style={{ color: "var(--color-on-surface-variant)" }}>{heute}</p>
       </div>
 
-      {/* KI-Insight Karte (immer sichtbar als Demo) */}
-      <div
-        className="ai-insight-card rounded-xl p-5 mb-6 ambient-shadow"
-        style={{ borderLeft: "4px solid var(--color-tertiary)" }}
-      >
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1">
-            <p
-              className="text-xs font-semibold tracking-widest mb-1"
-              style={{ color: "var(--color-tertiary)", fontFamily: "var(--font-display)" }}
-            >
-              ✨ KI-OPTIMIERUNGSVORSCHLAG
-            </p>
-            <p
-              className="text-base font-bold mb-1"
-              style={{ fontFamily: "var(--font-display)", color: "var(--color-on-surface)" }}
-            >
-              Betriebsübersicht analysiert
-            </p>
-            <p className="text-sm" style={{ color: "var(--color-on-surface-variant)" }}>
-              Alle offenen Aufträge, Stunden und Lagerbestände sind auf dem aktuellen Stand.
-            </p>
-          </div>
-          <span
-            className="text-xs font-semibold px-2 py-1 rounded-full flex-shrink-0"
-            style={{ backgroundColor: "rgba(134,83,0,0.1)", color: "var(--color-tertiary)" }}
-          >
-            INFO
-          </span>
-        </div>
-      </div>
+      {/* TODO: KI-Optimierungsvorschlag-Karte entfernt — war Fake-Text. Wieder einbauen sobald echte KI-Insights vorhanden. */}
 
       {/* TÜV/Wartung fällig (FM-38) */}
       {stats.tuvWartungFaellig.length > 0 && (

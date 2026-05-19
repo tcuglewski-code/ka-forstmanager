@@ -63,6 +63,10 @@ export default function EinstellungenPage() {
       const r = await fetch("/api/einstellungen/config").then((r) => r.json())
       if (r && typeof r === "object") {
         setConfig(prev => ({ ...prev, ...r }))
+        // Primärfarbe sofort anwenden (korrekte CSS-Variable: --color-primary)
+        if (r.firma_farbe) {
+          document.documentElement.style.setProperty("--color-primary", r.firma_farbe)
+        }
       }
     } catch {
       // Ignoriere Fehler beim Laden
@@ -137,9 +141,9 @@ export default function EinstellungenPage() {
           },
         }),
       })
-      // CSS-Variable aktualisieren
+      // CSS-Variable aktualisieren (korrekter Variablen-Name: --color-primary)
       if (config.firma_farbe) {
-        document.documentElement.style.setProperty("--primary", config.firma_farbe)
+        document.documentElement.style.setProperty("--color-primary", config.firma_farbe)
       }
       toast.success("Firma-Einstellungen gespeichert")
       setFirmaSaved(true)

@@ -11,7 +11,14 @@ export async function GET(
       where: { id },
       include: {
         quelle: true,
-        profil: true,
+        profil: {
+          include: {
+            ernten: {
+              include: { positionen: true },
+              orderBy: { datum: "desc" },
+            },
+          },
+        },
         wetterDaten: { orderBy: { datum: "desc" }, take: 5 },
       },
     })

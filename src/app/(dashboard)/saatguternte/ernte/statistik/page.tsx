@@ -342,7 +342,7 @@ export default async function StatistikPage({
               ) : (
                 baumartStats.map((b) => (
                   <tr key={b.baumart} className="border-b border-border hover:bg-[var(--color-surface-container-lowest)] transition-colors">
-                    <td className="px-4 py-3 text-zinc-300 font-medium">{b.baumart}</td>
+                    <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">{b.baumart}</td>
                     <td className="px-4 py-3 text-right text-[var(--color-on-surface)]">
                       {b.gesamtKg.toLocaleString("de-DE")}
                     </td>
@@ -399,7 +399,7 @@ export default async function StatistikPage({
                     key={b.bundesland}
                     className="border-b border-border hover:bg-[var(--color-surface-container-lowest)] transition-colors"
                   >
-                    <td className="px-4 py-3 text-zinc-300 font-medium">{b.bundesland}</td>
+                    <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">{b.bundesland}</td>
                     <td className="px-4 py-3 text-right text-[var(--color-on-surface)]">
                       {b.gesamtKg.toLocaleString("de-DE")}
                     </td>

@@ -218,7 +218,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
                   <tbody>
                     {aktuell.daily.time.map((t, i) => (
                       <tr key={t} className="border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors">
-                        <td className="px-4 py-2.5 text-zinc-300">{formatDatum(t)}</td>
+                        <td className="px-4 py-2.5 text-[var(--color-on-surface)] font-medium">{formatDatum(t)}</td>
                         <td className="px-4 py-2.5 text-center text-lg">
                           {/* Kein weather_code pro Tag in archive, verwende simplen Indikator */}
                           {(aktuell.daily.precipitation_sum[i] ?? 0) > 5
@@ -369,7 +369,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
                               key={m.monat}
                               className="border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors"
                             >
-                              <td className="px-3 py-2 text-zinc-300 font-medium">{m.label}</td>
+                              <td className="px-3 py-2 text-[var(--color-on-surface)] font-medium">{m.label}</td>
                               <td className="px-3 py-2 text-right text-blue-400 font-mono text-xs">
                                 {m.tempMinAvg != null ? `${m.tempMinAvg}°` : "–"}
                               </td>

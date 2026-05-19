@@ -229,7 +229,7 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
                       </div>
                     </td>
                     <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">{f.bundesland}</td>
-                    <td className="px-4 py-3 text-zinc-300">{f.baumart}</td>
+                    <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">{f.baumart}</td>
                     <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">
                       {f.flaecheRedHa != null
                         ? `${f.flaecheRedHa.toFixed(2)} ha`

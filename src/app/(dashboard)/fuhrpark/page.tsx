@@ -537,9 +537,10 @@ export default function FuhrparkPage() {
         fetch("/api/gruppen").then(r => r.json()),
         fetch("/api/auftraege").then(r => r.json()),
       ])
-      setEinsaetze(Array.isArray(e) ? e : [])
-      setGruppen(Array.isArray(gr) ? gr : [])
-      setAuftraege(Array.isArray(au) ? au : [])
+      // /api/gruppen liefert {items, total, page, totalPages}, /api/auftraege & /api/maschineneinsaetze liefern Arrays
+      setEinsaetze(Array.isArray(e) ? e : (Array.isArray(e?.items) ? e.items : []))
+      setGruppen(Array.isArray(gr) ? gr : (Array.isArray(gr?.items) ? gr.items : []))
+      setAuftraege(Array.isArray(au) ? au : (Array.isArray(au?.items) ? au.items : []))
     } catch {
       setEinsaetze([])
     } finally {
