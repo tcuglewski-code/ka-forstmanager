@@ -6,26 +6,59 @@ import { checkRateLimit } from "@/lib/rate-limit"
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+const ALLOWED_ORIGINS = new Set([
+  "https://peru-otter-113714.hostingersite.com",
+  "https://kochaufforstung.de",
+  "https://www.kochaufforstung.de",
+])
+
+function corsHeadersFor(origin: string | null): Record<string, string> {
+  const allow = origin && ALLOWED_ORIGINS.has(origin) ? origin : "https://peru-otter-113714.hostingersite.com"
+  return {
+    "Access-Control-Allow-Origin": allow,
+    "Vary": "Origin",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Max-Age": "86400",
+  }
+}
+
+export async function OPTIONS(req: Request) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: corsHeadersFor(req.headers.get("origin")),
+  })
+}
+
 // POST: öffentliche Bestellanfrage (vom WP-Wizard) — kein Auth
 // Body: { baumart, menge?, flaecheHa?, bundesland?, kontaktName, kontaktEmail,
 //         kontaktTelefon?, pflanzenArten?, notizen?, quelle? }
 export const POST = withErrorHandler(async (req: Request) => {
+  const cors = corsHeadersFor(req.headers.get("origin"))
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     req.headers.get("x-real-ip") ||
     "unknown"
 
-  // Rate-Limit: 10 Anfragen pro IP pro Stunde (in-memory, reicht für Vercel/single-region)
+  // Rate-Limit: 10 Anfragen pro IP pro Stunde (in-memory; bestätigter Spam-Verdacht
+  // sollte zusätzlich über Honeypot-Feld unten gefiltert werden).
   if (!checkRateLimit(`bs-bestellung:${ip}`, 10, 60 * 60 * 1000)) {
     return NextResponse.json(
       { error: "Zu viele Anfragen. Bitte später erneut versuchen." },
-      { status: 429 }
+      { status: 429, headers: cors }
     )
   }
 
   const body = (await req.json().catch(() => null)) as Record<string, unknown> | null
   if (!body) {
-    return NextResponse.json({ error: "Ungültiger Request-Body" }, { status: 400 })
+    return NextResponse.json({ error: "Ungültiger Request-Body" }, { status: 400, headers: cors })
+  }
+
+  // Honeypot: Bots füllen oft alle Felder aus — `website` ist im echten Formular
+  // nicht vorhanden, also muss es leer bleiben.
+  if (typeof body.website === "string" && body.website.trim() !== "") {
+    // Wie 201 antworten, um Bots nicht zu informieren, aber nichts speichern.
+    return NextResponse.json({ id: "spam", status: "neu", createdAt: new Date().toISOString() }, { status: 201, headers: cors })
   }
 
   const baumart = typeof body.baumart === "string" ? body.baumart.trim() : ""
@@ -35,14 +68,14 @@ export const POST = withErrorHandler(async (req: Request) => {
   if (!baumart || baumart.length > 100) {
     return NextResponse.json(
       { error: "Baumart ist Pflicht und max. 100 Zeichen lang" },
-      { status: 400 }
+      { status: 400, headers: cors }
     )
   }
   if (!kontaktName || kontaktName.length > 200) {
-    return NextResponse.json({ error: "Kontaktname ist Pflicht" }, { status: 400 })
+    return NextResponse.json({ error: "Kontaktname ist Pflicht" }, { status: 400, headers: cors })
   }
   if (!kontaktEmail || !EMAIL_REGEX.test(kontaktEmail) || kontaktEmail.length > 200) {
-    return NextResponse.json({ error: "Gültige E-Mail erforderlich" }, { status: 400 })
+    return NextResponse.json({ error: "Gültige E-Mail erforderlich" }, { status: 400, headers: cors })
   }
 
   const kontaktTelefon =
@@ -98,7 +131,7 @@ export const POST = withErrorHandler(async (req: Request) => {
     select: { id: true, status: true, createdAt: true },
   })
 
-  return NextResponse.json(created, { status: 201 })
+  return NextResponse.json(created, { status: 201, headers: cors })
 })
 
 // GET: Liste aller Bestellanfragen (Admin)

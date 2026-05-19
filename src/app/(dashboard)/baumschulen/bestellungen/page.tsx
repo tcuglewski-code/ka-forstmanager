@@ -367,7 +367,7 @@ export default function BestellungenAdminPage() {
                       <StatusBadge status={b.status} />
                     </td>
                     <td className="px-4 py-3 text-right whitespace-nowrap">
-                      {b.status !== "storniert" && (
+                      {b.status !== "storniert" && b.status !== "geliefert" && (
                         <>
                           <button
                             onClick={() => setModalFor(b)}
@@ -375,12 +375,14 @@ export default function BestellungenAdminPage() {
                           >
                             {b.baumschuleId ? "Ändern" : "Zuweisen"}
                           </button>
-                          <button
-                            onClick={() => stornieren(b)}
-                            className="text-xs px-2 py-1 rounded-md border border-border hover:border-red-500 text-on-surface-variant"
-                          >
-                            Stornieren
-                          </button>
+                          {b.status !== "bestaetigt" && (
+                            <button
+                              onClick={() => stornieren(b)}
+                              className="text-xs px-2 py-1 rounded-md border border-border hover:border-red-500 text-on-surface-variant"
+                            >
+                              Stornieren
+                            </button>
+                          )}
                         </>
                       )}
                     </td>

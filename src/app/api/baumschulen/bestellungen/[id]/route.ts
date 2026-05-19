@@ -6,6 +6,16 @@ import { withErrorHandler } from "@/lib/api-handler"
 const ADMIN_ROLES = ["admin", "ka_admin", "administrator", "supervisor"]
 const VALID_STATUS = ["neu", "zugewiesen", "angeboten", "bestaetigt", "geliefert", "storniert"]
 
+// Erlaubte Übergänge — verhindert Rückwärtssprünge aus Endzuständen.
+const STATUS_TRANSITIONS: Record<string, string[]> = {
+  neu: ["zugewiesen", "storniert"],
+  zugewiesen: ["angeboten", "bestaetigt", "storniert", "neu"],
+  angeboten: ["bestaetigt", "storniert", "zugewiesen"],
+  bestaetigt: ["geliefert", "storniert"],
+  geliefert: [],
+  storniert: [],
+}
+
 // PATCH: Bestellung aktualisieren (Baumschule zuweisen, Status ändern)
 export const PATCH = withErrorHandler(async (
   req: Request,
@@ -28,7 +38,7 @@ export const PATCH = withErrorHandler(async (
   const data: Record<string, unknown> = {}
 
   if (body.baumschuleId !== undefined) {
-    if (body.baumschuleId === null) {
+    if (body.baumschuleId === null || body.baumschuleId === "") {
       data.baumschuleId = null
     } else if (typeof body.baumschuleId === "string" && body.baumschuleId.trim()) {
       const bs = await prisma.baumschule.findUnique({
@@ -52,6 +62,18 @@ export const PATCH = withErrorHandler(async (
         { error: `Ungültiger Status. Erlaubt: ${VALID_STATUS.join(", ")}` },
         { status: 400 }
       )
+    }
+    // State-Machine prüfen, außer Status ist bereits identisch
+    if (body.status !== existing.status) {
+      const allowed = STATUS_TRANSITIONS[existing.status] ?? []
+      if (!allowed.includes(body.status)) {
+        return NextResponse.json(
+          {
+            error: `Status-Übergang ${existing.status} → ${body.status} nicht erlaubt`,
+          },
+          { status: 400 }
+        )
+      }
     }
     data.status = body.status
   }
