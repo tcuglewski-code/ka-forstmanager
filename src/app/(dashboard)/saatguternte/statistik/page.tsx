@@ -1,7 +1,7 @@
 "use client"
 
 // @ts-nocheck
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import Link from "next/link"
 import {
   BarChart3, TrendingUp, Calendar, Clock, Euro,
@@ -71,6 +71,15 @@ export default function SaatgutStatistikV2Page() {
   const [error, setError]       = useState<string | null>(null)
   const [tab, setTab]           = useState<"uebersicht"|"ranking"|"vergleich"|"flaechen">("uebersicht")
   const [jahrFilter, setJahrFilter] = useState("alle")
+  // FEAT-03: aufklappbare Baumart-Detail nach Herkunft
+  const [expandedBaumarten, setExpandedBaumarten] = useState<Set<string>>(new Set())
+  const toggleBaumart = (b: string) => {
+    setExpandedBaumarten((prev) => {
+      const next = new Set(prev)
+      if (next.has(b)) next.delete(b); else next.add(b)
+      return next
+    })
+  }
 
   useEffect(() => {
     setLoading(true)
@@ -364,34 +373,64 @@ export default function SaatgutStatistikV2Page() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {vergleichEntries.map(([baumart, v]) => (
-                    <tr key={baumart} className="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors">
-                      <td className="px-3 py-2 font-medium">{baumart}</td>
-                      <td className="px-3 py-2 text-right tabular-nums text-gray-500">
-                        {v.jahr2024 > 0 ? fmt(v.jahr2024) : "–"}
-                      </td>
-                      <td className="px-3 py-2 text-right tabular-nums">
-                        {v.jahr2025 > 0 ? fmt(v.jahr2025) : "–"}
-                      </td>
-                      <td className="px-3 py-2 text-right">
-                        {v.diff !== 0 ? (
-                          <span className={`inline-flex items-center gap-0.5 font-medium ${
-                            v.diff > 0 ? "text-green-600" : "text-red-500"
-                          }`}>
-                            {v.diff > 0
-                              ? <ChevronUp className="w-3.5 h-3.5" />
-                              : <ChevronDown className="w-3.5 h-3.5" />
-                            }
-                            {v.diff > 0 ? "+" : ""}{fmt(v.diff)} kg
-                          </span>
-                        ) : (
-                          <span className="text-gray-400 inline-flex items-center gap-0.5">
-                            <Minus className="w-3 h-3" /> 0
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                  {vergleichEntries.map(([baumart, v]) => {
+                    const herkuenfte = jahresvergleich.baumartHerkunft?.[baumart] ?? []
+                    const hatHerkuenfte = herkuenfte.length > 1 || (herkuenfte.length === 1 && herkuenfte[0].herkunft !== "Unbekannt")
+                    const isExpanded = expandedBaumarten.has(baumart)
+                    return (
+                      <React.Fragment key={baumart}>
+                        <tr className="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors">
+                          <td className="px-3 py-2 font-medium">
+                            {hatHerkuenfte ? (
+                              <button
+                                onClick={() => toggleBaumart(baumart)}
+                                className="inline-flex items-center gap-1 hover:text-green-600 transition-colors"
+                              >
+                                {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5 rotate-180" />}
+                                {baumart}
+                                <span className="text-xs text-gray-400 ml-1">({herkuenfte.length} Herk.)</span>
+                              </button>
+                            ) : (
+                              baumart
+                            )}
+                          </td>
+                          <td className="px-3 py-2 text-right tabular-nums text-gray-500">
+                            {v.jahr2024 > 0 ? fmt(v.jahr2024) : "–"}
+                          </td>
+                          <td className="px-3 py-2 text-right tabular-nums">
+                            {v.jahr2025 > 0 ? fmt(v.jahr2025) : "–"}
+                          </td>
+                          <td className="px-3 py-2 text-right">
+                            {v.diff !== 0 ? (
+                              <span className={`inline-flex items-center gap-0.5 font-medium ${
+                                v.diff > 0 ? "text-green-600" : "text-red-500"
+                              }`}>
+                                {v.diff > 0
+                                  ? <ChevronUp className="w-3.5 h-3.5" />
+                                  : <ChevronDown className="w-3.5 h-3.5" />
+                                }
+                                {v.diff > 0 ? "+" : ""}{fmt(v.diff)} kg
+                              </span>
+                            ) : (
+                              <span className="text-gray-400 inline-flex items-center gap-0.5">
+                                <Minus className="w-3 h-3" /> 0
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                        {isExpanded && herkuenfte.map((h, i) => (
+                          <tr key={`${baumart}-${i}`} className="bg-gray-50/50 dark:bg-gray-900/30">
+                            <td className="px-3 py-1.5 pl-10 text-xs text-gray-600 dark:text-gray-400">
+                              ↳ Herkunft <span className="font-mono">{h.herkunft}</span>
+                            </td>
+                            <td className="px-3 py-1.5 text-right tabular-nums text-xs text-gray-500">—</td>
+                            <td className="px-3 py-1.5 text-right tabular-nums text-xs">{fmt(h.gesamtKg)} kg</td>
+                            <td className="px-3 py-1.5 text-right tabular-nums text-xs text-gray-500">{h.einsaetze} Einsätze</td>
+                          </tr>
+                        ))}
+                      </React.Fragment>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>

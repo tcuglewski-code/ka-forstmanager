@@ -143,6 +143,36 @@ export async function GET(req: NextRequest) {
       ORDER BY es.jahr, SUM(el."gesammeltKg") DESC
     `)
 
+    // FEAT-03: Detail nach Baumart + Herkunft (z.B. Traubeneiche 06 vs 07)
+    const baumartHerkunftRaw: {
+      baumart:   string
+      herkunft:  string | null
+      gesamt_kg: string
+      einsaetze: number
+    }[] = await prisma.$queryRawUnsafe(`
+      SELECT
+        ee.baumart,
+        ee.herkunft,
+        SUM(el."gesammeltKg")::text AS gesamt_kg,
+        COUNT(DISTINCT ee.id)::int  AS einsaetze
+      FROM "ErnteLeistung"  el
+      JOIN "ErnteEinsatz"   ee ON el."einsatzId" = ee.id
+      JOIN "ErnteSaison"    es ON ee."saisonId"  = es.id
+      ${jahrFilter ? `WHERE es.jahr = ${jahrFilter}` : ""}
+      GROUP BY ee.baumart, ee.herkunft
+      ORDER BY ee.baumart, SUM(el."gesammeltKg") DESC
+    `)
+
+    const baumartHerkunftMap: Record<string, { herkunft: string; gesamtKg: number; einsaetze: number }[]> = {}
+    for (const r of baumartHerkunftRaw) {
+      if (!baumartHerkunftMap[r.baumart]) baumartHerkunftMap[r.baumart] = []
+      baumartHerkunftMap[r.baumart].push({
+        herkunft: r.herkunft ?? "Unbekannt",
+        gesamtKg: Math.round(Number(r.gesamt_kg ?? 0) * 10) / 10,
+        einsaetze: r.einsaetze,
+      })
+    }
+
     const baumartVergleich: Record<string, {
       jahr2024: number; jahr2025: number; diff: number
     }> = {}
@@ -202,6 +232,7 @@ export async function GET(req: NextRequest) {
       jahresvergleich: {
         baumartVergleich,
         jahresSummen,
+        baumartHerkunft: baumartHerkunftMap,
       },
       flaechenPerformance: flaechenRaw.map((r) => ({
         registerNr: r.register_nr,

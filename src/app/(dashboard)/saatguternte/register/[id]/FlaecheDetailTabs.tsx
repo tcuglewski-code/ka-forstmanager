@@ -351,6 +351,29 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
   const lon = flaeche.lonDez
   const hasKoord = lat != null && lon != null
 
+  // FEAT-04: editierbares Forstamt-Feld
+  const [forstamt, setForstamt] = useState<string>(flaeche.forstamt ?? "")
+  const [forstamtSaved, setForstamtSaved] = useState<string>(flaeche.forstamt ?? "")
+  const [forstamtSaving, setForstamtSaving] = useState(false)
+  async function saveForstamt() {
+    if (forstamt === forstamtSaved) return
+    setForstamtSaving(true)
+    try {
+      const res = await fetch(`/api/saatguternte/register/${flaeche.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ forstamt }),
+      })
+      if (!res.ok) throw new Error("Speichern fehlgeschlagen")
+      setForstamtSaved(forstamt)
+      toast.success("Forstamt aktualisiert")
+    } catch {
+      toast.error("Fehler beim Speichern")
+    } finally {
+      setForstamtSaving(false)
+    }
+  }
+
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: "uebersicht", label: "Übersicht", icon: <Eye className="w-3.5 h-3.5" /> },
     { id: "profil", label: "Profil & Scout", icon: <Leaf className="w-3.5 h-3.5" /> },
@@ -418,8 +441,31 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
             <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-5">
               <h2 className="text-sm font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wide mb-4">Standort</h2>
               <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm mb-4">
+                {/* FEAT-04: editierbares Forstamt */}
+                <div className="col-span-2">
+                  <dt className="text-zinc-600 text-xs mb-1">Forstamt (Vertragspartner)</dt>
+                  <dd className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={forstamt}
+                      onChange={(e) => setForstamt(e.target.value)}
+                      onBlur={saveForstamt}
+                      placeholder="—"
+                      className="flex-1 bg-[var(--color-surface-container-highest)] border border-border rounded-md px-2 py-1 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
+                    />
+                    {forstamtSaving && <span className="text-xs text-zinc-600">…</span>}
+                    {!forstamtSaving && forstamt !== forstamtSaved && (
+                      <button
+                        type="button"
+                        onClick={saveForstamt}
+                        className="text-xs px-2 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded transition-colors"
+                      >
+                        Speichern
+                      </button>
+                    )}
+                  </dd>
+                </div>
                 {[
-                  ["Forstamt", flaeche.forstamt ?? "–"],
                   ["Revier", flaeche.revier ?? "–"],
                   ["Landkreis", flaeche.landkreis ?? "–"],
                   ["Wuchsbezirk", flaeche.wuchsbezirk ?? "–"],

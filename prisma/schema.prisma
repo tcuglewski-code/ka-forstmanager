@@ -1252,6 +1252,8 @@ model Ernte {
   saison        Int
   datum         DateTime
   baumart       String
+  herkunftCode  String?  // z.B. '06', '07', '818-07'
+  herkunftName  String?  // z.B. 'Nordrhein-Westfalen Tiefland'
   mengeKgGesamt Float?
   notizen       String?
   exportiert    Boolean  @default(false)
@@ -2628,4 +2630,15 @@ model AuftragPflanzItem {
 
   @@index([auftragId])
   @@index([preislisteId])
+}
+
+// FEAT-02: Gespeicherte Flächenplanungen
+model FlaechenPlanung {
+  id          String   @id @default(cuid())
+  name        String   // z.B. 'Planung Saison 2025' oder auto-generiert mit Datum
+  flaechenIds String[] // Array von RegisterFlaeche IDs
+  notizen     String?
+  erstelltVon String?  // User-Name oder ID
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

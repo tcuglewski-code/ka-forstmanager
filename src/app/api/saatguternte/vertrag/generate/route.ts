@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
       ortVertragspartei, // string z.B. "Kassel"
       ortWaldbesitzer,   // string z.B. "Darmstadt"
       datum,             // string z.B. "27.03.2026"
+      forstamtName: forstamtNameOverride, // FEAT-04: editierbarer Forstamt-Name
     } = body
 
     if (!flaechenIds || !Array.isArray(flaechenIds) || flaechenIds.length === 0) {
@@ -33,8 +34,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Keine Flächen gefunden" }, { status: 400 })
     }
 
-    // Forstamt aus erster Fläche
-    const forstamtName = flaechen[0].forstamt ?? "Unbekannt"
+    // Forstamt: editierbarer Override hat Vorrang, ansonsten aus erster Fläche
+    const forstamtName =
+      (typeof forstamtNameOverride === "string" && forstamtNameOverride.trim()) ||
+      flaechen[0].forstamt ||
+      "Unbekannt"
 
     // Tabellen-Daten für Template
     const FLAECHEN = flaechen.map((f) => ({

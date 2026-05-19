@@ -37,12 +37,18 @@ export async function PATCH(
   try {
     const { id } = await params
     const body = await req.json()
-    const { status, notizen, bewertung, naechsteErnte, letzteInspektion } = body
+    const { status, notizen, bewertung, naechsteErnte, letzteInspektion, forstamt } = body
 
-    // letzteAktualisierung auf RegisterFlaeche setzen
+    // FEAT-04: forstamt direkt an RegisterFlaeche editierbar machen
+    const flaecheUpdate: { letzteAktualisierung: Date; forstamt?: string | null } = {
+      letzteAktualisierung: new Date(),
+    }
+    if (forstamt !== undefined) {
+      flaecheUpdate.forstamt = forstamt === "" ? null : forstamt
+    }
     await prisma.registerFlaeche.update({
       where: { id },
-      data: { letzteAktualisierung: new Date() },
+      data: flaecheUpdate,
     }).catch(() => {}) // ignorieren falls nicht existent
 
     // Upsert FlaechenProfil

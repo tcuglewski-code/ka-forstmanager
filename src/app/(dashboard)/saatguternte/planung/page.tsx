@@ -2,7 +2,8 @@
 
 import { useState, useEffect, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { Map, X, MapPin, ChevronUp, ChevronDown, AlertTriangle, ArrowLeft } from "lucide-react"
+import Link from "next/link"
+import { Map, X, MapPin, ChevronUp, ChevronDown, AlertTriangle, ArrowLeft, ExternalLink, Save, FolderOpen, Trash2 } from "lucide-react"
 
 interface Flaeche {
   id: string
@@ -68,6 +69,90 @@ function PlanungPageInner() {
   const [planungFlaechen, setPlanungFlaechen] = useState<Flaeche[]>([])
   const [loading, setLoading] = useState(urlIds.length > 0)
   const [mapsWarning, setMapsWarning] = useState(false)
+
+  // FEAT-02: Gespeicherte Planungen
+  interface GespeichertePlanung {
+    id: string
+    name: string
+    flaechenIds: string[]
+    notizen: string | null
+    erstelltVon: string | null
+    createdAt: string
+  }
+  const [gespeicherte, setGespeicherte] = useState<GespeichertePlanung[]>([])
+  const [showSaveDialog, setShowSaveDialog] = useState(false)
+  const [planungName, setPlanungName] = useState("")
+  const [planungNotizen, setPlanungNotizen] = useState("")
+  const [savingPlanung, setSavingPlanung] = useState(false)
+  const [planungenLoaded, setPlanungenLoaded] = useState(false)
+
+  // Gespeicherte Planungen laden
+  useEffect(() => {
+    fetch("/api/saatguternte/planung")
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) setGespeicherte(data)
+      })
+      .catch(() => {})
+      .finally(() => setPlanungenLoaded(true))
+  }, [])
+
+  async function savePlanung() {
+    if (!planungName.trim() || planungFlaechen.length === 0) return
+    setSavingPlanung(true)
+    try {
+      const res = await fetch("/api/saatguternte/planung", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: planungName.trim(),
+          flaechenIds: planungFlaechen.map((f) => f.id),
+          notizen: planungNotizen.trim() || null,
+        }),
+      })
+      if (!res.ok) throw new Error("Speichern fehlgeschlagen")
+      const neue = await res.json()
+      setGespeicherte((prev) => [neue, ...prev])
+      setShowSaveDialog(false)
+      setPlanungName("")
+      setPlanungNotizen("")
+    } catch (e) {
+      console.error(e)
+      alert("Fehler beim Speichern der Planung")
+    } finally {
+      setSavingPlanung(false)
+    }
+  }
+
+  async function loadPlanung(p: GespeichertePlanung) {
+    if (p.flaechenIds.length === 0) return
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/saatguternte/flaechen-by-ids?ids=${p.flaechenIds.join(",")}`)
+      const data: Flaeche[] = await res.json()
+      const ordered = p.flaechenIds
+        .map((id) => data.find((f) => f.id === id))
+        .filter(Boolean) as Flaeche[]
+      setPlanungFlaechen(ordered)
+    } catch (e) {
+      console.error(e)
+      alert("Fehler beim Laden der Planung")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function deletePlanung(id: string) {
+    if (!confirm("Planung wirklich löschen?")) return
+    try {
+      const res = await fetch(`/api/saatguternte/planung?id=${id}`, { method: "DELETE" })
+      if (!res.ok) throw new Error("Löschen fehlgeschlagen")
+      setGespeicherte((prev) => prev.filter((p) => p.id !== id))
+    } catch (e) {
+      console.error(e)
+      alert("Fehler beim Löschen")
+    }
+  }
 
   // Beim Laden: URL-IDs direkt als Planungsflächen laden
   useEffect(() => {
@@ -247,7 +332,14 @@ function PlanungPageInner() {
                   {/* Infos */}
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                      <span className="font-mono text-sm text-[var(--color-on-surface)]">{f.registerNr}</span>
+                      <Link
+                        href={`/saatguternte/register/${f.id}`}
+                        className="font-mono text-sm text-[var(--color-on-surface)] hover:text-emerald-400 inline-flex items-center gap-1 group/link"
+                        title="Zur Detailansicht"
+                      >
+                        {f.registerNr}
+                        <ExternalLink className="w-3 h-3 opacity-50 group-hover/link:opacity-100" />
+                      </Link>
                       <span className="text-sm text-[var(--color-on-surface-variant)]">{f.baumart}</span>
                       {f.flaecheHa && (
                         <span className="text-xs text-zinc-600">{f.flaecheHa.toFixed(1)} ha</span>
@@ -284,6 +376,14 @@ function PlanungPageInner() {
           {/* Aktionen */}
           <div className="p-4 border-t border-border space-y-3">
             <button
+              onClick={() => setShowSaveDialog(true)}
+              disabled={planungFlaechen.length === 0}
+              className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
+            >
+              <Save className="w-4 h-4" />
+              Planung speichern
+            </button>
+            <button
               onClick={optimizeRoute}
               disabled={mitKoords < 2}
               className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
@@ -315,6 +415,98 @@ function PlanungPageInner() {
             >
               📄 Vertrag generieren
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* FEAT-02: Save Dialog */}
+      {showSaveDialog && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+              <Save className="w-5 h-5 text-emerald-400" />
+              Planung speichern
+            </h3>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Name</label>
+                <input
+                  type="text"
+                  value={planungName}
+                  onChange={(e) => setPlanungName(e.target.value)}
+                  placeholder={`Planung ${new Date().toLocaleDateString("de-DE")}`}
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
+                  autoFocus
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Notizen (optional)</label>
+                <textarea
+                  value={planungNotizen}
+                  onChange={(e) => setPlanungNotizen(e.target.value)}
+                  rows={3}
+                  className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500 resize-none"
+                />
+              </div>
+              <p className="text-xs text-zinc-600">{planungFlaechen.length} Fläche(n) werden gespeichert.</p>
+            </div>
+            <div className="flex gap-2 mt-5">
+              <button
+                onClick={() => { setShowSaveDialog(false); setPlanungName(""); setPlanungNotizen("") }}
+                className="flex-1 px-4 py-2 border border-border text-[var(--color-on-surface-variant)] hover:text-zinc-300 rounded-lg text-sm transition-colors"
+              >
+                Abbrechen
+              </button>
+              <button
+                onClick={savePlanung}
+                disabled={!planungName.trim() || savingPlanung}
+                className="flex-1 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
+              >
+                {savingPlanung ? "Speichern..." : "Speichern"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FEAT-02: Gespeicherte Planungen */}
+      {planungenLoaded && gespeicherte.length > 0 && (
+        <div className="mt-8 bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
+          <div className="px-4 py-3 border-b border-border flex items-center gap-2">
+            <FolderOpen className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
+            <h2 className="text-sm font-semibold text-foreground">Gespeicherte Planungen</h2>
+            <span className="text-xs text-zinc-600 ml-auto">{gespeicherte.length}</span>
+          </div>
+          <div className="divide-y divide-[#1e1e1e]">
+            {gespeicherte.map((p) => (
+              <div key={p.id} className="px-4 py-3 flex items-center gap-3 hover:bg-[var(--color-surface-container-lowest)] transition-colors">
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm text-[var(--color-on-surface)] font-medium truncate">{p.name}</div>
+                  <div className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">
+                    {new Date(p.createdAt).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })}
+                    {" · "}
+                    {p.flaechenIds.length} Fläche(n)
+                    {p.erstelltVon && ` · ${p.erstelltVon}`}
+                  </div>
+                  {p.notizen && (
+                    <div className="text-xs text-zinc-600 mt-0.5 truncate italic">{p.notizen}</div>
+                  )}
+                </div>
+                <button
+                  onClick={() => loadPlanung(p)}
+                  className="px-3 py-1.5 text-xs bg-[var(--color-surface-container-highest)] hover:bg-emerald-900/30 border border-border hover:border-emerald-500 text-zinc-300 hover:text-emerald-400 rounded-md font-medium transition-all"
+                >
+                  Laden
+                </button>
+                <button
+                  onClick={() => deletePlanung(p.id)}
+                  className="p-1.5 text-zinc-600 hover:text-red-400 transition-colors"
+                  title="Löschen"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       )}

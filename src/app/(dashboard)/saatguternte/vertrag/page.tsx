@@ -47,6 +47,8 @@ function VertragPageInner() {
   const [loading, setLoading] = useState(urlIds.length > 0)
   const [generating, setGenerating] = useState(false)
   const [aktivesForstamt, setAktivesForstamt] = useState<string>("")
+  // FEAT-04: editierbare Anzeige-Namen pro Forstamt-Gruppe (Vertragspartner-Bezeichnung)
+  const [forstamtAnzeige, setForstamtAnzeige] = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (urlIds.length === 0) {
@@ -83,7 +85,7 @@ function VertragPageInner() {
   }, [forstaemter.length])
 
   const aktiveFlächen = flaechenByForstamt[aktivesForstamt] ?? []
-  const forstamtName = aktivesForstamt || flaechen[0]?.forstamt || "–"
+  const forstamtName = forstamtAnzeige[aktivesForstamt] ?? (aktivesForstamt || flaechen[0]?.forstamt || "–")
 
   async function handleDocxDownload() {
     setGenerating(true)
@@ -99,6 +101,7 @@ function VertragPageInner() {
           ortVertragspartei,
           ortWaldbesitzer,
           datum,
+          forstamtName,
         }),
       })
       if (!res.ok) {
@@ -269,6 +272,21 @@ function VertragPageInner() {
                   </div>
                 )}
               </div>
+              {/* FEAT-04: Editierbarer Forstamt-Name für den aktuellen Vertrag */}
+              {aktivesForstamt && (
+                <div>
+                  <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">
+                    Vertragspartner (Forstamt)
+                    <span className="text-zinc-600 ml-1">– aus Fläche: {aktivesForstamt}</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={forstamtAnzeige[aktivesForstamt] ?? aktivesForstamt}
+                    onChange={(e) => setForstamtAnzeige((prev) => ({ ...prev, [aktivesForstamt]: e.target.value }))}
+                    className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+              )}
               <div>
                 <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Ort Vertragspartei (Unterschrift)</label>
                 <input
