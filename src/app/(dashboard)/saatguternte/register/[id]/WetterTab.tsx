@@ -56,7 +56,12 @@ function Spinner() {
 }
 
 function formatDatum(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("de-DE", {
+  // FIX 2: Open-Meteo liefert "YYYY-MM-DD". new Date() parsed das als UTC-Mitternacht,
+  // was je nach lokaler Zeitzone den Tag um 1 nach hinten verschiebt. Daher explizit
+  // mit lokaler Timezone parsen.
+  const [year, month, day] = dateStr.split("-").map(Number)
+  if (!year || !month || !day) return dateStr
+  return new Date(year, month - 1, day).toLocaleDateString("de-DE", {
     weekday: "short",
     day: "2-digit",
     month: "2-digit",
