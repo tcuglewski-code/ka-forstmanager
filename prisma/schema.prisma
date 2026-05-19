@@ -1421,15 +1421,15 @@ model BaumschulPreisliste {
 }
 
 model BaumschulBestellung {
-  id           String     @id @default(cuid())
-  baumschuleId String
-  baumschule   Baumschule @relation(fields: [baumschuleId], references: [id])
-  wpOrderId    Int?       // WooCommerce Order ID
+  id           String      @id @default(cuid())
+  baumschuleId String?
+  baumschule   Baumschule? @relation(fields: [baumschuleId], references: [id])
+  wpOrderId    Int?        // WooCommerce Order ID
   baumart      String
-  menge        Int
+  menge        Int         @default(0)
   preis        Float?
-  einheit      String     @default("Stück")
-  status       String     @default("neu") // neu, bestaetigt, geliefert, storniert
+  einheit      String      @default("Stück")
+  status       String      @default("neu") // neu, zugewiesen, angeboten, bestaetigt, geliefert, storniert
   notizen      String?
   // Website-Anfrage Felder
   kontaktName    String?

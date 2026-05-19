@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
-import { Plus, TreePine, MapPin, Mail, Phone, X, Package, ChevronRight } from "lucide-react"
+import { Plus, TreePine, MapPin, Mail, Phone, X, Package, ChevronRight, Inbox } from "lucide-react"
 import { toast } from "sonner"
 
 interface Baumschule {
@@ -140,9 +140,17 @@ export default function BaumschulenListPage() {
             Verwaltung der Baumschul-Partner inkl. Sortiment & Preislisten
           </p>
         </div>
-        <button onClick={() => setShowModal(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-500">
-          <Plus className="w-4 h-4" /> Neue Baumschule
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/baumschulen/bestellungen"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-border text-on-surface hover:border-emerald-500/50"
+          >
+            <Inbox className="w-4 h-4" /> Eingehende Bestellungen
+          </Link>
+          <button onClick={() => setShowModal(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-500">
+            <Plus className="w-4 h-4" /> Neue Baumschule
+          </button>
+        </div>
       </div>
 
       {loading ? (
