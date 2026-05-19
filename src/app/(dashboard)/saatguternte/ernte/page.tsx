@@ -26,12 +26,17 @@ export default async function ErnteHistoriePage({
   const skip = (page - 1) * limit
 
   // Filter aufbauen
+  // FIX 4: defensives Spread um Konflikte zwischen mehreren where.profil-Bedingungen zu vermeiden
   const where: any = {}
   if (saison) where.saison = saison
   if (params.baumart) where.baumart = { contains: params.baumart, mode: "insensitive" }
   if (params.bundesland) {
     where.profil = {
-      flaeche: { bundesland: { contains: params.bundesland, mode: "insensitive" } },
+      ...(where.profil ?? {}),
+      flaeche: {
+        ...((where.profil as any)?.flaeche ?? {}),
+        bundesland: { contains: params.bundesland, mode: "insensitive" },
+      },
     }
   }
 
