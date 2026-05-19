@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
-import { Map, X, MapPin, ChevronUp, ChevronDown, AlertTriangle, ArrowLeft, ExternalLink, Save, FolderOpen, Trash2 } from "lucide-react"
+import { Map, X, MapPin, ChevronUp, ChevronDown, AlertTriangle, ArrowLeft, ExternalLink, Save, FolderOpen, Trash2, Copy } from "lucide-react"
 
 interface Flaeche {
   id: string
@@ -134,9 +134,37 @@ function PlanungPageInner() {
         .map((id) => data.find((f) => f.id === id))
         .filter(Boolean) as Flaeche[]
       setPlanungFlaechen(ordered)
+      // Scroll nach oben damit Nutzer geladene Liste sieht
+      if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" })
     } catch (e) {
       console.error(e)
       alert("Fehler beim Laden der Planung")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // FIX 9: Template-Feature — lädt Flächen UND öffnet Save-Dialog mit Vorschlagsnamen,
+  // sodass eine neue Planung auf Basis der alten erstellt werden kann.
+  async function useAsTemplate(p: GespeichertePlanung) {
+    if (p.flaechenIds.length === 0) return
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/saatguternte/flaechen-by-ids?ids=${p.flaechenIds.join(",")}`)
+      const data: Flaeche[] = await res.json()
+      const ordered = p.flaechenIds
+        .map((id) => data.find((f) => f.id === id))
+        .filter(Boolean) as Flaeche[]
+      setPlanungFlaechen(ordered)
+      // Save-Dialog vorbereiten mit "Kopie von …"
+      const heute = new Date().toLocaleDateString("de-DE")
+      setPlanungName(`Kopie von ${p.name} – ${heute}`)
+      setPlanungNotizen(p.notizen ?? "")
+      setShowSaveDialog(true)
+      if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" })
+    } catch (e) {
+      console.error(e)
+      alert("Fehler beim Laden der Vorlage")
     } finally {
       setLoading(false)
     }
@@ -423,7 +451,7 @@ function PlanungPageInner() {
       {showSaveDialog && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-[var(--color-on-surface)] mb-4 flex items-center gap-2">
               <Save className="w-5 h-5 text-emerald-400" />
               Planung speichern
             </h3>
@@ -474,7 +502,7 @@ function PlanungPageInner() {
         <div className="mt-8 bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
           <div className="px-4 py-3 border-b border-border flex items-center gap-2">
             <FolderOpen className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
-            <h2 className="text-sm font-semibold text-foreground">Gespeicherte Planungen</h2>
+            <h2 className="text-sm font-semibold text-[var(--color-on-surface)]">Gespeicherte Planungen</h2>
             <span className="text-xs text-zinc-600 ml-auto">{gespeicherte.length}</span>
           </div>
           <div className="divide-y divide-[#1e1e1e]">
@@ -495,8 +523,17 @@ function PlanungPageInner() {
                 <button
                   onClick={() => loadPlanung(p)}
                   className="px-3 py-1.5 text-xs bg-[var(--color-surface-container-highest)] hover:bg-emerald-900/30 border border-border hover:border-emerald-500 text-zinc-300 hover:text-emerald-400 rounded-md font-medium transition-all"
+                  title="Diese Planung als aktive Planung laden"
                 >
                   Laden
+                </button>
+                <button
+                  onClick={() => useAsTemplate(p)}
+                  className="px-3 py-1.5 text-xs bg-[var(--color-surface-container-highest)] hover:bg-blue-900/30 border border-border hover:border-blue-500 text-zinc-300 hover:text-blue-400 rounded-md font-medium transition-all flex items-center gap-1"
+                  title="Als Vorlage für neue Planung verwenden"
+                >
+                  <Copy className="w-3 h-3" />
+                  Als Vorlage
                 </button>
                 <button
                   onClick={() => deletePlanung(p.id)}
