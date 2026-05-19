@@ -1,26 +1,26 @@
 import { redirect } from "next/navigation"
-import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { BaumschulePortal } from "@/components/baumschule/BaumschulePortal"
 
-export default async function BaumschulePortalPage() {
-  const session = await auth()
+// FIX 8: Portal akzeptiert jetzt einen Token via URL (?token=xxx).
+// Kein NextAuth-Session nötig — Token wird auf jeder Seite verifiziert.
+export default async function BaumschulePortalPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ token?: string }>
+}) {
+  const { token } = await searchParams
 
-  if (!session?.user) {
+  if (!token) {
     redirect("/baumschule/login")
   }
 
-  const userRole = (session.user as any).role
-  if (userRole !== "baumschule" && userRole !== "ka_admin") {
-    redirect("/dashboard")
-  }
-
-  // Baumschule des eingeloggten Users laden
-  const baumschule = await prisma.baumschule.findFirst({
-    where: { userId: session.user.id },
+  // Token verifizieren
+  const baumschule = await prisma.baumschule.findUnique({
+    where: { loginToken: token },
   })
 
-  if (!baumschule) {
+  if (!baumschule || !baumschule.loginTokenExpiry || baumschule.loginTokenExpiry < new Date()) {
     redirect("/baumschule/login")
   }
 

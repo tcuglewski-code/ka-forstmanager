@@ -42,9 +42,9 @@ function BaumschuleLoginForm() {
         setBaumschuleName(daten.baumschule.name)
         setStatus("erfolg")
 
-        // Weiterleitung zum Baumschul-Portal nach 2 Sekunden
+        // FIX 8: Weiterleitung mit Token (Portal validiert token-basiert, kein NextAuth)
         setTimeout(() => {
-          router.push(`/baumschule/portal?id=${daten.baumschule.id}`)
+          router.push(`/baumschule/portal?token=${encodeURIComponent(token!)}`)
         }, 2000)
       } catch {
         setStatus("fehler")
