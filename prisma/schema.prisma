@@ -2672,3 +2672,29 @@ model FlaechenPlanung {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+// ANALYTICS — Sprint Analytics (2026-05)
+// Persistierte Monats-Snapshots für Trend-Auswertungen + KI-Insights
+model AnalyticsSnapshot {
+  id        String   @id @default(cuid())
+  tenantId  String   @default("koch-aufforstung")
+  periode   String   // "2026-05"
+  metriken  Json
+  createdAt DateTime @default(now())
+
+  @@index([tenantId, periode])
+}
+
+model AiInsight {
+  id              String   @id @default(cuid())
+  tenantId        String   @default("koch-aufforstung")
+  insightType     String
+  titel           String
+  zusammenfassung String
+  empfehlungen    Json
+  quelldaten      Json?
+  konfidenz       Float?
+  generatedAt     DateTime @default(now())
+
+  @@index([tenantId, insightType])
+}

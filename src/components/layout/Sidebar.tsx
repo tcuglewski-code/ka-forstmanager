@@ -349,6 +349,27 @@ export function Sidebar() {
             )}
           </div>
 
+          {/* Admin: Business Analytics */}
+          {isAdmin && (
+            <Link
+              href="/analytics"
+              onClick={() => setOpen(false)}
+              className={navItemBase}
+              style={
+                pathname.startsWith("/analytics") ? navItemActive : navItemDefault
+              }
+              onMouseEnter={e => {
+                if (!pathname.startsWith("/analytics")) (e.currentTarget as HTMLElement).style.backgroundColor = "var(--sidebar-hover)"
+              }}
+              onMouseLeave={e => {
+                if (!pathname.startsWith("/analytics")) (e.currentTarget as HTMLElement).style.backgroundColor = "transparent"
+              }}
+            >
+              <BarChart3 className="w-4 h-4 flex-shrink-0" />
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "0.875rem" }}>Analytics</span>
+            </Link>
+          )}
+
           {/* Admin: Benutzerverwaltung */}
           {isAdmin && (
             <Link
