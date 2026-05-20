@@ -55,6 +55,8 @@ export async function POST(
       kueche: body.kueche ?? false,
       haustierErlaubt: body.haustierErlaubt ?? false,
       fruehstueck: body.fruehstueck ?? false,
+      trailerParkplatz: body.trailerParkplatz ?? false,
+      frueherCheckIn: body.frueherCheckIn ?? false,
     }
 
     const unterkunft = await prisma.unterkunft.upsert({

@@ -284,12 +284,14 @@ model Unterkunft {
   kontakt     String?
   externeUrl  String?
   notizen     String?
-  wlan            Boolean @default(false)
-  waschmaschine   Boolean @default(false)
-  parkplatz       Boolean @default(false)
-  kueche          Boolean @default(false)
-  haustierErlaubt Boolean @default(false)
-  fruehstueck     Boolean @default(false)
+  wlan             Boolean @default(false)
+  waschmaschine    Boolean @default(false)
+  parkplatz        Boolean @default(false)
+  kueche           Boolean @default(false)
+  haustierErlaubt  Boolean @default(false)
+  fruehstueck      Boolean @default(false)
+  trailerParkplatz Boolean @default(false)
+  frueherCheckIn   Boolean @default(false)
   auftragId   String?  @unique
   auftrag     Auftrag? @relation(fields: [auftragId], references: [id], onDelete: SetNull)
   createdAt   DateTime @default(now())

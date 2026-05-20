@@ -1705,6 +1705,8 @@ export default function AuftragDetailPage() {
                   : null
               }
               wizardDaten={(auftrag.wizardDaten as Record<string, unknown> | null) ?? null}
+              lat={auftrag.lat ?? null}
+              lng={auftrag.lng ?? null}
             />
           </div>
 

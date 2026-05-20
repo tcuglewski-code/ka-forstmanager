@@ -19,6 +19,8 @@ interface Unterkunft {
   kueche?: boolean
   haustierErlaubt?: boolean
   fruehstueck?: boolean
+  trailerParkplatz?: boolean
+  frueherCheckIn?: boolean
 }
 
 interface Props {
@@ -34,6 +36,9 @@ interface Props {
   anzahlMitarbeiter?: number | null
   gruppe?: { name: string; mitgliederAnzahl?: number | null } | null
   wizardDaten?: Record<string, unknown> | null
+  // GPS-Koordinaten für präzise Suche
+  lat?: number | null
+  lng?: number | null
 }
 
 interface SearchState {
@@ -45,9 +50,9 @@ interface SearchState {
   wlan: boolean
   waschmaschine: boolean
   parkplatz: boolean
-  kueche: boolean
   haustierErlaubt: boolean
-  fruehstueck: boolean
+  trailerParkplatz: boolean
+  frueherCheckIn: boolean
 }
 
 const RADIUS_OPTIONS = ["10km", "20km", "30km", "50km", "100km"]
@@ -66,6 +71,8 @@ const EMPTY: Unterkunft = {
   kueche: false,
   haustierErlaubt: false,
   fruehstueck: false,
+  trailerParkplatz: false,
+  frueherCheckIn: false,
 }
 
 function toDateInput(value?: string | null): string {
@@ -90,6 +97,8 @@ export function UnterkunftCard({
   anzahlMitarbeiter,
   gruppe,
   wizardDaten,
+  lat,
+  lng,
 }: Props) {
   const [unterkunft, setUnterkunft] = useState<Unterkunft | null>(null)
   const [loading, setLoading] = useState(true)
@@ -124,9 +133,9 @@ export function UnterkunftCard({
     wlan: false,
     waschmaschine: false,
     parkplatz: false,
-    kueche: false,
     haustierErlaubt: false,
-    fruehstueck: false,
+    trailerParkplatz: false,
+    frueherCheckIn: false,
   })
 
   // Sync defaults wenn sich Props ändern (z. B. wenn Auftrag geladen wird)
@@ -156,9 +165,9 @@ export function UnterkunftCard({
             wlan: !!data.wlan,
             waschmaschine: !!data.waschmaschine,
             parkplatz: !!data.parkplatz,
-            kueche: !!data.kueche,
             haustierErlaubt: !!data.haustierErlaubt,
-            fruehstueck: !!data.fruehstueck,
+            trailerParkplatz: !!data.trailerParkplatz,
+            frueherCheckIn: !!data.frueherCheckIn,
           }))
         }
       }
@@ -220,38 +229,57 @@ export function UnterkunftCard({
     if (search.wlan) filters.push("facility%3D107")
     if (search.waschmaschine) filters.push("facility%3D116")
     if (search.parkplatz) filters.push("facility%3D2")
-    if (search.kueche) filters.push("facility%3D17")
     if (search.haustierErlaubt) filters.push("pets_score_breakdown%3D1")
+    // Trailer-Stellplatz und früher Check-in haben keinen Booking.com facility code
     const nflt = filters.join("%3B")
 
+    const radiusKm = parseInt(search.radius, 10) || 30
+
+    // Präferenz: 1) GPS-Koordinaten 2) PLZ aus wizardDaten 3) Ort-Name
     const params = new URLSearchParams()
-    if (search.ort) params.set("ss", search.ort)
+    if (lat != null && lng != null) {
+      params.set("latitude", String(lat))
+      params.set("longitude", String(lng))
+    } else if (flaeche_plz) {
+      const ssVal = [flaeche_plz, flaeche_ort].filter(Boolean).join(" ")
+      params.set("ss", ssVal || flaeche_plz)
+    } else if (search.ort) {
+      params.set("ss", search.ort)
+    }
     if (search.vonDatum) params.set("checkin", search.vonDatum)
     if (search.bisDatum) params.set("checkout", search.bisDatum)
     params.set("group_adults", String(search.personen || 1))
-    const radiusKm = parseInt(search.radius, 10)
-    if (!isNaN(radiusKm) && radiusKm > 0) params.set("radius", String(radiusKm))
+    params.set("radius", String(radiusKm))
 
     const base = `https://www.booking.com/searchresults.html?${params.toString()}`
     return nflt ? `${base}&nflt=${nflt}` : base
-  }, [search])
+  }, [search, lat, lng, flaeche_plz, flaeche_ort])
 
   const airbnbUrl = useMemo(() => {
     const amenities: string[] = []
     if (search.wlan) amenities.push("&amenities[]=4")
     if (search.waschmaschine) amenities.push("&amenities[]=33")
     if (search.parkplatz) amenities.push("&amenities[]=7")
-    if (search.kueche) amenities.push("&amenities[]=8")
     if (search.haustierErlaubt) amenities.push("&amenities[]=12")
 
-    const slug = encodeURIComponent(search.ort || "Deutschland")
     const params = new URLSearchParams()
     if (search.vonDatum) params.set("checkin", search.vonDatum)
     if (search.bisDatum) params.set("checkout", search.bisDatum)
     params.set("adults", String(search.personen || 1))
 
+    // Koordinaten-basierte Bounding-Box wenn lat/lng vorhanden
+    if (lat != null && lng != null) {
+      params.set("sw_lat", (lat - 0.3).toFixed(6))
+      params.set("sw_lng", (lng - 0.3).toFixed(6))
+      params.set("ne_lat", (lat + 0.3).toFixed(6))
+      params.set("ne_lng", (lng + 0.3).toFixed(6))
+      params.set("search_by_map", "true")
+      return `https://www.airbnb.de/s/homes?${params.toString()}${amenities.join("")}`
+    }
+
+    const slug = encodeURIComponent(search.ort || "Deutschland")
     return `https://www.airbnb.de/s/${slug}/homes?${params.toString()}${amenities.join("")}`
-  }, [search])
+  }, [search, lat, lng])
 
   // ──────────────────────────────────────────────────────────────────────
   // Render Helper
@@ -315,12 +343,12 @@ export function UnterkunftCard({
         <label className="block text-[10px] text-on-surface-variant uppercase tracking-wider mb-1.5">Ausstattung (Filter)</label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-xs">
           {[
-            { key: "wlan", label: "WLAN" },
+            { key: "wlan", label: "WLAN / Internet" },
             { key: "waschmaschine", label: "Waschmaschine" },
-            { key: "parkplatz", label: "Parkplatz" },
-            { key: "kueche", label: "Küche" },
-            { key: "haustierErlaubt", label: "Haustiere" },
-            { key: "fruehstueck", label: "Frühstück" },
+            { key: "parkplatz", label: "Parkplatz (PKW)" },
+            { key: "trailerParkplatz", label: "Großer Stellplatz / Trailer" },
+            { key: "haustierErlaubt", label: "Haustiere erlaubt" },
+            { key: "frueherCheckIn", label: "Früher Check-in möglich" },
           ].map(({ key, label }) => (
             <label key={key} className="flex items-center gap-1.5 cursor-pointer text-on-surface">
               <input
@@ -449,12 +477,12 @@ export function UnterkunftCard({
           <label className="block text-xs text-on-surface-variant mb-1.5">Ausstattung</label>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm">
             {[
-              { key: "wlan", label: "WLAN" },
+              { key: "wlan", label: "WLAN / Internet" },
               { key: "waschmaschine", label: "Waschmaschine" },
-              { key: "parkplatz", label: "Parkplatz" },
-              { key: "kueche", label: "Küche" },
-              { key: "haustierErlaubt", label: "Haustiere" },
-              { key: "fruehstueck", label: "Frühstück" },
+              { key: "parkplatz", label: "Parkplatz (PKW)" },
+              { key: "trailerParkplatz", label: "Großer Stellplatz / Trailer" },
+              { key: "haustierErlaubt", label: "Haustiere erlaubt" },
+              { key: "frueherCheckIn", label: "Früher Check-in möglich" },
             ].map(({ key, label }) => (
               <label key={key} className="flex items-center gap-1.5 cursor-pointer text-on-surface">
                 <input
@@ -502,9 +530,9 @@ export function UnterkunftCard({
       { label: "WLAN", on: !!unterkunft.wlan },
       { label: "Waschmaschine", on: !!unterkunft.waschmaschine },
       { label: "Parkplatz", on: !!unterkunft.parkplatz },
-      { label: "Küche", on: !!unterkunft.kueche },
+      { label: "Trailer-Stellplatz", on: !!unterkunft.trailerParkplatz },
       { label: "Haustiere", on: !!unterkunft.haustierErlaubt },
-      { label: "Frühstück", on: !!unterkunft.fruehstueck },
+      { label: "Früher Check-in", on: !!unterkunft.frueherCheckIn },
     ]
     return (
       <div className="space-y-3">
