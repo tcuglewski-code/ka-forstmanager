@@ -1704,6 +1704,7 @@ export default function AuftragDetailPage() {
                   ? { name: auftrag.gruppe.name, mitgliederAnzahl: null }
                   : null
               }
+              wizardDaten={(auftrag.wizardDaten as Record<string, unknown> | null) ?? null}
             />
           </div>
 

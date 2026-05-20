@@ -33,10 +33,12 @@ interface Props {
   waldbesitzerOrt?: string | null
   anzahlMitarbeiter?: number | null
   gruppe?: { name: string; mitgliederAnzahl?: number | null } | null
+  wizardDaten?: Record<string, unknown> | null
 }
 
 interface SearchState {
   ort: string
+  radius: string // z.B. "30km"
   personen: number
   vonDatum: string // YYYY-MM-DD
   bisDatum: string
@@ -47,6 +49,8 @@ interface SearchState {
   haustierErlaubt: boolean
   fruehstueck: boolean
 }
+
+const RADIUS_OPTIONS = ["10km", "20km", "30km", "50km", "100km"]
 
 const EMPTY: Unterkunft = {
   name: "",
@@ -85,6 +89,7 @@ export function UnterkunftCard({
   waldbesitzerOrt,
   anzahlMitarbeiter,
   gruppe,
+  wizardDaten,
 }: Props) {
   const [unterkunft, setUnterkunft] = useState<Unterkunft | null>(null)
   const [loading, setLoading] = useState(true)
@@ -92,13 +97,27 @@ export function UnterkunftCard({
   const [form, setForm] = useState<Unterkunft>(EMPTY)
 
   // Defaults für Suche
-  const defaultOrt = waldbesitzerOrt || ort || bundesland || ""
+  // Auto-fill aus wizardDaten: 'PLZ Ort' bevorzugt, dann Forstamt, dann Fallbacks
+  const wd = (wizardDaten as Record<string, string> | null) ?? {}
+  const flaeche_plz = wd.flaeche_plz ?? ""
+  const flaeche_ort = wd.flaeche_ort ?? ""
+  const forstamt = wd.flaeche_forstamt ?? wd.forstamt ?? ""
+  const ortAuto =
+    [flaeche_plz, flaeche_ort].filter(Boolean).join(" ") ||
+    forstamt ||
+    waldbesitzerOrt ||
+    ort ||
+    bundesland ||
+    ""
+
+  const defaultOrt = ortAuto
   const defaultPersonen = gruppe?.mitgliederAnzahl || anzahlMitarbeiter || anzahlPersonen || 4
   const defaultVon = toDateInput(startDatum)
   const defaultBis = toDateInput(endDatum)
 
   const [search, setSearch] = useState<SearchState>({
     ort: defaultOrt,
+    radius: "30km",
     personen: defaultPersonen,
     vonDatum: defaultVon,
     bisDatum: defaultBis,
@@ -210,6 +229,8 @@ export function UnterkunftCard({
     if (search.vonDatum) params.set("checkin", search.vonDatum)
     if (search.bisDatum) params.set("checkout", search.bisDatum)
     params.set("group_adults", String(search.personen || 1))
+    const radiusKm = parseInt(search.radius, 10)
+    if (!isNaN(radiusKm) && radiusKm > 0) params.set("radius", String(radiusKm))
 
     const base = `https://www.booking.com/searchresults.html?${params.toString()}`
     return nflt ? `${base}&nflt=${nflt}` : base
@@ -247,6 +268,18 @@ export function UnterkunftCard({
             placeholder="z.B. Eberswalde"
             className="w-full bg-[var(--color-surface-container)] border border-border rounded px-2 py-1.5 text-xs text-on-surface focus:outline-none focus:border-emerald-500"
           />
+        </div>
+        <div>
+          <label className="block text-[10px] text-on-surface-variant uppercase tracking-wider mb-1">Suchradius</label>
+          <select
+            value={search.radius}
+            onChange={(e) => setSearch({ ...search, radius: e.target.value })}
+            className="w-full bg-[var(--color-surface-container)] border border-border rounded px-2 py-1.5 text-xs text-on-surface focus:outline-none focus:border-emerald-500"
+          >
+            {RADIUS_OPTIONS.map((r) => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label className="block text-[10px] text-on-surface-variant uppercase tracking-wider mb-1">Personen</label>
