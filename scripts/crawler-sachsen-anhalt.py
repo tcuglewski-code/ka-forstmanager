@@ -1,3 +1,4 @@
+import os
 #!/usr/bin/env python3
 """
 NW-FVA Hessen EZR Crawler v2 - Optimiert
@@ -7,7 +8,7 @@ Strategie: 1x Listenpage → alle show-IDs + Basisdaten → Detailseiten für Ko
 import urllib.request, urllib.parse, ssl, http.cookiejar, re, time, json, sys
 import psycopg2
 
-DB_URL = "postgresql://neondb_owner:npg_1GXdqethC2bJ@ep-misty-moon-aldvc64t-pooler.c-3.eu-central-1.aws.neon.tech/ForstManagerKADB?sslmode=require"
+DB_URL = "postgresql://neondb_owner:" + os.environ.get("NEON_PASSWORD","") + "@ep-misty-moon-aldvc64t-pooler.c-3.eu-central-1.aws.neon.tech/ForstManagerKADB?sslmode=require"
 BASE_URL = "https://www.nw-fva.de/EZR-ST"
 USERNAME = "cuglewski@koch-aufforstung.de"
 PASSWORD = "Stani123"
