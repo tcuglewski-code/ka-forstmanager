@@ -64,7 +64,9 @@ function totalDistKm(flaechen: Flaeche[]): number {
 function PlanungPageInner() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const urlIds = searchParams.get("flaechenIds")?.split(",").filter(Boolean) ?? []
+  // Stabile Repräsentation für useEffect-Deps (Set/Arrays sind referenz-instabil)
+  const flaechenIdsParam = searchParams.get("flaechenIds") ?? ""
+  const urlIds = flaechenIdsParam.split(",").filter(Boolean)
 
   const [planungFlaechen, setPlanungFlaechen] = useState<Flaeche[]>([])
   const [loading, setLoading] = useState(urlIds.length > 0)
@@ -182,25 +184,31 @@ function PlanungPageInner() {
     }
   }
 
-  // Beim Laden: URL-IDs direkt als Planungsflächen laden
+  // Beim Laden: URL-IDs direkt als Planungsflächen laden.
+  // FIX BUG 1: reagiert jetzt auf URL-Änderungen (vorher nur `[]` → State blieb
+  // stale, wenn der Nutzer mit neuen Flächen-Auswahl auf diese Seite navigierte).
   useEffect(() => {
-    if (urlIds.length === 0) {
+    const ids = flaechenIdsParam.split(",").filter(Boolean)
+    if (ids.length === 0) {
       setLoading(false)
       return
     }
-    fetch(`/api/saatguternte/flaechen-by-ids?ids=${urlIds.join(",")}`)
+    setLoading(true)
+    fetch(`/api/saatguternte/flaechen-by-ids?ids=${ids.join(",")}`)
       .then((r) => r.json())
-      .then((data: Flaeche[]) => {
-        // Reihenfolge der URL-IDs beibehalten
-        const ordered = urlIds
+      .then((data: Flaeche[] | { error?: string }) => {
+        if (!Array.isArray(data)) {
+          setLoading(false)
+          return
+        }
+        const ordered = ids
           .map((id) => data.find((f) => f.id === id))
           .filter(Boolean) as Flaeche[]
         setPlanungFlaechen(ordered)
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [flaechenIdsParam])
 
   const remove = (id: string) => setPlanungFlaechen((prev) => prev.filter((f) => f.id !== id))
 
@@ -413,24 +421,33 @@ function PlanungPageInner() {
             </button>
             <button
               onClick={optimizeRoute}
-              disabled={mitKoords < 2}
+              disabled={planungFlaechen.length < 2}
+              title={mitKoords < 2 ? "Mindestens 2 Flächen mit Koordinaten erforderlich" : undefined}
               className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
             >
               🗺️ Optimale Route berechnen (TSP)
+              {planungFlaechen.length >= 2 && mitKoords < 2 && (
+                <span className="block text-[10px] text-amber-400 mt-0.5">⚠ Zu wenig Flächen mit Koordinaten</span>
+              )}
             </button>
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={exportEinsatzliste}
-                className="px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-blue-500 text-zinc-300 hover:text-blue-400 rounded-lg text-sm font-medium transition-all"
+                disabled={planungFlaechen.length === 0}
+                className="px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-blue-400 rounded-lg text-sm font-medium transition-all"
               >
                 📋 Einsatzliste exportieren
               </button>
               <button
                 onClick={openGoogleMaps}
-                disabled={mitKoords === 0}
+                disabled={planungFlaechen.length === 0}
+                title={mitKoords === 0 ? "Keine Fläche hat Koordinaten" : undefined}
                 className="px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-orange-400 rounded-lg text-sm font-medium transition-all"
               >
                 🌍 Google Maps öffnen
+                {planungFlaechen.length > 0 && mitKoords === 0 && (
+                  <span className="block text-[10px] text-amber-400 mt-0.5">⚠ Keine Koordinaten</span>
+                )}
               </button>
             </div>
             <button

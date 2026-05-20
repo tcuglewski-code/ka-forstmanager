@@ -60,6 +60,29 @@ export default async function ErnteHistoriePage({
     prisma.ernte.count({ where }),
   ])
 
+  // FIX 4: Erntehistorie zeigt zusätzlich ErnteEinsatz-Records (neueres Saison-/Gruppen-Modell).
+  // ErnteEinsatz lebt parallel zu Ernte — beide werden gemergt dargestellt, damit GFs die
+  // Saison-Einsätze sehen, auch wenn keine alten Ernte-Records existieren.
+  const einsatzWhere: any = {}
+  if (params.baumart) einsatzWhere.baumart = { contains: params.baumart, mode: "insensitive" }
+  if (saison) einsatzWhere.saison = { jahr: saison }
+  if (params.bundesland) {
+    einsatzWhere.flaeche = {
+      bundesland: { contains: params.bundesland, mode: "insensitive" },
+    }
+  }
+  const einsaetzeRaw = await prisma.ernteEinsatz.findMany({
+    where: einsatzWhere,
+    orderBy: { datum: "desc" },
+    take: limit,
+    include: {
+      saison: { select: { jahr: true } },
+      gruppe: { select: { name: true } },
+      flaeche: { select: { id: true, registerNr: true, bundesland: true } },
+      leistungen: { include: { person: { select: { name: true } } } },
+    },
+  })
+
   // Statistik-Cards (für gefilterte Saison)
   const [statsAgg, baumartCount, flaechenCount, sammlerRaw, saisons] = await Promise.all([
     prisma.ernte.aggregate({
@@ -223,10 +246,21 @@ export default async function ErnteHistoriePage({
               </tr>
             </thead>
             <tbody>
-              {ernten.length === 0 ? (
+              {ernten.length === 0 && einsaetzeRaw.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-4 py-16 text-center text-[var(--color-on-surface-variant)]">
-                    Keine Ernten gefunden.
+                    <div className="space-y-2">
+                      <p>Noch keine Ernten erfasst.</p>
+                      <p className="text-xs">
+                        Sobald Ernten oder Saison-Einsätze in der App protokolliert werden, erscheinen sie hier.
+                      </p>
+                      <Link
+                        href="/saatguternte/ernte/neu"
+                        className="inline-block mt-2 text-emerald-400 hover:text-emerald-300 text-sm"
+                      >
+                        + Neue Ernte erfassen
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -298,6 +332,81 @@ export default async function ErnteHistoriePage({
                   )
                 })
               )}
+              {/* FIX 4: ErnteEinsatz-Records (Saison-Einsätze aus der App) */}
+              {einsaetzeRaw.map((ev: any) => {
+                const mengeKg = ev.leistungen.reduce((s: number, l: any) => s + (l.gesammeltKg ?? 0), 0)
+                const sammlerNamen = [...new Set(ev.leistungen.map((l: any) => l.person?.name).filter(Boolean))] as string[]
+                return (
+                  <tr
+                    key={`ev-${ev.id}`}
+                    className="border-b border-border hover:bg-[var(--color-surface-container-lowest)] transition-colors"
+                  >
+                    <td className="px-4 py-3">
+                      <span className="px-2 py-0.5 bg-blue-900/30 text-blue-400 rounded text-xs font-medium">
+                        {ev.saison?.jahr ?? "—"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">
+                      {ev.datum ? new Date(ev.datum).toLocaleDateString("de-DE") : "—"}
+                    </td>
+                    <td className="px-4 py-3">
+                      {ev.flaeche ? (
+                        <Link
+                          href={`/saatguternte/register/${ev.flaeche.id}`}
+                          className="font-mono text-emerald-400 hover:text-emerald-300 text-xs"
+                        >
+                          {ev.flaeche.registerNr}
+                        </Link>
+                      ) : ev.registerNr ? (
+                        <span className="font-mono text-zinc-400 text-xs">{ev.registerNr}</span>
+                      ) : (
+                        <span className="text-zinc-600 text-xs">—</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-xs">
+                      {ev.flaeche?.bundesland ?? "—"}
+                    </td>
+                    <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">{ev.baumart}</td>
+                    <td className="px-4 py-3 text-right text-[var(--color-on-surface)] font-medium">
+                      {mengeKg > 0 ? mengeKg.toLocaleString("de-DE", { maximumFractionDigits: 1 }) : "—"}
+                    </td>
+                    <td className="px-4 py-3">
+                      {sammlerNamen.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {sammlerNamen.slice(0, 2).map((n) => (
+                            <span
+                              key={n}
+                              className="px-1.5 py-0.5 bg-surface-container-highest text-[var(--color-on-surface-variant)] rounded text-xs"
+                            >
+                              {n}
+                            </span>
+                          ))}
+                          {sammlerNamen.length > 2 && (
+                            <span className="text-[var(--color-on-surface-variant)] text-xs">+{sammlerNamen.length - 2}</span>
+                          )}
+                        </div>
+                      ) : ev.gruppe?.name ? (
+                        <span className="text-xs text-[var(--color-on-surface-variant)]">{ev.gruppe.name}</span>
+                      ) : (
+                        <span className="text-zinc-600 text-xs">—</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      {ev.flaeche?.id ? (
+                        <Link
+                          href={`/saatguternte/register/${ev.flaeche.id}`}
+                          className="inline-flex items-center gap-1 px-2 py-1 bg-[var(--color-surface-container-highest)] hover:bg-surface-container-highest border border-border text-[var(--color-on-surface-variant)] hover:text-white rounded text-xs transition-colors"
+                        >
+                          <Eye className="w-3 h-3" />
+                          Detail
+                        </Link>
+                      ) : (
+                        <span className="text-zinc-700 text-xs">—</span>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>

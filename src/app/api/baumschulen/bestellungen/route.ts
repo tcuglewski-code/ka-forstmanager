@@ -186,7 +186,11 @@ export const GET = withErrorHandler(async (req: Request) => {
   if (!session) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
 
   const role = session.user.role
-  if (role !== "ka_admin" && role !== "supervisor") {
+  // Admin- und Supervisor-Rollen dürfen alle eingehenden Bestellungen sehen.
+  // (ka_admin, supervisor, admin) — Baumschulen sehen ihre eigenen Bestellungen
+  // über /api/baumschulen/[id]/bestellungen, nicht über diese Sammelliste.
+  const ADMIN_ROLES = ["ka_admin", "supervisor", "admin"]
+  if (!ADMIN_ROLES.includes(role)) {
     return NextResponse.json({ error: "Zugriff verweigert" }, { status: 403 })
   }
 

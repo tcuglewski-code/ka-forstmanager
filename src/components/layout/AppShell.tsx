@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { usePathname } from "next/navigation"
 import { Sidebar } from "./Sidebar"
 import { GracePeriodBanner } from "./GracePeriodBanner"
 import { ForstManagerTour } from "@/components/tour/ForstManagerTour"
@@ -16,6 +17,11 @@ interface AppShellProps {
 
 export function AppShell({ children, title }: AppShellProps) {
   const [searchOpen, setSearchOpen] = useState(false)
+  const pathname = usePathname()
+  // Tour nur auf der Dashboard-Seite automatisch starten — auf anderen Seiten
+  // existieren die `data-tour="dashboard"`-Anker nicht und das Overlay blockiert
+  // den ersten View (z.B. /baumschulen/bestellungen).
+  const tourAutoStart = pathname === "/dashboard"
 
   return (
     <div
@@ -131,7 +137,7 @@ export function AppShell({ children, title }: AppShellProps) {
       </div>
 
       {/* Global Components */}
-      <ForstManagerTour autoStart={true} />
+      <ForstManagerTour autoStart={tourAutoStart} />
       <QuickSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       <KeyboardShortcuts onOpenSearch={() => setSearchOpen(true)} />
       <FeedbackButton />

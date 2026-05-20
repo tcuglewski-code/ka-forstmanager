@@ -180,8 +180,8 @@ export default function BestellungenAdminPage() {
       if (statusFilter !== "alle") q.set("status", statusFilter)
       if (baumartFilter.trim()) q.set("baumart", baumartFilter.trim())
       const [bRes, bsRes] = await Promise.all([
-        fetch(`/api/baumschulen/bestellungen?${q.toString()}`),
-        fetch("/api/saatguternte/baumschulen"),
+        fetch(`/api/baumschulen/bestellungen?${q.toString()}`, { credentials: "include" }),
+        fetch("/api/saatguternte/baumschulen", { credentials: "include" }),
       ])
       if (!bRes.ok) throw new Error("Bestellungen konnten nicht geladen werden")
       const bJson = await bRes.json()
