@@ -166,6 +166,13 @@ function MagicLinkContent() {
                 </button>
               </form>
 
+              {/* Info für Bestandskunden */}
+              <div className="mt-6 p-4 bg-[var(--color-surface-container-low)] border border-border rounded-xl text-sm text-[var(--color-on-surface-variant)] space-y-2">
+                <p className="font-medium text-white text-xs uppercase tracking-wide mb-2">ℹ️ Kein Zugang?</p>
+                <p>Ihr Zugang wird automatisch nach Ihrer ersten Anfrage über unsere Website angelegt. Nutzen Sie dabei dieselbe E-Mail-Adresse.</p>
+                <p>Bei Fragen: <a href="mailto:info@koch-aufforstung.de" className="text-emerald-400 hover:underline">info@koch-aufforstung.de</a></p>
+              </div>
+
               <p className="text-center text-xs text-zinc-600 mt-4">
                 Der Link ist 24 Stunden gültig.
               </p>
