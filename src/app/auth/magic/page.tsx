@@ -1,14 +1,20 @@
 "use client"
 
 import { useState, useEffect, Suspense } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { signIn } from "next-auth/react"
+import { useSearchParams } from "next/navigation"
 import { TreePine, Loader2, Mail, CheckCircle, XCircle } from "lucide-react"
 
+const ERROR_MESSAGES: Record<string, string> = {
+  missing: "Auth-Code fehlt. Bitte fordere einen neuen Link an.",
+  invalid: "Der Link ist ungültig oder bereits verwendet.",
+  expired: "Der Link ist abgelaufen. Bitte fordere einen neuen Link an.",
+  signin: "Anmeldung fehlgeschlagen. Bitte versuche es erneut.",
+}
+
 function MagicLinkContent() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
+  const errorParam = searchParams.get("error")
 
   const [status, setStatus] = useState<"loading" | "request" | "success" | "error" | "sent">("loading")
   const [email, setEmail] = useState("")
@@ -17,6 +23,12 @@ function MagicLinkContent() {
   const [debugLink, setDebugLink] = useState("")
 
   useEffect(() => {
+    // Error-Param aus URL (vom Callback-Redirect bei Fehler)
+    if (errorParam) {
+      setError(ERROR_MESSAGES[errorParam] || "Ein Fehler ist aufgetreten")
+      setStatus("error")
+      return
+    }
     if (token) {
       // Token vorhanden → validieren
       validateToken(token)
@@ -24,43 +36,29 @@ function MagicLinkContent() {
       // Kein Token → Anfrage-Formular zeigen
       setStatus("request")
     }
-  }, [token])
+  }, [token, errorParam])
 
   const validateToken = async (t: string) => {
+    setStatus("loading")
     try {
-      // Schritt 1: Token validieren und Auth-Code erhalten
-      const res = await fetch("/api/auth/magic-link/validate", {
+      // Schritt 1: Token-Vorab-Prüfung (verbraucht den Magic-Token, erstellt auth_ Token)
+      const checkRes = await fetch("/api/auth/magic-link/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: t }),
       })
 
-      const data = await res.json()
+      const data = await checkRes.json()
 
-      if (!res.ok || !data.success) {
+      if (!checkRes.ok || !data.success) {
         setError(data.error || "Ungültiger oder abgelaufener Link")
         setStatus("error")
         return
       }
 
-      // Schritt 2: Mit Auth-Code bei NextAuth einloggen
-      const signInResult = await signIn("magic-link", {
-        authCode: data.authCode,
-        redirect: false,
-      })
-
-      if (signInResult?.error) {
-        setError("Anmeldung fehlgeschlagen")
-        setStatus("error")
-        return
-      }
-
-      setStatus("success")
-      // Redirect zum Dashboard nach kurzer Verzögerung
-      setTimeout(() => {
-        router.push("/kunde/dashboard")
-        router.refresh()
-      }, 1500)
+      // Schritt 2: Server-Side Callback (zuverlässiger als Client-Side signIn)
+      // Full Page Reload erzwingt frische NextAuth-Session-Prüfung
+      window.location.href = `/api/auth/magic-link/callback?authCode=${encodeURIComponent(data.authCode)}`
     } catch {
       setError("Ein Fehler ist aufgetreten")
       setStatus("error")
