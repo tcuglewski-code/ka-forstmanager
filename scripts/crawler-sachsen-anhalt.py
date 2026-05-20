@@ -239,7 +239,11 @@ def upsert_flaeche(conn, quelle_id, entry, detail, is_sonderherkunft_detected):
         revier = forstrevier
 
     # Forstamt aus Detail (überschreibt falls genauer)
-    forstamt_detail = detail.get('Forstamt', detail.get('FA', detail.get('Zuständige Stelle', '')))
+    forstamt_detail = (detail.get('Forstamt / Forstverwaltung')
+                       or detail.get('Forstamt')
+                       or detail.get('FA')
+                       or detail.get('Hoheitlich zuständige Stelle')
+                       or detail.get('Zuständige Stelle'))
     if forstamt_detail:
         forstamt = forstamt_detail
 
