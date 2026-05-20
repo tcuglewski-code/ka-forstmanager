@@ -43,12 +43,13 @@ export async function GET(req: NextRequest) {
     }
 
     const validSortFields = ["registerNr", "bundesland", "baumart", "flaecheHa", "forstamt", "zulassungBis", "createdAt"]
-    const orderBy: Prisma.RegisterFlaecheOrderByWithRelationInput = {}
-    if (validSortFields.includes(sortBy)) {
-      (orderBy as Record<string, unknown>)[sortBy] = { sort: sortDir, nulls: "last" }
-    } else {
-      orderBy.registerNr = { sort: "asc", nulls: "last" }
-    }
+    const safeSortBy = validSortFields.includes(sortBy) ? sortBy : "registerNr"
+    const safeSortDir = sortDir === "asc" ? Prisma.SortOrder.asc : Prisma.SortOrder.desc
+    // Nulls-last: numerische/Datum-Felder via Prisma, Text via sort (nulls always last in Postgres desc)
+    const nullableFields = ["flaecheHa", "forstamt", "zulassungBis"]
+    const orderBy: Prisma.RegisterFlaecheOrderByWithRelationInput = nullableFields.includes(safeSortBy)
+      ? ({ [safeSortBy]: { sort: safeSortDir, nulls: Prisma.NullsOrder.last } } as Prisma.RegisterFlaecheOrderByWithRelationInput)
+      : ({ [safeSortBy]: safeSortDir } as Prisma.RegisterFlaecheOrderByWithRelationInput)
 
     const [data, total] = await Promise.all([
       prisma.registerFlaeche.findMany({

@@ -97,13 +97,13 @@ export default async function RegisterPage({
   }
 
   // OrderBy aufbauen — NULLs IMMER ans Ende, egal in welcher Richtung
-  const orderBy: Prisma.RegisterFlaecheOrderByWithRelationInput = {}
   const validSortFields = ["registerNr", "bundesland", "baumart", "flaecheHa", "forstamt", "zulassungBis"]
-  if (validSortFields.includes(sortBy)) {
-    ;(orderBy as Record<string, unknown>)[sortBy] = { sort: sortDir, nulls: "last" }
-  } else {
-    orderBy.registerNr = { sort: "asc", nulls: "last" }
-  }
+  const safeSortBy = validSortFields.includes(sortBy) ? sortBy : "registerNr"
+  const safeSortDir = sortDir === "asc" ? Prisma.SortOrder.asc : Prisma.SortOrder.desc
+  const nullableFields = ["flaecheHa", "forstamt", "zulassungBis"]
+  const orderBy: Prisma.RegisterFlaecheOrderByWithRelationInput = nullableFields.includes(safeSortBy)
+    ? ({ [safeSortBy]: { sort: safeSortDir, nulls: Prisma.NullsOrder.last } } as Prisma.RegisterFlaecheOrderByWithRelationInput)
+    : ({ [safeSortBy]: safeSortDir } as Prisma.RegisterFlaecheOrderByWithRelationInput)
 
   const [flaechen, total] = await Promise.all([
     prisma.registerFlaeche.findMany({
