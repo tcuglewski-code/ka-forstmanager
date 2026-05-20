@@ -49,6 +49,12 @@ export async function POST(
       kontakt: body.kontakt ?? null,
       externeUrl: body.externeUrl ?? null,
       notizen: body.notizen ?? null,
+      wlan: body.wlan ?? false,
+      waschmaschine: body.waschmaschine ?? false,
+      parkplatz: body.parkplatz ?? false,
+      kueche: body.kueche ?? false,
+      haustierErlaubt: body.haustierErlaubt ?? false,
+      fruehstueck: body.fruehstueck ?? false,
     }
 
     const unterkunft = await prisma.unterkunft.upsert({

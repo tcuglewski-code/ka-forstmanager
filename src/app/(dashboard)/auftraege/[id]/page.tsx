@@ -11,6 +11,7 @@ import { useParams, useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { PflanzverbandVorschau } from "@/components/auftraege/PflanzverbandVorschau"
 import { UnterkunftCard } from "@/components/auftraege/UnterkunftCard"
+import { DateEditor } from "@/components/auftraege/DateEditor"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 import { TagesprotokollFull } from "@/components/tagesprotokoll/TagesprotokollDetail"
@@ -1222,6 +1223,15 @@ export default function AuftragDetailPage() {
               {w?.turnus && <Field label="Turnus" value={w.turnus} />}
               {w?.ziel && <Field label="Ziel" value={w.ziel} />}
             </Grid2>
+
+            {/* Datums-Editor (Sprint 2026-05) */}
+            <div className="mt-4">
+              <DateEditor
+                auftragId={auftrag.id}
+                startDatum={auftrag.startDatum ?? null}
+                endDatum={auftrag.endDatum ?? null}
+              />
+            </div>
           </div>
 
           {/* Flächen-Polygon Karte (Sprint Q017) */}
@@ -1686,6 +1696,14 @@ export default function AuftragDetailPage() {
               startDatum={auftrag.startDatum ?? null}
               endDatum={auftrag.endDatum ?? null}
               anzahlPersonen={null}
+              bundesland={auftrag.bundesland ?? null}
+              waldbesitzerOrt={(w?.plz_ort as string) ?? null}
+              anzahlMitarbeiter={null}
+              gruppe={
+                auftrag.gruppe
+                  ? { name: auftrag.gruppe.name, mitgliederAnzahl: null }
+                  : null
+              }
             />
           </div>
 

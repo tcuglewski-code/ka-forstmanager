@@ -38,6 +38,7 @@ interface GanttChartProps {
 const STATUS_FARBEN: Record<string, string> = {
   anfrage: "#3b82f6",
   geplant: "#06b6d4",
+  in_planung: "#64748b",
   aktiv: "#84cc16",
   geprueft: "#0ea5e9",
   angebot: "#8b5cf6",
@@ -593,6 +594,20 @@ export function GanttChart({ auftraege, onAuftragClick, onAuftragUpdate }: Gantt
             )}
           </div>
         </div>
+
+        {/* Info-Banner: Aufträge ohne Datum */}
+        {(() => {
+          const ohneDatum = auftraege.filter((a) => !a.startDatum).length
+          if (ohneDatum === 0) return null
+          return (
+            <div className="px-4 py-2 border-t border-border bg-amber-500/5 text-xs text-amber-300/90 flex items-center gap-2">
+              <span aria-hidden>ℹ️</span>
+              <span>
+                {ohneDatum} Aufträge ohne Datum — Datum in Auftragsdetails setzen
+              </span>
+            </div>
+          )
+        })()}
 
         {/* Legend */}
         <div className="px-4 py-3 border-t border-border bg-[var(--color-surface-container-lowest)]">
