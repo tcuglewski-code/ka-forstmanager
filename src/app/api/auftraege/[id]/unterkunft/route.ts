@@ -7,7 +7,12 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  // Nur internes Personal darf Unterkünfte verwalten — niemals Kunden
+  const role = (session.user as { role?: string }).role
+  if (role === "kunde") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
 
   const { id } = await params
   const unterkunft = await prisma.unterkunft.findUnique({
@@ -21,7 +26,12 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  // Nur internes Personal darf Unterkünfte verwalten — niemals Kunden
+  const role = (session.user as { role?: string }).role
+  if (role === "kunde") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
 
   try {
     const { id } = await params
@@ -62,7 +72,12 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  // Nur internes Personal darf Unterkünfte verwalten — niemals Kunden
+  const role = (session.user as { role?: string }).role
+  if (role === "kunde") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
 
   try {
     const { id } = await params

@@ -364,14 +364,16 @@ export async function POST(req: NextRequest) {
     }
 
     // Kunden-Login: Falls E-Mail vorhanden → Magic-Link senden, Account anlegen
+    // WICHTIG: auf Vercel Serverless wird die Funktion nach dem Response beendet —
+    // deshalb await, nicht fire-and-forget. Resend-Latenz ist akzeptabel (<500ms).
     const kundenEmail = (body?.email ?? validatedData.waldbesitzerEmail)?.toString()?.trim()
     if (kundenEmail) {
-      ensureKundenAccountAndLogin({
+      await ensureKundenAccountAndLogin({
         email: kundenEmail,
         name: validatedData.waldbesitzer ?? null,
         auftragId: auftrag.id,
         auftragTitel: auftrag.titel,
-      }).catch(() => undefined)
+      })
     }
 
     // Sprint AG: E-Mail-Benachrichtigung — Auftrag erstellt
