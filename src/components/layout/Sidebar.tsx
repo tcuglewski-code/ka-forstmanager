@@ -120,7 +120,7 @@ export function Sidebar() {
 
   const user = session?.user
   const userRole = (user as { role?: string })?.role
-  const isAdmin = userRole === "ka_admin" || userRole === "admin"
+  const isAdmin = userRole === "ka_admin" || userRole === "admin" || userRole === "supervisor"
 
   const getRoleLabel = (role?: string) => {
     switch (role) {
