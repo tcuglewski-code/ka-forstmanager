@@ -24,6 +24,7 @@ interface Auftrag {
   neuFlag?: boolean
   saison?: { id: string; name: string } | null
   gruppe?: { id: string; name: string } | null
+  unterkunft?: { name: string } | null
   startDatum?: string | null
   endDatum?: string | null
   createdAt: string
@@ -224,6 +225,9 @@ export default function AuftraegePage() {
     if (filterGruppe) {
       if (a.gruppe?.id !== filterGruppe) return false
     }
+    // Filter-Bugfix: Status + Typ wurden bisher nicht in 'filtered' angewendet
+    if (filterStatus && a.status !== filterStatus) return false
+    if (filterTyp && a.typ !== filterTyp) return false
     return true
   })
 

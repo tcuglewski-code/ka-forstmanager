@@ -5,6 +5,101 @@ import { verifyToken } from "@/lib/auth-helpers"
 import { emailService } from "@/lib/email"
 import { sendKANotification } from "@/lib/telegram-notify"
 import { z } from "zod"
+import crypto from "crypto"
+
+// Optional: Resend für E-Mail-Versand des Kunden-Logins
+let resend: { emails: { send: (opts: unknown) => Promise<unknown> } } | null = null
+try {
+  if (process.env.RESEND_API_KEY) {
+    const { Resend } = require("resend")
+    resend = new Resend(process.env.RESEND_API_KEY)
+  }
+} catch {
+  // Resend nicht verfügbar — Login-Mail wird übersprungen
+}
+
+async function ensureKundenAccountAndLogin(opts: {
+  email: string
+  name?: string | null
+  auftragId: string
+  auftragTitel: string
+}) {
+  const email = opts.email.toLowerCase().trim()
+  try {
+    let user = await prisma.user.findUnique({ where: { email } })
+    if (user && user.role !== "kunde") {
+      // Bestehender Nicht-Kunden-Account → keine Magic-Mail
+      return
+    }
+    if (!user) {
+      const randomPassword = crypto.randomBytes(24).toString("hex")
+      user = await prisma.user.create({
+        data: {
+          id: "kunde_" + crypto.randomBytes(8).toString("hex"),
+          name: opts.name || email.split("@")[0],
+          email,
+          role: "kunde",
+          password: randomPassword, // wird nicht für Login verwendet (Magic-Link Flow)
+          active: true,
+        },
+      })
+    }
+
+    // Alte Token invalidieren
+    await prisma.magicToken.updateMany({
+      where: { email: user.email, used: false },
+      data: { used: true },
+    })
+
+    // Neuen Token erstellen (24h)
+    const token = crypto.randomBytes(32).toString("hex")
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
+    await prisma.magicToken.create({
+      data: { email: user.email, token, expiresAt },
+    })
+
+    const baseUrl = process.env.NEXTAUTH_URL
+      || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://ka-forstmanager.vercel.app")
+    const magicLink = `${baseUrl}/auth/magic?token=${token}`
+
+    if (resend) {
+      await resend.emails.send({
+        from: "Koch Aufforstung <onboarding@resend.dev>",
+        to: user.email,
+        subject: "Ihre Anfrage bei Koch Aufforstung",
+        html: `
+          <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto;">
+            <div style="background: #2C3A1C; padding: 20px; text-align: center;">
+              <h1 style="color: white; margin: 0; font-size: 22px;">🌲 Koch Aufforstung</h1>
+            </div>
+            <div style="padding: 30px; background: #f9f9f9;">
+              <p>Hallo ${user.name},</p>
+              <p>vielen Dank für Ihre Anfrage <strong>${opts.auftragTitel}</strong>.</p>
+              <p>Wir haben Ihren Auftrag aufgenommen. Über Ihr persönliches Kundenportal können Sie den Status jederzeit verfolgen:</p>
+              <p style="text-align: center; margin: 30px 0;">
+                <a href="${magicLink}"
+                   style="background: #2C3A1C; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                  Zum Kundenportal
+                </a>
+              </p>
+              <p style="color: #666; font-size: 14px;">
+                Der Link ist 24 Stunden gültig. Sie können sich später jederzeit erneut anmelden unter
+                <a href="${baseUrl}/auth/magic">${baseUrl}/auth/magic</a>.
+              </p>
+            </div>
+            <div style="padding: 15px; text-align: center; color: #999; font-size: 12px;">
+              © ${new Date().getFullYear()} Koch Aufforstung GmbH
+            </div>
+          </div>
+        `,
+      })
+    } else {
+      console.log("[Auftrag→Kunde] Magic-Link (kein RESEND_API_KEY):", magicLink)
+    }
+  } catch (err) {
+    console.error("[Auftrag→Kunde] Account/Login fehlgeschlagen:", err)
+  }
+}
 
 // KC-1: Zod Schema für Auftrags-Validierung
 const FlaecheSchema = z.object({
@@ -28,6 +123,7 @@ const AuftragCreateSchema = z.object({
   standort: z.string().optional().nullable(),
   bundesland: z.string().optional().nullable(),
   waldbesitzerEmail: z.string().email().optional().nullable().or(z.literal("")),
+  email: z.string().email().optional().nullable().or(z.literal("")),
   waldbesitzerTelefon: z.string().optional().nullable(),
   lat: z.union([z.string(), z.number()]).optional().nullable(),
   lng: z.union([z.string(), z.number()]).optional().nullable(),
@@ -143,6 +239,7 @@ export async function GET(req: NextRequest) {
       include: {
         saison: { select: { id: true, name: true } },
         gruppe: { select: { id: true, name: true } },
+        unterkunft: { select: { name: true } },
       },
       orderBy: { wpErstelltAm: "desc" },
       take,
@@ -264,6 +361,17 @@ export async function POST(req: NextRequest) {
           console.warn("[Auftraege POST] PflanzItem auto-create failed:", part, err)
         }
       }
+    }
+
+    // Kunden-Login: Falls E-Mail vorhanden → Magic-Link senden, Account anlegen
+    const kundenEmail = (body?.email ?? validatedData.waldbesitzerEmail)?.toString()?.trim()
+    if (kundenEmail) {
+      ensureKundenAccountAndLogin({
+        email: kundenEmail,
+        name: validatedData.waldbesitzer ?? null,
+        auftragId: auftrag.id,
+        auftragTitel: auftrag.titel,
+      }).catch(() => undefined)
     }
 
     // Sprint AG: E-Mail-Benachrichtigung — Auftrag erstellt

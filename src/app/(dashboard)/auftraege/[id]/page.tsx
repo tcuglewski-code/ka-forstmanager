@@ -4,12 +4,13 @@ import { useState, useEffect } from "react"
 import {
   ArrowLeft, ExternalLink, Save, Phone, Mail, User, TreePine, MapPin, Calendar,
   FileText, Shield, Sprout, Scissors, Package, Layers, Info, BadgeCheck, ChevronRight, Camera, CheckSquare, Plus,
-  MessageCircle, Download, BarChart3
+  MessageCircle, Download, BarChart3, Home
 } from "lucide-react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { PflanzverbandVorschau } from "@/components/auftraege/PflanzverbandVorschau"
+import { UnterkunftCard } from "@/components/auftraege/UnterkunftCard"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 import { TagesprotokollFull } from "@/components/tagesprotokoll/TagesprotokollDetail"
@@ -1673,6 +1674,18 @@ export default function AuftragDetailPage() {
               flaeche_ha={auftrag.flaeche_ha ?? null}
               baumarten={auftrag.baumarten ?? null}
               plz={w?.flaeche_plz ?? (Array.isArray(w?.flaechen) ? (w.flaechen as FlaecheItem[])[0]?.plz : null) ?? null}
+            />
+          </div>
+
+          {/* Unterkunft */}
+          <div className="bg-surface-container border border-border rounded-xl p-6">
+            <SectionHeading icon={<Home className="w-4 h-4" />} label="Unterkunft" />
+            <UnterkunftCard
+              auftragId={auftrag.id}
+              ort={auftrag.standort ?? auftrag.bundesland ?? null}
+              startDatum={auftrag.startDatum ?? null}
+              endDatum={auftrag.endDatum ?? null}
+              anzahlPersonen={null}
             />
           </div>
 

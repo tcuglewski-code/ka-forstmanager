@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     if (resend) {
       try {
         await resend.emails.send({
-          from: "Koch Aufforstung <noreply@koch-aufforstung.de>",
+          from: "Koch Aufforstung <onboarding@resend.dev>",
           to: user.email,
           subject: "Ihr Login-Link für den ForstManager",
           html: `

@@ -267,10 +267,27 @@ model Auftrag {
   angebote            Angebot[]
   fotos               Foto[]
   pflanzItems         AuftragPflanzItem[]
+  unterkunft          Unterkunft?
 
   @@index([status])
   @@index([createdAt])
   @@index([saisonId])
+}
+
+// UNTERKUNFT (Sprint 2026-05: Airbnb/Ferienwohnung pro Auftrag)
+model Unterkunft {
+  id          String   @id @default(cuid())
+  name        String
+  adresse     String?
+  maxPersonen Int?
+  preisNacht  Float?
+  kontakt     String?
+  externeUrl  String?
+  notizen     String?
+  auftragId   String?  @unique
+  auftrag     Auftrag? @relation(fields: [auftragId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 // AUDIT-LOG FÜR AUFTRÄGE (Sprint S)

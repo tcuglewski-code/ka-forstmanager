@@ -26,6 +26,7 @@ interface Auftrag {
   waldbesitzer?: string | null
   flaeche_ha?: number | null
   gruppe?: { id: string; name: string } | null
+  unterkunft?: { name: string } | null
 }
 
 interface GanttChartProps {
@@ -129,6 +130,9 @@ function DraggableBar({ auftrag, barStyle, statusColor, isMobile, onMobileMove }
           </p>
           {auftrag.waldbesitzer && (
             <p className="text-xs text-[var(--color-on-surface-variant)]">{auftrag.waldbesitzer}</p>
+          )}
+          {auftrag.unterkunft?.name && (
+            <p className="text-xs text-[var(--color-on-surface-variant)]">🏠 Unterkunft: {auftrag.unterkunft.name}</p>
           )}
           {!isMobile && (
             <p className="text-xs text-emerald-400 mt-1">🖱️ Ziehen zum Verschieben</p>
