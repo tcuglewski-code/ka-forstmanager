@@ -8,7 +8,7 @@ import urllib.request, urllib.parse, ssl, http.cookiejar, re, time, json, sys
 import psycopg2
 
 DB_URL = "postgresql://neondb_owner:npg_1GXdqethC2bJ@ep-misty-moon-aldvc64t-pooler.c-3.eu-central-1.aws.neon.tech/ForstManagerKADB?sslmode=require"
-BASE_URL = "https://www.nw-fva.de/EZR-HE"
+BASE_URL = "https://www.nw-fva.de/EZR-ST"
 USERNAME = "cuglewski@koch-aufforstung.de"
 PASSWORD = "Stani123"
 
@@ -291,7 +291,7 @@ def upsert_flaeche(conn, quelle_id, entry, detail, is_sonderherkunft_detected):
                 "rohdaten", "datenstand",
                 "createdAt", "updatedAt", "letzteAktualisierung"
             ) VALUES (
-                gen_random_uuid()::text, %s, %s, 'Hessen', %s,
+                gen_random_uuid()::text, %s, %s, 'Sachsen-Anhalt', %s,
                 %s, %s, %s,
                 %s, %s,
                 %s, %s,

@@ -112,9 +112,21 @@ export default async function ErnteHistoriePage({
     }),
   ])
 
-  // Filter-Optionen
-  const [baumartOptionen, bundeslandOptionen] = await Promise.all([
+  // Filter-Optionen — aus BEIDEN Tabellen (Ernte + ErnteEinsatz) extrahieren,
+  // damit Dropdowns auch dann Werte zeigen wenn nur ErnteEinsatz-Records existieren.
+  const [
+    baumartFromErnte,
+    baumartFromEinsatz,
+    bundeslandFromRegister,
+    bundeslandFromEinsatzFlaeche,
+    saisonsFromEinsatz,
+  ] = await Promise.all([
     prisma.ernte.findMany({
+      select: { baumart: true },
+      distinct: ["baumart"],
+      orderBy: { baumart: "asc" },
+    }),
+    prisma.ernteEinsatz.findMany({
       select: { baumart: true },
       distinct: ["baumart"],
       orderBy: { baumart: "asc" },
@@ -124,7 +136,39 @@ export default async function ErnteHistoriePage({
       distinct: ["bundesland"],
       orderBy: { bundesland: "asc" },
     }),
+    prisma.ernteEinsatz.findMany({
+      select: { flaeche: { select: { bundesland: true } } },
+    }),
+    prisma.ernteEinsatz.findMany({
+      select: { saison: { select: { jahr: true } } },
+    }),
   ])
+
+  const baumartOptionen = [
+    ...new Set([
+      ...baumartFromErnte.map((b) => b.baumart).filter(Boolean),
+      ...baumartFromEinsatz.map((b) => b.baumart).filter(Boolean),
+    ]),
+  ].sort()
+
+  const bundeslandOptionen = [
+    ...new Set([
+      ...bundeslandFromRegister.map((b) => b.bundesland).filter(Boolean),
+      ...bundeslandFromEinsatzFlaeche
+        .map((b) => b.flaeche?.bundesland)
+        .filter(Boolean) as string[],
+    ]),
+  ].sort()
+
+  // Saisons aus Ernte + ErnteEinsatz mergen
+  const saisonsMerged = [
+    ...new Set([
+      ...saisons.map((s) => s.saison).filter((s): s is number => typeof s === "number"),
+      ...saisonsFromEinsatz
+        .map((e) => e.saison?.jahr)
+        .filter((j): j is number => typeof j === "number"),
+    ]),
+  ].sort((a, b) => b - a)
 
   const gesamtKg = statsAgg._sum.mengeKgGesamt ?? 0
   const totalPages = Math.ceil(total / limit)
@@ -221,9 +265,9 @@ export default async function ErnteHistoriePage({
 
       {/* Filter */}
       <ErnteFilterClient
-        saisons={saisons.map((s) => s.saison)}
-        baumartOptionen={baumartOptionen.map((b) => b.baumart)}
-        bundeslandOptionen={bundeslandOptionen.map((b) => b.bundesland)}
+        saisons={saisonsMerged}
+        baumartOptionen={baumartOptionen}
+        bundeslandOptionen={bundeslandOptionen}
         currentSaison={params.saison ?? "alle"}
         currentBaumart={params.baumart ?? ""}
         currentBundesland={params.bundesland ?? ""}

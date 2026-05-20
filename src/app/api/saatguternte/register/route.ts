@@ -45,9 +45,9 @@ export async function GET(req: NextRequest) {
     const validSortFields = ["registerNr", "bundesland", "baumart", "flaecheHa", "forstamt", "zulassungBis", "createdAt"]
     const orderBy: Prisma.RegisterFlaecheOrderByWithRelationInput = {}
     if (validSortFields.includes(sortBy)) {
-      (orderBy as Record<string, string>)[sortBy] = sortDir
+      (orderBy as Record<string, unknown>)[sortBy] = { sort: sortDir, nulls: "last" }
     } else {
-      orderBy.registerNr = "asc"
+      orderBy.registerNr = { sort: "asc", nulls: "last" }
     }
 
     const [data, total] = await Promise.all([
