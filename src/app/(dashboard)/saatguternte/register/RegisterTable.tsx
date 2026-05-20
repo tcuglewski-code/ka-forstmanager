@@ -231,11 +231,16 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
                     <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">{f.bundesland}</td>
                     <td className="px-4 py-3 text-[var(--color-on-surface)] font-medium">{f.baumart}</td>
                     <td className="px-4 py-3 text-[var(--color-on-surface-variant)]">
-                      {f.flaecheRedHa != null
-                        ? `${f.flaecheRedHa.toFixed(2)} ha`
-                        : f.flaecheHa != null
-                          ? `${f.flaecheHa.toFixed(2)} ha`
-                          : "–"}
+                      {f.flaecheHa != null ? (
+                        <span>
+                          {f.flaecheHa.toFixed(2)} ha
+                          {f.flaecheRedHa != null && f.flaecheRedHa !== f.flaecheHa && (
+                            <span className="block text-xs text-[var(--color-on-surface-muted)]">
+                              red. {f.flaecheRedHa.toFixed(2)} ha
+                            </span>
+                          )}
+                        </span>
+                      ) : "–"}
                     </td>
                     <td className="px-4 py-3 text-[var(--color-on-surface-variant)] text-xs font-mono">
                       {formatKoord(f.latDez, f.lonDez)}
