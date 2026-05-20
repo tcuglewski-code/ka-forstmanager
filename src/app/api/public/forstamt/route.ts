@@ -51,13 +51,14 @@ export async function GET(req: NextRequest) {
   const client = new pg.Client({ connectionString: connStr })
   try {
     await client.connect()
+    // Exakter PLZ-Match zuerst, dann Prefix-Match nach PLZ aufsteigend
     const result = await client.query(
       `SELECT name, plz, ort, telefon, email
        FROM forstamter
        WHERE plz LIKE $1
-       ORDER BY plz ASC
+       ORDER BY (plz = $2) DESC, plz ASC
        LIMIT 10`,
-      [`${prefix}%`]
+      [`${prefix}%`, plz]
     )
     return NextResponse.json(result.rows, { headers: corsHeaders })
   } catch (err) {
