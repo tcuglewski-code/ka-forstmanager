@@ -93,7 +93,7 @@ export function ScoutClient({ flaeche }: { flaeche: Flaeche }) {
     <div className="min-h-screen bg-[var(--color-surface-container-low)] flex flex-col" style={{ maxWidth: 480, margin: "0 auto" }}>
       {/* Top Bar */}
       <div className="bg-[var(--color-surface-container)] border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
-        <Link href={`/saatguternte/register/${flaeche.id}`} className="text-[var(--color-on-surface-variant)] hover:text-zinc-300">
+        <Link href={`/saatguternte/register/${flaeche.id}`} className="text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]">
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div className="flex-1 min-w-0">
@@ -184,7 +184,7 @@ export function ScoutClient({ flaeche }: { flaeche: Flaeche }) {
             onChange={(e) => setNotizen(e.target.value)}
             rows={6}
             placeholder="z.B. Reife des Saatguts, Zugangssituation, Wetterbeobachtung, Besonderheiten..."
-            className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-xl px-4 py-3 text-base text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
+            className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-xl px-4 py-3 text-base text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500 resize-none"
             style={{ fontSize: 16 }}
           />
         </div>

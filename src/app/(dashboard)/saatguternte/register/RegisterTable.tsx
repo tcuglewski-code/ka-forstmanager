@@ -68,7 +68,7 @@ function SortHeader({
   return (
     <button
       onClick={() => onClick(field)}
-      className="flex items-center gap-1 hover:text-zinc-300 transition-colors whitespace-nowrap"
+      className="flex items-center gap-1 hover:text-[var(--color-on-surface)] transition-colors whitespace-nowrap"
     >
       {label}
       {isActive ? (
@@ -210,7 +210,7 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
                 data.map((f) => (
                   <tr
                     key={f.id}
-                    className={`border-b border-[var(--color-outline-variant)] hover:bg-[#1c1c1c] transition-colors ${ausgewaehlt.has(f.id) ? "bg-emerald-900/10" : ""}`}
+                    className={`border-b border-[var(--color-outline-variant)] hover:bg-[var(--color-surface-container-high)] transition-colors ${ausgewaehlt.has(f.id) ? "bg-emerald-100/40 dark:bg-emerald-900/10" : ""}`}
                   >
                     <td className="px-4 py-3">
                       <input
@@ -291,8 +291,8 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
 
       {/* Floating Action Bar — Zur Planung */}
       {ausgewaehlt.size > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-gray-800 border border-border rounded-xl shadow-2xl px-6 py-3 flex items-center gap-4">
-          <span className="text-[var(--color-on-surface)] font-medium">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl px-6 py-3 flex items-center gap-4">
+          <span className="text-white font-medium">
             {ausgewaehlt.size} Fläche{ausgewaehlt.size !== 1 ? "n" : ""} ausgewählt
           </span>
           <button
@@ -304,7 +304,7 @@ export function RegisterTable({ data, total, page, limit, sortBy, sortDir }: Pro
           </button>
           <button
             onClick={() => setAusgewaehlt(new Set())}
-            className="text-gray-400 hover:text-white px-2 transition-colors"
+            className="text-gray-300 hover:text-white px-2 transition-colors"
           >
             ✕
           </button>

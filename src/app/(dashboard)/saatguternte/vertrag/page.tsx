@@ -146,12 +146,12 @@ function VertragPageInner() {
         }
       `}</style>
 
-      <div className="min-h-screen bg-[var(--color-surface-container-low)] text-zinc-300 p-6">
+      <div className="min-h-screen bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] p-6">
         {/* Header */}
         <div className="no-print flex items-center gap-4 mb-6">
           <button
             onClick={() => router.back()}
-            className="p-2 rounded-lg border border-border hover:border-zinc-500 text-[var(--color-on-surface-variant)] hover:text-zinc-300 transition-all"
+            className="p-2 rounded-lg border border-border hover:border-zinc-500 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-all"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
@@ -162,7 +162,7 @@ function VertragPageInner() {
           <div className="flex-1" />
           <button
             onClick={() => window.print()}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:border-blue-500 text-zinc-300 hover:text-blue-400 transition-all text-sm"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:border-blue-500 text-[var(--color-on-surface)] hover:text-blue-600 dark:hover:text-blue-400 transition-all text-sm"
           >
             <Printer className="w-4 h-4" />
             Drucken / PDF

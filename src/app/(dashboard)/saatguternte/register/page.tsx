@@ -246,14 +246,14 @@ export default async function RegisterPage({
         <div className="flex items-center gap-2">
           <a
             href={`/api/saatguternte/register/export?${new URLSearchParams(params as Record<string, string>).toString()}`}
-            className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest hover:bg-[#333] text-zinc-300 rounded-lg text-sm font-medium transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-[var(--color-surface-container-highest)] hover:bg-[var(--color-surface-container-high)] text-[var(--color-on-surface)] rounded-lg text-sm font-medium transition-all"
           >
             <Download className="w-4 h-4" />
             CSV Export
           </a>
           <Link
             href="/saatguternte/crawler"
-            className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest hover:bg-[#333] text-zinc-300 rounded-lg text-sm font-medium transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-[var(--color-surface-container-highest)] hover:bg-[var(--color-surface-container-high)] text-[var(--color-on-surface)] rounded-lg text-sm font-medium transition-all"
           >
             <Bot className="w-4 h-4" />
             Crawler verwalten
@@ -343,7 +343,7 @@ export default async function RegisterPage({
         <select
           name="bundesland"
           defaultValue={params.bundesland ?? ""}
-          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Bundesländer</option>
           {bundeslaender.map((b) => (
@@ -355,7 +355,7 @@ export default async function RegisterPage({
         <select
           name="baumart"
           defaultValue={params.baumart ?? ""}
-          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Baumarten</option>
           {baumarten.map((b) => (
@@ -369,7 +369,7 @@ export default async function RegisterPage({
           <select
             name="herkunft"
             defaultValue={params.herkunft ?? ""}
-            className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+            className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
           >
             <option value="">Alle Herkünfte ({herkunftsOptionen.length})</option>
             {herkunftsOptionen.map((h) => (
@@ -380,7 +380,7 @@ export default async function RegisterPage({
         <select
           name="quelleId"
           defaultValue={params.quelleId ?? ""}
-          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Quellen</option>
           {quellen.map((q) => (
@@ -392,7 +392,7 @@ export default async function RegisterPage({
         <select
           name="status"
           defaultValue={params.status ?? ""}
-          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Status</option>
           <option value="zugelassen">Zugelassen</option>
@@ -401,7 +401,7 @@ export default async function RegisterPage({
         <select
           name="eigentumsart"
           defaultValue={params.eigentumsart ?? ""}
-          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
         >
           <option value="">Alle Eigentumsarten</option>
           {eigentumsarten.map((e) => (
@@ -413,7 +413,7 @@ export default async function RegisterPage({
         <select
           name="gps"
           defaultValue={params.gps ?? ""}
-          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
         >
           <option value="">GPS: Alle</option>
           <option value="mit_gps">📍 Mit GPS</option>
@@ -422,14 +422,14 @@ export default async function RegisterPage({
         <select
           name="quality"
           defaultValue={params.quality ?? ""}
-          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+          className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-1.5 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
         >
           <option value="">Datenqualität: Alle</option>
           <option value="vollstaendig">✓ Vollständig (GPS + Fläche)</option>
           <option value="fehlerhaft">⚠️ Fehlerhaft (Parser-Bug)</option>
           <option value="unvollstaendig">○ Unvollständig</option>
         </select>
-        <label className="flex items-center gap-2 px-3 py-1.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-sm text-zinc-300 cursor-pointer hover:border-amber-500/50 transition-all select-none">
+        <label className="flex items-center gap-2 px-3 py-1.5 bg-[var(--color-surface-container-highest)] border border-border rounded-lg text-sm text-[var(--color-on-surface)] cursor-pointer hover:border-amber-500/50 transition-all select-none">
           <input
             type="checkbox"
             name="sonderherkunft"
@@ -448,7 +448,7 @@ export default async function RegisterPage({
         {hasFilter && (
           <Link
             href="/saatguternte/register"
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-highest hover:bg-[#333] text-[var(--color-on-surface-variant)] rounded-lg text-sm transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--color-surface-container-highest)] hover:bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)] rounded-lg text-sm transition-all"
           >
             <X className="w-3.5 h-3.5" />
             Zurücksetzen

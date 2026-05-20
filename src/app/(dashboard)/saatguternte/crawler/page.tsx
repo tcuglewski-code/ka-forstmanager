@@ -29,7 +29,7 @@ export default async function CrawlerPage() {
       <div className="flex items-center gap-2 mb-6">
         <Link
           href="/saatguternte/register"
-          className="flex items-center gap-1.5 text-sm text-[var(--color-on-surface-variant)] hover:text-zinc-300 transition-colors"
+          className="flex items-center gap-1.5 text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           Register-Übersicht

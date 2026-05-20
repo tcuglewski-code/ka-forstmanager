@@ -166,7 +166,7 @@ export default function GruppenPage() {
                   <div className="space-y-1.5 pt-1">
                     {gruppe.mitglieder?.length > 0 ? (
                       gruppe.mitglieder.map((m) => (
-                        <div key={m.id} className="flex items-center gap-2 text-xs text-zinc-300">
+                        <div key={m.id} className="flex items-center gap-2 text-xs text-[var(--color-on-surface)]">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
                           <span>{m.person?.name ?? "—"}</span>
                           {m.person?.nationalitaet && (

@@ -160,7 +160,7 @@ export default async function ErnteHistoriePage({
           className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
             activeTab === "historie"
               ? "border-emerald-500 text-emerald-400"
-              : "border-transparent text-[var(--color-on-surface-variant)] hover:text-zinc-300"
+              : "border-transparent text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]"
           }`}
         >
           📋 Erntehistorie
@@ -170,7 +170,7 @@ export default async function ErnteHistoriePage({
           className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
             activeTab === "statistik"
               ? "border-emerald-500 text-emerald-400"
-              : "border-transparent text-[var(--color-on-surface-variant)] hover:text-zinc-300"
+              : "border-transparent text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]"
           }`}
         >
           📊 Statistik

@@ -193,7 +193,7 @@ function ProfilTab({
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2.5 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
             >
               {statusOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -225,7 +225,7 @@ function ProfilTab({
               type="date"
               value={letzteInspektion}
               onChange={(e) => setLetzteInspektion(e.target.value)}
-              className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2.5 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
             />
           </div>
 
@@ -236,7 +236,7 @@ function ProfilTab({
               type="date"
               value={naechsteErnte}
               onChange={(e) => setNaechsteErnte(e.target.value)}
-              className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2.5 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500"
             />
           </div>
         </div>
@@ -249,7 +249,7 @@ function ProfilTab({
             onChange={(e) => setNotizen(e.target.value)}
             rows={5}
             placeholder="Beobachtungen, Hinweise, Scout-Notizen..."
-            className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2.5 text-sm text-zinc-300 focus:outline-none focus:border-emerald-500 resize-none"
+            className="w-full bg-[var(--color-surface-container-highest)] border border-border rounded-lg px-3 py-2.5 text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-emerald-500 resize-none"
           />
         </div>
 
@@ -443,7 +443,7 @@ export function FlaecheDetailTabs({ flaeche, initialTab }: { flaeche: Flaeche; i
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all flex-1 justify-center ${
               activeTab === tab.id
                 ? "bg-emerald-600 text-white"
-                : "text-[var(--color-on-surface-variant)] hover:text-zinc-300 hover:bg-[var(--color-surface-container-highest)]"
+                : "text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-highest)]"
             }`}
           >
             {tab.icon}
@@ -695,7 +695,7 @@ function RohdatenInline({ data }: { data: unknown }) {
     <div>
       <button
         onClick={() => setOpen(!open)}
-        className="text-xs text-[var(--color-on-surface-variant)] hover:text-zinc-300"
+        className="text-xs text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]"
       >
         {open ? "▼ Ausblenden" : "▶ Anzeigen"}
       </button>

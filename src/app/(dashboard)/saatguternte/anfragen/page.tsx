@@ -12,7 +12,7 @@ const BAUMARTEN = [
 ]
 
 const STATUS_CONFIG = {
-  offen:         { label: "Offen",            color: "bg-[var(--color-surface-container-high)] text-zinc-300" },
+  offen:         { label: "Offen",            color: "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface)]" },
   in_ernte:      { label: "In Ernte",         color: "bg-blue-900/60 text-blue-300" },
   "erfüllt":     { label: "Erfüllt ✅",       color: "bg-emerald-900/60 text-emerald-300" },
   teilerfüllt:   { label: "Teilerfüllt 🟡",   color: "bg-yellow-900/60 text-yellow-300" },
@@ -21,7 +21,7 @@ const STATUS_CONFIG = {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const cfg = STATUS_CONFIG[status] ?? { label: status, color: "bg-[var(--color-surface-container-high)] text-zinc-300" }
+  const cfg = STATUS_CONFIG[status] ?? { label: status, color: "bg-[var(--color-surface-container-high)] text-[var(--color-on-surface)]" }
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${cfg.color}`}>
       {cfg.label}
@@ -309,7 +309,7 @@ export default function ErnteanfragenPage() {
           className="bg-[var(--color-surface-container-highest)] border border-border text-[var(--color-on-surface)] text-sm rounded-lg px-3 py-2 w-36"
         />
 
-        <label className="flex items-center gap-2 cursor-pointer select-none text-sm text-zinc-300">
+        <label className="flex items-center gap-2 cursor-pointer select-none text-sm text-[var(--color-on-surface)]">
           <input
             type="checkbox"
             checked={filterNurSHK}

@@ -172,7 +172,7 @@ export function WetterTab({ flaecheId, latDez, lonDez }: WetterTabProps) {
               <button
                 onClick={ladeGespeicherte}
                 disabled={loading}
-                className="flex items-center gap-2 px-4 py-2 bg-surface-container-highest hover:bg-[#333] disabled:opacity-50 text-zinc-300 rounded-lg text-sm font-medium transition-all"
+                className="flex items-center gap-2 px-4 py-2 bg-[var(--color-surface-container-highest)] hover:bg-[var(--color-surface-container-high)] disabled:opacity-50 text-[var(--color-on-surface)] rounded-lg text-sm font-medium transition-all"
               >
                 <Cloud className="w-4 h-4" />
                 Gespeicherte anzeigen

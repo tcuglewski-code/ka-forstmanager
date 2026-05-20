@@ -398,7 +398,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
                   </button>
                   <button
                     onClick={() => toggleCredForm(quelle.id)}
-                    className="px-3 py-1.5 text-[var(--color-on-surface-variant)] hover:text-zinc-300 text-xs transition-colors"
+                    className="px-3 py-1.5 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] text-xs transition-colors"
                   >
                     Abbrechen
                   </button>

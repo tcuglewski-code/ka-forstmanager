@@ -14,7 +14,7 @@ export function RohdatenToggle({ data }: Props) {
     <div>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 text-xs text-[var(--color-on-surface-variant)] hover:text-zinc-300 transition-colors"
+        className="flex items-center gap-2 text-xs text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
       >
         {open ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
         {open ? "Rohdaten ausblenden" : "Rohdaten anzeigen"}

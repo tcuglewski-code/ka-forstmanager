@@ -263,7 +263,7 @@ function PlanungPageInner() {
       <div className="flex items-center gap-3 mb-6">
         <button
           onClick={() => router.push("/saatguternte/register")}
-          className="flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:text-zinc-300 text-sm transition-colors"
+          className="flex items-center gap-2 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] text-sm transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Zurück zur Register-Übersicht
@@ -414,7 +414,7 @@ function PlanungPageInner() {
             <button
               onClick={() => setShowSaveDialog(true)}
               disabled={planungFlaechen.length === 0}
-              className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
+              className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-[var(--color-on-surface)] hover:text-emerald-600 dark:hover:text-emerald-400 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
             >
               <Save className="w-4 h-4" />
               Planung speichern
@@ -423,7 +423,7 @@ function PlanungPageInner() {
               onClick={optimizeRoute}
               disabled={planungFlaechen.length < 2}
               title={mitKoords < 2 ? "Mindestens 2 Flächen mit Koordinaten erforderlich" : undefined}
-              className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
+              className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-[var(--color-on-surface)] hover:text-emerald-600 dark:hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
             >
               🗺️ Optimale Route berechnen (TSP)
               {planungFlaechen.length >= 2 && mitKoords < 2 && (
@@ -434,7 +434,7 @@ function PlanungPageInner() {
               <button
                 onClick={exportEinsatzliste}
                 disabled={planungFlaechen.length === 0}
-                className="px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-blue-400 rounded-lg text-sm font-medium transition-all"
+                className="px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-[var(--color-on-surface)] hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-sm font-medium transition-all"
               >
                 📋 Einsatzliste exportieren
               </button>
@@ -442,7 +442,7 @@ function PlanungPageInner() {
                 onClick={openGoogleMaps}
                 disabled={planungFlaechen.length === 0}
                 title={mitKoords === 0 ? "Keine Fläche hat Koordinaten" : undefined}
-                className="px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-orange-400 rounded-lg text-sm font-medium transition-all"
+                className="px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-[var(--color-on-surface)] hover:text-orange-600 dark:hover:text-orange-400 rounded-lg text-sm font-medium transition-all"
               >
                 🌍 Google Maps öffnen
                 {planungFlaechen.length > 0 && mitKoords === 0 && (
@@ -456,7 +456,7 @@ function PlanungPageInner() {
                 router.push(`/saatguternte/vertrag?flaechenIds=${ids}`)
               }}
               disabled={planungFlaechen.length === 0}
-              className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-300 hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
+              className="w-full px-4 py-2.5 bg-[var(--color-surface-container-highest)] border border-border hover:border-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-[var(--color-on-surface)] hover:text-emerald-600 dark:hover:text-emerald-400 rounded-lg text-sm font-medium transition-all"
             >
               📄 Vertrag generieren
             </button>
@@ -498,7 +498,7 @@ function PlanungPageInner() {
             <div className="flex gap-2 mt-5">
               <button
                 onClick={() => { setShowSaveDialog(false); setPlanungName(""); setPlanungNotizen("") }}
-                className="flex-1 px-4 py-2 border border-border text-[var(--color-on-surface-variant)] hover:text-zinc-300 rounded-lg text-sm transition-colors"
+                className="flex-1 px-4 py-2 border border-border text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] rounded-lg text-sm transition-colors"
               >
                 Abbrechen
               </button>
@@ -539,14 +539,14 @@ function PlanungPageInner() {
                 </div>
                 <button
                   onClick={() => loadPlanung(p)}
-                  className="px-3 py-1.5 text-xs bg-[var(--color-surface-container-highest)] hover:bg-emerald-900/30 border border-border hover:border-emerald-500 text-zinc-300 hover:text-emerald-400 rounded-md font-medium transition-all"
+                  className="px-3 py-1.5 text-xs bg-[var(--color-surface-container-highest)] hover:bg-emerald-100/60 dark:hover:bg-emerald-900/30 border border-border hover:border-emerald-500 text-[var(--color-on-surface)] hover:text-emerald-700 dark:hover:text-emerald-400 rounded-md font-medium transition-all"
                   title="Diese Planung als aktive Planung laden"
                 >
                   Laden
                 </button>
                 <button
                   onClick={() => useAsTemplate(p)}
-                  className="px-3 py-1.5 text-xs bg-[var(--color-surface-container-highest)] hover:bg-blue-900/30 border border-border hover:border-blue-500 text-zinc-300 hover:text-blue-400 rounded-md font-medium transition-all flex items-center gap-1"
+                  className="px-3 py-1.5 text-xs bg-[var(--color-surface-container-highest)] hover:bg-blue-100/60 dark:hover:bg-blue-900/30 border border-border hover:border-blue-500 text-[var(--color-on-surface)] hover:text-blue-700 dark:hover:text-blue-400 rounded-md font-medium transition-all flex items-center gap-1"
                   title="Als Vorlage für neue Planung verwenden"
                 >
                   <Copy className="w-3 h-3" />
