@@ -115,16 +115,26 @@ type AiResponse = {
 }
 
 function parseJsonResponse(text: string): AiResponse | null {
-  // Try direct parse first
+  if (!text) return null
+  // Strip markdown fences if present
+  let clean = text.trim()
+  clean = clean.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim()
+  // Try direct parse
   try {
-    return JSON.parse(text)
+    return JSON.parse(clean)
   } catch {
-    // Extract JSON block from markdown fences or surrounding text
-    const match = text.match(/\{[\s\S]*\}/)
+    // Extract first {...} block
+    const match = clean.match(/\{[\s\S]*\}/)
     if (match) {
       try {
         return JSON.parse(match[0])
       } catch {
+        // Last resort: find outermost { } 
+        const start = clean.indexOf("{")
+        const end = clean.lastIndexOf("}")
+        if (start !== -1 && end > start) {
+          try { return JSON.parse(clean.slice(start, end + 1)) } catch { return null }
+        }
         return null
       }
     }
@@ -168,6 +178,7 @@ export async function GET(req: NextRequest) {
     res = await client.messages.create({
       model: config.aiModel,
       max_tokens: 1024,
+      system: "Du bist ein Datenanalyst. Antworte IMMER und AUSSCHLIESSLICH mit reinem JSON. Kein Markdown, keine Erklärungen, keine ```-Blöcke. Nur das JSON-Objekt.",
       messages: [{ role: "user", content: prompt }],
     })
   } catch (e) {
