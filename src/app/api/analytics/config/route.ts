@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth"
 
 const TENANT_ID = "koch-aufforstung"
 const ALLOWED_ROLES = ["ka_admin", "super_admin", "admin", "supervisor"]
-const ALLOWED_MODELS = ["claude-sonnet-4-6", "claude-opus-4-7", "claude-haiku-4-5"]
+const ALLOWED_MODELS = ["claude-sonnet-4-5", "claude-opus-4-5", "claude-haiku-4-5"]
 const ALLOWED_FREQUENCIES = ["daily", "weekly", "monthly"]
 
 async function requireRole(req?: NextRequest) {
