@@ -86,6 +86,10 @@
     {
       "path": "/api/cron/check-zeiterfassung-anomalien",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/analytics-ai",
+      "schedule": "0 7 * * 1"
     }
   ]
 }

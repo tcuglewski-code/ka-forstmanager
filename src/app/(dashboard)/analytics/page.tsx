@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
-import { BarChart3, Users, ClipboardList, Receipt, TrendingUp, Loader2 } from "lucide-react"
+import { BarChart3, Users, ClipboardList, Receipt, TrendingUp, Loader2, Bot, Sparkles, AlertTriangle, CheckCircle2 } from "lucide-react"
 import { KpiCard } from "@/components/analytics/KpiCard"
 import { UmsatzChart } from "@/components/analytics/UmsatzChart"
 import { StatusDonut } from "@/components/analytics/StatusDonut"
@@ -52,12 +52,33 @@ interface KapazitaetResp {
 }
 
 const FOREST = "#012d1d"
+const GOLD = "#C5A55A"
+
+type Tab = "kpi" | "ki"
+
+interface AiInsightData {
+  id: string
+  titel: string
+  zusammenfassung: string
+  empfehlungen: {
+    empfehlungen?: Array<{ titel: string; beschreibung: string; prioritaet?: string; zeitraum?: string }>
+    positiv?: string[]
+    risiken?: string[]
+  }
+  generatedAt: string
+}
+
+interface AiInsightResp {
+  insight: AiInsightData | null
+  config: { aiEnabled: boolean; aiModel: string; aiFrequency: string; aiLastRun: string | null } | null
+}
 
 export default function AnalyticsPage() {
   const { data: session, status } = useSession()
   const role = (session?.user as { role?: string } | undefined)?.role
-  const allowed = ["ka_admin", "super_admin", "admin"].includes(role || "")
+  const allowed = ["ka_admin", "super_admin", "admin", "supervisor"].includes(role || "")
 
+  const [tab, setTab] = useState<Tab>("kpi")
   const [range, setRange] = useState<Range>("12m")
   const [loading, setLoading] = useState(true)
   const [overview, setOverview] = useState<OverviewResp | null>(null)
@@ -65,6 +86,10 @@ export default function AnalyticsPage() {
   const [auftraege, setAuftraege] = useState<AuftraegeResp | null>(null)
   const [material, setMaterial] = useState<MaterialResp | null>(null)
   const [kapazitaet, setKapazitaet] = useState<KapazitaetResp | null>(null)
+  const [aiData, setAiData] = useState<AiInsightResp | null>(null)
+  const [aiLoading, setAiLoading] = useState(false)
+  const [aiRunning, setAiRunning] = useState(false)
+  const [aiError, setAiError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!allowed) return
@@ -86,6 +111,36 @@ export default function AnalyticsPage() {
       .catch(e => console.error("Analytics fetch error:", e))
       .finally(() => setLoading(false))
   }, [range, allowed])
+
+  const loadAiInsight = () => {
+    setAiLoading(true)
+    setAiError(null)
+    fetch("/api/analytics/ai-insight")
+      .then(r => r.json())
+      .then((d: AiInsightResp) => setAiData(d))
+      .catch(e => setAiError(e?.message || "Fehler beim Laden"))
+      .finally(() => setAiLoading(false))
+  }
+
+  useEffect(() => {
+    if (!allowed) return
+    if (tab === "ki" && !aiData) loadAiInsight()
+  }, [tab, allowed, aiData])
+
+  const runAiAnalysis = async () => {
+    setAiRunning(true)
+    setAiError(null)
+    try {
+      const r = await fetch("/api/cron/analytics-ai", { method: "POST" })
+      const d = await r.json()
+      if (!r.ok) throw new Error(d?.error || d?.detail || "Analyse fehlgeschlagen")
+      loadAiInsight()
+    } catch (e) {
+      setAiError(e instanceof Error ? e.message : "Fehler")
+    } finally {
+      setAiRunning(false)
+    }
+  }
 
   if (status === "loading") {
     return (
@@ -123,23 +178,60 @@ export default function AnalyticsPage() {
             Management-Cockpit: Umsatz, Kunden, Aufträge, Kapazität.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          {(["3m", "6m", "12m", "all"] as Range[]).map(r => (
-            <button
-              key={r}
-              onClick={() => setRange(r)}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
-              style={
-                range === r
-                  ? { backgroundColor: FOREST, color: "#fff", borderColor: FOREST }
-                  : { backgroundColor: "transparent", color: FOREST, borderColor: "var(--color-outline-variant, #d1d5db)" }
-              }
-            >
-              {r === "all" ? "Alle" : r.toUpperCase()}
-            </button>
-          ))}
-        </div>
+        {tab === "kpi" && (
+          <div className="flex items-center gap-2">
+            {(["3m", "6m", "12m", "all"] as Range[]).map(r => (
+              <button
+                key={r}
+                onClick={() => setRange(r)}
+                className="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
+                style={
+                  range === r
+                    ? { backgroundColor: FOREST, color: "#fff", borderColor: FOREST }
+                    : { backgroundColor: "transparent", color: FOREST, borderColor: "var(--color-outline-variant, #d1d5db)" }
+                }
+              >
+                {r === "all" ? "Alle" : r.toUpperCase()}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
+
+      {/* Tabs */}
+      <div className="flex items-center gap-2 border-b" style={{ borderColor: "var(--color-outline-variant, #e5e7eb)" }}>
+        <button
+          onClick={() => setTab("kpi")}
+          className="px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px"
+          style={{
+            borderColor: tab === "kpi" ? FOREST : "transparent",
+            color: tab === "kpi" ? FOREST : "var(--color-on-surface-variant, #6b7280)",
+          }}
+        >
+          📊 Kennzahlen
+        </button>
+        <button
+          onClick={() => setTab("ki")}
+          className="px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px"
+          style={{
+            borderColor: tab === "ki" ? FOREST : "transparent",
+            color: tab === "ki" ? FOREST : "var(--color-on-surface-variant, #6b7280)",
+          }}
+        >
+          🤖 KI-Ratgeber
+        </button>
+      </div>
+
+      {tab === "ki" ? (
+        <KiRatgeberPanel
+          data={aiData}
+          loading={aiLoading}
+          running={aiRunning}
+          error={aiError}
+          onRun={runAiAnalysis}
+        />
+      ) : (
+        <>
 
       {/* Row 1 — KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -222,6 +314,163 @@ export default function AnalyticsPage() {
           </div>
         </div>
       </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+function KiRatgeberPanel({
+  data,
+  loading,
+  running,
+  error,
+  onRun,
+}: {
+  data: AiInsightResp | null
+  loading: boolean
+  running: boolean
+  error: string | null
+  onRun: () => void
+}) {
+  if (loading && !data) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="w-6 h-6 animate-spin" style={{ color: FOREST }} />
+      </div>
+    )
+  }
+
+  const aiDisabled = data?.config && data.config.aiEnabled === false
+
+  if (aiDisabled) {
+    return (
+      <div className="rounded-2xl p-6 border" style={{ borderColor: "#fde68a", backgroundColor: "#fffbeb" }}>
+        <h3 className="text-base font-semibold flex items-center gap-2" style={{ color: "#92400e" }}>
+          <Bot className="w-5 h-5" /> KI-Ratgeber deaktiviert
+        </h3>
+        <p className="text-sm mt-2 opacity-80">
+          Die KI-Analyse ist aktuell deaktiviert. Aktivierung erfolgt in Mission Control unter „KI-Einstellungen".
+        </p>
+      </div>
+    )
+  }
+
+  const insight = data?.insight
+  const empfehlungen = insight?.empfehlungen?.empfehlungen ?? []
+  const positiv = insight?.empfehlungen?.positiv ?? []
+  const risiken = insight?.empfehlungen?.risiken ?? []
+  const lastRun = data?.config?.aiLastRun
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl p-4 border"
+        style={{ borderColor: "var(--color-outline-variant, #e5e7eb)", backgroundColor: "var(--color-surface-container, #ffffff)" }}>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: FOREST }}>
+            <Sparkles className="w-5 h-5" style={{ color: GOLD }} />
+          </div>
+          <div>
+            <div className="text-sm font-semibold" style={{ color: FOREST }}>KI-Strategieanalyse</div>
+            <div className="text-xs opacity-70">
+              Modell: {data?.config?.aiModel ?? "—"} · Frequenz: {data?.config?.aiFrequency ?? "—"}
+              {lastRun ? ` · Letzte Analyse: ${new Date(lastRun).toLocaleString("de-DE")}` : " · Noch keine Analyse"}
+            </div>
+          </div>
+        </div>
+        <button
+          onClick={onRun}
+          disabled={running}
+          className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-opacity disabled:opacity-50"
+          style={{ backgroundColor: FOREST, color: "#fff" }}
+        >
+          {running ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+          {running ? "Analysiere…" : "Jetzt analysieren"}
+        </button>
+      </div>
+
+      {error && (
+        <div className="rounded-xl p-4 border text-sm" style={{ borderColor: "#fecaca", backgroundColor: "#fef2f2", color: "#991b1b" }}>
+          {error}
+        </div>
+      )}
+
+      {!insight && !running && (
+        <div className="rounded-2xl p-8 border text-center" style={{ borderColor: "var(--color-outline-variant, #e5e7eb)", backgroundColor: "var(--color-surface-container, #ffffff)" }}>
+          <Bot className="w-10 h-10 mx-auto mb-3 opacity-40" />
+          <p className="text-sm opacity-70">Noch keine KI-Analyse vorhanden. Starte die erste Analyse oben.</p>
+        </div>
+      )}
+
+      {insight && (
+        <>
+          <div className="rounded-2xl p-5 border" style={{ borderColor: "var(--color-outline-variant, #e5e7eb)", backgroundColor: "var(--color-surface-container, #ffffff)" }}>
+            <h3 className="text-sm font-semibold mb-2" style={{ color: FOREST }}>Zusammenfassung</h3>
+            <p className="text-sm leading-relaxed">{insight.zusammenfassung || "—"}</p>
+          </div>
+
+          {empfehlungen.length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold mb-3" style={{ color: FOREST }}>Empfehlungen</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {empfehlungen.map((e, i) => {
+                  const prio = (e.prioritaet || "").toLowerCase()
+                  const prioColor =
+                    prio === "hoch" ? { bg: "#fef2f2", color: "#991b1b" }
+                    : prio === "mittel" ? { bg: "#fffbeb", color: "#92400e" }
+                    : { bg: "#f0fdf4", color: "#166534" }
+                  return (
+                    <div key={i} className="rounded-xl p-4 border" style={{ borderColor: "var(--color-outline-variant, #e5e7eb)", backgroundColor: "var(--color-surface-container, #ffffff)" }}>
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="text-sm font-semibold" style={{ color: FOREST }}>{e.titel}</div>
+                        {e.prioritaet && (
+                          <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full whitespace-nowrap"
+                            style={{ backgroundColor: prioColor.bg, color: prioColor.color }}>
+                            {e.prioritaet}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs opacity-80 leading-relaxed">{e.beschreibung}</p>
+                      {e.zeitraum && <p className="text-[11px] opacity-60 mt-2">Zeitraum: {e.zeitraum}</p>}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="rounded-2xl p-5 border" style={{ borderColor: "#bbf7d0", backgroundColor: "#f0fdf4" }}>
+              <h3 className="text-sm font-semibold flex items-center gap-2 mb-3" style={{ color: "#166534" }}>
+                <CheckCircle2 className="w-4 h-4" /> Positiv
+              </h3>
+              {positiv.length === 0 ? (
+                <p className="text-xs opacity-60">—</p>
+              ) : (
+                <ul className="space-y-1.5 text-sm">
+                  {positiv.map((p, i) => <li key={i} className="flex gap-2"><span style={{ color: "#16a34a" }}>•</span><span>{p}</span></li>)}
+                </ul>
+              )}
+            </div>
+            <div className="rounded-2xl p-5 border" style={{ borderColor: "#fecaca", backgroundColor: "#fef2f2" }}>
+              <h3 className="text-sm font-semibold flex items-center gap-2 mb-3" style={{ color: "#991b1b" }}>
+                <AlertTriangle className="w-4 h-4" /> Risiken
+              </h3>
+              {risiken.length === 0 ? (
+                <p className="text-xs opacity-60">—</p>
+              ) : (
+                <ul className="space-y-1.5 text-sm">
+                  {risiken.map((r, i) => <li key={i} className="flex gap-2"><span style={{ color: "#dc2626" }}>•</span><span>{r}</span></li>)}
+                </ul>
+              )}
+            </div>
+          </div>
+
+          <p className="text-xs opacity-50 text-center">
+            Generiert {new Date(insight.generatedAt).toLocaleString("de-DE")}
+          </p>
+        </>
+      )}
     </div>
   )
 }

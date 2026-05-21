@@ -2698,3 +2698,14 @@ model AiInsight {
 
   @@index([tenantId, insightType])
 }
+
+model TenantConfig {
+  id               String    @id @default(cuid())
+  tenantId         String    @unique @default("koch-aufforstung")
+  aiEnabled        Boolean   @default(true)
+  aiModel          String    @default("claude-sonnet-4-6")
+  aiFrequency      String    @default("weekly")
+  aiLastRun        DateTime?
+  aiApiKeyOverride String?
+  updatedAt        DateTime  @updatedAt
+}
