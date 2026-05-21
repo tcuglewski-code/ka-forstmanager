@@ -231,7 +231,6 @@ export async function GET(req: NextRequest) {
       { status: 502 }
     )
   }
-  }
 
   const insight = await prisma.aiInsight.create({
     data: {
