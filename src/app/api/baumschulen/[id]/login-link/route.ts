@@ -38,7 +38,7 @@ export const POST = withErrorHandler(async (_: Request, { params }: { params: Pr
     // Neuen Baumschul-User erstellen
     const email = baumschule.email ?? `baumschule-${baumschuleId}@ka-intern.local`
     const randomPasswort = crypto.randomBytes(16).toString("hex")
-    const hashedPasswort = await bcrypt.hash(randomPasswort, 10)
+    const hashedPasswort = await bcrypt.hash(randomPasswort, 12)
 
     const user = await prisma.user.create({
       data: {

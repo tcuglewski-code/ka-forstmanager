@@ -29,7 +29,7 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
   if (!body.name || !body.email || !body.password) {
     return NextResponse.json({ error: "name, email und password sind Pflichtfelder" }, { status: 400 })
   }
-  const hashedPassword = await bcrypt.hash(body.password, 10)
+  const hashedPassword = await bcrypt.hash(body.password, 12)
   const user = await prisma.user.create({
     data: {
       name: body.name,

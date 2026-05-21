@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Aktuelles Passwort ist falsch" }, { status: 400 })
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10)
+    const hashedPassword = await bcrypt.hash(newPassword, 12)
 
     // AAF-SEC-3: Reset mustChangePassword + increment tokenVersion (invalidates other sessions)
     await prisma.user.update({

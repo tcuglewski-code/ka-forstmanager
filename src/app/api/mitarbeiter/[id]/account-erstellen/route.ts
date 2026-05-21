@@ -86,7 +86,7 @@ export const POST = withErrorHandler(async (req: NextRequest, { params }: { para
     }
   }
 
-  const hash = await bcrypt.hash(passwort, 10)
+  const hash = await bcrypt.hash(passwort, 12)
 
   // Email-Kollisions-Check
   const existing = await prisma.user.findUnique({

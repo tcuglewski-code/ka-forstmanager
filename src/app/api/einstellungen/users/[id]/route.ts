@@ -19,7 +19,7 @@ export const PATCH = withErrorHandler(async (req: NextRequest, { params }: { par
   if (body.email) updateData.email = body.email
   if (body.role) updateData.role = body.role
   if (body.active !== undefined) updateData.active = body.active
-  if (body.password) updateData.password = await bcrypt.hash(body.password, 10)
+  if (body.password) updateData.password = await bcrypt.hash(body.password, 12)
   const user = await prisma.user.update({
     where: { id },
     data: updateData,

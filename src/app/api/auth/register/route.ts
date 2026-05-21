@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'E-Mail bereits registriert' }, { status: 400 })
     }
 
-    const hash = await bcrypt.hash(password, 10)
+    const hash = await bcrypt.hash(password, 12)
 
     const newUser = await prisma.user.create({
       data: {

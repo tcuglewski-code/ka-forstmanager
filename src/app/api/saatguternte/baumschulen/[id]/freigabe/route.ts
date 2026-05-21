@@ -86,7 +86,7 @@ export const POST = withErrorHandler(async (
   if (!userId) {
     const userEmail = baumschule.email ?? `baumschule-${id}@ka-intern.local`
     const randomPasswort = crypto.randomBytes(16).toString("hex")
-    const hashedPasswort = await bcrypt.hash(randomPasswort, 10)
+    const hashedPasswort = await bcrypt.hash(randomPasswort, 12)
 
     // E-Mail kollidiert evtl. mit bestehendem User — defensiv
     const existingUser = await prisma.user.findUnique({ where: { email: userEmail } })

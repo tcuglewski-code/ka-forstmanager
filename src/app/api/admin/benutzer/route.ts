@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Passwort hashen
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await bcrypt.hash(password, 12)
 
     const user = await prisma.user.create({
       data: {
@@ -133,7 +133,7 @@ export async function PUT(req: NextRequest) {
 
     // Falls neues Passwort gesetzt
     if (password) {
-      updateData.password = await bcrypt.hash(password, 10)
+      updateData.password = await bcrypt.hash(password, 12)
     }
 
     const updated = await prisma.user.update({
