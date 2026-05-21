@@ -178,7 +178,33 @@ export async function GET(req: NextRequest) {
     res = await client.messages.create({
       model: config.aiModel,
       max_tokens: 1024,
-      system: "Du bist ein Datenanalyst. Antworte IMMER und AUSSCHLIESSLICH mit reinem JSON. Kein Markdown, keine Erklärungen, keine ```-Blöcke. Nur das JSON-Objekt.",
+      tools: [{
+        name: "analyse_forstbetrieb",
+        description: "Analysiert Kennzahlen eines Forstbetriebs und gibt Handlungsempfehlungen",
+        input_schema: {
+          type: "object" as const,
+          properties: {
+            zusammenfassung: { type: "string", description: "Gesamteinschätzung in 1-3 Sätzen" },
+            empfehlungen: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  titel: { type: "string" },
+                  beschreibung: { type: "string" },
+                  prioritaet: { type: "string", enum: ["hoch", "mittel", "niedrig"] },
+                  zeitraum: { type: "string" }
+                },
+                required: ["titel", "beschreibung", "prioritaet", "zeitraum"]
+              }
+            },
+            positiv: { type: "array", items: { type: "string" } },
+            risiken: { type: "array", items: { type: "string" } }
+          },
+          required: ["zusammenfassung", "empfehlungen", "positiv", "risiken"]
+        }
+      }],
+      tool_choice: { type: "tool" as const, name: "analyse_forstbetrieb" },
       messages: [{ role: "user", content: prompt }],
     })
   } catch (e) {
@@ -186,15 +212,25 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Anthropic API error", detail: msg }, { status: 502 })
   }
 
-  const textBlock = res.content.find(c => c.type === "text")
-  const text = textBlock && "text" in textBlock ? textBlock.text : ""
-  const parsed = parseJsonResponse(text)
+  // tool_use liefert garantiertes JSON; text als Fallback
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const toolBlock = res.content.find((c: any) => c.type === "tool_use") as any
+  let parsed: AiResponse | null = null
+  if (toolBlock?.input) {
+    parsed = toolBlock.input as AiResponse
+  } else {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const textBlock = res.content.find((c: any) => c.type === "text") as any
+    const rawText: string = textBlock?.text ?? ""
+    parsed = parseJsonResponse(rawText)
+  }
 
   if (!parsed) {
     return NextResponse.json(
-      { error: "Failed to parse model response", raw: text.slice(0, 500) },
-      { status: 500 }
+      { error: "Failed to parse model response", raw: JSON.stringify(res.content).slice(0, 500) },
+      { status: 502 }
     )
+  }
   }
 
   const insight = await prisma.aiInsight.create({
