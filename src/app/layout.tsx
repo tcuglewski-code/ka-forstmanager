@@ -1,8 +1,11 @@
 import type { Metadata } from "next"
 import { Manrope, Inter, Barlow_Condensed } from "next/font/google"
+import { Suspense } from "react"
 import "./globals.css"
 import { Toaster } from "sonner"
 import PostHogProvider from "@/components/providers/PostHogProvider"
+import DemoBanner from "@/components/DemoBanner"
+import { auth } from "@/lib/auth"
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -30,11 +33,12 @@ export const metadata: Metadata = {
   description: "Digitales Betriebssystem für Forstunternehmen",
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const session = await auth().catch(() => null)
   return (
     <html lang="de" className={`${manrope.variable} ${inter.variable} ${barlowCondensed.variable}`}>
       <body
@@ -45,6 +49,9 @@ export default function RootLayout({
           color: "var(--color-on-surface)",
         }}
       >
+        <Suspense fallback={null}>
+          <DemoBanner userEmail={session?.user?.email ?? null} />
+        </Suspense>
         <PostHogProvider>
           {children}
         </PostHogProvider>
