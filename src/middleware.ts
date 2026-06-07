@@ -52,7 +52,7 @@ export default auth((req) => {
 
   const isLoggedIn = !!req.auth
   const isLoginPage = pathname === "/login"
-  const isPublicPage = pathname === "/login" || pathname === "/forgot-password" || pathname === "/reset-password" || pathname.startsWith("/baumschule/login")
+  const isPublicPage = pathname === "/login" || pathname === "/forgot-password" || pathname === "/reset-password" || pathname.startsWith("/baumschule/login") || pathname === "/demo"
 
   if (!isLoggedIn && !isPublicPage) {
     return NextResponse.redirect(new URL("/login", req.url))
