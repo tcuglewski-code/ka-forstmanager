@@ -187,7 +187,7 @@ export default function LoginPage() {
                     required
                     autoComplete="email"
                     placeholder="name@koch-aufforstung.de"
-                    className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-gray-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
                   />
                 </div>
 
@@ -203,7 +203,7 @@ export default function LoginPage() {
                     required
                     autoComplete="current-password"
                     placeholder="••••••••"
-                    className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-gray-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
                   />
                 </div>
               </>
@@ -225,7 +225,7 @@ export default function LoginPage() {
                     inputMode="numeric"
                     placeholder={useBackupCode ? "XXXX-XXXX" : "000000"}
                     maxLength={useBackupCode ? 9 : 6}
-                    className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-white text-center text-2xl font-mono tracking-widest placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-gray-900 text-center text-2xl font-mono tracking-widest placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
                   />
                 </div>
 
