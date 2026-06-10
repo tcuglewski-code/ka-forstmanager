@@ -74,6 +74,7 @@ const navItems = [
   { href: "/baumschule/katalog", label: "Produktkatalog", icon: Package },
   { href: "/kontakte", label: "Kontakte", icon: MapPin },
   { href: "/wissensbank", label: "Wissensbank", icon: BookOpen },
+  { href: "/dokumentation", label: "Dokumentation", icon: BookOpen },
   { href: "/foerderung", label: "Förderberater", icon: Leaf },
   { href: "/foerderung/news", label: "Aktuelle Updates", icon: Bell },
   { href: "/foerderung/praxis", label: "Unsere Erfahrungen", icon: BookOpen },
