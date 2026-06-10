@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Sidebar } from "./Sidebar"
 import { GracePeriodBanner } from "./GracePeriodBanner"
 import { ForstManagerTour } from "@/components/tour/ForstManagerTour"
@@ -17,6 +17,7 @@ interface AppShellProps {
 
 export function AppShell({ children, title }: AppShellProps) {
   const [searchOpen, setSearchOpen] = useState(false)
+  const router = useRouter()
   const pathname = usePathname()
   // Tour nur auf der Dashboard-Seite automatisch starten — auf anderen Seiten
   // existieren die `data-tour="dashboard"`-Anker nicht und das Overlay blockiert
@@ -118,6 +119,7 @@ export function AppShell({ children, title }: AppShellProps) {
               onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--color-surface-container)")}
               onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
               title="Profil"
+              onClick={() => router.push("/profil")}
             >
               <User className="w-5 h-5" />
             </button>
