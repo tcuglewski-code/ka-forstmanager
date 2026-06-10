@@ -8,6 +8,8 @@ import { ForstManagerTour } from "@/components/tour/ForstManagerTour"
 import { QuickSearch } from "@/components/search/QuickSearch"
 import { KeyboardShortcuts } from "@/components/shortcuts/KeyboardShortcuts"
 import { FeedbackButton } from "@/components/feedback/FeedbackButton"
+import { NotificationPanel } from "./NotificationPanel"
+import { useNotifications } from "@/hooks/useNotifications"
 import { Bell, User, Search, HelpCircle } from "lucide-react"
 
 interface AppShellProps {
@@ -17,6 +19,8 @@ interface AppShellProps {
 
 export function AppShell({ children, title }: AppShellProps) {
   const [searchOpen, setSearchOpen] = useState(false)
+  const [notificationsOpen, setNotificationsOpen] = useState(false)
+  const { unreadCount } = useNotifications()
   const router = useRouter()
   const pathname = usePathname()
   // Tour nur auf der Dashboard-Seite automatisch starten — auf anderen Seiten
@@ -105,13 +109,27 @@ export function AppShell({ children, title }: AppShellProps) {
               <HelpCircle className="w-5 h-5" />
             </a>
             <button
-              className="p-2 rounded-xl tonal-transition"
+              className="relative p-2 rounded-xl tonal-transition"
               style={{ color: "var(--color-on-surface-variant)" }}
               onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--color-surface-container)")}
               onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
               title="Benachrichtigungen"
+              onClick={() => setNotificationsOpen(o => !o)}
+              aria-label={unreadCount > 0 ? `${unreadCount} ungelesene Benachrichtigungen` : "Benachrichtigungen"}
             >
               <Bell className="w-5 h-5" />
+              {unreadCount > 0 && (
+                <span
+                  className="absolute top-1 right-1 min-w-[16px] h-4 px-1 rounded-full text-[10px] font-semibold flex items-center justify-center"
+                  style={{
+                    backgroundColor: "#C5A55A",
+                    color: "#2C3A1C",
+                    border: "2px solid var(--color-surface)",
+                  }}
+                >
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
             </button>
             <button
               className="p-2 rounded-xl tonal-transition"
@@ -143,6 +161,7 @@ export function AppShell({ children, title }: AppShellProps) {
       <QuickSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       <KeyboardShortcuts onOpenSearch={() => setSearchOpen(true)} />
       <FeedbackButton />
+      <NotificationPanel open={notificationsOpen} onClose={() => setNotificationsOpen(false)} />
     </div>
   )
 }
