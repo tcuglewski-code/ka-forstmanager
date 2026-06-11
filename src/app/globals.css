@@ -2,68 +2,76 @@
 @import "driver.js/dist/driver.css";
 
 /* ============================================================
-   THE DIGITAL FOREMAN — Design System v1.0
-   Koch Aufforstung GmbH · ForstManager
+   FELDHUB DESIGN SYSTEM — ForstManager
+   Bone / Deep Forest / Gold / Technical Moss
+   Koch Aufforstung GmbH
    ============================================================ */
 
 :root {
   /* Core Palette */
-  --color-primary: #026c47;
+  --color-primary: #1A2E1A;
+  --color-primary-deep: #0d1a0d;
   --color-on-primary: #ffffff;
-  --color-primary-container: #52a87e;
-  --color-on-primary-container: #003823;
+  --color-primary-container: rgba(26, 46, 26, 0.12);
+  --color-on-primary-container: #0d1a0d;
 
-  --color-secondary: #4b6457;
-  --color-secondary-container: #cde9d9;
-  --color-on-secondary-container: #2d4037;
+  --color-secondary: #C5A55A;
+  --color-secondary-container: rgba(197, 165, 90, 0.15);
+  --color-on-secondary-container: #5c4a1e;
 
-  --color-tertiary: #865300;
-  --color-tertiary-container: #ce8a2f;
+  --color-tertiary: #8CAA1F;
+  --color-tertiary-container: rgba(140, 170, 31, 0.12);
   --color-on-tertiary: #ffffff;
 
   /* Surface Scale */
-  --color-surface: #fdf9ef;
-  --color-surface-dim: #dedad0;
+  --color-surface: #EBEAE4;
+  --color-surface-dim: #D8D7D1;
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #f8f3e9;
-  --color-surface-container: #f2eee3;
-  --color-surface-container-high: #ece8de;
-  --color-surface-container-highest: #e6e2d8;
+  --color-surface-container-low: #F2F1EB;
+  --color-surface-container: #EBEAE4;
+  --color-surface-container-high: #E3E2DC;
+  --color-surface-container-highest: #DBDAD4;
 
   /* Text */
-  --color-on-surface: #1c1c16;
-  --color-on-surface-variant: #3f4942;
+  --color-on-surface: #1b1c19;
+  --color-on-surface-variant: #434841;
 
   /* Borders */
-  --color-outline: #6f7a72;
-  --color-outline-variant: #bec9c0;
-  --color-border: #bec9c0;
+  --color-outline: #747871;
+  --color-outline-variant: rgba(26, 46, 26, 0.15);
+  --color-border: rgba(26, 46, 26, 0.08);
 
   /* Semantic */
   --color-error: #ba1a1a;
-  --color-background: #fdf9ef;
+  --color-background: #F7F6F0;
 
-  /* Sidebar — Dark Forest Green */
-  --sidebar-bg: #0d2b1f;
-  --sidebar-hover: #1a4030;
-  --sidebar-active: #026c47;
-  --sidebar-text: rgba(255, 255, 255, 0.85);
-  --sidebar-text-muted: rgba(255, 255, 255, 0.45);
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(26, 46, 26, 0.04), 0 4px 12px rgba(26, 46, 26, 0.05);
+  --shadow-hover: 0 8px 24px rgba(26, 46, 26, 0.10);
 
-  /* Typography */
-  --font-display: var(--font-manrope), "Manrope", sans-serif;
-  --font-body: var(--font-inter), "Inter", sans-serif;
-  --font-mono: var(--font-barlow), "Barlow Condensed", sans-serif;
+  /* Sidebar — Deep Forest */
+  --sidebar-bg: #1A2E1A;
+  --sidebar-hover: rgba(197, 165, 90, 0.08);
+  --sidebar-active: rgba(197, 165, 90, 0.15);
+  --sidebar-active-border: #C5A55A;
+  --sidebar-text: rgba(247, 246, 240, 0.85);
+  --sidebar-text-muted: rgba(247, 246, 240, 0.45);
+  --sidebar-gold: #C5A55A;
+
+  /* Typography — Feldhub Tri-Font */
+  --font-display: var(--font-hanken), "Hanken Grotesk", system-ui, sans-serif;
+  --font-body: var(--font-inter), "Inter", system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, monospace;
 
   /* Brand Colors */
-  --color-forest: #2C3A1C;
-  --color-forest-hover: #3a4d24;
+  --color-forest: #1A2E1A;
+  --color-forest-hover: #0d1a0d;
   --color-gold: #C5A55A;
   --color-gold-hover: #b8943e;
 
   /* Legacy aliases (kept for compatibility) */
-  --background: #fdf9ef;
-  --foreground: #1c1c16;
+  --background: #F7F6F0;
+  --foreground: #1b1c19;
 }
 
 @theme inline {
@@ -72,6 +80,7 @@
 
   /* Map design tokens to Tailwind */
   --color-primary: var(--color-primary);
+  --color-primary-deep: var(--color-primary-deep);
   --color-primary-container: var(--color-primary-container);
   --color-secondary: var(--color-secondary);
   --color-secondary-container: var(--color-secondary-container);
@@ -218,9 +227,129 @@ select {
 .font-mono-kpi {
   font-family: var(--font-mono);
 }
+.font-mono-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 
 /* ============================================================
-   Component Utilities
+   Feldhub Component Utilities
+   ============================================================ */
+.overline {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+}
+
+.bento-card {
+  background: var(--color-surface-container-low);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.bento-card:hover {
+  transform: translateY(-2px) scale(1.005);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(26, 46, 26, 0.16);
+}
+
+.bento-dark {
+  background: var(--color-primary);
+  color: var(--color-background);
+  border: 1px solid rgba(247, 246, 240, 0.08);
+  border-radius: 20px;
+}
+
+.badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-tertiary);
+  background: rgba(140, 170, 31, 0.12);
+  border: 1px solid rgba(140, 170, 31, 0.25);
+  border-radius: 6px;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+.badge-soon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8a6d2a;
+  background: rgba(197, 165, 90, 0.18);
+  border: 1px solid rgba(197, 165, 90, 0.45);
+  border-radius: 6px;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+@keyframes moss-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.3); }
+}
+.moss-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--color-tertiary);
+  animation: moss-pulse 2.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .moss-dot { animation: none; }
+}
+
+.bg-grid-light {
+  background-image:
+    linear-gradient(rgba(26, 46, 26, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26, 46, 26, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.bg-grid-dark {
+  background-image:
+    linear-gradient(rgba(247, 246, 240, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247, 246, 240, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--color-primary);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-weight: 500;
+  border-radius: 10px;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 0 4px rgba(26, 46, 26, 0.15);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   Legacy Component Utilities (recolored)
    ============================================================ */
 .glass-card {
   background: rgba(255, 255, 255, 0.4);
@@ -229,11 +358,11 @@ select {
 }
 
 .ambient-shadow {
-  box-shadow: 0 12px 40px rgba(17, 41, 31, 0.06);
+  box-shadow: 0 12px 40px rgba(26, 46, 26, 0.06);
 }
 
 .ambient-shadow-md {
-  box-shadow: 0 4px 16px rgba(17, 41, 31, 0.08);
+  box-shadow: 0 4px 16px rgba(26, 46, 26, 0.08);
 }
 
 .tonal-transition {
@@ -242,7 +371,7 @@ select {
 
 /* KI-Insight-Karte */
 .ai-insight-card {
-  border-left: 4px solid var(--color-tertiary);
+  border-left: 4px solid var(--color-secondary);
   background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -295,7 +424,7 @@ select {
 .input-adaptive {
   @apply w-full rounded-sm px-3 py-2 text-sm transition-colors;
   @apply bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] placeholder-[var(--color-on-surface-variant)];
-  @apply focus:outline-none focus:ring-2 focus:ring-[#026c47]/40 focus:border-transparent;
+  @apply focus:outline-none focus:ring-2 focus:ring-[#1A2E1A]/40 focus:border-transparent;
 }
 
 .dark .input-adaptive,
@@ -318,7 +447,7 @@ select {
 /* Dark-Mode-kompatible Section-Header */
 .section-header-adaptive {
   @apply px-4 py-3 border-b flex items-center gap-2;
-  @apply bg-gray-50 border-border;
+  @apply bg-[var(--color-surface-container-low)] border-border;
 }
 
 .dark .section-header-adaptive,
@@ -344,7 +473,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: var(--color-surface-container-low) !important;
   border: 1px solid var(--color-outline-variant) !important;
   color: var(--color-on-surface) !important;
-  box-shadow: 0 20px 60px rgba(17, 41, 31, 0.12) !important;
+  box-shadow: 0 20px 60px rgba(26, 46, 26, 0.12) !important;
   border-radius: 12px !important;
 }
 
@@ -374,7 +503,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .driver-popover-prev-btn:hover,
 .driver-popover-next-btn:hover {
-  background: var(--color-on-primary-container, #003823) !important;
+  background: var(--color-primary-deep, #0d1a0d) !important;
   opacity: 0.9;
 }
 
@@ -397,7 +526,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
    Selection Color
    ============================================================ */
 ::selection {
-  background: rgba(2, 108, 71, 0.15);
+  background: rgba(197, 165, 90, 0.3);
   color: var(--color-on-surface);
 }
 
@@ -407,7 +536,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
    ============================================================ */
 *:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-primary);
   border-radius: 4px;
 }
 
@@ -415,14 +544,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 button:focus-visible,
 a:focus-visible,
 [role="button"]:focus-visible {
-  box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-primary);
 }
 
 /* Für Inputs (überschreibt .input-adaptive) */
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-primary);
   border-color: var(--color-primary);
 }
 

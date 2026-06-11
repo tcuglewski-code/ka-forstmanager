@@ -52,36 +52,36 @@ import { cn } from "@/lib/utils"
 import { resetAndStartTour } from "@/components/tour/ForstManagerTour"
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, tourId: "dashboard" },
-  { href: "/auftraege", label: "Aufträge", icon: ClipboardList, tourId: "auftraege" },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, tourId: "dashboard", section: "Übersicht" },
+  { href: "/auftraege", label: "Aufträge", icon: ClipboardList, tourId: "auftraege", section: "Betrieb" },
   { href: "/angebote", label: "Angebote", icon: FileText },
   { href: "/saisons", label: "Saisons", icon: Calendar },
-  { href: "/mitarbeiter", label: "Mitarbeiter", icon: Users, tourId: "mitarbeiter" },
+  { href: "/mitarbeiter", label: "Mitarbeiter", icon: Users, tourId: "mitarbeiter", section: "Verwaltung" },
   { href: "/gruppen", label: "Gruppen", icon: UsersRound },
-  { href: "/lieferantenbestellungen", label: "Lieferantenbestellungen", icon: ShoppingCart },
+  { href: "/lieferantenbestellungen", label: "Lieferantenbestellungen", icon: ShoppingCart, section: "Material" },
   { href: "/lager", label: "Lager", icon: Package, tourId: "lager" },
   { href: "/fuhrpark", label: "Fuhrpark", icon: Car },
-  { href: "/lohn", label: "Lohn", icon: DollarSign },
+  { href: "/lohn", label: "Lohn", icon: DollarSign, section: "Finanzen" },
   { href: "/stunden", label: "Stunden", icon: Clock },
   { href: "/vorschuesse", label: "Vorschüsse", icon: TrendingDown },
   { href: "/rechnungen", label: "Rechnungen", icon: Receipt, tourId: "rechnungen" },
-  { href: "/qualifikationen", label: "Qualifikationen", icon: GraduationCap },
+  { href: "/qualifikationen", label: "Qualifikationen", icon: GraduationCap, section: "Personal" },
   { href: "/schulungen", label: "Schulungen", icon: BookOpen },
-  { href: "/dokumente", label: "Dokumente", icon: FileText },
+  { href: "/dokumente", label: "Dokumente", icon: FileText, section: "Dokumentation" },
   { href: "/protokolle", label: "Protokolle", icon: ScrollText, tourId: "protokolle" },
   { href: "/abnahmen", label: "Abnahmen", icon: CheckSquare, tourId: "abnahmen" },
-  { href: "/baumschulen", label: "Baumschulen", icon: TreeDeciduous },
+  { href: "/baumschulen", label: "Baumschulen", icon: TreeDeciduous, section: "Baumschule" },
   { href: "/baumschule/katalog", label: "Produktkatalog", icon: Package },
-  { href: "/kontakte", label: "Kontakte", icon: MapPin },
+  { href: "/kontakte", label: "Kontakte", icon: MapPin, section: "Wissen" },
   { href: "/wissensbank", label: "Wissensbank", icon: BookOpen },
   { href: "/dokumentation", label: "Dokumentation", icon: BookOpen },
-  { href: "/foerderung", label: "Förderberater", icon: Leaf },
+  { href: "/foerderung", label: "Förderberater", icon: Leaf, section: "Förderung" },
   { href: "/foerderung/news", label: "Aktuelle Updates", icon: Bell },
   { href: "/foerderung/praxis", label: "Unsere Erfahrungen", icon: BookOpen },
   { href: "/foerderung/dashboard", label: "Erfolgsquoten", icon: BarChart3 },
-  { href: "/reports", label: "Reports", icon: BarChart3, tourId: "reports" },
+  { href: "/reports", label: "Reports", icon: BarChart3, tourId: "reports", section: "Analyse" },
   { href: "/jahresuebersicht", label: "Jahresübersicht", icon: BarChart3 },
-  { href: "/einstellungen", label: "Einstellungen", icon: Settings, tourId: "einstellungen" },
+  { href: "/einstellungen", label: "Einstellungen", icon: Settings, tourId: "einstellungen", section: "System" },
   { href: "/einstellungen/telegram", label: "Telegram", icon: MessageCircle },
 ]
 
@@ -159,12 +159,24 @@ export function Sidebar() {
 
   const navItemActive = {
     backgroundColor: "var(--sidebar-active)",
-    color: "#ffffff",
+    color: "#F7F6F0",
     fontWeight: 600,
+    borderLeft: "3px solid var(--sidebar-active-border)",
+    borderRadius: "0 8px 8px 0",
   } as const
 
   const navItemDefault = {
     color: "var(--sidebar-text)",
+    borderLeft: "3px solid transparent",
+  } as const
+
+  const sectionLabelStyle = {
+    fontFamily: "var(--font-mono)",
+    fontSize: "10px",
+    fontWeight: 700,
+    letterSpacing: "0.14em",
+    textTransform: "uppercase",
+    color: "var(--sidebar-gold)",
   } as const
 
   const subNavItemBase =
@@ -207,7 +219,7 @@ export function Sidebar() {
         <button
           onClick={() => setOpen(false)}
           className="lg:hidden absolute top-3 right-3 p-2.5 rounded-lg"
-          style={{ color: "var(--sidebar-text-muted)", backgroundColor: "rgba(255,255,255,0.06)" }}
+          style={{ color: "var(--sidebar-text-muted)", backgroundColor: "rgba(247,246,240,0.06)" }}
           aria-label="Menü schließen"
         >
           <X className="w-5 h-5" />
@@ -216,18 +228,27 @@ export function Sidebar() {
         {/* ── Brand ── */}
         <div
           className="px-5 py-5 flex-shrink-0"
-          style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+          style={{ borderBottom: "1px solid rgba(247,246,240,0.08)" }}
         >
           <div className="flex items-center gap-3">
             <KaLogo />
             <div>
               <p
-                className="text-sm font-bold leading-tight tracking-tight"
-                style={{ color: "#ffffff", fontFamily: "var(--font-display)" }}
+                className="text-sm leading-tight tracking-tight"
+                style={{ color: "#F7F6F0", fontFamily: "var(--font-display)", fontWeight: 600 }}
               >
                 ForstManager
               </p>
-              <p className="text-xs leading-tight mt-0.5" style={{ color: "var(--sidebar-text-muted)" }}>
+              <p
+                className="leading-tight mt-0.5"
+                style={{
+                  color: "var(--sidebar-gold)",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "10px",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                }}
+              >
                 Koch Aufforstung
               </p>
             </div>
@@ -240,12 +261,12 @@ export function Sidebar() {
             onClick={openSearch}
             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all"
             style={{
-              backgroundColor: "rgba(255,255,255,0.06)",
+              backgroundColor: "rgba(247,246,240,0.06)",
               color: "var(--sidebar-text-muted)",
-              border: "1px solid rgba(255,255,255,0.08)",
+              border: "1px solid rgba(247,246,240,0.08)",
             }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.1)")}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)")}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "rgba(247,246,240,0.1)")}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = "rgba(247,246,240,0.06)")}
           >
             <Search className="w-4 h-4 flex-shrink-0" />
             <span className="flex-1 text-left" style={{ fontFamily: "var(--font-body)" }}>
@@ -253,7 +274,7 @@ export function Sidebar() {
             </span>
             <kbd
               className="flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px]"
-              style={{ backgroundColor: "rgba(255,255,255,0.08)", color: "var(--sidebar-text-muted)" }}
+              style={{ backgroundColor: "rgba(247,246,240,0.08)", color: "var(--sidebar-text-muted)" }}
             >
               <Command className="w-2.5 h-2.5" />K
             </kbd>
@@ -267,8 +288,13 @@ export function Sidebar() {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
 
             return (
+              <div key={item.href}>
+                {"section" in item && item.section && (
+                  <p className="px-3 pt-4 pb-1.5 select-none" style={sectionLabelStyle}>
+                    {item.section}
+                  </p>
+                )}
               <Link
-                key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
                 data-tour={item.tourId}
@@ -286,6 +312,7 @@ export function Sidebar() {
                   {item.label}
                 </span>
               </Link>
+              </div>
             )
           })}
 
@@ -316,7 +343,7 @@ export function Sidebar() {
             {saatgutOpen && (
               <div
                 className="mt-0.5 ml-3 pl-3 space-y-0.5"
-                style={{ borderLeft: "1px solid rgba(255,255,255,0.1)" }}
+                style={{ borderLeft: "1px solid rgba(247,246,240,0.1)" }}
               >
                 {saatgutSubItems.map((sub) => {
                   const SubIcon = sub.icon
@@ -414,7 +441,7 @@ export function Sidebar() {
             </span>
             <kbd
               className="flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px]"
-              style={{ backgroundColor: "rgba(255,255,255,0.08)", color: "var(--sidebar-text-muted)" }}
+              style={{ backgroundColor: "rgba(247,246,240,0.08)", color: "var(--sidebar-text-muted)" }}
             >
               <Command className="w-2.5 h-2.5" />/
             </kbd>
@@ -445,8 +472,8 @@ export function Sidebar() {
             href="/auftraege/schnell"
             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
             style={{
-              backgroundColor: "#d97706",
-              color: "#ffffff",
+              backgroundColor: "var(--sidebar-gold)",
+              color: "#1A2E1A",
               fontFamily: "var(--font-display)",
             }}
             onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
@@ -459,8 +486,9 @@ export function Sidebar() {
             href="/auftraege/neu"
             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
             style={{
-              backgroundColor: "var(--sidebar-active)",
-              color: "#ffffff",
+              backgroundColor: "rgba(247,246,240,0.1)",
+              color: "#F7F6F0",
+              border: "1px solid rgba(247,246,240,0.15)",
               fontFamily: "var(--font-display)",
             }}
             onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
@@ -474,7 +502,7 @@ export function Sidebar() {
         {/* ── User Menu ── */}
         <div
           className="p-3 flex-shrink-0"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+          style={{ borderTop: "1px solid rgba(247,246,240,0.08)" }}
           ref={userMenuRef}
         >
           <div className="relative">
@@ -488,7 +516,7 @@ export function Sidebar() {
               {/* Avatar */}
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0"
-                style={{ backgroundColor: "rgba(255,255,255,0.1)" }}
+                style={{ backgroundColor: "rgba(247,246,240,0.1)" }}
               >
                 {(user as { avatar?: string })?.avatar ? (
                   <img
@@ -512,7 +540,7 @@ export function Sidebar() {
                   {user?.name || "Benutzer"}
                 </p>
                 <p className="text-xs flex items-center gap-1" style={{ color: "var(--sidebar-text-muted)" }}>
-                  {isAdmin && <Shield className="w-3 h-3" style={{ color: "#52a87e" }} />}
+                  {isAdmin && <Shield className="w-3 h-3" style={{ color: "var(--sidebar-gold)" }} />}
                   {getRoleLabel(userRole)}
                 </p>
               </div>
@@ -527,8 +555,8 @@ export function Sidebar() {
               <div
                 className="absolute bottom-full left-0 right-0 mb-2 rounded-xl shadow-xl overflow-hidden"
                 style={{
-                  backgroundColor: "#0d2b1f",
-                  border: "1px solid rgba(255,255,255,0.12)",
+                  backgroundColor: "#0d1a0d",
+                  border: "1px solid rgba(247,246,240,0.12)",
                   boxShadow: "0 -8px 32px rgba(0,0,0,0.3)",
                 }}
               >
@@ -576,7 +604,7 @@ export function Sidebar() {
                     Benutzerverwaltung
                   </Link>
                 )}
-                <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+                <div style={{ borderTop: "1px solid rgba(247,246,240,0.08)" }}>
                   <button
                     onClick={() => signOut({ callbackUrl: "/login" })}
                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-all"
@@ -594,11 +622,11 @@ export function Sidebar() {
 
           <p
             className="text-[10px] px-3 mt-2"
-            style={{ color: "rgba(255,255,255,0.2)" }}
+            style={{ color: "rgba(247,246,240,0.2)" }}
           >
             Koch Aufforstung GmbH
           </p>
-          <div className="text-[10px] px-3 mt-1 flex gap-2" style={{ color: "rgba(255,255,255,0.2)" }}>
+          <div className="text-[10px] px-3 mt-1 flex gap-2" style={{ color: "rgba(247,246,240,0.2)" }}>
             <a 
               href="https://peru-otter-113714.hostingersite.com/datenschutz/" 
               target="_blank" 

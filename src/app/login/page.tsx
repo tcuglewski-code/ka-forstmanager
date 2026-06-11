@@ -131,22 +131,108 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-surface-container-low)] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo/Brand */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-forest mb-4">
-            <TreePine className="w-8 h-8 text-emerald-400" />
+    <div className="min-h-screen flex" style={{ backgroundColor: "var(--color-background)" }}>
+      {/* ── Linke Spalte: Deep Forest Brand-Panel ── */}
+      <div
+        className="hidden lg:flex flex-col justify-between w-[40%] p-12 bg-grid-dark"
+        style={{ backgroundColor: "#1A2E1A" }}
+      >
+        <div>
+          <div className="flex items-center gap-3">
+            <div
+              className="inline-flex items-center justify-center w-11 h-11 rounded-xl"
+              style={{ backgroundColor: "rgba(247,246,240,0.08)", border: "1px solid rgba(247,246,240,0.12)" }}
+            >
+              <TreePine className="w-6 h-6" style={{ color: "#C5A55A" }} />
+            </div>
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "11px",
+                fontWeight: 700,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "#C5A55A",
+              }}
+            >
+              Feldhub Reforest
+            </span>
           </div>
-          <h1 className="text-2xl font-bold text-white">ForstManager</h1>
+        </div>
+
+        <div>
+          <h1
+            className="text-5xl leading-tight tracking-tight"
+            style={{ fontFamily: "var(--font-display)", fontWeight: 700, color: "#F7F6F0" }}
+          >
+            ForstManager
+          </h1>
+          <p
+            className="mt-4 text-lg leading-relaxed max-w-md"
+            style={{ fontFamily: "var(--font-body)", color: "rgba(247,246,240,0.7)" }}
+          >
+            Digitales Betriebssystem für Forstunternehmen
+          </p>
+
+          <div className="mt-10 space-y-4">
+            {[
+              "Aufträge, Protokolle & Abnahmen — alles in einem System",
+              "Offline-App für den Außendienst im Wald",
+              "Förderberatung & Analytics auf Knopfdruck",
+            ].map((feature) => (
+              <div key={feature} className="flex items-center gap-3">
+                <span className="moss-dot flex-shrink-0" />
+                <span className="text-sm" style={{ color: "rgba(247,246,240,0.8)" }}>
+                  {feature}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <p
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "10px",
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            color: "rgba(247,246,240,0.35)",
+          }}
+        >
+          Koch Aufforstung GmbH · ForstManager v1.0
+        </p>
+      </div>
+
+      {/* ── Rechte Spalte: Login-Formular auf Bone ── */}
+      <div className="flex-1 flex items-center justify-center p-4 lg:p-12">
+      <div className="w-full max-w-md">
+        {/* Logo/Brand — Mobile only */}
+        <div className="text-center mb-8 lg:hidden">
+          <div
+            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4"
+            style={{ backgroundColor: "#1A2E1A" }}
+          >
+            <TreePine className="w-8 h-8" style={{ color: "#C5A55A" }} />
+          </div>
+          <h1
+            className="text-2xl"
+            style={{ fontFamily: "var(--font-display)", fontWeight: 700, color: "var(--color-on-surface)" }}
+          >
+            ForstManager
+          </h1>
           <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">Koch Aufforstung GmbH</p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-[var(--color-surface-container)] border border-border rounded-2xl p-8">
+        <div className="bento-card p-8" style={{ backgroundColor: "var(--color-surface-container-low)" }}>
           {!requiresTwoFactor ? (
             <>
-              <h2 className="text-lg font-semibold text-white mb-1">Anmelden</h2>
+              <h2
+                className="text-2xl mb-1"
+                style={{ fontFamily: "var(--font-display)", fontWeight: 700, color: "var(--color-on-surface)" }}
+              >
+                Willkommen zurück
+              </h2>
               <p className="text-sm text-[var(--color-on-surface-variant)] mb-6">
                 Melden Sie sich mit Ihren Zugangsdaten an
               </p>
@@ -154,19 +240,24 @@ export default function LoginPage() {
           ) : (
             <>
               <div className="flex items-center gap-3 mb-1">
-                <Shield className="w-5 h-5 text-emerald-400" />
-                <h2 className="text-lg font-semibold text-white">Zwei-Faktor-Authentifizierung</h2>
+                <Shield className="w-5 h-5" style={{ color: "#8CAA1F" }} />
+                <h2
+                  className="text-xl"
+                  style={{ fontFamily: "var(--font-display)", fontWeight: 700, color: "var(--color-on-surface)" }}
+                >
+                  Zwei-Faktor-Authentifizierung
+                </h2>
               </div>
               <p className="text-sm text-[var(--color-on-surface-variant)] mb-6">
-                {useBackupCode 
-                  ? "Geben Sie einen Ihrer Backup-Codes ein" 
+                {useBackupCode
+                  ? "Geben Sie einen Ihrer Backup-Codes ein"
                   : "Geben Sie den Code aus Ihrer Authenticator-App ein"}
               </p>
             </>
           )}
 
           {error && (
-            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
               {error}
             </div>
           )}
@@ -187,7 +278,7 @@ export default function LoginPage() {
                     required
                     autoComplete="email"
                     placeholder="name@koch-aufforstung.de"
-                    className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-gray-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-2.5 bg-[#F2F1EB] border border-[rgba(26,46,26,0.15)] rounded-lg text-[var(--color-on-surface)] placeholder-[#9a9e97] focus:outline-none focus:ring-2 focus:ring-[#1A2E1A]/40 focus:border-[#1A2E1A] transition-all"
                   />
                 </div>
 
@@ -203,7 +294,7 @@ export default function LoginPage() {
                     required
                     autoComplete="current-password"
                     placeholder="••••••••"
-                    className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-gray-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-2.5 bg-[#F2F1EB] border border-[rgba(26,46,26,0.15)] rounded-lg text-[var(--color-on-surface)] placeholder-[#9a9e97] focus:outline-none focus:ring-2 focus:ring-[#1A2E1A]/40 focus:border-[#1A2E1A] transition-all"
                   />
                 </div>
               </>
@@ -225,14 +316,15 @@ export default function LoginPage() {
                     inputMode="numeric"
                     placeholder={useBackupCode ? "XXXX-XXXX" : "000000"}
                     maxLength={useBackupCode ? 9 : 6}
-                    className="w-full px-4 py-2.5 bg-[var(--color-surface-container-low)] border border-border rounded-lg text-gray-900 text-center text-2xl font-mono tracking-widest placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                    className="w-full px-4 py-2.5 bg-[#F2F1EB] border border-[rgba(26,46,26,0.15)] rounded-lg text-[var(--color-on-surface)] text-center text-2xl tracking-widest placeholder-[#9a9e97] focus:outline-none focus:ring-2 focus:ring-[#1A2E1A]/40 focus:border-[#1A2E1A] transition-all"
+                    style={{ fontFamily: "var(--font-mono)" }}
                   />
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setUseBackupCode(!useBackupCode)}
-                  className="w-full flex items-center justify-center gap-2 text-sm text-[var(--color-on-surface-variant)] hover:text-white transition-colors"
+                  className="w-full flex items-center justify-center gap-2 text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
                 >
                   <Key className="w-4 h-4" />
                   {useBackupCode 
@@ -245,7 +337,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 px-4 bg-forest hover:bg-[#3a4d26] text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+              className="btn-primary w-full py-2.5 px-4 text-sm disabled:opacity-60 disabled:cursor-not-allowed mt-2"
             >
               {loading ? (
                 <>
@@ -261,7 +353,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={handleBackToLogin}
-                className="w-full text-sm text-[var(--color-on-surface-variant)] hover:text-zinc-300 transition-colors"
+                className="w-full text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors"
               >
                 Zurück zur Anmeldung
               </button>
@@ -277,10 +369,10 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="text-center text-xs text-zinc-600 mt-6">
+        <p className="text-center text-xs mt-6" style={{ color: "var(--color-outline)" }}>
           © 2026 Koch Aufforstung GmbH — ForstManager v1.0
         </p>
-        <p className="text-center text-xs text-zinc-600 mt-2">
+        <p className="text-center text-xs mt-2" style={{ color: "var(--color-outline)" }}>
           <a 
             href="https://peru-otter-113714.hostingersite.com/datenschutz/" 
             target="_blank" 
@@ -299,6 +391,7 @@ export default function LoginPage() {
             Impressum
           </a>
         </p>
+      </div>
       </div>
     </div>
   )

@@ -424,11 +424,11 @@ const STATUS_LABELS: Record<string, string> = {
 }
 
 const STATUS_FARBEN: Record<string, string> = {
-  anfrage: "bg-[#dedad0] text-[#4b6457]",
-  geprueft: "bg-[#cde9d9] text-[#026c47]",
-  angebot: "bg-[#e6e2d8] text-[#3f4942]",
+  anfrage: "bg-[#EBEAE4] text-[#434841]",
+  geprueft: "bg-[rgba(140,170,31,0.16)] text-[#5a6e14]",
+  angebot: "bg-[#E3E2DC] text-[#434841]",
   bestaetigt: "bg-amber-100 text-amber-800",
-  in_ausfuehrung: "bg-[#cde9d9] text-[#026c47]",
+  in_ausfuehrung: "bg-[rgba(140,170,31,0.16)] text-[#5a6e14]",
   abgeschlossen: "bg-gray-200 text-gray-700",
 }
 
@@ -473,20 +473,20 @@ export default async function DashboardPage() {
             <StatCard
               label="Gruppenmitglieder"
               value={scoped.gruppenMitglieder.toString()}
-              icon={<Users className="w-5 h-5 text-emerald-400" />}
+              icon={<Users className="w-5 h-5 text-[#8CAA1F]" />}
               href="/mitarbeiter"
             />
           )}
           <StatCard
             label="Gruppen-Aufträge"
             value={scoped.gruppenAuftraege.toString()}
-            icon={<ClipboardList className="w-5 h-5 text-emerald-400" />}
+            icon={<ClipboardList className="w-5 h-5 text-[#8CAA1F]" />}
             href="/auftraege"
           />
           <StatCard
             label="Aktiv heute (Gruppe)"
             value={scoped.aktiveMitarbeiterHeute.toString()}
-            icon={<UserCheck className="w-5 h-5 text-emerald-400" />}
+            icon={<UserCheck className="w-5 h-5 text-[#8CAA1F]" />}
             href="/stunden?datum=heute"
           />
           <StatCard
@@ -494,7 +494,7 @@ export default async function DashboardPage() {
             value={scoped.offeneAbnahmen.toString()}
             icon={
               <CheckSquare
-                className={`w-5 h-5 ${scoped.offeneAbnahmen > 0 ? "text-amber-400" : "text-emerald-400"}`}
+                className={`w-5 h-5 ${scoped.offeneAbnahmen > 0 ? "text-amber-400" : "text-[#8CAA1F]"}`}
               />
             }
             href="/abnahmen"
@@ -505,12 +505,12 @@ export default async function DashboardPage() {
         {/* Eigene Werte (nur eigene Stunden/Lohn, keine Aggregate) */}
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div
-            className="rounded-xl p-5 ambient-shadow-md"
+            className="bento-card p-5"
             style={{ backgroundColor: "var(--color-surface-container-low)" }}
           >
             <p
-              className="text-xs font-semibold uppercase tracking-wider mb-2"
-              style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
+              className="text-[10px] font-bold uppercase mb-2"
+              style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-mono)", letterSpacing: "0.1em" }}
             >
               Eigene Stunden
             </p>
@@ -522,12 +522,12 @@ export default async function DashboardPage() {
             </p>
           </div>
           <div
-            className="rounded-xl p-5 ambient-shadow-md"
+            className="bento-card p-5"
             style={{ backgroundColor: "var(--color-surface-container-low)" }}
           >
             <p
-              className="text-xs font-semibold uppercase tracking-wider mb-2"
-              style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
+              className="text-[10px] font-bold uppercase mb-2"
+              style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-mono)", letterSpacing: "0.1em" }}
             >
               Eigener Lohn (geschätzt)
             </p>
@@ -542,12 +542,12 @@ export default async function DashboardPage() {
             </p>
           </div>
           <div
-            className="rounded-xl p-5 ambient-shadow-md"
+            className="bento-card p-5"
             style={{ backgroundColor: "var(--color-surface-container-low)" }}
           >
             <p
-              className="text-xs font-semibold uppercase tracking-wider mb-2"
-              style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
+              className="text-[10px] font-bold uppercase mb-2"
+              style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-mono)", letterSpacing: "0.1em" }}
             >
               Qual. ablaufend (eigene)
             </p>
@@ -579,7 +579,7 @@ export default async function DashboardPage() {
               </Link>
             </div>
             <div
-              className="rounded-xl overflow-hidden ambient-shadow-md"
+              className="bento-card overflow-hidden"
               style={{ backgroundColor: "var(--color-surface-container-low)" }}
             >
               {scoped.neuesteAuftraege.map((a, i) => (
@@ -605,7 +605,7 @@ export default async function DashboardPage() {
                       {a.bundesland || "—"}
                     </p>
                   </div>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#dedad0] text-[#4b6457]">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#EBEAE4] text-[#434841]">
                     {a.status}
                   </span>
                 </Link>
@@ -740,10 +740,10 @@ export default async function DashboardPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <StatCard label="Aktive Mitarbeiter" value={stats.aktiveMitarbeiter.toString()} icon={<Users className="w-5 h-5 text-emerald-400" />} href="/mitarbeiter" />
-        <StatCard label="Aktive Saisons" value={stats.aktiveSaisons.toString()} icon={<Sprout className="w-5 h-5 text-emerald-400" />} href="/saisons" />
-        <StatCard label="Offene Aufträge" value={stats.offeneAuftraege.toString()} icon={<ClipboardList className="w-5 h-5 text-emerald-400" />} href="/auftraege" />
-        <StatCard label="Lager-Alerts" value={stats.lagerUnterMindest.toString()} icon={<Package className={`w-5 h-5 ${stats.lagerUnterMindest > 0 ? "text-red-400" : "text-emerald-400"}`} />} href="/lager" alert={stats.lagerUnterMindest > 0} />
+        <StatCard label="Aktive Mitarbeiter" value={stats.aktiveMitarbeiter.toString()} icon={<Users className="w-5 h-5 text-[#8CAA1F]" />} href="/mitarbeiter" />
+        <StatCard label="Aktive Saisons" value={stats.aktiveSaisons.toString()} icon={<Sprout className="w-5 h-5 text-[#8CAA1F]" />} href="/saisons" />
+        <StatCard label="Offene Aufträge" value={stats.offeneAuftraege.toString()} icon={<ClipboardList className="w-5 h-5 text-[#8CAA1F]" />} href="/auftraege" />
+        <StatCard label="Lager-Alerts" value={stats.lagerUnterMindest.toString()} icon={<Package className={`w-5 h-5 ${stats.lagerUnterMindest > 0 ? "text-red-400" : "text-[#8CAA1F]"}`} />} href="/lager" alert={stats.lagerUnterMindest > 0} />
       </div>
 
       {/* New Stats Row */}
@@ -751,28 +751,28 @@ export default async function DashboardPage() {
         <StatCard
           label="Offene Abnahmen"
           value={stats.offeneAbnahmen.toString()}
-          icon={<CheckSquare className={`w-5 h-5 ${stats.offeneAbnahmen > 0 ? "text-amber-400" : "text-emerald-400"}`} />}
+          icon={<CheckSquare className={`w-5 h-5 ${stats.offeneAbnahmen > 0 ? "text-amber-400" : "text-[#8CAA1F]"}`} />}
           href="/abnahmen"
           alert={stats.offeneAbnahmen > 0}
         />
         <StatCard
           label="Stunden ausstehend"
           value={stats.stundenAusstehend.toString()}
-          icon={<Clock className={`w-5 h-5 ${stats.stundenAusstehend > 0 ? "text-amber-400" : "text-emerald-400"}`} />}
+          icon={<Clock className={`w-5 h-5 ${stats.stundenAusstehend > 0 ? "text-amber-400" : "text-[#8CAA1F]"}`} />}
           href="/stunden?genehmigt=false"
           alert={stats.stundenAusstehend > 0}
         />
         <StatCard
           label="Vorschüsse offen"
           value={`${stats.vorschuessOffen.toFixed(0)} €`}
-          icon={<DollarSign className={`w-5 h-5 ${stats.vorschuessOffen > 0 ? "text-amber-400" : "text-emerald-400"}`} />}
+          icon={<DollarSign className={`w-5 h-5 ${stats.vorschuessOffen > 0 ? "text-amber-400" : "text-[#8CAA1F]"}`} />}
           href="/vorschuesse"
           alert={stats.vorschuessOffen > 0}
         />
         <StatCard
           label="Qual. ablaufend"
           value={stats.ablaufendeQualifikationen.toString()}
-          icon={<AlertTriangle className={`w-5 h-5 ${stats.ablaufendeQualifikationen > 0 ? "text-amber-400" : "text-emerald-400"}`} />}
+          icon={<AlertTriangle className={`w-5 h-5 ${stats.ablaufendeQualifikationen > 0 ? "text-amber-400" : "text-[#8CAA1F]"}`} />}
           href="/qualifikationen"
           alert={stats.ablaufendeQualifikationen > 0}
         />
@@ -783,27 +783,27 @@ export default async function DashboardPage() {
         <StatCard
           label="Offene Förderanträge"
           value={stats.offeneFoerderantraege.toString()}
-          icon={<FileText className={`w-5 h-5 ${stats.offeneFoerderantraege > 0 ? "text-blue-400" : "text-emerald-400"}`} />}
+          icon={<FileText className={`w-5 h-5 ${stats.offeneFoerderantraege > 0 ? "text-blue-400" : "text-[#8CAA1F]"}`} />}
           href="/angebote?status=versendet"
           alert={stats.offeneFoerderantraege > 3}
         />
         <StatCard
           label="Fällige Rechnungen (7T)"
           value={stats.faelligeRechnungen7Tage.toString()}
-          icon={<CalendarClock className={`w-5 h-5 ${stats.faelligeRechnungen7Tage > 0 ? "text-amber-400" : "text-emerald-400"}`} />}
+          icon={<CalendarClock className={`w-5 h-5 ${stats.faelligeRechnungen7Tage > 0 ? "text-amber-400" : "text-[#8CAA1F]"}`} />}
           href="/rechnungen?faellig=7"
           alert={stats.faelligeRechnungen7Tage > 0}
         />
         <StatCard
           label="Aktiv heute"
           value={stats.aktiveMitarbeiterHeute.toString()}
-          icon={<UserCheck className="w-5 h-5 text-emerald-400" />}
+          icon={<UserCheck className="w-5 h-5 text-[#8CAA1F]" />}
           href="/stunden?datum=heute"
         />
         <StatCard
           label="Saatgut Lager (kg)"
           value={stats.saatgutLagerstand.toFixed(1)}
-          icon={<Leaf className={`w-5 h-5 ${stats.saatgutLagerstand < 10 ? "text-amber-400" : "text-emerald-400"}`} />}
+          icon={<Leaf className={`w-5 h-5 ${stats.saatgutLagerstand < 10 ? "text-amber-400" : "text-[#8CAA1F]"}`} />}
           href="/lager?kategorie=saatgut"
           alert={stats.saatgutLagerstand < 10}
         />
@@ -812,12 +812,12 @@ export default async function DashboardPage() {
       {/* Wirtschaftlichkeits-Widget */}
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div
-          className="rounded-xl p-5 ambient-shadow-md"
+          className="bento-card p-5"
           style={{ backgroundColor: "var(--color-surface-container-low)" }}
         >
           <p
-            className="text-xs font-semibold uppercase tracking-wider mb-2"
-            style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
+            className="text-[10px] font-bold uppercase mb-2"
+            style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-mono)", letterSpacing: "0.1em" }}
           >
             Gesamtstunden
           </p>
@@ -828,30 +828,28 @@ export default async function DashboardPage() {
             {(stats.stundenGesamt._sum?.stunden ?? 0).toFixed(0)}h
           </p>
         </div>
-        <div
-          className="rounded-xl p-5 ambient-shadow-md"
-          style={{ backgroundColor: "var(--color-surface-container-low)" }}
-        >
+        <div className="bento-dark p-5 bg-grid-dark">
           <p
-            className="text-xs font-semibold uppercase tracking-wider mb-2"
-            style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
+            className="text-xs font-bold uppercase mb-2 flex items-center gap-2"
+            style={{ color: "var(--color-gold)", fontFamily: "var(--font-mono)", letterSpacing: "0.1em" }}
           >
+            <span className="moss-dot" style={{ width: 6, height: 6 }} />
             Realisierter Umsatz
           </p>
           <p
             className="text-3xl font-bold"
-            style={{ fontFamily: "var(--font-mono)", color: "#10b981" }}
+            style={{ fontFamily: "var(--font-display)", color: "#F7F6F0" }}
           >
             {((stats.realisierterUmsatz._sum?.betrag ?? 0)).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
           </p>
         </div>
         <div
-          className="rounded-xl p-5 ambient-shadow-md"
+          className="bento-card p-5"
           style={{ backgroundColor: "var(--color-surface-container-low)" }}
         >
           <p
-            className="text-xs font-semibold uppercase tracking-wider mb-2"
-            style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
+            className="text-[10px] font-bold uppercase mb-2"
+            style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-mono)", letterSpacing: "0.1em" }}
           >
             Offene Forderungen
           </p>
@@ -863,12 +861,12 @@ export default async function DashboardPage() {
           </p>
         </div>
         <div
-          className="rounded-xl p-5 ambient-shadow-md"
+          className="bento-card p-5"
           style={{ backgroundColor: "var(--color-surface-container-low)" }}
         >
           <p
-            className="text-xs font-semibold uppercase tracking-wider mb-2"
-            style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-body)" }}
+            className="text-[10px] font-bold uppercase mb-2"
+            style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-mono)", letterSpacing: "0.1em" }}
           >
             Lohnkosten (akt. Saison)
           </p>
@@ -884,8 +882,7 @@ export default async function DashboardPage() {
       {/* Quick Actions */}
       <div className="mt-8">
         <h2
-          className="text-xs font-semibold mb-3 uppercase tracking-widest"
-          style={{ color: "var(--color-outline)", fontFamily: "var(--font-display)" }}
+          className="overline mb-3"
         >
           Schnellzugriff
         </h2>
@@ -899,17 +896,17 @@ export default async function DashboardPage() {
             <Link
               key={action.label}
               href={action.href}
-              className="flex flex-col gap-1 p-4 rounded-xl tonal-transition ambient-shadow-md group"
-              style={{ backgroundColor: "var(--color-surface-container-low)" }}
+              className="flex flex-col gap-1 p-4 rounded-xl tonal-transition group"
+              style={{ backgroundColor: "var(--color-primary)", boxShadow: "var(--shadow-card)" }}
             >
               <span className="text-2xl">{action.icon}</span>
               <span
                 className="text-sm font-semibold mt-1"
-                style={{ color: "var(--color-on-surface)", fontFamily: "var(--font-display)" }}
+                style={{ color: "#F7F6F0", fontFamily: "var(--font-display)" }}
               >
                 {action.label}
               </span>
-              <span className="text-xs" style={{ color: "var(--color-on-surface-variant)" }}>{action.desc}</span>
+              <span className="text-xs" style={{ color: "rgba(247,246,240,0.6)" }}>{action.desc}</span>
             </Link>
           ))}
         </div>
@@ -920,8 +917,7 @@ export default async function DashboardPage() {
         <div className="mt-6">
           <div className="flex items-center justify-between mb-3">
             <h2
-              className="text-xs font-semibold uppercase tracking-widest"
-              style={{ color: "var(--color-outline)", fontFamily: "var(--font-display)" }}
+              className="overline"
             >
               Neueste Aufträge
             </h2>
@@ -934,7 +930,7 @@ export default async function DashboardPage() {
             </Link>
           </div>
           <div
-            className="rounded-xl overflow-hidden ambient-shadow-md"
+            className="bento-card overflow-hidden"
             style={{ backgroundColor: "var(--color-surface-container-low)" }}
           >
             {stats.neuesteAuftraege.map((a, i) => (
@@ -957,9 +953,9 @@ export default async function DashboardPage() {
                 </div>
                 <span
                   className={`text-xs px-2 py-0.5 rounded-full ${
-                    a.status === "abgeschlossen" ? "bg-[#e6e2d8] text-[#3f4942]" :
-                    a.status === "laufend" ? "bg-[#cde9d9] text-[#026c47]" :
-                    "bg-[#dedad0] text-[#4b6457]"
+                    a.status === "abgeschlossen" ? "bg-[#E3E2DC] text-[#434841]" :
+                    a.status === "laufend" ? "bg-[rgba(140,170,31,0.16)] text-[#5a6e14]" :
+                    "bg-[#EBEAE4] text-[#434841]"
                   }`}
                 >
                   {a.status}
@@ -974,13 +970,12 @@ export default async function DashboardPage() {
       {(stats.letzteProtokolle.length > 0 || stats.letzteAbnahmen.length > 0) && (
         <div className="mt-6">
           <h2
-            className="text-xs font-semibold uppercase tracking-widest mb-3"
-            style={{ color: "var(--color-outline)", fontFamily: "var(--font-display)" }}
+            className="overline mb-3"
           >
             Letzte Aktivitäten
           </h2>
           <div
-            className="rounded-xl overflow-hidden ambient-shadow-md"
+            className="bento-card overflow-hidden"
             style={{ backgroundColor: "var(--color-surface-container-low)" }}
           >
             {[
@@ -1024,7 +1019,7 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
         {/* Auftrags-Status */}
         <div
-          className="rounded-xl p-6 ambient-shadow-md"
+          className="bento-card p-6"
           style={{ backgroundColor: "var(--color-surface-container-low)" }}
         >
           <div className="flex items-center gap-2 mb-4">
@@ -1065,7 +1060,7 @@ export default async function DashboardPage() {
 
         {/* Nächste Schulungen */}
         <div
-          className="rounded-xl p-6 ambient-shadow-md"
+          className="bento-card p-6"
           style={{ backgroundColor: "var(--color-surface-container-low)" }}
         >
           <div className="flex items-center gap-2 mb-4">
@@ -1118,7 +1113,7 @@ export default async function DashboardPage() {
 
         {/* Schnellzugriff */}
         <div
-          className="rounded-xl p-6 ambient-shadow-md"
+          className="bento-card p-6"
           style={{ backgroundColor: "var(--color-surface-container-low)" }}
         >
           <h2

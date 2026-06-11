@@ -9,16 +9,19 @@ export function StatCard({ label, value, icon, href, alert }: {
   return (
     <Link
       href={href}
-      className="block rounded-xl p-5 tonal-transition ambient-shadow-md"
-      style={{ backgroundColor: alert ? "rgba(186,26,26,0.05)" : "var(--color-surface-container-low)", outline: alert ? "1px solid rgba(186,26,26,0.2)" : "none" }}
-      onMouseEnter={e => (e.currentTarget.style.backgroundColor = alert ? "rgba(186,26,26,0.08)" : "var(--color-surface-container)")}
-      onMouseLeave={e => (e.currentTarget.style.backgroundColor = alert ? "rgba(186,26,26,0.05)" : "var(--color-surface-container-low)")}
+      className="block bento-card p-5"
+      style={alert ? { backgroundColor: "rgba(186,26,26,0.05)", borderColor: "rgba(186,26,26,0.2)" } : undefined}
     >
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "var(--color-on-surface-variant)" }}>{label}</span>
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: alert ? "rgba(186,26,26,0.1)" : "var(--color-secondary-container)" }}>{icon}</div>
+        <span
+          className="text-[10px] font-bold uppercase"
+          style={{ color: "var(--color-on-surface-variant)", fontFamily: "var(--font-mono)", letterSpacing: "0.1em" }}
+        >
+          {label}
+        </span>
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: alert ? "rgba(186,26,26,0.1)" : "var(--color-primary-container)" }}>{icon}</div>
       </div>
-      <p className="text-3xl font-bold" style={{ fontFamily: "var(--font-mono)", color: alert ? "var(--color-error)" : "var(--color-on-surface)" }}>{value}</p>
+      <p className="text-3xl font-bold" style={{ fontFamily: "var(--font-display)", color: alert ? "var(--color-error)" : "var(--color-on-surface)" }}>{value}</p>
     </Link>
   )
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Manrope, Inter, Barlow_Condensed } from "next/font/google"
+import { Hanken_Grotesk, Inter, JetBrains_Mono } from "next/font/google"
 import { Suspense } from "react"
 import "./globals.css"
 import { Toaster } from "sonner"
@@ -7,10 +7,10 @@ import PostHogProvider from "@/components/providers/PostHogProvider"
 import DemoBanner from "@/components/DemoBanner"
 import { auth } from "@/lib/auth"
 
-const manrope = Manrope({
+const hankenGrotesk = Hanken_Grotesk({
   subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
-  variable: "--font-manrope",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-hanken",
   display: "swap",
 })
 
@@ -21,10 +21,10 @@ const inter = Inter({
   display: "swap",
 })
 
-const barlowCondensed = Barlow_Condensed({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["600", "700"],
-  variable: "--font-barlow",
+  weight: ["400", "500", "700"],
+  variable: "--font-jetbrains",
   display: "swap",
 })
 
@@ -40,7 +40,7 @@ export default async function RootLayout({
 }) {
   const session = await auth().catch(() => null)
   return (
-    <html lang="de" className={`${manrope.variable} ${inter.variable} ${barlowCondensed.variable}`}>
+    <html lang="de" className={`${hankenGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
       <body
         className="antialiased"
         style={{

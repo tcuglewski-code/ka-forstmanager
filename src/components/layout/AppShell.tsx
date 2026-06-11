@@ -40,8 +40,9 @@ export function AppShell({ children, title }: AppShellProps) {
         <header
           className="sticky top-0 z-20 px-6 py-3 flex items-center gap-4"
           style={{
-            backgroundColor: "var(--color-surface)",
-            boxShadow: "0 1px 0 var(--color-outline-variant), 0 4px 16px rgba(17,41,31,0.04)",
+            backgroundColor: "var(--color-background)",
+            borderBottom: "1px solid var(--color-border)",
+            boxShadow: "0 1px 0 rgba(26,46,26,0.06)",
           }}
         >
           {/* Search */}
@@ -51,19 +52,27 @@ export function AppShell({ children, title }: AppShellProps) {
             style={{
               backgroundColor: "var(--color-surface-container-low)",
               color: "var(--color-on-surface-variant)",
+              border: "1px solid var(--color-border)",
             }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--color-surface-container)")}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = "var(--color-surface-container-low)")}
+            onMouseEnter={e => {
+              e.currentTarget.style.backgroundColor = "var(--color-surface-container)"
+              e.currentTarget.style.borderColor = "var(--color-primary)"
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.backgroundColor = "var(--color-surface-container-low)"
+              e.currentTarget.style.borderColor = "var(--color-border)"
+            }}
           >
             <Search className="w-4 h-4 flex-shrink-0" />
             <span className="flex-1 text-left">
               {title ? `Suche in ${title}…` : "Ressourcen, Mitarbeiter…"}
             </span>
             <kbd
-              className="hidden sm:flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono"
+              className="hidden sm:flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px]"
               style={{
                 backgroundColor: "var(--color-surface-container-high)",
                 color: "var(--color-outline)",
+                fontFamily: "var(--font-mono)",
               }}
             >
               ⌘K
@@ -74,11 +83,10 @@ export function AppShell({ children, title }: AppShellProps) {
 
           {/* Live Sync indicator */}
           <div className="hidden sm:flex items-center gap-1.5 text-xs" style={{ color: "var(--color-outline)" }}>
-            <span
-              className="w-1.5 h-1.5 rounded-full animate-pulse"
-              style={{ backgroundColor: "var(--color-primary)" }}
-            />
-            Live Sync
+            <span className="moss-dot" style={{ width: 6, height: 6 }} />
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+              Live Sync
+            </span>
           </div>
 
           {/* Page Title (if set) */}
@@ -122,9 +130,10 @@ export function AppShell({ children, title }: AppShellProps) {
                 <span
                   className="absolute top-1 right-1 min-w-[16px] h-4 px-1 rounded-full text-[10px] font-semibold flex items-center justify-center"
                   style={{
-                    backgroundColor: "#C5A55A",
-                    color: "#2C3A1C",
-                    border: "2px solid var(--color-surface)",
+                    backgroundColor: "var(--color-gold)",
+                    color: "#1A2E1A",
+                    border: "2px solid var(--color-background)",
+                    fontFamily: "var(--font-mono)",
                   }}
                 >
                   {unreadCount > 9 ? "9+" : unreadCount}
@@ -132,14 +141,18 @@ export function AppShell({ children, title }: AppShellProps) {
               )}
             </button>
             <button
-              className="p-2 rounded-xl tonal-transition"
-              style={{ color: "var(--color-on-surface-variant)" }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--color-surface-container)")}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
+              className="w-9 h-9 rounded-full flex items-center justify-center tonal-transition"
+              style={{
+                backgroundColor: "var(--color-primary)",
+                color: "#F7F6F0",
+                fontFamily: "var(--font-mono)",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--color-primary-deep, #0d1a0d)")}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = "var(--color-primary)")}
               title="Profil"
               onClick={() => router.push("/profil")}
             >
-              <User className="w-5 h-5" />
+              <User className="w-4 h-4" />
             </button>
           </div>
         </header>
