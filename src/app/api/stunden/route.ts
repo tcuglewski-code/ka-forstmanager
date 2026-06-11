@@ -66,11 +66,19 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
     where.mitarbeiterId = mitarbeiterId
   }
   if (genehmigt !== null && genehmigt !== "") where.genehmigt = genehmigt === "true"
-  if (monat && jahr) {
+  // AUDIT-FIX: [BUG-004] Datumsfilter ?von&?bis (ISO-Datum) — z.B. für Dashboard-Link "Aktiv heute"
+  const von = searchParams.get("von")
+  const bis = searchParams.get("bis")
+  if (von || bis) {
+    const datumFilter: { gte?: Date; lt?: Date } = {}
+    if (von && !isNaN(Date.parse(von))) datumFilter.gte = new Date(von)
+    if (bis && !isNaN(Date.parse(bis))) datumFilter.lt = new Date(bis)
+    if (datumFilter.gte || datumFilter.lt) where.datum = datumFilter
+  } else if (monat && jahr) {
     const m = parseInt(monat), y = parseInt(jahr)
-    const von = new Date(y, m - 1, 1)
-    const bis = new Date(y, m, 1)
-    where.datum = { gte: von, lt: bis }
+    const vonDatum = new Date(y, m - 1, 1)
+    const bisDatum = new Date(y, m, 1)
+    where.datum = { gte: vonDatum, lt: bisDatum }
   }
 
   const [data, total] = await Promise.all([

@@ -459,7 +459,8 @@ async function sendNotfallSMS(params: {
         to: params.to,
       });
 
-      console.log(`[DeadMan] SMS gesendet an ${params.kontaktName}`);
+      // AUDIT-FIX: [DSGVO] kein Klartext-Name in Logs
+      console.log('[DeadMan] SMS gesendet (Notfallkontakt)');
       return true;
     } catch (e) {
       console.error('[DeadMan] Twilio SMS fehlgeschlagen:', e);
@@ -468,7 +469,8 @@ async function sendNotfallSMS(params: {
   }
 
   // Fallback: Loggen wenn kein Twilio
-  console.log(`[DeadMan] SMS würde gesendet an ${params.kontaktName} (${params.to}): ${params.message}`);
+  // AUDIT-FIX: [DSGVO] kein Name/Telefonnummer/Nachrichteninhalt in Logs
+  console.log('[DeadMan] SMS würde gesendet (Twilio nicht konfiguriert — Notfallkontakt nicht erreicht)');
   return false;
 }
 

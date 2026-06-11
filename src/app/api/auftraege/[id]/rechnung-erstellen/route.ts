@@ -49,6 +49,19 @@ export async function POST(
     return NextResponse.json({ error: 'Auftrag nicht gefunden' }, { status: 404 })
   }
 
+  // AUDIT-FIX: [K2] Geschäftsregel "Rechnung erst nach Abnahme" durchsetzen —
+  // vorher konnte jederzeit eine Rechnung erstellt werden, auch ohne (bestätigte) Abnahme.
+  const bestaetigteAbnahme = await prisma.abnahme.findFirst({
+    where: { auftragId: id, status: 'bestätigt' },
+    select: { id: true },
+  })
+  if (!bestaetigteAbnahme) {
+    return NextResponse.json(
+      { error: 'Rechnung kann erst nach bestätigter Abnahme erstellt werden' },
+      { status: 400 }
+    )
+  }
+
   const protos = auftrag.protokolle || []
 
   // Aggregiere Leistungen aus allen Protokollen

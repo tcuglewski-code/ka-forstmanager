@@ -39,18 +39,28 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (body.rechnungFreigegeben !== undefined) updateData.rechnungFreigegeben = body.rechnungFreigegeben
 
   // Wenn status → 'bestätigt': Rechnung automatisch freigeben
+  // AUDIT-FIX: [K10] Freigabe-Logik vereinheitlicht (entwurf+erstellt wie /bestaetigen)
+  // und Abnahme-Update + Rechnungs-Freigabe in eine Transaktion gepackt (vorher: inkonsistenter Zustand bei Teilfehler).
   if (body.status === "bestätigt" && body.rechnungFreigegeben !== false) {
     updateData.rechnungFreigegeben = true
     updateData.freigegebenAm = new Date()
     updateData.freigegebenVon = (session as any).user?.id
 
     const existing = await prisma.abnahme.findUnique({ where: { id } })
-    if (existing) {
-      await prisma.rechnung.updateMany({
-        where: { auftragId: existing.auftragId, status: "entwurf" },
+    if (!existing) return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 })
+
+    const [abnahme] = await prisma.$transaction([
+      prisma.abnahme.update({
+        where: { id },
+        data: updateData,
+        include: { auftrag: { select: { id: true, titel: true } } },
+      }),
+      prisma.rechnung.updateMany({
+        where: { auftragId: existing.auftragId, status: { in: ["entwurf", "erstellt"] } },
         data: { status: "freigegeben" },
-      })
-    }
+      }),
+    ])
+    return NextResponse.json(abnahme)
   }
 
   const abnahme = await prisma.abnahme.update({

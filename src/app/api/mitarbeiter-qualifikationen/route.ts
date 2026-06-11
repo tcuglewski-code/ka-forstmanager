@@ -10,11 +10,15 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
   const { searchParams } = new URL(req.url)
   const filter = searchParams.get("filter") // "30" | "60" | "90"
   const heute = new Date()
-  let where = {}
+  // AUDIT-FIX: [BUG-008] Qualifikationen gelöschter/inaktiver Mitarbeiter ausschließen — konsistent mit Dashboard-Counter
+  const where: Record<string, unknown> = {
+    mitarbeiter: { deletedAt: null, status: "aktiv" },
+  }
   if (filter) {
     const days = parseInt(filter)
     const bis = new Date(heute.getTime() + days * 24 * 60 * 60 * 1000)
-    where = { ablaufDatum: { lte: bis } }
+    // Fenster wie Dashboard-Counter: inkl. bereits abgelaufener (handlungsrelevant), keine Untergrenze
+    where.ablaufDatum = { lte: bis }
   }
   const data = await prisma.mitarbeiterQualifikation.findMany({
     where,

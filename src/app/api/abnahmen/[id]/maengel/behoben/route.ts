@@ -38,7 +38,9 @@ export const POST = withErrorHandler(async (req: NextRequest, { params }: { para
 
   // Prüfen ob alle Mängel erledigt sind
   const alleErledigt = maengel.every(m => m.erledigtAm !== null)
-  const neuerStatus = alleErledigt ? "abnahme" : "mängel"
+  // AUDIT-FIX: [K4] "abnahme" ist kein gültiger Abnahme-Status (Vokabular: offen|bestätigt|abgelehnt|mängel).
+  // Nach Behebung aller Mängel geht die Abnahme zurück auf "offen" (erneute Prüfung nötig).
+  const neuerStatus = alleErledigt ? "offen" : "mängel"
 
   const updated = await prisma.abnahme.update({
     where: { id },

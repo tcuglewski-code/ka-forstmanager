@@ -27,6 +27,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const body = await req.json()
     const menge = parseFloat(body.menge)
 
+    // AUDIT-FIX: [K7] Mengen-Validierung — NaN/negative Mengen führten zu korrupten Beständen
+    if (!Number.isFinite(menge) || menge < 0) {
+      return NextResponse.json({ error: "Ungültige Menge" }, { status: 400 })
+    }
+
     // KD-3: Mengenvalidierung - prüfe aktuellen Bestand vor Buchung
     if (body.typ === "ausgang" || body.typ === "reserve" || body.typ === "zuweisung") {
       const artikel = await prisma.lagerArtikel.findUnique({
@@ -67,34 +72,41 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       notiz = `Korrektur: ${altBestand} → ${menge} (Delta: ${delta >= 0 ? "+" : ""}${delta})${body.notiz ? " | " + body.notiz : ""}`
     }
 
-    const bewegung = await prisma.lagerBewegung.create({
-      data: {
-        artikelId,
-        typ: body.typ,
-        menge,
-        referenz: body.referenz ?? null,
-        notiz,
-        auftragId: body.auftragId || null,
-        mitarbeiterId: body.mitarbeiterId || null,
-      },
-    })
+    // AUDIT-FIX: [K7] Bewegung + Bestands-Update atomar in einer Transaktion —
+    // vorher konnte bei Teilfehler eine Bewegung ohne Bestandsänderung (oder umgekehrt) entstehen.
+    const bestandUpdate =
+      body.typ === "korrektur"
+        ? // FM-32: Korrektur setzt Bestand absolut auf den eingegebenen Wert
+          prisma.lagerArtikel.update({
+            where: { id: artikelId },
+            data: { bestand: menge },
+          })
+        : prisma.lagerArtikel.update({
+            where: { id: artikelId },
+            data: {
+              bestand: {
+                increment:
+                  body.typ === "eingang" || body.typ === "rueckgabe"
+                    ? menge
+                    : -menge, // ausgang/reserve/zuweisung
+              },
+            },
+          })
 
-    // Update bestand
-    if (body.typ === "korrektur") {
-      // FM-32: Korrektur setzt Bestand absolut auf den eingegebenen Wert
-      await prisma.lagerArtikel.update({
-        where: { id: artikelId },
-        data: { bestand: menge },
-      })
-    } else {
-      const delta = (body.typ === "eingang" || body.typ === "rueckgabe")
-        ? menge
-        : -menge // ausgang/reserve/zuweisung
-      await prisma.lagerArtikel.update({
-        where: { id: artikelId },
-        data: { bestand: { increment: delta } },
-      })
-    }
+    const [bewegung] = await prisma.$transaction([
+      prisma.lagerBewegung.create({
+        data: {
+          artikelId,
+          typ: body.typ,
+          menge,
+          referenz: body.referenz ?? null,
+          notiz,
+          auftragId: body.auftragId || null,
+          mitarbeiterId: body.mitarbeiterId || null,
+        },
+      }),
+      bestandUpdate,
+    ])
 
     return NextResponse.json(bewegung, { status: 201 })
   } catch (error) {

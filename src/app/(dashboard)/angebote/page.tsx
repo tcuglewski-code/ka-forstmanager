@@ -91,6 +91,13 @@ export default function AngebotePage() {
   const [config, setConfig] = useState<Record<string, string>>({})
   const [filterStatus, setFilterStatus] = useState<string>("")
 
+  // AUDIT-FIX: [BUG-005] URL-Param ?status= lesen (Dashboard-Link "Offene Förderanträge")
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const statusParam = params.get("status")
+    if (statusParam) setFilterStatus(statusParam)
+  }, [])
+
   const [form, setForm] = useState<AngebotForm>({
     waldbesitzerName: "",
     waldbesitzerEmail: "",

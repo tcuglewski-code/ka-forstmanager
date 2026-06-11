@@ -16,16 +16,20 @@ interface Abnahme {
 
 interface Auftrag { id: string; titel: string }
 
+// AUDIT-FIX: [K9] Status-Vokabular an Schema angepasst (offen|bestätigt|abgelehnt|mängel)
+// — vorher bestanden/nicht_bestanden, die nie in der DB vorkommen → Badges/Filter griffen nicht.
 const statusBadge: Record<string, string> = {
   offen: "bg-blue-100 text-blue-800",
-  bestanden: "bg-emerald-100 text-emerald-800",
-  nicht_bestanden: "bg-red-100 text-red-800",
+  "bestätigt": "bg-emerald-100 text-emerald-800",
+  abgelehnt: "bg-red-100 text-red-800",
+  "mängel": "bg-amber-100 text-amber-800",
 }
 
 const statusLabel: Record<string, string> = {
   offen: "Offen",
-  bestanden: "Bestanden",
-  nicht_bestanden: "Nicht bestanden",
+  "bestätigt": "Bestätigt",
+  abgelehnt: "Abgelehnt",
+  "mängel": "Mängel",
 }
 
 export default function AbnahmenPage() {
@@ -44,12 +48,22 @@ export default function AbnahmenPage() {
     const params = new URLSearchParams()
     if (filterStatus) params.set("status", filterStatus)
     if (filterAuftrag) params.set("auftragId", filterAuftrag)
-    const [a, au] = await Promise.all([
-      fetch(`/api/abnahmen?${params}`).then((r) => r.json()),
-      fetch("/api/auftraege").then((r) => r.json()),
-    ])
-    setAbnahmen(Array.isArray(a) ? a : [])
-    setAuftraege(Array.isArray(au) ? au : [])
+    // AUDIT-FIX: [BUG-010] res.ok prüfen — vorher wurde bei API-Fehler kommentarlos eine leere Liste angezeigt
+    try {
+      const [resA, resAu] = await Promise.all([
+        fetch(`/api/abnahmen?${params}`),
+        fetch("/api/auftraege"),
+      ])
+      if (!resA.ok || !resAu.ok) {
+        toast.error("Fehler beim Laden der Abnahmen")
+      } else {
+        const [a, au] = await Promise.all([resA.json(), resAu.json()])
+        setAbnahmen(Array.isArray(a) ? a : [])
+        setAuftraege(Array.isArray(au) ? au : [])
+      }
+    } catch {
+      toast.error("Fehler beim Laden der Abnahmen")
+    }
     setLoading(false)
   }, [filterStatus, filterAuftrag])
 
@@ -92,8 +106,9 @@ export default function AbnahmenPage() {
         <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
           <option value="">Alle Status</option>
           <option value="offen">Offen</option>
-          <option value="bestanden">Bestanden</option>
-          <option value="nicht_bestanden">Nicht bestanden</option>
+          <option value="bestätigt">Bestätigt</option>
+          <option value="abgelehnt">Abgelehnt</option>
+          <option value="mängel">Mängel</option>
         </select>
         <select value={filterAuftrag} onChange={(e) => setFilterAuftrag(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
           <option value="">Alle Aufträge</option>
@@ -177,8 +192,9 @@ export default function AbnahmenPage() {
                   <label className="block text-xs text-[var(--color-on-surface-variant)] mb-1">Status</label>
                   <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full bg-[var(--color-surface-container-low)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
                     <option value="offen">Offen</option>
-                    <option value="bestanden">Bestanden</option>
-                    <option value="nicht_bestanden">Nicht bestanden</option>
+                    <option value="bestätigt">Bestätigt</option>
+                    <option value="abgelehnt">Abgelehnt</option>
+                    <option value="mängel">Mängel</option>
                   </select>
                 </div>
               </div>

@@ -12,8 +12,18 @@ export async function GET(req: Request) {
   if (!session) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 })
 
   const url = new URL(req.url)
-  const kundeId = url.searchParams.get("kundeId")
+  let kundeId = url.searchParams.get("kundeId")
   const auftragId = url.searchParams.get("auftragId")
+
+  // AUDIT-FIX: [K3] IDOR — Kunden konnten via ?kundeId=... fremde Dokumente abrufen.
+  // Rolle "kunde": kundeId zwingend aus der eigenen Session, Request-Param wird ignoriert/abgelehnt.
+  const sessionUser = session.user as { id?: string; role?: string }
+  if (sessionUser.role === "kunde") {
+    if (kundeId && kundeId !== sessionUser.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+    kundeId = sessionUser.id ?? null
+  }
 
   if (!kundeId) {
     return NextResponse.json({ error: "kundeId fehlt" }, { status: 400 })
@@ -75,8 +85,16 @@ export async function DELETE(req: Request) {
   }
 
   // Sicherheitscheck: Nur Dateien im Kunden-Verzeichnis löschen
-  if (!pfad.startsWith("/Koch-Aufforstung/Kunden/")) {
+  if (!pfad.startsWith("/Koch-Aufforstung/Kunden/") || pfad.includes("..")) {
     return NextResponse.json({ error: "Ungültiger Pfad" }, { status: 400 })
+  }
+
+  // AUDIT-FIX: [K3] IDOR — Rolle "kunde" darf nur im eigenen Verzeichnis löschen
+  const sessionUser = session.user as { id?: string; role?: string }
+  if (sessionUser.role === "kunde") {
+    if (!sessionUser.id || !pfad.startsWith(`/Koch-Aufforstung/Kunden/${sessionUser.id}/`)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
   }
 
   try {

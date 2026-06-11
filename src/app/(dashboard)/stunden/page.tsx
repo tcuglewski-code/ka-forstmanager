@@ -100,15 +100,26 @@ export default function StundenPage() {
   const [filterMonat, setFilterMonat] = useState(String(new Date().getMonth() + 1))
   const [filterJahr, setFilterJahr] = useState(String(new Date().getFullYear()))
   const [filterGenehmigt, setFilterGenehmigt] = useState("")
+  // AUDIT-FIX: [BUG-004] Tagesfilter für ?datum=heute (Dashboard-Link "Aktiv heute")
+  const [filterTag, setFilterTag] = useState("")
   const [urlParamsLoaded, setUrlParamsLoaded] = useState(false)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const maId = params.get("mitarbeiterId")
     const genehmigtParam = params.get("genehmigt")
+    const datumParam = params.get("datum")
     if (maId) setFilterMitarbeiter(maId)
     if (genehmigtParam !== null && genehmigtParam !== "") {
       setFilterGenehmigt(genehmigtParam)
+      setFilterMonat("")
+      setFilterJahr("")
+    }
+    // AUDIT-FIX: [BUG-004] datum=heute → Tagesfilter statt Monatsfilter
+    if (datumParam === "heute") {
+      const h = new Date()
+      const iso = `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, "0")}-${String(h.getDate()).padStart(2, "0")}`
+      setFilterTag(iso)
       setFilterMonat("")
       setFilterJahr("")
     }
@@ -133,21 +144,39 @@ export default function StundenPage() {
     setLoading(true)
     const params = new URLSearchParams()
     if (filterMitarbeiter) params.set("mitarbeiterId", filterMitarbeiter)
-    if (filterMonat) params.set("monat", filterMonat)
-    if (filterJahr) params.set("jahr", filterJahr)
+    // AUDIT-FIX: [BUG-004] Tagesfilter hat Vorrang vor Monat/Jahr
+    if (filterTag) {
+      const tag = new Date(filterTag)
+      const naechsterTag = new Date(tag.getTime() + 24 * 60 * 60 * 1000)
+      params.set("von", filterTag)
+      params.set("bis", `${naechsterTag.getFullYear()}-${String(naechsterTag.getMonth() + 1).padStart(2, "0")}-${String(naechsterTag.getDate()).padStart(2, "0")}`)
+    } else {
+      if (filterMonat) params.set("monat", filterMonat)
+      if (filterJahr) params.set("jahr", filterJahr)
+    }
     if (filterGenehmigt) params.set("genehmigt", filterGenehmigt)
-    const [s, a, m, au] = await Promise.all([
-      fetch(`/api/stunden?${params}`).then((r) => r.json()),
-      fetch("/api/abwesenheiten").then((r) => r.json()),
-      fetch("/api/mitarbeiter").then((r) => r.json()),
-      fetch("/api/auftraege?limit=200").then((r) => r.json()),
-    ])
-    setStunden(Array.isArray(s) ? s : [])
-    setAbwesenheiten(Array.isArray(a) ? a : [])
-    setMitarbeiter(Array.isArray(m) ? m : (m.items ?? []))
-    setAuftraege(Array.isArray(au) ? au : (Array.isArray(au?.data) ? au.data : []))
+    // AUDIT-FIX: [BUG-010] res.ok prüfen — vorher wurde bei API-Fehler kommentarlos eine leere Liste angezeigt
+    try {
+      const [resS, resA, resM, resAu] = await Promise.all([
+        fetch(`/api/stunden?${params}`),
+        fetch("/api/abwesenheiten"),
+        fetch("/api/mitarbeiter"),
+        fetch("/api/auftraege?limit=200"),
+      ])
+      if (!resS.ok || !resA.ok || !resM.ok || !resAu.ok) {
+        toast.error("Fehler beim Laden der Stunden-Daten")
+      } else {
+        const [s, a, m, au] = await Promise.all([resS.json(), resA.json(), resM.json(), resAu.json()])
+        setStunden(Array.isArray(s) ? s : [])
+        setAbwesenheiten(Array.isArray(a) ? a : [])
+        setMitarbeiter(Array.isArray(m) ? m : (m.items ?? []))
+        setAuftraege(Array.isArray(au) ? au : (Array.isArray(au?.data) ? au.data : []))
+      }
+    } catch {
+      toast.error("Fehler beim Laden der Stunden-Daten")
+    }
     setLoading(false)
-  }, [filterMitarbeiter, filterMonat, filterJahr, filterGenehmigt])
+  }, [filterMitarbeiter, filterMonat, filterJahr, filterGenehmigt, filterTag])
 
   useEffect(() => { if (urlParamsLoaded) fetchAll() }, [fetchAll, urlParamsLoaded])
 
@@ -255,13 +284,13 @@ export default function StundenPage() {
               <option value="">Alle Mitarbeiter</option>
               {mitarbeiter.map((m) => <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>)}
             </select>
-            <select value={filterMonat} onChange={(e) => setFilterMonat(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
+            <select value={filterMonat} onChange={(e) => { setFilterTag(""); setFilterMonat(e.target.value) }} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
               <option value="">Alle Monate</option>
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                 <option key={m} value={m}>{new Date(2024, m - 1).toLocaleString("de-DE", { month: "long" })}</option>
               ))}
             </select>
-            <select value={filterJahr} onChange={(e) => setFilterJahr(e.target.value)} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
+            <select value={filterJahr} onChange={(e) => { setFilterTag(""); setFilterJahr(e.target.value) }} className="bg-[var(--color-surface-container)] border border-border rounded-lg px-3 py-2 text-sm text-[var(--color-on-surface)]">
               <option value="">Alle Jahre</option>
               {jahre.map((y) => <option key={y} value={y}>{y}</option>)}
             </select>

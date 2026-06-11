@@ -8,6 +8,8 @@ import { notifyAuftragStatusChange } from "@/lib/telegram"
 import { sendKANotification } from "@/lib/telegram-notify"
 // KT-1: Bidirektionaler WP-Sync
 import { wpSyncEngine } from "@/lib/sync/wp-sync"
+// AUDIT-FIX: [K1] Status-Validierung
+import { isValidAuftragStatus, AUFTRAG_STATUSES } from "@/lib/auftrag-status"
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -36,6 +38,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   try {
     const { id } = await params
     const body = await req.json()
+
+    // AUDIT-FIX: [K1] Status-Whitelist — Dashboard-PATCH übernahm body.status bisher ungeprüft
+    if (body.status !== undefined && !isValidAuftragStatus(body.status)) {
+      return NextResponse.json(
+        { error: "Ungültiger Status", allowed: AUFTRAG_STATUSES },
+        { status: 400 }
+      )
+    }
 
     // Vorherigen Status laden für Audit-Log
     const auftragVorher = body.status

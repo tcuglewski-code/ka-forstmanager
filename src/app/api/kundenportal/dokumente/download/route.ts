@@ -17,8 +17,16 @@ export async function GET(req: Request) {
   }
 
   // Sicherheitscheck: Nur Kunden-Dateien erlaubt
-  if (!pfad.startsWith("/Koch-Aufforstung/Kunden/")) {
+  if (!pfad.startsWith("/Koch-Aufforstung/Kunden/") || pfad.includes("..")) {
     return NextResponse.json({ error: "Zugriff verweigert" }, { status: 403 })
+  }
+
+  // AUDIT-FIX: [K3] IDOR — Rolle "kunde" darf nur Dateien aus dem eigenen Verzeichnis laden
+  const sessionUser = session.user as { id?: string; role?: string }
+  if (sessionUser.role === "kunde") {
+    if (!sessionUser.id || !pfad.startsWith(`/Koch-Aufforstung/Kunden/${sessionUser.id}/`)) {
+      return NextResponse.json({ error: "Zugriff verweigert" }, { status: 403 })
+    }
   }
 
   try {

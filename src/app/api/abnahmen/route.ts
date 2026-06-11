@@ -12,6 +12,7 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import { withErrorHandler } from "@/lib/api-handler"
+import { getGruppenIdsForUser } from "@/lib/auth-helpers"
 
 
 export const GET = withErrorHandler(async (req: NextRequest) => {
@@ -23,6 +24,14 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
   const where: Record<string, unknown> = {}
   if (status) where.status = status
   if (auftragId) where.auftragId = auftragId
+
+  // AUDIT-FIX: [BUG-009] Role-Scoping wie /api/auftraege — GF/MA sehen nur Abnahmen der eigenen Gruppe(n)
+  const user = session.user as { role?: string; email?: string }
+  const gruppenIds = await getGruppenIdsForUser(user.email ?? null, user.role ?? null)
+  if (gruppenIds.length > 0) {
+    // nicht-Admin: auf eigene Gruppen einschränken ("__none__" → leeres Ergebnis)
+    where.auftrag = { gruppeId: { in: gruppenIds } }
+  }
   const data = await prisma.abnahme.findMany({
     where,
     include: { auftrag: { select: { id: true, titel: true } } },

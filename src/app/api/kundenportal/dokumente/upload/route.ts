@@ -30,9 +30,18 @@ export async function POST(req: Request) {
   try {
     const formData = await req.formData()
     const datei = formData.get("datei") as File | null
-    const kundeId = formData.get("kundeId") as string | null
+    let kundeId = formData.get("kundeId") as string | null
     const auftragId = formData.get("auftragId") as string | null
     const dokumentTyp = (formData.get("typ") as string) ?? "sonstiges"
+
+    // AUDIT-FIX: [K3] IDOR — Rolle "kunde": kundeId zwingend aus Session, nicht aus dem Request
+    const sessionUser = session.user as { id?: string; role?: string }
+    if (sessionUser.role === "kunde") {
+      if (kundeId && kundeId !== sessionUser.id) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+      }
+      kundeId = sessionUser.id ?? null
+    }
 
     // Validierung
     if (!datei) {
@@ -40,6 +49,10 @@ export async function POST(req: Request) {
     }
     if (!kundeId) {
       return NextResponse.json({ error: "kundeId fehlt" }, { status: 400 })
+    }
+    // AUDIT-FIX: [K3] Path-Traversal über kundeId verhindern (wird in Nextcloud-Pfad interpoliert)
+    if (/[\/\\.]{2}|[\/\\]/.test(kundeId)) {
+      return NextResponse.json({ error: "Ungültige kundeId" }, { status: 400 })
     }
 
     // Dateityp prüfen

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { verifyToken } from "@/lib/auth-helpers"
+// AUDIT-FIX: [K5] zentrale "Offen"-Definition statt eigener 4er-Whitelist
+import { OPEN_STATUS_FILTER } from "@/lib/auftrag-status"
 
 export async function GET(req: NextRequest) {
   const user = await verifyToken(req)
@@ -26,15 +28,17 @@ export async function GET(req: NextRequest) {
       gesamtFlaeche,
     ] = await Promise.all([
       // Offene Auftraege gesamt
+      // AUDIT-FIX: [K5] OPEN_STATUS_FILTER — vorher fielen z.B. maengel_offen/pausiert durchs Raster
       prisma.auftrag.aggregate({
-        where: { status: { in: ["anfrage", "geplant", "aktiv", "in_bearbeitung"] } },
+        where: { status: OPEN_STATUS_FILTER, deletedAt: null },
         _count: { _all: true },
         _sum: { flaeche_ha: true },
       }),
       // Offene Auftraege diese Woche
       prisma.auftrag.aggregate({
         where: {
-          status: { in: ["anfrage", "geplant", "aktiv", "in_bearbeitung"] },
+          status: OPEN_STATUS_FILTER,
+          deletedAt: null,
           createdAt: { gte: startOfWeek, lte: endOfWeek },
         },
         _count: { _all: true },

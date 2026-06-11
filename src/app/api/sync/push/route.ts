@@ -61,7 +61,8 @@ export async function POST(req: NextRequest) {
     if (gpsTracks) {
       for (const track of gpsTracks.created ?? []) {
         // GPS-Track in Protokoll-Notizen speichern (einfaches Fallback)
-        console.log("[sync/push] GPS-Track empfangen:", track.sessionId, "user:", user?.email ?? "app-sync")
+        // AUDIT-FIX: [DSGVO] keine E-Mail-Adresse in Logs — User-ID reicht zur Zuordnung
+        console.log("[sync/push] GPS-Track empfangen:", track.sessionId, "userId:", (user as { id?: string })?.id ?? "app-sync")
         totalProcessed++
       }
     }

@@ -42,6 +42,27 @@ export const DELETE = withErrorHandler(async (_req: Request,
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const { id } = await params
+
+  // AUDIT-FIX: [K8] Beim Löschen eines aktiven Einsatzes blieb das Fahrzeug auf "im_einsatz" hängen
+  const einsatz = await prisma.maschineneinsatz.findUnique({
+    where: { id },
+    select: { fahrzeugId: true, bisDatum: true },
+  })
+
   await prisma.maschineneinsatz.delete({ where: { id } })
+
+  if (einsatz && !einsatz.bisDatum) {
+    // Nur zurücksetzen, wenn kein anderer offener Einsatz für das Fahrzeug existiert
+    const andererOffener = await prisma.maschineneinsatz.findFirst({
+      where: { fahrzeugId: einsatz.fahrzeugId, bisDatum: null },
+      select: { id: true },
+    })
+    if (!andererOffener) {
+      await prisma.fahrzeug
+        .update({ where: { id: einsatz.fahrzeugId }, data: { status: "verfuegbar" } })
+        .catch((err) => { console.error("Fahrzeug-Status Reset Fehler:", err) })
+    }
+  }
+
   return NextResponse.json({ ok: true })
 })

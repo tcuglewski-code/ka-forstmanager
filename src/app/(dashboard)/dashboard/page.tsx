@@ -7,6 +7,8 @@ import { FoerderungWidget } from "@/components/foerderung/FoerderungWidget"
 import { AiUsageWidget } from "@/components/dashboard/AiUsageWidget"
 import { StatCard, QuickLink, HoverLink, HoverActionCard } from "@/components/dashboard/InteractiveCards"
 import { isAdminRole, getGruppenIdsForUser } from "@/lib/auth-helpers"
+// AUDIT-FIX: [K5] Zentrale "Offen"-Definition
+import { OPEN_STATUS_FILTER } from "@/lib/auftrag-status"
 
 const GF_ROLES = ["ka_gruppenführer", "ka_gruppenfuhrer", "gruppenfuehrer", "gruppenführer"]
 
@@ -45,8 +47,9 @@ async function getRoleScopedStats(role: string, email: string | null | undefined
     }
 
     // Aufträge der Gruppe(n)
+    // AUDIT-FIX: [K5] zentrale "Offen"-Definition (inkl. storniert-Ausschluss)
     const auftraegeFilter = hasGruppen
-      ? { gruppeId: { in: gruppenIds }, status: { notIn: ["abgeschlossen"] } }
+      ? { gruppeId: { in: gruppenIds }, status: OPEN_STATUS_FILTER }
       : { id: "__never__" }
 
     const [
@@ -68,11 +71,12 @@ async function getRoleScopedStats(role: string, email: string | null | undefined
           })
         : Promise.resolve([] as { status: string; _count: number }[]),
       // Eigene Qualifikationen ablaufend (nur für MA/GF eigene)
+      // AUDIT-FIX: [BUG-008] abgelaufene einschließen (kein gte) — konsistent mit Admin-Counter
       own
         ? prisma.mitarbeiterQualifikation.count({
             where: {
               mitarbeiterId: own.id,
-              ablaufDatum: { lte: in30Tagen, gte: heute },
+              ablaufDatum: { lte: in30Tagen },
             },
           })
         : Promise.resolve(0),
@@ -141,9 +145,16 @@ async function getRoleScopedStats(role: string, email: string | null | undefined
             }[],
           ),
       // Eigene Stunden (Summe für aktuellen Monat)
+      // AUDIT-FIX: [BUG-007] Datumsfilter auf aktuellen Monat — vorher Lebenszeit-Summe
       own
         ? prisma.stundeneintrag.aggregate({
-            where: { mitarbeiterId: own.id },
+            where: {
+              mitarbeiterId: own.id,
+              datum: {
+                gte: new Date(heute.getFullYear(), heute.getMonth(), 1),
+                lt: new Date(heute.getFullYear(), heute.getMonth() + 1, 1),
+              },
+            },
             _sum: { stunden: true },
           })
         : Promise.resolve({ _sum: { stunden: 0 } }),
@@ -223,15 +234,22 @@ async function getStats() {
       aktiveMitarbeiterHeute,
       saatgutLagerstand,
     ] = await Promise.all([
-      prisma.mitarbeiter.count({ where: { status: "aktiv" } }),
+      // AUDIT-FIX: [BUG-001] deletedAt: null ergänzt — Counter zählte soft-gelöschte Mitarbeiter mit
+      prisma.mitarbeiter.count({ where: { status: "aktiv", deletedAt: null } }),
       prisma.saison.count({ where: { status: "aktiv" } }),
-      prisma.auftrag.count({ where: { status: { notIn: ["abgeschlossen"] } } }),
+      // AUDIT-FIX: [WARN-001/K5] zentrale OPEN_STATUS_FILTER-Definition + deletedAt: null
+      prisma.auftrag.count({ where: { status: OPEN_STATUS_FILTER, deletedAt: null } }),
       prisma.auftrag.groupBy({ by: ["status"], _count: true }),
-      prisma.$queryRaw<[{ count: bigint }]>`SELECT COUNT(*)::int as count FROM "LagerArtikel" WHERE bestand < mindestbestand`
+      // AUDIT-FIX: [BUG-002] deletedAt IS NULL ergänzt — Alert zählte gelöschte Artikel mit
+      prisma.$queryRaw<[{ count: bigint }]>`SELECT COUNT(*)::int as count FROM "LagerArtikel" WHERE bestand < mindestbestand AND "deletedAt" IS NULL`
         .then(r => Number(r[0]?.count ?? 0))
         .catch(() => 0),
+      // AUDIT-FIX: [BUG-008] abgelaufene Qualifikationen einschließen (kein gte) + gelöschte/inaktive Mitarbeiter ausschließen
       prisma.mitarbeiterQualifikation.count({
-        where: { ablaufDatum: { lte: in30Tagen, gte: heute } },
+        where: {
+          ablaufDatum: { lte: in30Tagen },
+          mitarbeiter: { deletedAt: null, status: "aktiv" },
+        },
       }),
       prisma.wartung.count({ where: { erledigt: false, datum: { lte: heute } } }),
       // FM-38: TÜV/Wartung fällig in nächsten 30 Tagen
@@ -271,10 +289,12 @@ async function getStats() {
         where: { status: "versendet" },
       }),
       // Q023: Fällige Rechnungen in nächsten 7 Tagen
+      // AUDIT-FIX: [BUG-003] storniert ausgeschlossen + deletedAt: null ergänzt
       prisma.rechnung.count({
         where: {
           faelligAm: { lte: in7Tagen, gte: heute },
-          status: { not: "bezahlt" },
+          status: { notIn: ["bezahlt", "storniert"] },
+          deletedAt: null,
         },
       }),
       // Q023: Aktive Mitarbeiter heute (mit Stundeneintrag)
@@ -285,8 +305,9 @@ async function getStats() {
         },
       }).then(r => r.length),
       // Q023: Saatgut-Lagerstand (Summe Bestand für Kategorie saatgut)
+      // AUDIT-FIX: [BUG-002] deletedAt: null ergänzt
       prisma.lagerArtikel.aggregate({
-        where: { kategorie: "saatgut" },
+        where: { kategorie: "saatgut", deletedAt: null },
         _sum: { bestand: true },
       }),
     ])

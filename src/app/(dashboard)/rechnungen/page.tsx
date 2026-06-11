@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 import { Receipt, Plus, Loader2, CheckCircle, ExternalLink, Printer, Lock, FileDown } from "lucide-react"
 import ZipayoButton from "@/components/payments/ZipayoButton"
 
@@ -40,7 +41,14 @@ const statusLabel: Record<string, string> = {
   storniert: "Storniert",
 }
 
-export default function RechnungenPage() {
+function RechnungenPageInner() {
+  // AUDIT-FIX: [BUG-003] URL-Param ?faellig=N lesen (Dashboard-Link "Fällige Rechnungen (7T)")
+  const searchParams = useSearchParams()
+  const faelligTage = (() => {
+    const raw = searchParams.get("faellig")
+    const n = raw ? parseInt(raw, 10) : NaN
+    return Number.isFinite(n) && n > 0 ? n : null
+  })()
   const [rechnungen, setRechnungen] = useState<Rechnung[]>([])
   const [auftraege, setAuftraege] = useState<Auftrag[]>([])
   const [loading, setLoading] = useState(true)
@@ -141,7 +149,17 @@ export default function RechnungenPage() {
   }
 
   // Sprint Q: Filtern + Sortieren (client-seitig)
+  // AUDIT-FIX: [BUG-003] faellig-Filter: fällig in N Tagen, nicht bezahlt/storniert
   const gefilterteRechnungen = rechnungen
+    .filter(r => {
+      if (faelligTage === null) return true
+      if (!r.faelligAm) return false
+      if (r.status === "bezahlt" || r.status === "storniert") return false
+      const faelligAm = new Date(r.faelligAm)
+      const heute = new Date(); heute.setHours(0, 0, 0, 0)
+      const bis = new Date(heute.getTime() + faelligTage * 24 * 60 * 60 * 1000)
+      return faelligAm >= heute && faelligAm <= bis
+    })
     .filter(r => !filterStatus || r.status === filterStatus)
     .sort((a, b) => {
       let cmp = 0
@@ -166,6 +184,10 @@ export default function RechnungenPage() {
           </h1>
           <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">
             Offene Summe: <span className="text-amber-400 font-medium">{gesamtOffen.toFixed(2)} €</span>
+            {/* AUDIT-FIX: [BUG-003] Hinweis bei aktivem faellig-Filter */}
+            {faelligTage !== null && (
+              <span className="ml-3 text-xs text-amber-400">Filter: fällig in {faelligTage} Tagen</span>
+            )}
           </p>
         </div>
         <button onClick={() => {
@@ -410,5 +432,14 @@ export default function RechnungenPage() {
         </div>
       )}
     </div>
+  )
+}
+
+// AUDIT-FIX: [BUG-003] Suspense-Wrapper für useSearchParams
+export default function RechnungenPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-emerald-400 animate-spin" /></div>}>
+      <RechnungenPageInner />
+    </Suspense>
   )
 }

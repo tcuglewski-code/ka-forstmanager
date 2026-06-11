@@ -534,6 +534,8 @@ function LagerPageInner() {
   const router = useRouter()
   const itemIdFromUrl = searchParams.get("item")
   const tabFromUrl = (searchParams.get("tab") as TabType) || "artikel"
+  // AUDIT-FIX: [BUG-006] URL-Param ?kategorie= lesen (Dashboard-Link "Saatgut Lager")
+  const kategorieFromUrl = searchParams.get("kategorie")
 
   const [activeTab, setActiveTab] = useState<TabType>(tabFromUrl)
   const [artikel, setArtikel] = useState<LagerArtikel[]>([])
@@ -547,7 +549,8 @@ function LagerPageInner() {
   const [editArtikel, setEditArtikel] = useState<LagerArtikel | null>(null)
   const [qrArtikel, setQrArtikel] = useState<LagerArtikel | null>(null)
   
-  const [filterKategorie, setFilterKategorie] = useState("")
+  // AUDIT-FIX: [BUG-006] Kategorie-Filter aus URL initialisieren
+  const [filterKategorie, setFilterKategorie] = useState(kategorieFromUrl ?? "")
   const [searchQuery, setSearchQuery] = useState("")
   const [historieArtikel, setHistorieArtikel] = useState<LagerArtikel | null>(null)
   const [deleteArtikel, setDeleteArtikel] = useState<LagerArtikel | null>(null)

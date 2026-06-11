@@ -16,27 +16,29 @@ export const POST = withErrorHandler(async (req: NextRequest, { params }: { para
   const abnahme = await prisma.abnahme.findUnique({ where: { id } })
   if (!abnahme) return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 })
 
-  const updated = await prisma.abnahme.update({
-    where: { id },
-    data: {
-      status: "bestätigt",
-      signaturUrl: signaturUrl ?? null,
-      notizen: notizen ?? abnahme.notizen,
-      fotos: fotos ?? abnahme.fotos ?? undefined,
-      rechnungFreigegeben: true,
-      freigegebenAm: new Date(),
-      freigegebenVon: (session as any).user?.id ?? null,
-    },
-  })
-
-  // Rechnungen mit Status 'entwurf' oder 'erstellt' freigeben
-  await prisma.rechnung.updateMany({
-    where: {
-      auftragId: abnahme.auftragId,
-      status: { in: ["entwurf", "erstellt"] },
-    },
-    data: { status: "freigegeben" },
-  })
+  // AUDIT-FIX: [K10] Abnahme-Bestätigung + Rechnungs-Freigabe atomar in einer Transaktion
+  const [updated] = await prisma.$transaction([
+    prisma.abnahme.update({
+      where: { id },
+      data: {
+        status: "bestätigt",
+        signaturUrl: signaturUrl ?? null,
+        notizen: notizen ?? abnahme.notizen,
+        fotos: fotos ?? abnahme.fotos ?? undefined,
+        rechnungFreigegeben: true,
+        freigegebenAm: new Date(),
+        freigegebenVon: (session as any).user?.id ?? null,
+      },
+    }),
+    // Rechnungen mit Status 'entwurf' oder 'erstellt' freigeben
+    prisma.rechnung.updateMany({
+      where: {
+        auftragId: abnahme.auftragId,
+        status: { in: ["entwurf", "erstellt"] },
+      },
+      data: { status: "freigegeben" },
+    }),
+  ])
 
   return NextResponse.json({ ok: true, abnahme: updated })
 })
