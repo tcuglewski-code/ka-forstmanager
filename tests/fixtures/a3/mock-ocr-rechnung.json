@@ -1,0 +1,37 @@
+{
+  "typ": "PDF_RECHNUNG",
+  "provider": "mock-ocr",
+  "kostenEur": 0,
+  "felder": {
+    "rechnungsNr": { "wert": "RE-2026-0455", "konfidenz": 0.97 },
+    "datum": { "wert": "2026-06-01", "konfidenz": 0.95 },
+    "lieferantName": { "wert": "Baumschule Müller GmbH", "konfidenz": 0.93 },
+    "lieferantUstId": { "wert": "DE123456789", "konfidenz": 0.9 },
+    "gesamtBetrag": { "wert": "1240.00", "konfidenz": 0.96 },
+    "nettoBetrag": { "wert": "1042.00", "konfidenz": 0.88 },
+    "mwstBetrag": { "wert": "198.00", "konfidenz": 0.86 },
+    "waehrung": { "wert": "EUR", "konfidenz": 0.99 }
+  },
+  "positionen": [
+    {
+      "artikelBezeichnung": "Rotbuche 2j. 50-80 vS",
+      "lieferantArtikelNr": "BU-2J-5080",
+      "menge": 500,
+      "einheit": "Stück",
+      "einzelpreis": 1.8,
+      "gesamtpreis": 900,
+      "mwstSatz": 19,
+      "konfidenz": 0.94
+    },
+    {
+      "artikelBezeichnung": "Wildverbiss-Spirale 60",
+      "lieferantArtikelNr": null,
+      "menge": 100,
+      "einheit": "Stück",
+      "einzelpreis": 1.42,
+      "gesamtpreis": 142,
+      "mwstSatz": 19,
+      "konfidenz": 0.71
+    }
+  ]
+}

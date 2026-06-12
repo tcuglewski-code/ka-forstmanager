@@ -1,0 +1,33 @@
+{
+  "typ": "LIEFERSCHEIN",
+  "provider": "mock-ocr",
+  "kostenEur": 0,
+  "felder": {
+    "rechnungsNr": { "wert": "LS-889", "konfidenz": 0.91 },
+    "datum": { "wert": "2026-06-08", "konfidenz": 0.89 },
+    "lieferantName": { "wert": "Forst-Shop GmbH", "konfidenz": 0.84 },
+    "waehrung": { "wert": "EUR", "konfidenz": 0.99 }
+  },
+  "positionen": [
+    {
+      "artikelBezeichnung": "Buche 2j 50-80",
+      "lieferantArtikelNr": null,
+      "menge": 20,
+      "einheit": "Bund",
+      "einzelpreis": 0,
+      "gesamtpreis": 0,
+      "mwstSatz": 0,
+      "konfidenz": 0.78
+    },
+    {
+      "artikelBezeichnung": "Tonkinstäbe 120 cm",
+      "lieferantArtikelNr": "TK-120",
+      "menge": 500,
+      "einheit": "Stück",
+      "einzelpreis": 0,
+      "gesamtpreis": 0,
+      "mwstSatz": 0,
+      "konfidenz": 0.62
+    }
+  ]
+}

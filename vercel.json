@@ -4,6 +4,10 @@
   ],
   "crons": [
     {
+      "path": "/api/dokumente/process",
+      "schedule": "* * * * *"
+    },
+    {
       "path": "/api/cron/sync-auftraege",
       "schedule": "0 6 * * *"
     },

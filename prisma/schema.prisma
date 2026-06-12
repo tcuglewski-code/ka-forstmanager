@@ -2727,6 +2727,8 @@ model DokumentenScan {
   routingGrund            String?
   verarbeitungsKostenJson Json?
   verarbeitungsDauerMs    Int?
+  verarbeitungsVersuche   Int       @default(0)
+  verarbeitungBegonnenAm  DateTime?
   lieferantId             String?
   bestellungId            String?
   erstelltVon             String
