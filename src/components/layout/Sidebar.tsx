@@ -60,6 +60,7 @@ const navItems = [
   { href: "/gruppen", label: "Gruppen", icon: UsersRound },
   { href: "/lieferantenbestellungen", label: "Lieferantenbestellungen", icon: ShoppingCart, section: "Material" },
   { href: "/lager", label: "Lager", icon: Package, tourId: "lager" },
+  { href: "/dokumente/scans", label: "Dokumenten-KI", icon: ScrollText },
   { href: "/fuhrpark", label: "Fuhrpark", icon: Car },
   { href: "/lohn", label: "Lohn", icon: DollarSign, section: "Finanzen" },
   { href: "/stunden", label: "Stunden", icon: Clock },
@@ -395,6 +396,27 @@ export function Sidebar() {
             >
               <BarChart3 className="w-4 h-4 flex-shrink-0" />
               <span style={{ fontFamily: "var(--font-body)", fontSize: "0.875rem" }}>Analytics</span>
+            </Link>
+          )}
+
+          {/* Admin: Dokumenten-KI Einstellungen */}
+          {isAdmin && (
+            <Link
+              href="/einstellungen/dokumente-ki"
+              onClick={() => setOpen(false)}
+              className={navItemBase}
+              style={
+                pathname === "/einstellungen/dokumente-ki" ? navItemActive : navItemDefault
+              }
+              onMouseEnter={e => {
+                if (pathname !== "/einstellungen/dokumente-ki") (e.currentTarget as HTMLElement).style.backgroundColor = "var(--sidebar-hover)"
+              }}
+              onMouseLeave={e => {
+                if (pathname !== "/einstellungen/dokumente-ki") (e.currentTarget as HTMLElement).style.backgroundColor = "transparent"
+              }}
+            >
+              <Shield className="w-4 h-4 flex-shrink-0" />
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "0.875rem" }}>Dokumenten-KI</span>
             </Link>
           )}
 

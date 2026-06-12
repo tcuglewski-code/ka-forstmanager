@@ -241,11 +241,13 @@ export async function verarbeiteScan(scan: DokumentenScan): Promise<PipelineErge
   let routingGrund = routing.grund
   if (routing.action === "AUTO_BUCHEN") {
     const aktiv = await istAutoBuchungAktiv()
-    if (aktiv) {
-      // Auto-Buchung selbst kommt in Sprint 3 (Buchungs-Transaktion);
-      // bis dahin konservativ: Review mit explizitem Grund.
+    const alleGemappt = positionen.length > 0 && positionen.every((p) => p.artikelId)
+    if (aktiv && alleGemappt) {
+      zielStatus = "GEBUCHT"
+      routingGrund = "Auto-Buchung: Konfidenz über Schwelle, alle Positionen gemappt"
+    } else if (aktiv) {
       zielStatus = "REVIEW_ERFORDERLICH"
-      routingGrund = "Auto-Buchung qualifiziert — Buchungs-Flow erfordert Bestätigung"
+      routingGrund = "Auto-Buchung qualifiziert, aber nicht alle Positionen einem Artikel zugeordnet"
     } else {
       zielStatus = "REVIEW_ERFORDERLICH"
       routingGrund = "Auto-Buchung qualifiziert, aber Kill-Switch inaktiv (Shadow-Mode)"
@@ -258,8 +260,28 @@ export async function verarbeiteScan(scan: DokumentenScan): Promise<PipelineErge
   const gesamtKonfidenz =
     feldKonfidenzen.length > 0 ? Math.min(...feldKonfidenzen) : 0
 
-  // --- Persistenz ---
+  // --- Persistenz (+ Auto-Buchung in derselben Transaktion, DOK-029) ---
+  const buchungsOps =
+    zielStatus === "GEBUCHT"
+      ? positionen.flatMap((p) => [
+          prisma.lagerArtikel.update({
+            where: { id: p.artikelId! },
+            data: { bestand: { increment: p.menge } },
+          }),
+          prisma.lagerBewegung.create({
+            data: {
+              artikelId: p.artikelId!,
+              typ: "eingang",
+              menge: p.menge,
+              referenz: scan.id,
+              notiz: `Dokumenten-KI Auto-Buchung: ${scan.originalDateiName} (${scan.typ})`,
+            },
+          }),
+        ])
+      : []
+
   await prisma.$transaction([
+    ...buchungsOps,
     prisma.extrahiertePosition.deleteMany({ where: { scanId: scan.id } }),
     prisma.dokumentenScan.update({
       where: { id: scan.id },
@@ -291,15 +313,28 @@ export async function verarbeiteScan(scan: DokumentenScan): Promise<PipelineErge
           })),
         },
         auditLog: {
-          create: {
-            aktion: "OCR_ABGESCHLOSSEN",
-            systemAktion: true,
-            details: {
-              routing: routing.action,
-              grund: routingGrund,
-              kostenEur,
-              positionen: positionen.length,
-            },
+          createMany: {
+            data: [
+              {
+                aktion: "OCR_ABGESCHLOSSEN" as const,
+                systemAktion: true,
+                details: {
+                  routing: routing.action,
+                  grund: routingGrund,
+                  kostenEur,
+                  positionen: positionen.length,
+                },
+              },
+              ...(zielStatus === "GEBUCHT"
+                ? [
+                    {
+                      aktion: "GEBUCHT" as const,
+                      systemAktion: true,
+                      details: { bewegungen: positionen.length, autoBuchung: true },
+                    },
+                  ]
+                : []),
+            ],
           },
         },
       },
