@@ -118,6 +118,16 @@ export async function POST(req: NextRequest) {
       },
     })
 
+    // DOK-006: Verarbeitung sofort anstoßen (fire-and-forget; täglicher Cron
+    // ist nur Sweeper, Hobby-Plan erlaubt keine Minuten-Crons)
+    if (process.env.CRON_SECRET) {
+      const baseUrl = process.env.NEXTAUTH_URL || `https://${req.headers.get("host")}`
+      fetch(`${baseUrl}/api/dokumente/process`, {
+        method: "POST",
+        headers: { "x-cron-secret": process.env.CRON_SECRET },
+      }).catch(() => {}) // non-blocking; Fehler holt der Sweeper-Cron nach
+    }
+
     return NextResponse.json({ scan, duplikatVon: duplikat?.id ?? null }, { status: 201 })
   } catch (error) {
     console.error("[DokumentenScan] Upload fehlgeschlagen:", error)

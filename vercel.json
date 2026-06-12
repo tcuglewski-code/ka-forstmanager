@@ -5,7 +5,7 @@
   "crons": [
     {
       "path": "/api/dokumente/process",
-      "schedule": "* * * * *"
+      "schedule": "30 5 * * *"
     },
     {
       "path": "/api/cron/sync-auftraege",
