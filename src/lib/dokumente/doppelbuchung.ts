@@ -8,7 +8,8 @@
 import { prisma } from "@/lib/prisma"
 
 export function normalisiereRechnungsNr(nr: string): string {
-  return nr.toLowerCase().trim().replace(/[-\s]/g, "")
+  // alle Trennzeichen entfernen (-, /, ., Leerzeichen …) — nur Alphanumerik zählt
+  return nr.toLowerCase().trim().replace(/[^a-z0-9]/g, "")
 }
 
 /**

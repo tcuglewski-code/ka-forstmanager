@@ -24,6 +24,13 @@ export const accountErstellenRateLimit = new Ratelimit({
   prefix: "ratelimit:account-erstellen",
 })
 
+// DOK-026: 20 Dokumenten-Uploads pro Benutzer pro Stunde
+export const dokUploadRateLimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(20, "1 h"),
+  prefix: "ratelimit:dok-upload",
+})
+
 // Simple in-memory rate limiter for non-Redis use cases
 const memoryStore = new Map<string, { count: number; resetAt: number }>()
 

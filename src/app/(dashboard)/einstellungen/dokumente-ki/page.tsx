@@ -6,7 +6,7 @@
  * /api/settings/dokumente-ki die Admin-Rolle.
  */
 import { useState, useEffect } from "react"
-import { ShieldAlert, Loader2, Save } from "lucide-react"
+import { ShieldAlert, Loader2, Save, Download, Euro } from "lucide-react"
 import { toast } from "sonner"
 
 interface Settings {
@@ -16,11 +16,33 @@ interface Settings {
   dok_ki_vier_augen_betrag: string
 }
 
+interface KostenMonat {
+  monat: string
+  scans: number
+  kostenEur: number
+  avgDauerMs: number | null
+  status: Record<string, number>
+}
+
+interface KostenDaten {
+  scansGesamt: number
+  kostenGesamtEur: number
+  monate: KostenMonat[]
+}
+
 export default function DokumenteKiEinstellungenPage() {
   const [settings, setSettings] = useState<Settings | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [verboten, setVerboten] = useState(false)
+  const [kosten, setKosten] = useState<KostenDaten | null>(null)
+
+  useEffect(() => {
+    fetch("/api/dokumente/kosten?monate=6")
+      .then((r) => (r.ok ? r.json() : null))
+      .then(setKosten)
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     fetch("/api/settings/dokumente-ki")
@@ -180,6 +202,54 @@ export default function DokumenteKiEinstellungenPage() {
         {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
         Speichern
       </button>
+
+      {/* DOK-059: Kosten-Übersicht */}
+      <div className="border rounded-lg bg-card p-4 space-y-3">
+        <h2 className="flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--color-on-surface)" }}>
+          <Euro className="w-4 h-4" /> Verarbeitungskosten (6 Monate)
+        </h2>
+        {kosten ? (
+          <>
+            <div className="text-sm">
+              <strong>{kosten.scansGesamt}</strong> Dokumente ·{" "}
+              <strong>{kosten.kostenGesamtEur.toFixed(2)} €</strong> OCR/KI-Kosten gesamt
+            </div>
+            <div className="space-y-1">
+              {kosten.monate.map((m) => (
+                <div key={m.monat} className="flex items-center justify-between text-xs border-b last:border-0 py-1.5">
+                  <span className="font-medium">{m.monat}</span>
+                  <span>{m.scans} Scans</span>
+                  <span>{m.kostenEur.toFixed(4)} €</span>
+                  <span className="text-[var(--color-on-surface-variant)]">
+                    Ø {m.avgDauerMs != null ? `${(m.avgDauerMs / 1000).toFixed(1)}s` : "—"}
+                  </span>
+                </div>
+              ))}
+              {kosten.monate.length === 0 && (
+                <p className="text-xs text-[var(--color-on-surface-variant)]">Noch keine Verarbeitungen.</p>
+              )}
+            </div>
+          </>
+        ) : (
+          <p className="text-xs text-[var(--color-on-surface-variant)]">Lade Kosten…</p>
+        )}
+      </div>
+
+      {/* DOK-062: Steuerberater-Export */}
+      <div className="border rounded-lg bg-card p-4 space-y-2">
+        <h2 className="flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--color-on-surface)" }}>
+          <Download className="w-4 h-4" /> Steuerberater-Export
+        </h2>
+        <p className="text-xs text-[var(--color-on-surface-variant)]">
+          CSV aller gebuchten Belege inkl. Positionen (Semikolon-getrennt, Excel-kompatibel).
+        </p>
+        <a
+          href="/api/dokumente/export?status=GEBUCHT"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium hover:bg-accent/50"
+        >
+          <Download className="w-4 h-4" /> Gebuchte Belege exportieren (CSV)
+        </a>
+      </div>
     </div>
   )
 }

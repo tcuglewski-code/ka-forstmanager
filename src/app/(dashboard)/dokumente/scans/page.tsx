@@ -47,7 +47,16 @@ export default function DokumenteScansPage() {
   const [filter, setFilter] = useState("REVIEW_ERFORDERLICH")
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [stoerung, setStoerung] = useState<string[]>([])
   const fileRef = useRef<HTMLInputElement>(null)
+
+  // DOK-064: Störungs-Banner
+  useEffect(() => {
+    fetch("/api/dokumente/stoerung")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => d?.stoerung && setStoerung(d.gruende ?? []))
+      .catch(() => {})
+  }, [])
 
   const lade = useCallback(async () => {
     setLoading(true)
@@ -70,19 +79,22 @@ export default function DokumenteScansPage() {
     lade()
   }, [lade])
 
-  async function upload(file: File) {
+  async function upload(files: FileList) {
     setUploading(true)
     try {
       const fd = new FormData()
-      fd.append("file", file)
+      for (const f of Array.from(files)) fd.append("file", f)
       const res = await fetch("/api/dokumente/scans", { method: "POST", body: fd })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
-      if (data.duplikatVon) {
-        toast.warning("Hinweis: identische Datei wurde bereits hochgeladen")
-      } else {
-        toast.success("Hochgeladen — Verarbeitung gestartet")
-      }
+      const ergebnisse: { dateiName: string; ok: boolean; duplikatVon?: string | null; fehler?: string }[] =
+        data.ergebnisse ?? []
+      const fehler = ergebnisse.filter((e) => !e.ok)
+      const duplikate = ergebnisse.filter((e) => e.ok && e.duplikatVon)
+      const okZahl = ergebnisse.filter((e) => e.ok).length
+      if (okZahl > 0) toast.success(`${okZahl} Dokument(e) hochgeladen — Verarbeitung gestartet`)
+      for (const f of fehler) toast.error(`${f.dateiName}: ${f.fehler}`)
+      if (duplikate.length > 0) toast.warning(`${duplikate.length} Datei(en) bereits vorhanden (Duplikat-Hinweis)`)
       setFilter("ALLE")
       setPage(1)
       lade()
@@ -116,9 +128,10 @@ export default function DokumenteScansPage() {
           <input
             ref={fileRef}
             type="file"
+            multiple
             accept=".pdf,.xml,.jpg,.jpeg,.png"
             className="hidden"
-            onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])}
+            onChange={(e) => e.target.files?.length && upload(e.target.files)}
           />
           <button
             onClick={() => fileRef.current?.click()}
@@ -130,6 +143,16 @@ export default function DokumenteScansPage() {
           </button>
         </div>
       </div>
+
+      {stoerung.length > 0 && (
+        <div className="border border-red-300 bg-red-50 text-red-900 rounded-lg p-3 text-sm flex items-start gap-2">
+          <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+          <div>
+            <strong>Störung in der Dokumenten-Verarbeitung:</strong> {stoerung.join(" · ")}.
+            Uploads bleiben erhalten und werden nachverarbeitet.
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-2">
         {FILTER.map((f) => (

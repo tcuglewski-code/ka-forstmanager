@@ -96,8 +96,20 @@ export default function ScanDetailPage({ params }: { params: Promise<{ id: strin
         fetch("/api/lager?limit=200"),
       ])
       if (!scanRes.ok) throw new Error(`HTTP ${scanRes.status}`)
-      setScan(await scanRes.json())
+      const scanData: Scan = await scanRes.json()
+      setScan(scanData)
       if (artRes.ok) setArtikel(await artRes.json())
+      // Review-Lock: warnen, wenn ein anderer Benutzer gerade reviewt
+      if (scanData.status === "REVIEW_ERFORDERLICH") {
+        fetch(`/api/dokumente/scans/${id}/review-lock`, { method: "POST" })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((lock) => {
+            if (lock?.locked) {
+              toast.warning(`Achtung: dieses Dokument wird gerade von einem anderen Benutzer geprüft`)
+            }
+          })
+          .catch(() => {})
+      }
     } catch {
       toast.error("Dokument konnte nicht geladen werden")
     } finally {
