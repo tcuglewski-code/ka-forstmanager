@@ -6,7 +6,7 @@
  */
 import { useState, useEffect, useCallback, useRef } from "react"
 import Link from "next/link"
-import { FileText, Upload, Loader2, RefreshCw, AlertTriangle } from "lucide-react"
+import { FileText, Upload, Loader2, RefreshCw, AlertTriangle, ClipboardCheck, ChevronDown, ChevronUp } from "lucide-react"
 import { toast } from "sonner"
 import { KonfidenzAmpel } from "@/components/dokumente/KonfidenzAmpel"
 
@@ -40,6 +40,13 @@ const TYP_LABEL: Record<string, string> = {
 
 const FILTER = ["ALLE", "REVIEW_ERFORDERLICH", "AUSSTEHEND", "GEBUCHT", "ABGELEHNT", "FEHLER"]
 
+// DOK-065: Stammdaten-Readiness
+interface Readiness {
+  score: number
+  bereit: boolean
+  hinweise: string[]
+}
+
 export default function DokumenteScansPage() {
   const [items, setItems] = useState<ScanItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -48,6 +55,8 @@ export default function DokumenteScansPage() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [stoerung, setStoerung] = useState<string[]>([])
+  const [readiness, setReadiness] = useState<Readiness | null>(null)
+  const [readinessOffen, setReadinessOffen] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
   // DOK-064: Störungs-Banner
@@ -55,6 +64,14 @@ export default function DokumenteScansPage() {
     fetch("/api/dokumente/stoerung")
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => d?.stoerung && setStoerung(d.gruende ?? []))
+      .catch(() => {})
+  }, [])
+
+  // DOK-065: Stammdaten-Readiness
+  useEffect(() => {
+    fetch("/api/dokumente/readiness")
+      .then((r) => (r.ok ? r.json() : null))
+      .then(setReadiness)
       .catch(() => {})
   }, [])
 
@@ -151,6 +168,36 @@ export default function DokumenteScansPage() {
             <strong>Störung in der Dokumenten-Verarbeitung:</strong> {stoerung.join(" · ")}.
             Uploads bleiben erhalten und werden nachverarbeitet.
           </div>
+        </div>
+      )}
+
+      {/* DOK-065: Stammdaten-Readiness — nur zeigen, wenn Score < 100 */}
+      {readiness && readiness.score < 100 && (
+        <div
+          className={`border rounded-lg p-3 text-sm ${
+            readiness.bereit ? "border-amber-300 bg-amber-50 text-amber-900" : "border-red-300 bg-red-50 text-red-900"
+          }`}
+        >
+          <button
+            onClick={() => setReadinessOffen((o) => !o)}
+            className="flex w-full items-center gap-2 text-left font-medium"
+          >
+            <ClipboardCheck className="w-4 h-4 shrink-0" />
+            Stammdaten-Readiness: {readiness.score}/100
+            {!readiness.bereit && " — Pflege der Stammdaten empfohlen, bevor viele Dokumente verarbeitet werden"}
+            {readinessOffen ? (
+              <ChevronUp className="w-4 h-4 ml-auto shrink-0" />
+            ) : (
+              <ChevronDown className="w-4 h-4 ml-auto shrink-0" />
+            )}
+          </button>
+          {readinessOffen && readiness.hinweise.length > 0 && (
+            <ul className="mt-2 space-y-1 text-xs list-disc list-inside">
+              {readiness.hinweise.map((h, i) => (
+                <li key={i}>{h}</li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
 
