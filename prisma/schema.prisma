@@ -2709,3 +2709,120 @@ model TenantConfig {
   aiApiKeyOverride String?
   updatedAt        DateTime  @updatedAt
 }
+
+// ============================================================
+// A3: Dokumenten-KI (DOK-002)
+// ============================================================
+
+model DokumentenScan {
+  id                      String    @id @default(cuid())
+  typ                     DokTyp
+  status                  DokStatus @default(AUSSTEHEND)
+  originalDateiUrl        String
+  originalDateiName       String
+  originalDateiHash       String // SHA-256
+  rohExtraktion           Json?
+  extrahierteDaten        Json?
+  gesamtKonfidenz         Float?
+  routingGrund            String?
+  verarbeitungsKostenJson Json?
+  verarbeitungsDauerMs    Int?
+  lieferantId             String?
+  bestellungId            String?
+  erstelltVon             String
+  erstelltAm              DateTime  @default(now())
+  aktualisiertAm          DateTime  @updatedAt
+  deletedAt               DateTime?
+
+  positionen ExtrahiertePosition[]
+  auditLog   DokumentenAudit[]
+
+  @@index([status, typ])
+  @@index([originalDateiHash])
+  @@index([erstelltAm])
+}
+
+enum DokTyp {
+  XRECHNUNG
+  ZUGFERD
+  PDF_RECHNUNG
+  LIEFERSCHEIN
+  GUTSCHRIFT
+}
+
+enum DokStatus {
+  AUSSTEHEND
+  IN_VERARBEITUNG
+  REVIEW_ERFORDERLICH
+  GEBUCHT
+  ABGELEHNT
+  FEHLER
+}
+
+model ExtrahiertePosition {
+  id                 String         @id @default(cuid())
+  scanId             String
+  scan               DokumentenScan @relation(fields: [scanId], references: [id])
+  artikelBezeichnung String
+  artikelNummer      String?
+  lieferantArtikelNr String?
+  mengeErwartet      Float
+  mengeErhalten      Float?
+  einheit            String
+  einzelpreis        Float
+  gesamtpreis        Float
+  mwstSatz           Float
+  konfidenz          Float
+  matchStatus        MatchStatus    @default(UNBEKANNT)
+  lagerArtikelId     String?
+
+  @@index([scanId])
+}
+
+enum MatchStatus {
+  EXAKT
+  FUZZY
+  UNBEKANNT
+  MANUELL
+}
+
+model DokumentenAudit {
+  id           String         @id @default(cuid())
+  scanId       String
+  scan         DokumentenScan @relation(fields: [scanId], references: [id])
+  aktion       DokAktion
+  userId       String?
+  systemAktion Boolean        @default(false)
+  details      Json?
+  ipAdresse    String?
+  erstelltAm   DateTime       @default(now())
+
+  @@index([scanId])
+}
+
+enum DokAktion {
+  HOCHGELADEN
+  OCR_ABGESCHLOSSEN
+  REVIEW_GESTARTET
+  BESTAETIGT
+  ABGELEHNT
+  GEBUCHT
+  STORNIERT
+  FEHLER
+}
+
+model LagerArtikelAlias {
+  id             String      @id @default(cuid())
+  lagerArtikelId String
+  alias          String
+  quelle         AliasQuelle @default(MANUELL)
+  erstelltAm     DateTime    @default(now())
+
+  @@index([lagerArtikelId])
+  @@index([alias])
+}
+
+enum AliasQuelle {
+  MANUELL
+  GELERNT
+}
