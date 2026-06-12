@@ -61,7 +61,8 @@ export default function DokumentePage() {
       fetch("/api/auftraege").then((r) => r.json()),
       fetch("/api/saisons").then((r) => r.json()),
     ])
-    setDokumente(Array.isArray(d) ? d : [])
+    // AUDIT-FIX [PAGINATION-MISMATCH]: API gibt { items } zurück
+    setDokumente(Array.isArray(d) ? d : (d?.items ?? []))
     setAuftraege(Array.isArray(a) ? a : [])
     setSaisons(Array.isArray(s) ? s : [])
     setLoading(false)

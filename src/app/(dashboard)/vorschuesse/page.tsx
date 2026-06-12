@@ -29,7 +29,8 @@ export default function VorschuessePage() {
       fetch("/api/vorschuesse").then((r) => r.json()),
       fetch("/api/mitarbeiter").then((r) => r.json()),
     ])
-    setVorschuesse(Array.isArray(v) ? v : [])
+    // AUDIT-FIX [BUG-VORSCHUESSE]: API gibt { items, total } zurück — nicht direktes Array
+    setVorschuesse(Array.isArray(v) ? v : (v.items ?? []))
     setMitarbeiter(Array.isArray(m) ? m : (m.items ?? []))
     setLoading(false)
   }, [])
