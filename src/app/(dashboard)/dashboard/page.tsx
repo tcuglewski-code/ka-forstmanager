@@ -279,7 +279,10 @@ async function getStats() {
         select: { id: true, titel: true, datum: true, typ: true },
       }),
       prisma.abnahme.count({ where: { status: "offen" } }),
-      prisma.stundeneintrag.count({ where: { genehmigt: false } }),
+      // BUG-FIX: SUM der Stunden statt COUNT der Einträge — konsistent mit Detail-Seite
+      prisma.stundeneintrag
+        .aggregate({ where: { genehmigt: false }, _sum: { stunden: true }, _count: true })
+        .then((r: { _sum: { stunden: number | null } }) => r._sum.stunden ?? 0),
       prisma.vorschuss.aggregate({
         where: { genehmigt: false },
         _sum: { betrag: true },
@@ -452,6 +455,10 @@ const STATUS_FARBEN: Record<string, string> = {
   in_ausfuehrung: "bg-[rgba(140,170,31,0.16)] text-[#5a6e14]",
   abgeschlossen: "bg-gray-200 text-gray-700",
 }
+
+// BUG-FIX: Stunden mit deutschem Komma + "h"-Suffix formatieren
+const formatStunden = (val: number) =>
+  val.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "h"
 
 const SCHULUNG_TYP: Record<string, string> = {
   pflicht: "bg-red-100 text-red-800",
@@ -763,8 +770,8 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <StatCard label="Aktive Mitarbeiter" value={stats.aktiveMitarbeiter.toString()} icon={<Users className="w-5 h-5 text-[#8CAA1F]" />} href="/mitarbeiter" />
         <StatCard label="Aktive Saisons" value={stats.aktiveSaisons.toString()} icon={<Sprout className="w-5 h-5 text-[#8CAA1F]" />} href="/saisons" />
-        <StatCard label="Offene Aufträge" value={stats.offeneAuftraege.toString()} icon={<ClipboardList className="w-5 h-5 text-[#8CAA1F]" />} href="/auftraege" />
-        <StatCard label="Lager-Alerts" value={stats.lagerUnterMindest.toString()} icon={<Package className={`w-5 h-5 ${stats.lagerUnterMindest > 0 ? "text-red-400" : "text-[#8CAA1F]"}`} />} href="/lager" alert={stats.lagerUnterMindest > 0} />
+        <StatCard label="Offene Aufträge" value={stats.offeneAuftraege.toString()} icon={<ClipboardList className="w-5 h-5 text-[#8CAA1F]" />} href="/auftraege?status=offen" />
+        <StatCard label="Lager-Alerts" value={stats.lagerUnterMindest.toString()} icon={<Package className={`w-5 h-5 ${stats.lagerUnterMindest > 0 ? "text-red-400" : "text-[#8CAA1F]"}`} />} href="/lager?filter=unterMindest" alert={stats.lagerUnterMindest > 0} />
       </div>
 
       {/* New Stats Row */}
@@ -773,28 +780,28 @@ export default async function DashboardPage() {
           label="Offene Abnahmen"
           value={stats.offeneAbnahmen.toString()}
           icon={<CheckSquare className={`w-5 h-5 ${stats.offeneAbnahmen > 0 ? "text-amber-400" : "text-[#8CAA1F]"}`} />}
-          href="/abnahmen"
+          href="/abnahmen?status=offen"
           alert={stats.offeneAbnahmen > 0}
         />
         <StatCard
           label="Stunden ausstehend"
-          value={stats.stundenAusstehend.toString()}
+          value={formatStunden(stats.stundenAusstehend)}
           icon={<Clock className={`w-5 h-5 ${stats.stundenAusstehend > 0 ? "text-amber-400" : "text-[#8CAA1F]"}`} />}
-          href="/stunden?genehmigt=false"
+          href="/stunden?filter=ausstehend"
           alert={stats.stundenAusstehend > 0}
         />
         <StatCard
           label="Vorschüsse offen"
           value={`${stats.vorschuessOffen.toFixed(0)} €`}
           icon={<DollarSign className={`w-5 h-5 ${stats.vorschuessOffen > 0 ? "text-amber-400" : "text-[#8CAA1F]"}`} />}
-          href="/vorschuesse"
+          href="/vorschuesse?filter=offen"
           alert={stats.vorschuessOffen > 0}
         />
         <StatCard
           label="Qual. ablaufend"
           value={stats.ablaufendeQualifikationen.toString()}
           icon={<AlertTriangle className={`w-5 h-5 ${stats.ablaufendeQualifikationen > 0 ? "text-amber-400" : "text-[#8CAA1F]"}`} />}
-          href="/qualifikationen"
+          href="/qualifikationen?filter=ablaufend"
           alert={stats.ablaufendeQualifikationen > 0}
         />
       </div>
@@ -864,8 +871,10 @@ export default async function DashboardPage() {
             {((stats.realisierterUmsatz._sum?.betrag ?? 0)).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
           </p>
         </div>
-        <div
-          className="bento-card p-5"
+        {/* BUG-FIX: Drill-Down Link für Offene Forderungen */}
+        <Link
+          href="/rechnungen?status=offen"
+          className="bento-card p-5 block cursor-pointer transition-opacity hover:opacity-80"
           style={{ backgroundColor: "var(--color-surface-container-low)" }}
         >
           <p
@@ -880,7 +889,7 @@ export default async function DashboardPage() {
           >
             {((stats.offeneForderungen._sum?.betrag ?? 0)).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
           </p>
-        </div>
+        </Link>
         <div
           className="bento-card p-5"
           style={{ backgroundColor: "var(--color-surface-container-low)" }}

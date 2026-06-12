@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
 import { getReads, markAll } from "@/lib/notifications-store"
 
 export const dynamic = "force-dynamic"
@@ -20,46 +21,83 @@ export interface NotificationItem {
   link?: string
 }
 
-export function demoNotifications(): NotificationItem[] {
+// BUG-FIX: echte Benachrichtigungen aus DB statt demoNotifications()
+async function buildNotifications(): Promise<NotificationItem[]> {
+  const items: NotificationItem[] = []
   const now = Date.now()
-  return [
-    {
-      id: "demo-1",
-      type: "signatur_faellig",
-      title: "Abnahme ausstehend",
-      message: "Fläche Nordwald wartet auf Förster-Signatur",
-      read: false,
-      createdAt: new Date(now - 2 * 60 * 60 * 1000).toISOString(),
-      link: "/abnahmen",
-    },
-    {
-      id: "demo-2",
+  const nowIso = new Date(now).toISOString()
+
+  const [lagerWarnungen, offeneAbnahmen, neueAuftraege, stundenPending] = await Promise.all([
+    // 1. Lager unter Mindestbestand (field-zu-field Vergleich → queryRaw)
+    prisma.$queryRaw<
+      { id: string; name: string; bestand: number; mindestbestand: number }[]
+    >`SELECT id, name, bestand, mindestbestand FROM "LagerArtikel" WHERE bestand < mindestbestand AND "deletedAt" IS NULL LIMIT 5`.catch(
+      () => []
+    ),
+    // 2. Abnahmen ausstehend
+    prisma.abnahme.count({ where: { status: "offen" } }).catch(() => 0),
+    // 3. Neue Aufträge (letzte 24h)
+    prisma.auftrag
+      .findMany({
+        where: { createdAt: { gte: new Date(now - 24 * 60 * 60 * 1000) }, deletedAt: null },
+        select: { id: true, titel: true, createdAt: true },
+        orderBy: { createdAt: "desc" },
+        take: 3,
+      })
+      .catch(() => []),
+    // 4. Stunden ausstehend
+    prisma.stundeneintrag.count({ where: { genehmigt: false } }).catch(() => 0),
+  ])
+
+  for (const artikel of lagerWarnungen) {
+    items.push({
+      id: `lager-${artikel.id}`,
       type: "lager_warnung",
       title: "Lagerbestand niedrig",
-      message: "Eichensetzlinge: 450 Stück (unter Mindestbestand 500)",
+      message: `${artikel.name}: ${artikel.bestand} (unter Mindestbestand ${artikel.mindestbestand})`,
       read: false,
-      createdAt: new Date(now - 5 * 60 * 60 * 1000).toISOString(),
+      createdAt: nowIso,
       link: "/lager",
-    },
-    {
-      id: "demo-3",
+    })
+  }
+
+  if (offeneAbnahmen > 0) {
+    items.push({
+      id: "abnahmen-ausstehend",
+      type: "signatur_faellig",
+      title: "Abnahmen ausstehend",
+      message: `${offeneAbnahmen} Abnahme${offeneAbnahmen > 1 ? "n" : ""} wartet auf Bestätigung`,
+      read: false,
+      createdAt: nowIso,
+      link: "/abnahmen?status=offen",
+    })
+  }
+
+  for (const auftrag of neueAuftraege) {
+    items.push({
+      id: `auftrag-${auftrag.id}`,
       type: "auftrag_neu",
       title: "Neuer Auftrag eingegangen",
-      message: "Aufforstung Südwald — 3,5 ha",
-      read: true,
-      createdAt: new Date(now - 24 * 60 * 60 * 1000).toISOString(),
-      link: "/auftraege",
-    },
-    {
-      id: "demo-4",
+      message: auftrag.titel,
+      read: false,
+      createdAt: auftrag.createdAt.toISOString(),
+      link: `/auftraege/${auftrag.id}`,
+    })
+  }
+
+  if (stundenPending > 0) {
+    items.push({
+      id: "stunden-ausstehend",
       type: "system",
-      title: "System-Update",
-      message: "Neue Features verfügbar: Analytics-Dashboard",
-      read: true,
-      createdAt: new Date(now - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      link: "/analytics",
-    },
-  ]
+      title: "Stunden ausstehend",
+      message: `${stundenPending} Stundeneintr${stundenPending > 1 ? "äge" : "ag"} nicht genehmigt`,
+      read: false,
+      createdAt: nowIso,
+      link: "/stunden?filter=ausstehend",
+    })
+  }
+
+  return items
 }
 
 export async function GET() {
@@ -68,7 +106,7 @@ export async function GET() {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 })
   }
   const reads = getReads(session.user.id)
-  const items = demoNotifications().map((n) => ({
+  const items = (await buildNotifications()).map((n) => ({
     ...n,
     read: n.read || reads.has(n.id),
   }))
@@ -88,7 +126,7 @@ export async function PATCH(req: Request) {
   if (all) {
     markAll(
       session.user.id,
-      demoNotifications().map((n) => n.id)
+      (await buildNotifications()).map((n) => n.id)
     )
   }
   return NextResponse.json({ ok: true })

@@ -9,7 +9,7 @@ export function StatCard({ label, value, icon, href, alert }: {
   return (
     <Link
       href={href}
-      className="block bento-card p-5"
+      className="block bento-card p-5 cursor-pointer transition hover:opacity-80 hover:ring-2 hover:ring-[#8CAA1F]/30"
       style={alert ? { backgroundColor: "rgba(186,26,26,0.05)", borderColor: "rgba(186,26,26,0.2)" } : undefined}
     >
       <div className="flex items-center justify-between mb-3">
