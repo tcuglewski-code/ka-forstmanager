@@ -59,8 +59,8 @@ function RechnungenPageInner() {
   const [loadingBetrag, setLoadingBetrag] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
 
-  // Sprint Q: Filter + Sortierung
-  const [filterStatus, setFilterStatus] = useState("")
+  // Sprint Q: Filter + Sortierung (URL-Param ?status= lesen für Dashboard-Drill-Down)
+  const [filterStatus, setFilterStatus] = useState(() => searchParams.get("status") ?? "")
   const [sortBy, setSortBy] = useState<"datum" | "betrag" | "status">("datum")
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc")
 
