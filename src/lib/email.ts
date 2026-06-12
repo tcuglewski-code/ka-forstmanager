@@ -50,8 +50,11 @@ export async function sendEmail({ to, subject, html, attachments }: EmailOptions
     console.log('[email] Gesendet:', info.messageId)
     return { messageId: info.messageId }
   } catch (error) {
-    console.error('[email] Fehler:', error)
-    return { error: String(error) }
+    // AUDIT-FIX T-010: [DSGVO] nur error.message loggen — Nodemailer-Fehlerobjekte können
+    // Empfänger-Adressen (envelope/rejected) enthalten
+    const message = error instanceof Error ? error.message : "Unbekannter Fehler"
+    console.error('[email] Fehler:', message)
+    return { error: message }
   }
 }
 

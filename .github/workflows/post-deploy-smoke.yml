@@ -1,0 +1,37 @@
+# AUDIT-FIX T-037: Post-Deploy Smoke-Test — Vercel meldet READY auch bei kaputtem Deploy.
+# Prüft nach jedem Push auf main (mit Wartezeit für Vercel-Deploy) + alle 15min per Cron,
+# ob die Produktion erreichbar ist.
+name: Post-Deploy Smoke Test
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Vercel deploy (only on push)
+        if: github.event_name == 'push'
+        run: sleep 90
+
+      - name: Check /login returns 200
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 https://ka-forstmanager.vercel.app/login)
+          echo "/login -> $code"
+          if [ "$code" != "200" ]; then
+            echo "::error::Smoke test failed: /login returned $code"
+            exit 1
+          fi
+
+      - name: Check /api/health
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 https://ka-forstmanager.vercel.app/api/health)
+          echo "/api/health -> $code"
+          if [ "$code" != "200" ]; then
+            echo "::error::Smoke test failed: /api/health returned $code"
+            exit 1
+          fi

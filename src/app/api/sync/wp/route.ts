@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { wpSyncEngine } from "@/lib/sync/wp-sync"
+import { verifyToken, isAdminRole } from "@/lib/auth-helpers"
 
 // GET: Sync-Status abrufen
-export async function GET() {
+// AUDIT-FIX T-006: Auth + Admin-Check — Sync-Status/Fehlerquoten waren öffentlich lesbar
+export async function GET(req: NextRequest) {
   try {
+    const user = await verifyToken(req)
+    if (!user || !isAdminRole((user as { role?: string }).role)) {
+      return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 })
+    }
+
     // Aufträge mit ausstehenden lokalen Änderungen
     const pendingSync = await prisma.auftrag.count({
       where: {
@@ -98,6 +105,13 @@ export async function POST(req: NextRequest) {
         )
       }
       return NextResponse.json({ ok: true, debugReportId: mcBody.id })
+    }
+
+    // AUDIT-FIX T-006: Sync-Aktionen (sync_all/sync_one/pull) nur für Admins —
+    // der wizard_bug_report-Pfad oben bleibt bewusst offen (öffentliches WP-Widget, nur Forwarding)
+    const user = await verifyToken(req)
+    if (!user || !isAdminRole((user as { role?: string }).role)) {
+      return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 })
     }
 
     if (action === "sync_all") {

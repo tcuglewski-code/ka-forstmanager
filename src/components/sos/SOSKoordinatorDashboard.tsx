@@ -36,6 +36,8 @@ interface SOSEvent {
   resolutionNotes: string | null
   isDelayedSync: boolean
   koordinatorenNotified: number
+  // AUDIT-FIX T-035: echte Telefonnummer des Mitarbeiters (von API angereichert)
+  mitarbeiterTelefon: string | null
 }
 
 export default function SOSKoordinatorDashboard() {
@@ -365,13 +367,21 @@ export default function SOSKoordinatorDashboard() {
               {/* Actions */}
               <div className="space-y-3">
                 {/* Call Button */}
-                <a
-                  href={`tel:+49000000000`} // TODO: Get from Mitarbeiter
-                  className="flex items-center justify-center gap-2 w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors"
-                >
-                  <Phone className="w-5 h-5" />
-                  Mitarbeiter anrufen
-                </a>
+                {/* AUDIT-FIX T-035: Dummy-Nummer (+49000000000) ersetzt durch echte MA-Nummer aus DB; Button nur wenn Nummer vorhanden */}
+                {selectedEvent.mitarbeiterTelefon ? (
+                  <a
+                    href={`tel:${selectedEvent.mitarbeiterTelefon.replace(/[^+\d]/g, "")}`}
+                    className="flex items-center justify-center gap-2 w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors"
+                  >
+                    <Phone className="w-5 h-5" />
+                    Mitarbeiter anrufen ({selectedEvent.mitarbeiterTelefon})
+                  </a>
+                ) : (
+                  <div className="flex items-center justify-center gap-2 w-full py-3 bg-gray-200 text-gray-500 rounded-lg font-semibold">
+                    <Phone className="w-5 h-5" />
+                    Keine Telefonnummer hinterlegt
+                  </div>
+                )}
 
                 {/* Google Maps */}
                 {selectedEvent.googleMapsLink && (

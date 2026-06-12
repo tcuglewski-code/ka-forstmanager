@@ -148,7 +148,9 @@ function PlanungPageInner() {
 
   // FIX 9: Template-Feature — lädt Flächen UND öffnet Save-Dialog mit Vorschlagsnamen,
   // sodass eine neue Planung auf Basis der alten erstellt werden kann.
-  async function useAsTemplate(p: GespeichertePlanung) {
+  // AUDIT-FIX T-008: Hook an Top-Level verschoben (rules-of-hooks) — Funktion umbenannt,
+  // da der "use"-Prefix sie fälschlich als Hook klassifizierte (Aufruf im onClick-Callback).
+  async function applyAsTemplate(p: GespeichertePlanung) {
     if (p.flaechenIds.length === 0) return
     setLoading(true)
     try {
@@ -545,7 +547,7 @@ function PlanungPageInner() {
                   Laden
                 </button>
                 <button
-                  onClick={() => useAsTemplate(p)}
+                  onClick={() => applyAsTemplate(p)}
                   className="px-3 py-1.5 text-xs bg-[var(--color-surface-container-highest)] hover:bg-blue-100/60 dark:hover:bg-blue-900/30 border border-border hover:border-blue-500 text-[var(--color-on-surface)] hover:text-blue-700 dark:hover:text-blue-400 rounded-md font-medium transition-all flex items-center gap-1"
                   title="Als Vorlage für neue Planung verwenden"
                 >

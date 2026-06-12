@@ -10,6 +10,22 @@ import { NextRequest, NextResponse } from "next/server"
 export const dynamic = "force-dynamic"
 export const runtime = "nodejs"
 
+// AUDIT-FIX T-035: Events um echte Mitarbeiter-Telefonnummer anreichern —
+// das Koordinator-Dashboard zeigte eine hardcodierte Dummy-Nummer (tel:+49000000000)
+type EventWithTelefon<T> = T & { mitarbeiterTelefon: string | null }
+async function enrichWithTelefon<T extends { mitarbeiterId: string }>(
+  events: T[]
+): Promise<EventWithTelefon<T>[]> {
+  const ids = [...new Set(events.map((e) => e.mitarbeiterId))]
+  if (ids.length === 0) return events.map((e) => ({ ...e, mitarbeiterTelefon: null }))
+  const mitarbeiter = await prisma.mitarbeiter.findMany({
+    where: { id: { in: ids } },
+    select: { id: true, telefon: true, mobil: true },
+  })
+  const telefonById = new Map(mitarbeiter.map((m) => [m.id, m.mobil || m.telefon || null]))
+  return events.map((e) => ({ ...e, mitarbeiterTelefon: telefonById.get(e.mitarbeiterId) ?? null }))
+}
+
 export async function GET(req: NextRequest) {
   const session = await auth()
   if (!session) {
@@ -35,7 +51,9 @@ export async function GET(req: NextRequest) {
         })
         
         controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ type: "init", events })}\n\n`)
+          encoder.encode(
+            `data: ${JSON.stringify({ type: "init", events: await enrichWithTelefon(events) })}\n\n`
+          )
         )
 
         // Poll for updates every 3 seconds
@@ -50,7 +68,9 @@ export async function GET(req: NextRequest) {
             })
             
             controller.enqueue(
-              encoder.encode(`data: ${JSON.stringify({ type: "update", events: activeEvents })}\n\n`)
+              encoder.encode(
+                `data: ${JSON.stringify({ type: "update", events: await enrichWithTelefon(activeEvents) })}\n\n`
+              )
             )
           } catch (error) {
             console.error("[SSE] Poll error:", error)
@@ -94,5 +114,5 @@ export async function GET(req: NextRequest) {
     where: { status: { in: ["pending", "sent", "acknowledged"] } },
   })
 
-  return NextResponse.json({ events, activeCount })
+  return NextResponse.json({ events: await enrichWithTelefon(events), activeCount })
 }

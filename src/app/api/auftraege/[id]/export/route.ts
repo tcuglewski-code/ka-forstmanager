@@ -4,10 +4,17 @@
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
 import { withErrorHandler } from "@/lib/api-handler"
+import { verifyToken } from "@/lib/auth-helpers"
 
 
 export const GET = withErrorHandler(async (req: NextRequest,
   { params }: { params: Promise<{ id: string }> }) => {
+  // AUDIT-FIX T-023: Auth erforderlich — GPS-Koordinaten + Waldbesitzer-Namen waren öffentlich lesbar
+  const user = await verifyToken(req)
+  if (!user) {
+    return new Response("Nicht authentifiziert", { status: 401 })
+  }
+
   const { id } = await params
   const format = new URL(req.url).searchParams.get("format") ?? "gpx"
 

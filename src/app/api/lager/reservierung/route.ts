@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { verifyToken } from "@/lib/auth-helpers"
 
 // GET: Liste aller Reservierungen, optional gefiltert nach auftragId
+// AUDIT-FIX T-003: Auth erforderlich — Auftragszuordnungen/Materialmengen waren ohne Login lesbar
 export async function GET(req: NextRequest) {
   try {
+    const user = await verifyToken(req)
+    if (!user) {
+      return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 })
+    }
+
     const auftragId = req.nextUrl.searchParams.get("auftragId")
     
     const where = auftragId ? { auftragId } : {}
@@ -32,8 +39,14 @@ export async function GET(req: NextRequest) {
 }
 
 // POST: Neue Reservierung erstellen
+// AUDIT-FIX T-003: Auth erforderlich — Endpoint manipulierte Lagerbestand ohne Login
 export async function POST(req: NextRequest) {
   try {
+    const user = await verifyToken(req)
+    if (!user) {
+      return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 })
+    }
+
     const body = await req.json()
     const { artikelId, auftragId, menge } = body
     

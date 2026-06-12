@@ -50,19 +50,12 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
   const [editMode, setEditMode] = useState(false)
   const [editedContent, setEditedContent] = useState("")
 
-  // Nur für abgeschlossene Aufträge anzeigen
-  if (auftragStatus !== "abgeschlossen") {
-    return (
-      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6 text-center">
-        <FileText className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
-        <p className="text-[var(--color-on-surface-variant)]">Bewertungs-Workflow verfügbar nach Auftragsabschluss</p>
-        <p className="text-zinc-600 text-sm mt-1">Status muss "abgeschlossen" sein</p>
-      </div>
-    )
-  }
-
+  // AUDIT-FIX T-008: Hook an Top-Level verschoben (rules-of-hooks)
+  // Early-Return für nicht-abgeschlossene Aufträge steht jetzt NACH dem useEffect;
+  // der Fetch wird im Effect übersprungen, damit das Verhalten unverändert bleibt.
   // Content laden
   useEffect(() => {
+    if (auftragStatus !== "abgeschlossen") return
     const loadContent = async () => {
       try {
         const res = await fetch(`/api/content?auftragId=${auftragId}`)
@@ -75,7 +68,18 @@ export function BlogWorkflow({ auftragId, auftragStatus, waldbesitzerEmail }: Pr
       }
     }
     loadContent()
-  }, [auftragId])
+  }, [auftragId, auftragStatus])
+
+  // Nur für abgeschlossene Aufträge anzeigen
+  if (auftragStatus !== "abgeschlossen") {
+    return (
+      <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6 text-center">
+        <FileText className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
+        <p className="text-[var(--color-on-surface-variant)]">Bewertungs-Workflow verfügbar nach Auftragsabschluss</p>
+        <p className="text-zinc-600 text-sm mt-1">Status muss "abgeschlossen" sein</p>
+      </div>
+    )
+  }
 
   // Aktuellen Schritt berechnen
   const getCurrentStep = () => {

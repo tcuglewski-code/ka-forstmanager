@@ -1,14 +1,21 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { verifyToken, isAdminRole } from "@/lib/auth-helpers"
 
 // GET: Einzelne Bestellung
+// AUDIT-FIX T-024: Auth erforderlich — Bestellung/Lieferantendaten waren ohne Login lesbar
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  
+
   try {
+    const user = await verifyToken(req)
+    if (!user) {
+      return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 })
+    }
+
     const bestellung = await prisma.bestellung.findUnique({
       where: { id },
       include: {
@@ -36,8 +43,17 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  
+
   try {
+    // AUDIT-FIX T-002: Auth + Admin-Check — Status-/Bestandsmanipulation war ohne Login möglich
+    const user = await verifyToken(req)
+    if (!user) {
+      return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 })
+    }
+    if (!isAdminRole((user as { role?: string }).role)) {
+      return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 })
+    }
+
     const body = await req.json()
     const { status, notizen } = body
     
@@ -94,8 +110,17 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  
+
   try {
+    // AUDIT-FIX T-002: Auth + Admin-Check — Bestellungen waren ohne Login löschbar
+    const user = await verifyToken(req)
+    if (!user) {
+      return NextResponse.json({ error: "Nicht authentifiziert" }, { status: 401 })
+    }
+    if (!isAdminRole((user as { role?: string }).role)) {
+      return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 })
+    }
+
     await prisma.bestellung.delete({ where: { id } })
     return NextResponse.json({ success: true })
   } catch (error) {

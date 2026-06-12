@@ -46,12 +46,8 @@ export default function BaumschuleDetailPage() {
   const router = useRouter()
   const { confirm, ConfirmDialogElement } = useConfirm()
 
-  // Guard: "neu" should not reach detail page (modal handles creation)
-  if (id === "neu") {
-    router.push("/saatguternte/baumschulen")
-    return null
-  }
-
+  // AUDIT-FIX T-008: Hook an Top-Level verschoben (rules-of-hooks)
+  // Guard für id === "neu" steht jetzt NACH allen Hooks (siehe unten vor dem Loading-Return).
   const [baumschule, setBaumschule] = useState<Baumschule | null>(null)
   const [preislisten, setPreislisten] = useState<Preisliste[]>([])
   const [laden, setLaden] = useState(true)
@@ -94,7 +90,16 @@ export default function BaumschuleDetailPage() {
     }
   }
 
-  useEffect(() => { laden_() }, [id])
+  // AUDIT-FIX T-008: Hook an Top-Level verschoben (rules-of-hooks)
+  // Redirect-Guard für "neu" hier statt als Early-Return vor den Hooks.
+  useEffect(() => {
+    if (id === "neu") {
+      router.push("/saatguternte/baumschulen")
+      return
+    }
+    laden_()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
 
   async function preisErstellen(e: React.FormEvent) {
     e.preventDefault()
@@ -148,6 +153,12 @@ export default function BaumschuleDetailPage() {
 
   const aktivPreislisten = preislisten.filter((p) => p.aktiv)
   const inaktivPreislisten = preislisten.filter((p) => !p.aktiv)
+
+  // AUDIT-FIX T-008: Hook an Top-Level verschoben (rules-of-hooks)
+  // Guard: "neu" should not reach detail page (modal handles creation) — Redirect läuft im useEffect oben.
+  if (id === "neu") {
+    return null
+  }
 
   if (laden) {
     return (

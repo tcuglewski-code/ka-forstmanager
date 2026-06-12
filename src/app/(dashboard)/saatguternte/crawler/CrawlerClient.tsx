@@ -43,6 +43,8 @@ export function CrawlerClient({ initialQuellen }: Props) {
   const [hessenStatus, setHessenStatus] = useState<HessenStatus | null>(null)
   const [hessenLoading, setHessenLoading] = useState(false)
   const [showHessenLog, setShowHessenLog] = useState(false)
+  // AUDIT-FIX T-008: Hook an Top-Level verschoben (rules-of-hooks) — vorher useState pro Quelle im map-Callback
+  const [showPassFor, setShowPassFor] = useState<Record<string, boolean>>({})
 
   function toggleCredForm(id: string) {
     setCredForms((prev) => ({
@@ -270,7 +272,8 @@ export function CrawlerClient({ initialQuellen }: Props) {
         const StatusIcon = statusConf.icon
         const isRunning = quelle.crawlStatus === "running" || crawling === quelle.id
         const form = credForms[quelle.id]
-        const [showPass, setShowPass] = useState(false)
+        // AUDIT-FIX T-008: Hook an Top-Level verschoben (rules-of-hooks)
+        const showPass = !!showPassFor[quelle.id]
 
         return (
           <div key={quelle.id} className="bg-[var(--color-surface-container)] border border-border rounded-xl overflow-hidden">
@@ -380,7 +383,7 @@ export function CrawlerClient({ initialQuellen }: Props) {
                       />
                       <button
                         type="button"
-                        onClick={() => setShowPass((v) => !v)}
+                        onClick={() => setShowPassFor((prev) => ({ ...prev, [quelle.id]: !prev[quelle.id] }))}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-[var(--color-on-surface-variant)]"
                       >
                         {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
