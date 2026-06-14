@@ -268,6 +268,7 @@ model Auftrag {
   fotos               Foto[]
   pflanzItems         AuftragPflanzItem[]
   unterkunft          Unterkunft?
+  materialBedarfe     MaterialBedarf[]
 
   @@index([status])
   @@index([createdAt])
@@ -434,6 +435,7 @@ model Lieferant {
 
   artikel      LagerArtikel[]
   bestellungen Bestellung[]
+  bestellVorschlaege BestellVorschlag[]
 }
 
 // KO-1: Bestellungen bei Lieferanten
@@ -1191,6 +1193,7 @@ model Angebot {
   followUps  AngebotsFollowUp[]
   varianten  AngebotsVariante[]
   audits     AngebotsAudit[]
+  materialBedarfe MaterialBedarf[]
 
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
@@ -1305,6 +1308,93 @@ model AngebotsDraft {
   erstelltAm            DateTime  @default(now())
   aktualisiertAm        DateTime  @updatedAt
   angebote              Angebot[]
+}
+
+// ============================================================
+// A2 MATERIAL-BEDARF-AGENT (Sprint A2)
+// Bestandsbewusster Materialbedarf aus Angebot/Auftrag.
+// Deterministische Reforest-Formeln (NEVER #23/#24), LLM nur Fallback.
+// Kill-Switch: mat_agent_aktiv (Default false, NEVER #21).
+// ============================================================
+
+enum MatStatus {
+  NEU
+  BERECHNET
+  BESTELLT
+  ABGEBROCHEN
+}
+
+enum MatQuelle {
+  FORMEL
+  LLM
+  MANUELL
+}
+
+enum BestellVorschlagStatus {
+  VORSCHLAG
+  BESTELLT
+  GELIEFERT
+}
+
+model MaterialBedarf {
+  id                 String             @id @default(cuid())
+  angebotId          String?
+  angebot            Angebot?           @relation(fields: [angebotId], references: [id], onDelete: SetNull)
+  auftragId          String?
+  auftrag            Auftrag?           @relation(fields: [auftragId], references: [id], onDelete: SetNull)
+  inputSpezifikation Json // Zod-validierte MatInputSpezifikation (NEVER #23)
+  lagerAbgleichJson  Json? // {verfuegbar, teilweise, fehlt}
+  gesamtKosten       Float?
+  llmKostenCent      Int                @default(0) // NEVER #22 Kosten-Tracking
+  status             MatStatus          @default(NEU)
+  killSwitchAktiv    Boolean            @default(true)
+  erstelltVon        String?
+  erstelltAm         DateTime           @default(now())
+  aktualisiertAm     DateTime           @updatedAt
+  positionen         MaterialPosition[]
+  bestellVorschlaege BestellVorschlag[]
+
+  @@index([angebotId])
+  @@index([auftragId])
+  @@index([status])
+}
+
+model MaterialPosition {
+  id                String         @id @default(cuid())
+  materialBedarfId  String
+  materialBedarf    MaterialBedarf @relation(fields: [materialBedarfId], references: [id], onDelete: Cascade)
+  bezeichnung       String
+  menge             Float
+  einheit           String // stueck, kg, lm, m2
+  einzelpreis       Float?
+  gesamtpreis       Float?
+  lagerArtikelId    String?
+  lagerBestand      Float?
+  zuBestellenMenge  Float?
+  berechnungsFormel String?
+  quelle            MatQuelle      @default(FORMEL)
+  konfidenz         Float          @default(1.0)
+  reihenfolge       Int            @default(0)
+
+  @@index([materialBedarfId])
+}
+
+model BestellVorschlag {
+  id               String                 @id @default(cuid())
+  materialBedarfId String
+  materialBedarf   MaterialBedarf         @relation(fields: [materialBedarfId], references: [id], onDelete: Cascade)
+  lieferantId      String?
+  lieferant        Lieferant?             @relation(fields: [lieferantId], references: [id], onDelete: SetNull)
+  baumschuleId     String?
+  baumschule       Baumschule?            @relation(fields: [baumschuleId], references: [id], onDelete: SetNull)
+  lieferantName    String? // Snapshot für Anzeige
+  positionenJson   Json // [{materialPositionId, bezeichnung, menge, preis}]
+  gesamtBetrag     Float                  @default(0)
+  status           BestellVorschlagStatus @default(VORSCHLAG)
+  bestelltAm       DateTime?
+  erstelltAm       DateTime               @default(now())
+
+  @@index([materialBedarfId])
 }
 
 model AngebotsVariante {
@@ -1648,6 +1738,7 @@ model Baumschule {
   preislisten  BaumschulPreisliste[]
   bestellungen BaumschulBestellung[]
   user         User?                 @relation(fields: [userId], references: [id])
+  bestellVorschlaege BestellVorschlag[]
 }
 
 // Sprint AI: Preislistenverwaltung für Baumschulen
