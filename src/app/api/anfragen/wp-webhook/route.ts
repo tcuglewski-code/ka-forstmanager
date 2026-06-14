@@ -5,43 +5,17 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { sendEmail } from "@/lib/email"
+import { isAgentAktiv } from "@/lib/angebote/config"
+import { generiereAngebot } from "@/lib/angebote/generieren"
+import {
+  type WPWizardDaten,
+  webhookFlowEntscheidung,
+  buildRoheAnfrage,
+} from "@/lib/anfragen/webhook-flow"
 
 // Webhook-Token für Authentifizierung
 const WEBHOOK_TOKEN = process.env.WP_WEBHOOK_TOKEN ?? ""
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "info@koch-aufforstung.de"
-
-interface WPWizardDaten {
-  // Basis-Felder aus WP Wizard
-  id?: number
-  titel?: string
-  waldbesitzer?: string
-  email?: string
-  telefon?: string
-  flaeche?: string | number
-  standort?: string
-  bundesland?: string
-  angelegt?: number // Unix Timestamp
-  
-  // Wizard-spezifische Daten
-  wizard_typ?: string // "pflanzung", "kulturschutz", etc.
-  wizard_daten?: {
-    pflanzverband?: string
-    schutztyp?: string[]
-    schutzart?: string
-    zauntyp?: string
-    aufwuchsart?: string[]
-    arbeitsmethode?: string
-    baumarten?: string
-    beschreibung?: string
-    lat?: number
-    lng?: number
-    [key: string]: unknown
-  }
-  
-  // Weitere Felder
-  status?: string
-  kommentar?: string
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -177,6 +151,27 @@ export async function POST(request: NextRequest) {
           console.warn("[WP-Webhook] PflanzItem auto-create failed:", part, err)
         }
       }
+    }
+
+    // WIZ-02: A1-Angebots-Agent triggern (backward-kompatibel via Kill-Switch).
+    // Auftrag wurde oben IMMER erstellt. Nur wenn ang_agent_aktiv=true wird
+    // zusätzlich ein AngebotsDraft + KI-Angebot generiert (fire-and-forget,
+    // blockiert die Webhook-Antwort nicht).
+    try {
+      const flow = webhookFlowEntscheidung(await isAgentAktiv())
+      if (flow.angebotsAgentTriggern) {
+        const roheAnfrage = buildRoheAnfrage(data)
+        void generiereAngebot(roheAnfrage, "wizard", "wp-webhook")
+          .then((r) =>
+            console.log("[WP-Webhook] AngebotsDraft erstellt:", r.draftId, "Angebot:", r.angebotId)
+          )
+          .catch((e) =>
+            console.warn("[WP-Webhook] A1-Trigger fehlgeschlagen:", e instanceof Error ? e.message : e)
+          )
+      }
+    } catch (flowError) {
+      // Kill-Switch-Lookup-Fehler nicht fatal — Auftrag wurde erstellt.
+      console.warn("[WP-Webhook] A1-Flow-Entscheidung fehlgeschlagen:", flowError)
     }
 
     // Activity-Log
