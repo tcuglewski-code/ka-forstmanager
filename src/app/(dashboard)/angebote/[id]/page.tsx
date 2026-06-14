@@ -6,9 +6,9 @@
  * erlaubt Freigabe (Mensch-im-Loop) sowie PDF-Vorschau.
  */
 import { useState, useEffect, useCallback } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { FileText, CheckCircle2, Layers, Loader2, Pencil, Send } from "lucide-react"
+import { FileText, CheckCircle2, Layers, Loader2, Pencil, Send, Package } from "lucide-react"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
 
 interface Position {
@@ -57,6 +57,7 @@ function eur(n: number | null | undefined): string {
 
 export default function AngebotDetailPage() {
   const { id } = useParams<{ id: string }>()
+  const router = useRouter()
   const [angebot, setAngebot] = useState<Angebot | null>(null)
   const [positionen, setPositionen] = useState<Position[]>([])
   const [varianten, setVarianten] = useState<Variante[]>([])
@@ -123,6 +124,30 @@ export default function AngebotDetailPage() {
       }
       toast.success("Gut/Besser/Best erzeugt")
       laden()
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function materialBedarfBerechnen() {
+    setBusy(true)
+    try {
+      const res = await fetch(`/api/material-bedarf/berechnen`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ angebotId: id }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.status === 503) {
+        toast.error("Material-Agent ist deaktiviert (Kill-Switch mat_agent_aktiv).")
+        return
+      }
+      if (!res.ok) {
+        toast.error(data.error ?? "Materialbedarf-Berechnung fehlgeschlagen")
+        return
+      }
+      toast.success(`Materialbedarf berechnet: ${data.positionenAnzahl} Position(en)`)
+      if (data.materialBedarfId) router.push(`/material-bedarf/${data.materialBedarfId}`)
     } finally {
       setBusy(false)
     }
@@ -195,6 +220,15 @@ export default function AngebotDetailPage() {
           >
             {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Layers className="w-4 h-4" />}
             Gut/Besser/Best
+          </button>
+          <button
+            onClick={materialBedarfBerechnen}
+            disabled={busy}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border text-sm disabled:opacity-60"
+            style={{ borderColor: "#C5A55A", color: "#2C3A1C" }}
+          >
+            {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Package className="w-4 h-4" />}
+            Materialbedarf berechnen
           </button>
           {!istFreigegeben && (
             <button
