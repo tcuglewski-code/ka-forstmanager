@@ -440,6 +440,25 @@ export function Sidebar() {
               <span style={{ fontFamily: "var(--font-body)", fontSize: "0.875rem" }}>Benutzerverwaltung</span>
             </Link>
           )}
+
+          {/* Admin: Preisbuch (A1 Angebots-Agent) */}
+          {isAdmin && (
+            <Link
+              href="/admin/preisbuch"
+              onClick={() => setOpen(false)}
+              className={navItemBase}
+              style={pathname === "/admin/preisbuch" ? navItemActive : navItemDefault}
+              onMouseEnter={e => {
+                if (pathname !== "/admin/preisbuch") (e.currentTarget as HTMLElement).style.backgroundColor = "var(--sidebar-hover)"
+              }}
+              onMouseLeave={e => {
+                if (pathname !== "/admin/preisbuch") (e.currentTarget as HTMLElement).style.backgroundColor = "transparent"
+              }}
+            >
+              <Shield className="w-4 h-4 flex-shrink-0" />
+              <span style={{ fontFamily: "var(--font-body)", fontSize: "0.875rem" }}>Preisbuch</span>
+            </Link>
+          )}
         </nav>
 
         {/* ── Quick Actions ── */}
