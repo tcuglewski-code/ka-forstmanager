@@ -51,14 +51,14 @@ export async function GET(req: Request, { params }: { params: Promise<{ token: s
     gesamtBrutto: angebot.gesamtpreis,
     gueltigBis: angebot.gueltigBis,
     foerderHinweis: angebot.foerderHinweis,
-    positionen: angebot.positionen.map((p) => ({
+    positionen: angebot.positionen.map((p: (typeof angebot.positionen)[number]) => ({
       bezeichnung: p.bezeichnung,
       menge: p.menge,
       einheit: p.einheit,
       einzelpreis: p.einzelpreis,
       gesamtpreis: p.gesamtpreis,
     })),
-    varianten: angebot.varianten.map((v) => ({
+    varianten: angebot.varianten.map((v: (typeof angebot.varianten)[number]) => ({
       stufe: v.stufe,
       titel: v.titel,
       verkaufstext: v.verkaufstext,

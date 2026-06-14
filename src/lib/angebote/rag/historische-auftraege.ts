@@ -71,10 +71,21 @@ export async function findeAehnlicheAuftraege(
       take: 200,
     })
 
-    const bewertet = auftraege
-      .map((a) => {
+    type AuftragRow = {
+      nummer: string | null
+      titel: string
+      typ: string
+      flaeche_ha: number | null
+      bundesland: string | null
+      standort: string | null
+      rechnungen: { betrag: number | null; bruttoBetrag: number | null; nettoBetrag: number | null }[]
+    }
+    type Bewertet = { a: AuftragRow; score: number; istKosten: number }
+
+    const bewertet: Bewertet[] = (auftraege as AuftragRow[])
+      .map((a): Bewertet => {
         const istKosten = a.rechnungen.reduce(
-          (sum, r) => sum + (r.bruttoBetrag ?? r.betrag ?? 0),
+          (sum: number, r: AuftragRow["rechnungen"][number]) => sum + (r.bruttoBetrag ?? r.betrag ?? 0),
           0
         )
         return {
@@ -83,11 +94,11 @@ export async function findeAehnlicheAuftraege(
           istKosten,
         }
       })
-      .filter((x) => x.score > 0.3 && x.istKosten > 0)
-      .sort((x, y) => y.score - x.score)
+      .filter((x: Bewertet) => x.score > 0.3 && x.istKosten > 0)
+      .sort((x: Bewertet, y: Bewertet) => y.score - x.score)
       .slice(0, limit)
 
-    const ergebnis: VergleichsAuftrag[] = bewertet.map((x) => ({
+    const ergebnis: VergleichsAuftrag[] = bewertet.map((x: Bewertet) => ({
       nummer: x.a.nummer ?? null,
       titel: x.a.titel,
       typ: x.a.typ,

@@ -85,7 +85,7 @@ export async function versendeAngebot(angebotId: string, empfaengerEmail?: strin
     gueltigBis: fmtDatum(angebot.gueltigBis),
     empfaenger: angebot.waldbesitzerName ?? "Waldbesitzer:in",
     beschreibung: angebot.beschreibung ?? undefined,
-    positionen: angebot.positionen.map((p) => ({
+    positionen: angebot.positionen.map((p: (typeof angebot.positionen)[number]) => ({
       bezeichnung: p.bezeichnung,
       menge: p.menge,
       einheit: p.einheit,
@@ -97,7 +97,7 @@ export async function versendeAngebot(angebotId: string, empfaengerEmail?: strin
     mwstBetrag: mwst,
     gesamtBrutto: brutto,
     foerderHinweis: angebot.foerderHinweis,
-    varianten: angebot.varianten.map((v) => ({
+    varianten: angebot.varianten.map((v: (typeof angebot.varianten)[number]) => ({
       stufe: v.stufe,
       titel: v.titel ?? v.stufe,
       gesamtNetto: v.gesamtNetto,
