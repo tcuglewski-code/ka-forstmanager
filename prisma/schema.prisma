@@ -1159,8 +1159,232 @@ model Angebot {
   // Sprint FQ (B1): Kalkulations-Transparenz
   kalkulationsModus   String? // "flaeche" | "stueck" | "stunden"
   kalkulationsDetails String? // JSON mit Berechnungsdetails
+
+  // ===== A1 Angebots-Agent (Sprint A1) =====
+  draftId                  String?
+  draft                    AngebotsDraft? @relation(fields: [draftId], references: [id], onDelete: SetNull)
+  waldbesitzerId           String?
+  variante                 String?        @default("einzeln") // gut, besser, best, einzeln
+  kiGeneriert              Boolean        @default(false)
+  kiGeneriertAm            DateTime?
+  kiKostenCent             Int?
+  kiModell                 String?
+  anfrageSpezifikationJson Json? // Zod-validierte AnfrageSpezifikation
+  vergleichsAuftraegeJson  Json? // RAG: ähnliche historische Aufträge
+  foerderHinweis           String? // Sylvia-Förderhinweis (Info-only)
+  mwstSatz                 Float?         @default(19)
+  gesamtNetto              Float?
+  mwstBetrag               Float?
+  // Versand + Tracking (DSGVO-konform, keine Klartext-IP)
+  trackingToken            String?        @unique // Waldbesitzer-Portal-Link
+  trackingPixelId          String?        @unique // 1×1 Pixel-ID
+  trackingOptOut           Boolean        @default(false)
+  pdfUrl                   String?
+  freigegebenVon           String?
+  freigegebenAm            DateTime?
+  versendetAm              DateTime?
+  abgelehntGrund           String?
+  killSwitchAktiv          Boolean        @default(true)
+
+  positionen AngebotsPosition[]
+  tracking   AngebotsTracking[]
+  followUps  AngebotsFollowUp[]
+  varianten  AngebotsVariante[]
+  audits     AngebotsAudit[]
+
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
+
+  @@index([status])
+  @@index([draftId])
+  @@index([waldbesitzerId])
+}
+
+// ============================================================
+// A1 ANGEBOTS-AGENT — Preisbuch (Sprint A1)
+// ============================================================
+
+enum PreisbuchEinheit {
+  ha
+  stueck
+  lm
+  m2
+  stunde
+  pauschale
+  kg
+}
+
+enum AufschlagTyp {
+  steilheit
+  entfernung
+  saison
+  menge
+  subunternehmer
+  fixkosten
+  bodenart
+  sonstiges
+}
+
+model PreisbuchKategorie {
+  id           String             @id @default(cuid())
+  name         String             @unique // z.B. "aufforstung", "kulturpflege"
+  label        String? // deutsche Anzeige: "Aufforstung/Pflanzung"
+  beschreibung String?
+  reihenfolge  Int                @default(0)
+  aktiv        Boolean            @default(true)
+  eintraege    PreisbuchEintrag[]
+  erstelltAm   DateTime           @default(now())
+  aktualisiertAm DateTime         @updatedAt
+}
+
+model PreisbuchEintrag {
+  id             String               @id @default(cuid())
+  kategorieId    String
+  kategorie      PreisbuchKategorie   @relation(fields: [kategorieId], references: [id], onDelete: Cascade)
+  bezeichnung    String
+  einheit        PreisbuchEinheit
+  basispreis     Float
+  beschreibung   String?
+  lieferantTyp   String? // EIGEN, FREMDLEISTUNG, MATERIAL
+  mwstSatz       Float                @default(19) // 7 für Pflanzen, 19 für DL (ANG-047)
+  gueltigVon     DateTime?
+  gueltigBis     DateTime?
+  aktiv          Boolean              @default(true)
+  reihenfolge    Int                  @default(0)
+  metadatenJson  Json? // kategoriespezifisch, Zod-validiert (ANG-001)
+  aufschlaege    PreisbuchAufschlag[]
+  positionen     AngebotsPosition[]
+  erstelltVon    String?
+  erstelltAm     DateTime             @default(now())
+  aktualisiertAm DateTime             @updatedAt
+
+  @@index([kategorieId])
+  @@index([aktiv])
+}
+
+model PreisbuchAufschlag {
+  id           String           @id @default(cuid())
+  eintragId    String?
+  eintrag      PreisbuchEintrag? @relation(fields: [eintragId], references: [id], onDelete: Cascade)
+  name         String
+  typ          AufschlagTyp
+  bedingung    Json // z.B. {"min": 15, "max": 30} — Zod-validiert (ANG-002)
+  faktor       Float // 0.15 für +15%, -0.05 für Mengenrabatt
+  beschreibung String?
+  aktiv        Boolean          @default(true)
+  reihenfolge  Int              @default(0)
+  erstelltAm   DateTime         @default(now())
+  aktualisiertAm DateTime       @updatedAt
+}
+
+model KalkulationsTemplate {
+  id                 String   @id @default(cuid())
+  name               String
+  beschreibung       String?
+  leistungsTyp       String // erstaufforstung_laub, erstaufforstung_nadel, kulturpflege, saatgut, kombination
+  positionenJson     Json // Array {eintragName, kategorieName, mengenFormel, optional} — Zod (ANG-003)
+  berechnungsLogikJson Json? // Formeln — Zod (ANG-003)
+  aktiv              Boolean  @default(true)
+  reihenfolge        Int      @default(0)
+  erstelltAm         DateTime @default(now())
+  aktualisiertAm     DateTime @updatedAt
+}
+
+// ============================================================
+// A1 ANGEBOTS-AGENT — Angebots-Pipeline (Sprint A1)
+// ============================================================
+
+model AngebotsDraft {
+  id                    String    @id @default(cuid())
+  roheAnfrage           String    @db.Text // Freitext oder Wizard-JSON
+  inputTyp              String    @default("freitext") // freitext, wizard, email
+  geparsteSpezifikation Json? // Zod-validierte AnfrageSpezifikation
+  status                String    @default("NEU") // NEU, PARSING, BEREIT, FEHLER
+  fehlerText            String?
+  erstelltVon           String?
+  erstelltAm            DateTime  @default(now())
+  aktualisiertAm        DateTime  @updatedAt
+  angebote              Angebot[]
+}
+
+model AngebotsVariante {
+  id           String  @id @default(cuid())
+  angebotId    String
+  angebot      Angebot @relation(fields: [angebotId], references: [id], onDelete: Cascade)
+  stufe        String // gut, besser, best
+  titel        String?
+  verkaufstext String?
+  gesamtNetto  Float
+  gesamtBrutto Float
+  positionenJson Json // Snapshot der Positionen je Variante (Zod)
+  begruendung  String?
+  erstelltAm   DateTime @default(now())
+
+  @@index([angebotId])
+}
+
+model AngebotsPosition {
+  id               String            @id @default(cuid())
+  angebotId        String
+  angebot          Angebot           @relation(fields: [angebotId], references: [id], onDelete: Cascade)
+  bezeichnung      String
+  menge            Float
+  einheit          PreisbuchEinheit
+  einzelpreis      Float
+  aufschlaegeJson  Json? // Array {typ, faktor, betrag} — Zod (ANG-010)
+  gesamtpreis      Float
+  mwstSatz         Float             @default(19)
+  preisbuchId      String?
+  preisbuch        PreisbuchEintrag? @relation(fields: [preisbuchId], references: [id], onDelete: SetNull)
+  quelle           String            @default("preisbuch") // preisbuch, historisch, geschaetzt, manuell
+  konfidenz        Float             @default(1.0)
+  manuellGeaendert Boolean           @default(false)
+  reihenfolge      Int               @default(0)
+
+  @@index([angebotId])
+}
+
+model AngebotsTracking {
+  id        String   @id @default(cuid())
+  angebotId String
+  angebot   Angebot  @relation(fields: [angebotId], references: [id], onDelete: Cascade)
+  ereignis  String // gesendet, geoeffnet, link_geklickt, angenommen, abgelehnt
+  ipHash    String? // SHA-256, kein Klartext (DSGVO)
+  userAgent String?
+  timestamp DateTime @default(now())
+
+  @@index([angebotId])
+}
+
+model AngebotsFollowUp {
+  id        String   @id @default(cuid())
+  angebotId String
+  angebot   Angebot  @relation(fields: [angebotId], references: [id], onDelete: Cascade)
+  stufe     Int // 1, 2, 3
+  faelligAm DateTime
+  typ       String // reminder, alternativangebot, abschluss
+  status    String   @default("offen") // offen, gesendet, erledigt, uebersprungen
+  notiz     String?
+  gesendetAm DateTime?
+  erstelltAm DateTime @default(now())
+
+  @@index([angebotId])
+  @@index([status])
+}
+
+model AngebotsAudit {
+  id          String   @id @default(cuid())
+  angebotId   String
+  angebot     Angebot  @relation(fields: [angebotId], references: [id], onDelete: Cascade)
+  schritt     String // parsing, kalkulation, varianten, text, rag, foerderung
+  modell      String?
+  promptHash  String? // SHA-256, kein Klartext
+  detailsJson Json? // Preisbuch-IDs, Aufschläge, Vergleichsdaten
+  kostenCent  Int?
+  erstelltVon String?
+  erstelltAm  DateTime @default(now())
+
+  @@index([angebotId])
 }
 
 // ============================================================
