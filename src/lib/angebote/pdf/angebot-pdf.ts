@@ -2,7 +2,7 @@
  * A1 — Angebots-PDF Generator (ANG-025)
  * Markenkonformes Angebots-PDF (Koch Aufforstung: Waldgrün/Gold) mit pdf-lib.
  * Enthält Pflicht-Geschäftsangaben, Positionstabelle, Netto/MwSt/Brutto sowie
- * optional eine Gut/Besser/Best-Übersicht. KEIN Feldhub-Branding (CLAUDE.md).
+ * optional eine Gut/Besser/Best-Übersicht. Ausschließlich Koch-Aufforstung-Marke (CLAUDE.md).
  */
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib"
 

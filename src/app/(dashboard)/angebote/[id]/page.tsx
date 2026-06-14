@@ -8,7 +8,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { useParams } from "next/navigation"
 import { toast } from "sonner"
-import { FileText, CheckCircle2, Layers, Loader2, Pencil } from "lucide-react"
+import { FileText, CheckCircle2, Layers, Loader2, Pencil, Send } from "lucide-react"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
 
 interface Position {
@@ -90,6 +90,22 @@ export default function AngebotDetailPage() {
         return
       }
       toast.success("Angebot freigegeben")
+      laden()
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function versenden() {
+    setBusy(true)
+    try {
+      const res = await fetch(`/api/angebote/${id}/versenden`, { method: "POST" })
+      if (!res.ok) {
+        const e = await res.json().catch(() => ({}))
+        toast.error(e.error ?? "Versand fehlgeschlagen")
+        return
+      }
+      toast.success("Angebot versendet")
       laden()
     } finally {
       setBusy(false)
@@ -188,6 +204,16 @@ export default function AngebotDetailPage() {
               style={{ backgroundColor: "#2C3A1C" }}
             >
               <CheckCircle2 className="w-4 h-4" /> Freigeben
+            </button>
+          )}
+          {istFreigegeben && angebot.status !== "versendet" && angebot.status !== "angenommen" && angebot.status !== "abgelehnt" && (
+            <button
+              onClick={versenden}
+              disabled={busy}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm disabled:opacity-60"
+              style={{ backgroundColor: "#2C3A1C" }}
+            >
+              <Send className="w-4 h-4" /> Versenden
             </button>
           )}
         </div>
