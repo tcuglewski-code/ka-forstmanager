@@ -905,12 +905,28 @@ model Rechnung {
   stripeInvoiceId       String?        @unique // Stripe Invoice ID (wenn Billing genutzt wird)
   paidAt                DateTime?      // Wann wurde bezahlt
   paidViaMittel         String?        // Zahlungsmittel: 'stripe', 'überweisung', 'bar', etc.
+  // A8 Rechnungs-Agent: Herkunft, Workflow, Mahnwesen, Storno-Gegenbuchung
+  draftId           String?            // Herkunft aus RechnungsDraft (A8-Engine)
+  angebotId         String?            // Quelle A1-Angebot
+  quelleTyp         String             @default("manuell") // auftrag | angebot | manuell
+  mwstBetrag        Float?             // Explizit ausgewiesener MwSt-Betrag (Σ je Satz)
+  freigegebenVon    String?            // User-ID der GoBD-Freigabe
+  freigegebenAm     DateTime?
+  gesendetAm        DateTime?          // Versand-Zeitstempel (A8)
+  zipayoLink        String?            // Zahlungslink
+  zahlungsEingang   Float?             @default(0) // kumulierte (Teil-)Zahlungen
+  storniertDurch    String?            // User-ID der Stornierung
+  storniertAm       DateTime?
+  stornoRechnungId  String?            // Verweis auf Gegenbuchungs-Rechnung (GoBD)
+  mahnstufe         Int                @default(0) // 0-3
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   auftrag           Auftrag?           @relation(fields: [auftragId], references: [id], onDelete: SetNull)
+  draft             RechnungsDraft?    @relation(fields: [draftId], references: [id], onDelete: SetNull)
   positionen        RechnungPosition[]
   auditLog          RechnungAuditLog[]
   versionen         RechnungVersion[]
+  mahnungen         MahnungEvent[]
   gdprRequest       GdprRequest?       @relation(fields: [gdprRequestId], references: [id])
   paymentRecords    PaymentRecord[]
   // Sprint P2-1: Protokoll ↔ Rechnung Verknüpfung
@@ -918,6 +934,45 @@ model Rechnung {
 
   @@index([deletedAt]) // Index für effiziente Filterung aktiver Rechnungen
   @@index([stripePaymentIntentId])
+  @@index([draftId])
+  @@index([status])
+  @@index([faelligAm])
+}
+
+// A8 RECHNUNGS-AGENT: Entwurf aus Auftrag/Angebot/Material (Engine-Output)
+model RechnungsDraft {
+  id          String     @id @default(cuid())
+  auftragId   String?
+  angebotId   String?
+  quelleTyp   String     @default("manuell") // auftrag | angebot | manuell
+  status      String     @default("NEU") // NEU | BEREIT | FEHLER
+  fehlerText  String?
+  extraktJson Json? // Zod-validierter Engine-Output (NEVER #23)
+  erstelltVon String?
+  erstelltAm  DateTime   @default(now())
+  rechnungen  Rechnung[]
+
+  @@index([auftragId])
+  @@index([status])
+}
+
+// A8 RECHNUNGS-AGENT: Mahnwesen für Waldbesitzer-Rechnungen
+// ABGRENZUNG: ≠ DunningRecord (das ist Stripe-SaaS-Subscription-Dunning auf Tenant-Ebene)
+model MahnungEvent {
+  id          String   @id @default(cuid())
+  rechnungId  String
+  rechnung    Rechnung @relation(fields: [rechnungId], references: [id], onDelete: Cascade)
+  stufe       Int // 1, 2, 3
+  faelligAm   DateTime
+  gesendetAm  DateTime?
+  status      String   @default("offen") // offen | gesendet | bezahlt | abgebrochen
+  gebuehr     Float    @default(0) // Mahngebühr in EUR (0 / 5 / 15)
+  betragOffen Float    @default(0) // offener Rechnungsbetrag zum Zeitpunkt
+  createdAt   DateTime @default(now())
+
+  @@unique([rechnungId, stufe])
+  @@index([rechnungId])
+  @@index([status])
 }
 
 // Sprint P2-1: Protokoll ↔ Rechnung Verknüpfung (Many-to-Many)
@@ -1001,6 +1056,10 @@ model RechnungPosition {
   gesamt          Float
   protokollId     String? // Welches Protokoll hat diese Position erzeugt
   typ             String   @default("leistung") // leistung|material|fahrt
+  // A8: MwSt je Position (mehrere Sätze pro Rechnung möglich) + Quell-Tracking
+  mwstSatz          Float   @default(19)
+  auftragPositionId String?
+  angebotPositionId String?
   createdAt       DateTime @default(now())
 }
 

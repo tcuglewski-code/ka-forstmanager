@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 import { isAdmin, isAdminOrGF } from "@/lib/permissions"
 import { sendKANotification } from "@/lib/telegram-notify"
+import { naechsteNummer } from "@/lib/rechnungen/nummernkreis"
 import { z } from "zod"
 
 const RechnungCreateSchema = z.object({
@@ -124,26 +125,7 @@ export async function POST(req: NextRequest) {
   }
   const validData = parsed.data
 
-  // Auto-Rechnungsnummer: find highest RE-YYYY-NNNN number across ALL records
-  let nummer = validData.nummer?.trim()
-  if (!nummer) {
-    const year = new Date().getFullYear()
-    const pattern = `RE-${year}-`
-    const allRechnungen = await prisma.rechnung.findMany({
-      where: { nummer: { startsWith: pattern } },
-      select: { nummer: true },
-    })
-    let maxNum = 0
-    const re = new RegExp(`^RE-${year}-(\\d{4})$`)
-    for (const r of allRechnungen) {
-      const m = r.nummer.match(re)
-      if (m) {
-        const n = parseInt(m[1], 10)
-        if (n > maxNum) maxNum = n
-      }
-    }
-    nummer = `RE-${year}-${String(maxNum + 1).padStart(4, "0")}`
-  }
+  const manuelleNummer = validData.nummer?.trim() || null
 
   try {
     const mwstSatz = validData.mwst ?? 19
@@ -166,22 +148,26 @@ export async function POST(req: NextRequest) {
 
     const bruttoBetrag = nettoBetrag * (1 + mwstSatz / 100)
 
-    const rechnung = await prisma.rechnung.create({
-      data: {
-        nummer,
-        auftragId: validData.auftragId || null,
-        betrag: bruttoBetrag,
-        nettoBetrag,
-        bruttoBetrag,
-        mwst: mwstSatz,
-        status: "offen",
-        faelligAm: validData.faelligAm ? new Date(validData.faelligAm) : null,
-        notizen: validData.notizen ?? null,
-        ...(positionenData && positionenData.length > 0 ? {
-          positionen: { create: positionenData },
-        } : {}),
-      },
-      include: { auftrag: { select: { id: true, titel: true } }, positionen: true },
+    // REC-002: Nummer + Rechnung in EINER Transaktion → lückenlos, kein Race.
+    const rechnung = await prisma.$transaction(async (tx) => {
+      const nummer = manuelleNummer ?? (await naechsteNummer(tx))
+      return tx.rechnung.create({
+        data: {
+          nummer,
+          auftragId: validData.auftragId || null,
+          betrag: bruttoBetrag,
+          nettoBetrag,
+          bruttoBetrag,
+          mwst: mwstSatz,
+          status: "offen",
+          faelligAm: validData.faelligAm ? new Date(validData.faelligAm) : null,
+          notizen: validData.notizen ?? null,
+          ...(positionenData && positionenData.length > 0 ? {
+            positionen: { create: positionenData },
+          } : {}),
+        },
+        include: { auftrag: { select: { id: true, titel: true } }, positionen: true },
+      })
     })
 
     // Sprint GB-01: Audit-Log für Erstellung
