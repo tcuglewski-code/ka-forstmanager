@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
-import { Plus, FileText, ExternalLink, Euro, Calendar, User } from "lucide-react"
+import { Plus, FileText, ExternalLink, Euro, Calendar, User, Sparkles } from "lucide-react"
 import Link from "next/link"
 import { Breadcrumb } from "@/components/layout/Breadcrumb"
 
@@ -232,13 +232,23 @@ export default function AngebotePage() {
           </h1>
           <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">Anfragen zu Angeboten weiterverarbeiten</p>
         </div>
-        <button
-          onClick={() => setModalOffen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-medium transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Neues Angebot
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/angebote/neu"
+            className="flex items-center gap-2 px-4 py-2 text-white rounded-lg text-sm font-medium transition-colors"
+            style={{ backgroundColor: "#C5A55A" }}
+          >
+            <Sparkles className="w-4 h-4" />
+            KI-Angebot
+          </Link>
+          <button
+            onClick={() => setModalOffen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-medium transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Neues Angebot
+          </button>
+        </div>
       </div>
 
       {/* Filter */}
