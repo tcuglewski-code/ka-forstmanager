@@ -16,7 +16,7 @@
     "test:a8": "tsx tests/a8/nummernkreis.test.ts && tsx tests/a8/rechnungs-engine.test.ts && tsx tests/a8/mahnwesen.test.ts && tsx tests/a8/e2e.test.ts && bash scripts/check-a8-boundaries.sh"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.80.0",
+    "@anthropic-ai/sdk": "^0.88.0",
     "@auth/prisma-adapter": "^2.11.1",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
