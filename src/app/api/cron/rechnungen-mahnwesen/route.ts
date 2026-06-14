@@ -17,26 +17,9 @@
  */
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { MAHNBARE_STATUS, zielStufe } from "@/lib/rechnungen/mahnstufen"
 
 const CRON_SECRET = process.env.CRON_SECRET
-
-// Tage nach Fälligkeit → Stufe + Gebühr (€)
-const MAHN_STUFEN = [
-  { stufe: 1, abTagen: 7, gebuehr: 0, label: "Zahlungserinnerung" },
-  { stufe: 2, abTagen: 14, gebuehr: 5, label: "1. Mahnung" },
-  { stufe: 3, abTagen: 30, gebuehr: 15, label: "2. Mahnung" },
-] as const
-
-// Status, die noch mahnbar sind (offen / versandt / teilbezahlt)
-const MAHNBARE_STATUS = ["offen", "gesendet", "versendet", "freigegeben", "teilbezahlt", "überfällig"]
-
-function zielStufe(overdueTage: number): (typeof MAHN_STUFEN)[number] | null {
-  let result: (typeof MAHN_STUFEN)[number] | null = null
-  for (const s of MAHN_STUFEN) {
-    if (overdueTage >= s.abTagen) result = s
-  }
-  return result
-}
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization")

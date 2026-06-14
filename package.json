@@ -12,7 +12,8 @@
     "db:seed-demo": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-demo.ts",
     "db:studio": "prisma studio",
     "seed:test": "tsx prisma/seed-test.ts",
-    "test:e2e": "playwright test tests/e2e/"
+    "test:e2e": "playwright test tests/e2e/",
+    "test:a8": "tsx tests/a8/nummernkreis.test.ts && tsx tests/a8/rechnungs-engine.test.ts && tsx tests/a8/mahnwesen.test.ts && tsx tests/a8/e2e.test.ts && bash scripts/check-a8-boundaries.sh"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",

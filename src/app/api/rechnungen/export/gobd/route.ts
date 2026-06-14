@@ -15,6 +15,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth, canAccessAccounting } from "@/lib/auth"
 import { isAdmin } from "@/lib/permissions"
+import { logPdAccess, extractRequestInfo } from "@/lib/pd-access-log"
 import archiver from "archiver"
 import { createHash } from "crypto"
 
@@ -412,7 +413,30 @@ ForstManager - GoBD-Export v${exportMeta.version}
       console.error("Activity log error:", logError)
       // Nicht kritisch - Export fortsetzen
     }
-    
+
+    // DSGVO/GoBD: PD-Access-Log für Rechnungs-Export (REC-024)
+    // Rechnungen enthalten personenbezogene Kundendaten → EXPORT protokollpflichtig.
+    const { ip, userAgent } = extractRequestInfo(req)
+    await logPdAccess({
+      userId: session.user.id || null,
+      userName: session.user.name || session.user.email || null,
+      resource: "INVOICE",
+      resourceId: jahr ? String(jahr) : "alle",
+      action: "EXPORT",
+      ip,
+      userAgent,
+      endpoint: "/api/rechnungen/export/gobd",
+      method: "GET",
+      statusCode: 200,
+      metadata: {
+        jahr: jahr || "alle",
+        anzahl: rechnungen.length,
+        mitAuditLog: includeAuditLog,
+        mitPdfs: includePdfs,
+        dateigroesse: zipBuffer.length,
+      },
+    })
+
     return new NextResponse(zipBuffer, {
       status: 200,
       headers: {
