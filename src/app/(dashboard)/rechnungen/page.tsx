@@ -148,6 +148,37 @@ function RechnungenPageInner() {
     setSaving(false)
   }
 
+  // REC-012: Rechnung per A8-Agent aus Auftrag generieren (deterministisch, Kill-Switch-geschützt)
+  async function generierePerAgent() {
+    if (!form.auftragId) return
+    setSaving(true)
+    setCreateError(null)
+    try {
+      const res = await fetch("/api/rechnungen/generieren", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ auftragId: form.auftragId }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        if (data.code === "AGENT_INACTIVE") {
+          setCreateError("Rechnungs-Agent ist deaktiviert (Shadow-Mode). Aktivierung unter Einstellungen → Rechnung.")
+        } else {
+          setCreateError(data.error || `Fehler ${res.status}: Agent-Generierung fehlgeschlagen`)
+        }
+        setSaving(false)
+        return
+      }
+      setShowModal(false)
+      setForm({ nummer: "", auftragId: "", betrag: "", mwst: "19", faelligAm: "", notizen: "" })
+      setSelectedAuftragLink("")
+      await fetchAll()
+    } catch {
+      setCreateError("Netzwerkfehler: Bitte Verbindung prüfen")
+    }
+    setSaving(false)
+  }
+
   // Sprint Q: Filtern + Sortieren (client-seitig)
   // AUDIT-FIX: [BUG-003] faellig-Filter: fällig in N Tagen, nicht bezahlt/storniert
   const gefilterteRechnungen = rechnungen
@@ -175,6 +206,20 @@ function RechnungenPageInner() {
 
   const gesamtOffen = rechnungen.filter((r) => r.status === "offen" || r.status === "freigegeben").reduce((s, r) => s + r.betrag, 0)
 
+  // REC-008: KPIs — offen / überfällig / bezahlt diesen Monat
+  const heuteKpi = new Date(); heuteKpi.setHours(0, 0, 0, 0)
+  const monatsStart = new Date(heuteKpi.getFullYear(), heuteKpi.getMonth(), 1)
+  const offeneStatus = (s: string) => ["offen", "freigegeben", "gesendet", "versendet", "teilbezahlt", "überfällig"].includes(s)
+  const kpiOffen = rechnungen.filter((r) => offeneStatus(r.status))
+  const kpiUeberfaellig = kpiOffen.filter((r) => r.faelligAm && new Date(r.faelligAm) < heuteKpi)
+  const kpiBezahltMonat = rechnungen.filter((r) => r.status === "bezahlt" && new Date(r.rechnungsDatum) >= monatsStart)
+  const kpiSumme = (arr: Rechnung[]) => arr.reduce((s, r) => s + r.betrag, 0)
+  const kpis = [
+    { label: "Offen", count: kpiOffen.length, summe: kpiSumme(kpiOffen), farbe: "text-amber-400" },
+    { label: "Überfällig", count: kpiUeberfaellig.length, summe: kpiSumme(kpiUeberfaellig), farbe: "text-red-400" },
+    { label: "Bezahlt (Monat)", count: kpiBezahltMonat.length, summe: kpiSumme(kpiBezahltMonat), farbe: "text-emerald-400" },
+  ]
+
   return (
     <div className="max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-6">
@@ -197,6 +242,17 @@ function RechnungenPageInner() {
         }} className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
           <Plus className="w-4 h-4" /> Rechnung erstellen
         </button>
+      </div>
+
+      {/* REC-008: KPI-Karten */}
+      <div className="grid grid-cols-3 gap-3 mb-5">
+        {kpis.map((k) => (
+          <div key={k.label} className="bg-[var(--color-surface-container)] border border-border rounded-xl p-4">
+            <p className="text-xs text-[var(--color-on-surface-variant)] uppercase tracking-wider">{k.label}</p>
+            <p className={`text-xl font-bold mt-1 ${k.farbe}`}>{k.summe.toFixed(2)} €</p>
+            <p className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">{k.count} Rechnung(en)</p>
+          </div>
+        ))}
       </div>
 
       {/* Sprint Q: Filter + Sortierung */}
@@ -413,7 +469,17 @@ function RechnungenPageInner() {
                 {createError}
               </div>
             )}
-            <div className="flex gap-3 mt-6">
+            {form.auftragId && (
+              <button
+                onClick={generierePerAgent}
+                disabled={saving}
+                className="w-full mt-4 px-4 py-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 text-sm font-medium hover:bg-emerald-500/20 disabled:opacity-50"
+                title="Positionen automatisch aus Auftrag/Angebot/Material übernehmen (A8-Agent)"
+              >
+                {saving ? "Generiere…" : "🤖 Per Agent aus Auftrag generieren"}
+              </button>
+            )}
+            <div className="flex gap-3 mt-3">
               <button
                 onClick={() => { setShowModal(false); setSelectedAuftragLink("") }}
                 className="flex-1 px-4 py-2 rounded-lg border border-border text-[var(--color-on-surface-variant)] text-sm hover:bg-[#222]"
@@ -425,7 +491,7 @@ function RechnungenPageInner() {
                 disabled={saving || !form.betrag}
                 className="flex-1 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium disabled:opacity-50"
               >
-                {saving ? "Speichern..." : "Erstellen"}
+                {saving ? "Speichern..." : "Manuell erstellen"}
               </button>
             </div>
           </div>

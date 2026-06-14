@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { 
+import {
   Building2, Save, Loader2, AlertCircle, CheckCircle,
-  CreditCard, FileText, Info, ArrowLeft
+  CreditCard, FileText, Info, ArrowLeft, Power
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 
@@ -28,6 +28,10 @@ export default function RechnungsEinstellungenPage() {
     company_tax_number: "",
   })
 
+  // A8 Kill-Switch (REC-021)
+  const [agentAktiv, setAgentAktiv] = useState<boolean | null>(null)
+  const [agentSaving, setAgentSaving] = useState(false)
+
   // Einstellungen laden
   useEffect(() => {
     async function loadSettings() {
@@ -48,8 +52,38 @@ export default function RechnungsEinstellungenPage() {
         setLoading(false)
       }
     }
+    async function loadAgent() {
+      try {
+        const res = await fetch("/api/settings/rechnungs-agent")
+        if (res.ok) {
+          const data = await res.json()
+          setAgentAktiv(!!data.aktiv)
+        }
+      } catch {
+        // Nur Admin sieht den Schalter
+      }
+    }
     loadSettings()
+    loadAgent()
   }, [])
+
+  async function toggleAgent() {
+    if (agentAktiv === null) return
+    setAgentSaving(true)
+    try {
+      const res = await fetch("/api/settings/rechnungs-agent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ aktiv: !agentAktiv }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setAgentAktiv(!!data.aktiv)
+      }
+    } finally {
+      setAgentSaving(false)
+    }
+  }
 
   // Einstellungen speichern
   async function handleSave(e: React.FormEvent) {
@@ -119,6 +153,34 @@ export default function RechnungsEinstellungenPage() {
           </p>
         </div>
       </div>
+
+      {/* A8 Rechnungs-Agent Kill-Switch (REC-021, nur Admin) */}
+      {agentAktiv !== null && (
+        <div className="bg-[var(--color-surface-container)] border border-border rounded-xl p-6 mb-6">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex gap-3">
+              <Power className={`w-5 h-5 shrink-0 mt-0.5 ${agentAktiv ? "text-emerald-400" : "text-zinc-500"}`} />
+              <div>
+                <h3 className="text-[var(--color-on-surface)] font-semibold">Rechnungs-Agent (A8)</h3>
+                <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">
+                  {agentAktiv
+                    ? "Aktiv — automatische Rechnungserstellung aus Aufträgen ist freigeschaltet."
+                    : "Shadow-Mode — der Agent generiert keine Rechnungen automatisch. Manuelles Erstellen bleibt möglich."}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={toggleAgent}
+              disabled={agentSaving}
+              className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors disabled:opacity-50 ${agentAktiv ? "bg-emerald-500" : "bg-zinc-600"}`}
+              aria-label="Rechnungs-Agent umschalten"
+            >
+              <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${agentAktiv ? "translate-x-6" : "translate-x-1"}`} />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Form */}
       <form onSubmit={handleSave} className="space-y-6">
